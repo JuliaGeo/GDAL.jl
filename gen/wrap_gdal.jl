@@ -5,7 +5,7 @@ using Clang
 gdalpath = "/usr/local/include"
 includedirs = [gdalpath]
 
-headerfiles = ["gdal.h", "ogr_api.h"]
+headerfiles = ["gdal.h", "ogr_api.h", "gdal_alg.h", "ogr_srs_api.h"]
 headerpaths = [joinpath(gdalpath, h) for h in headerfiles]
 
 "header_wrapped: arguments: (headerfile, cursorname) pair, returns Bool
