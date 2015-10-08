@@ -70,15 +70,15 @@ const CPL_IS_LSB = 1
 # Skipping MacroDefinition: CPL_LSBWORD32 ( x ) ( x )
 # Skipping MacroDefinition: CPL_MSBWORD32 ( x ) CPL_SWAP32 ( x )
 
-const CPL_LSBPTR16 = x
+# const CPL_LSBPTR16 = x
 
-# Skipping MacroDefinition: CPL_MSBPTR16 ( x ) CPL_SWAP16PTR ( x )
+# # Skipping MacroDefinition: CPL_MSBPTR16 ( x ) CPL_SWAP16PTR ( x )
 
-const CPL_LSBPTR32 = x
+# const CPL_LSBPTR32 = x
 
-# Skipping MacroDefinition: CPL_MSBPTR32 ( x ) CPL_SWAP32PTR ( x )
+# # Skipping MacroDefinition: CPL_MSBPTR32 ( x ) CPL_SWAP32PTR ( x )
 
-const CPL_LSBPTR64 = x
+# const CPL_LSBPTR64 = x
 
 # Skipping MacroDefinition: CPL_MSBPTR64 ( x ) CPL_SWAP64PTR ( x )
 # Skipping MacroDefinition: CPL_LSBINT16PTR ( x ) ( ( * ( GByte * ) ( x ) ) | ( * ( ( ( GByte * ) ( x ) ) + 1 ) << 8 ) )
