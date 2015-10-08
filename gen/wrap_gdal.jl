@@ -1,20 +1,24 @@
-#!/usr/bin/env julia
-
 using Clang
 
 gdalpath = "/usr/local/include"
 includedirs = [gdalpath]
 
-headerfiles = ["gdal.h", "ogr_api.h", "gdal_alg.h", "ogr_srs_api.h"]
+headerfiles = ["cpl_minixml.h",
+               "cpl_port.h",
+               "cpl_progress.h",
+               "gdal.h",
+               "gdal_alg.h",
+               "gdalwarper.h",
+               "ogr_api.h",
+               "ogr_core.h",
+               "ogr_srs_api.h"]
+
 headerpaths = [joinpath(gdalpath, h) for h in headerfiles]
 
-"header_wrapped: arguments: (headerfile, cursorname) pair, returns Bool
-if/not the pair should be wrapped [default: true]"
+# indicates if/not the pair should be wrapped
 function header_wrapped(headerfile, cursorname)
-    # @show headerfile cursorname
-    # without this the stdout etc also got wrapped
-    # contains(cursorname, "/usr/local/include/") # wrap only included files from gdal
-    headerfile == cursorname # wrap no included files
+    # don't wrap included files
+    headerfile == cursorname
 end
 
 context=wrap_c.init(headers=headerpaths,
@@ -25,13 +29,3 @@ context=wrap_c.init(headers=headerpaths,
                     header_library=x->"libgdal")
 
 run(context)
-
-# headerfile == cursorname # wrap no included files
-# gdal 872
-# ogr 1368
-# common 403
-
-# contains(cursorname, "/usr/local/include/") # wrap only included files from gdal
-# gdal 2824
-# ogr 1548
-# common 1181
