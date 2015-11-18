@@ -1,7 +1,20 @@
 module GDAL
 
+# this can go when all ccalls are done in the C submodule
+const depfile = joinpath(dirname(@__FILE__), "..", "deps", "deps.jl")
+if isfile(depfile)
+  include(depfile)
+else
+  error("libgdal not properly installed. Please run Pkg.build(\"GDAL\")")
+end
+
 module C
-    const libgdal = "libgdal"
+    const depfile = joinpath(dirname(@__FILE__), "..", "deps", "deps.jl")
+    if isfile(depfile)
+        include(depfile)
+    else
+        error("libgdal not properly installed. Please run Pkg.build(\"GDAL\")")
+    end
 
     include("C/misc.jl")
     include("C/common.jl")
@@ -15,8 +28,6 @@ module C
     include("C/ogr_core.jl")
     include("C/ogr_srs_api.jl")
 end
-
-const libgdal = "libgdal"
 
 include("C/misc.jl")
 include("C/common.jl")
