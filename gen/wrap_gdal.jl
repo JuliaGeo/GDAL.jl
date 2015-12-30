@@ -1,4 +1,9 @@
 using Clang
+using LibExpat
+
+workdir = dirname(@__FILE__)
+srcdir = joinpath(workdir, "../src")
+include(joinpath(workdir, "doc.jl"))
 
 gdalpath = "/usr/local/include"
 includedirs = [gdalpath]
@@ -39,10 +44,17 @@ function minimal_rewriter(ex::Expr)
     # if it is a function
     if ex.head == :function
         funcname = ex.args[1].args[1]
+        @show funcname
         # skip predefined functions
         if funcname in skip_func
             return ""
         end
+        # add docstring
+        fnode = functionnode(et, string(funcname))
+        docstr = build_docstring(fnode)
+        # turn it into a tuple, special cased in visr/Clang.jl
+        # done because a block Expr gets a begin/end block when printing
+        ex = (docstr, ex)
     end
     ex
 end
@@ -51,7 +63,7 @@ minimal_rewriter(s::AbstractString) = s # keep comments
 minimal_rewriter(A::Vector) = [minimal_rewriter(a) for a in A]
 
 context=wrap_c.init(headers=headerpaths,
-                    output_dir="src/C",
+                    output_dir=joinpath(srcdir, "C"),
                     common_file="common.jl",
                     clang_includes=includedirs,
                     header_wrapped=header_wrapped,
@@ -60,4 +72,4 @@ context=wrap_c.init(headers=headerpaths,
 
 run(context)
 
-rm("src/C/cpl_port.jl") # delete empty file
+rm(joinpath(srcdir, "C/cpl_port.jl")) # delete empty file

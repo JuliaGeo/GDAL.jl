@@ -1,3 +1,8 @@
+using LibExpat
+
+workdir = dirname(@__FILE__)
+include(joinpath(workdir, "doc.jl"))
+srcdir = joinpath(workdir, "../src")
 
 headerfiles = [
     "gdal.jl",
@@ -55,57 +60,7 @@ check_nullpointer = [
 
 parsefile(file) = parse(join(["quote", readall(file), "end"], ";"))
 
-
-"rewrite certain expressions"
-function rewriter(ex::Expr)
-    # if it is a function
-    if ex.head == :function
-        orig_ex = copy(ex)
-
-        # function signature
-        for arg in ex.args[1].args[2:end]
-            # loosen type constraints; ccall will convert the arguments
-            if arg.args[2] == :Cint
-                arg.args[2] = :Integer
-            elseif arg.args[2] == :Cdouble
-                arg.args[2] = :Real
-            elseif arg.args[2] == :(Ptr{Cdouble})
-                arg.args[2] = :(Vector{Float64})
-            elseif arg.args[2] == :(Ptr{Cint})
-                arg.args[2] = :(Vector{Cint})
-            elseif arg.args[2] == :(Ptr{GDALRasterIOExtraArg})
-                arg.args[2] = :GDALRasterIOExtraArg
-            elseif arg.args[2] == :(Ptr{UInt8})
-                arg.args[2] = :AbstractString
-            elseif arg.args[2] == :(Ptr{Ptr{UInt8}})
-                arg.args[2] = :(Vector{UTF8String})
-            end
-        end
-        assert(ex.args[2].args[1].head == :ccall)
-        # ccall input types
-        assert(ex.args[2].args[1].args[3].head == :tuple)
-        intypes = ex.args[2].args[1].args[3].args
-        for i = 1:length(intypes)
-            # memory owned by julia
-            if intypes[i] == :(Ptr{GDALRasterIOExtraArg})
-                intypes[i] = :(Ref{GDALRasterIOExtraArg})
-            end
-        end
-        # ccall return type
-        rettype = ex.args[2].args[1].args[2]
-        if rettype == :(Ptr{UInt8})
-            ex.args[2].args[1] = Expr(:call, :bytestring, ex.args[2].args[1])
-        elseif rettype == :(Ptr{Ptr{UInt8}})
-            ex.args[2].args[1] = Expr(:call, :unsafe_load, ex.args[2].args[1])
-            ex.args[2].args[1] = Expr(:call, :bytestring, ex.args[2].args[1])
-        elseif rettype in check_nullpointer
-            ex.args[2].args[1] = Expr(:call, :checknull, ex.args[2].args[1])
-        end
-    end
-    ex
-end
-
-
+"rename the function to more a julian convention"
 function newfuncname(name::Symbol)
     name = lowercase(string(name))
     for (pat, r) in strip_prefixes
@@ -114,18 +69,76 @@ function newfuncname(name::Symbol)
     symbol(name)
 end
 
+"rewrite certain expressions"
+function rewriter(ex::Expr)
+    orig_ex = copy(ex)
+
+    # rename function name
+    old_funcname = ex.args[1].args[1]
+    new_funcname = newfuncname(old_funcname)
+    ex.args[1].args[1] = new_funcname
+    shift!(ex.args[2].args) # removes LineNumberNode
+
+    # add docstring
+    fnode = functionnode(et, string(old_funcname))
+    docstr = build_docstring(fnode)
+    # turn it into a tuple, special cased in visr/Clang.jl
+    # done because a block Expr gets a begin/end block when printing
+
+    # function signature
+    for arg in ex.args[1].args[2:end]
+        # loosen type constraints; ccall will convert the arguments
+        if arg.args[2] == :Cint
+            arg.args[2] = :Integer
+        elseif arg.args[2] == :Cdouble
+            arg.args[2] = :Real
+        elseif arg.args[2] == :(Ptr{Cdouble})
+            arg.args[2] = :(Vector{Float64})
+        elseif arg.args[2] == :(Ptr{Cint})
+            arg.args[2] = :(Vector{Cint})
+        elseif arg.args[2] == :(Ptr{GDALRasterIOExtraArg})
+            arg.args[2] = :GDALRasterIOExtraArg
+        elseif arg.args[2] == :(Ptr{UInt8})
+            arg.args[2] = :AbstractString
+        elseif arg.args[2] == :(Ptr{Ptr{UInt8}})
+            arg.args[2] = :(Vector{UTF8String})
+        end
+    end
+    assert(ex.args[2].args[1].head == :ccall)
+    # ccall input types
+    assert(ex.args[2].args[1].args[3].head == :tuple)
+    intypes = ex.args[2].args[1].args[3].args
+    for i = 1:length(intypes)
+        # memory owned by julia
+        if intypes[i] == :(Ptr{GDALRasterIOExtraArg})
+            intypes[i] = :(Ref{GDALRasterIOExtraArg})
+        end
+    end
+    # ccall return type
+    rettype = ex.args[2].args[1].args[2]
+    if rettype == :(Ptr{UInt8})
+        ex.args[2].args[1] = Expr(:call, :bytestring, ex.args[2].args[1])
+    elseif rettype == :(Ptr{Ptr{UInt8}})
+        ex.args[2].args[1] = Expr(:call, :unsafe_load, ex.args[2].args[1])
+        ex.args[2].args[1] = Expr(:call, :bytestring, ex.args[2].args[1])
+    elseif rettype in check_nullpointer
+        ex.args[2].args[1] = Expr(:call, :checknull, ex.args[2].args[1])
+    end
+    (docstr, ex)
+end
 
 for headerfile in headerfiles
-    expr = parsefile(joinpath("src/C", headerfile))
+    expr = parsefile(joinpath(srcdir, "C", headerfile))
     # rename gdal.jl to prevent name clash
     headerfile = headerfile == "gdal.jl" ? "gdal_h.jl" : headerfile
-    open(joinpath("src", headerfile), "w") do io
+    open(joinpath(srcdir, headerfile), "w") do io
         for el in expr.args[1].args
             if isa(el, Expr)
-                el.args[1].args[1] = newfuncname(el.args[1].args[1])
-                shift!(el.args[2].args) # removes LineNumberNode
-                el = rewriter(el)
-                write(io, "$el\n\n")
+                if el.head == :function
+                    docstr, el = rewriter(el)
+                    println(io, "\n\n\"\"\"\n", docstr, "\"\"\"")
+                    println(io, "$el")
+                end
             end
         end
     end
