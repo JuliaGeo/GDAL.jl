@@ -87,6 +87,7 @@ function rewriter(ex::Expr)
 
     # function signature
     for arg in ex.args[1].args[2:end]
+        isa(arg, Symbol) && continue # no type constraints
         # loosen type constraints; ccall will convert the arguments
         if arg.args[2] == :Cint
             arg.args[2] = :Integer

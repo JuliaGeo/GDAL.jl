@@ -24,7 +24,7 @@ end
     OGRRealloc(void * pOld,
                size_t size) -> void *
 """
-function OGRRealloc(arg1::Ptr{Void},size_t::Cint)
+function OGRRealloc(arg1,size_t::Cint)
     ccall((:OGRRealloc,libgdal),Ptr{Void},(Ptr{Void},Cint),arg1,size_t)
 end
 
@@ -32,15 +32,15 @@ end
 """
     OGRStrdup(const char *) -> char *
 """
-function OGRStrdup(arg1::Ptr{UInt8})
-    ccall((:OGRStrdup,libgdal),Ptr{UInt8},(Ptr{UInt8},),arg1)
+function OGRStrdup(arg1)
+    ccall((:OGRStrdup,libgdal),Cstring,(Cstring,),arg1)
 end
 
 
 """
     OGRFree(void * pMemory) -> void
 """
-function OGRFree(arg1::Ptr{Void})
+function OGRFree(arg1)
     ccall((:OGRFree,libgdal),Void,(Ptr{Void},),arg1)
 end
 
@@ -57,7 +57,7 @@ Fetch a human readable name corresponding to an OGRwkbGeometryType value.
 internal human readable string, or NULL on failure.
 """
 function OGRGeometryTypeToName(eType::OGRwkbGeometryType)
-    ccall((:OGRGeometryTypeToName,libgdal),Ptr{UInt8},(OGRwkbGeometryType,),eType)
+    ccall((:OGRGeometryTypeToName,libgdal),Cstring,(OGRwkbGeometryType,),eType)
 end
 
 
@@ -296,8 +296,8 @@ Parse date string.
 ### Returns
 TRUE if apparently successful or FALSE on failure.
 """
-function OGRParseDate(pszInput::Ptr{UInt8},psOutput::Ptr{OGRField},nOptions::Cint)
-    ccall((:OGRParseDate,libgdal),Cint,(Ptr{UInt8},Ptr{OGRField},Cint),pszInput,psOutput,nOptions)
+function OGRParseDate(pszInput,psOutput,nOptions::Cint)
+    ccall((:OGRParseDate,libgdal),Cint,(Cstring,Ptr{OGRField},Cint),pszInput,psOutput,nOptions)
 end
 
 
@@ -312,8 +312,8 @@ Get runtime version information.
 ### Returns
 an internal string containing the requested information.
 """
-function GDALVersionInfo(arg1::Ptr{UInt8})
-    ccall((:GDALVersionInfo,libgdal),Ptr{UInt8},(Ptr{UInt8},),arg1)
+function GDALVersionInfo(arg1)
+    ccall((:GDALVersionInfo,libgdal),Cstring,(Cstring,),arg1)
 end
 
 
@@ -332,6 +332,6 @@ Return TRUE if GDAL library version at runtime matches nVersionMajor.nVersionMin
 ### Returns
 TRUE if GDAL library version at runtime matches nVersionMajor.nVersionMinor, FALSE otherwise.
 """
-function GDALCheckVersion(nVersionMajor::Cint,nVersionMinor::Cint,pszCallingComponentName::Ptr{UInt8})
-    ccall((:GDALCheckVersion,libgdal),Cint,(Cint,Cint,Ptr{UInt8}),nVersionMajor,nVersionMinor,pszCallingComponentName)
+function GDALCheckVersion(nVersionMajor::Cint,nVersionMinor::Cint,pszCallingComponentName)
+    ccall((:GDALCheckVersion,libgdal),Cint,(Cint,Cint,Cstring),nVersionMajor,nVersionMinor,pszCallingComponentName)
 end

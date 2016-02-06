@@ -62,7 +62,7 @@ const CXT_Literal = (UInt32)(4)
 
 type CPLXMLNode
     eType::CPLXMLNodeType
-    pszValue::Ptr{UInt8}
+    pszValue::Cstring
     psNext::Ptr{CPLXMLNode}
     psChild::Ptr{CPLXMLNode}
 end
@@ -92,8 +92,8 @@ const CPL_FRMT_GB_WITHOUT_PREFIX = "ll"
 # Skipping MacroDefinition: CPLIsFinite ( x ) ( ! isnan ( x ) && ! isinf ( x ) )
 
 const CPL_IS_LSB = 1
-# const CPL_STATIC_ASSERT_IF_AVAILABLE = x
 
+# const CPL_STATIC_ASSERT_IF_AVAILABLE = x
 # Skipping MacroDefinition: CPL_SWAP16 ( x ) ( ( GUInt16 ) ( ( ( ( GUInt16 ) ( x ) & 0x00ffU ) << 8 ) | ( ( ( GUInt16 ) ( x ) & 0xff00U ) >> 8 ) ) )
 # Skipping MacroDefinition: CPL_SWAP16PTR ( x ) \
 #{ GByte byTemp , * _pabyDataT = ( GByte * ) ( x ) ; CPL_STATIC_ASSERT_IF_AVAILABLE ( sizeof ( * ( x ) ) == 1 || sizeof ( * ( x ) ) == 2 ) ; byTemp = _pabyDataT [ 0 ] ; _pabyDataT [ 0 ] = _pabyDataT [ 1 ] ; _pabyDataT [ 1 ] = byTemp ; \
@@ -134,7 +134,6 @@ const CPL_IS_LSB = 1
 # Skipping MacroDefinition: CPL_WARN_DEPRECATED ( x ) __attribute__ ( ( deprecated ( x ) ) )
 
 # const CPL_WARN_DEPRECATED_IF_GDAL_COMPILATION = x
-
 # Skipping MacroDefinition: CPL_IS_DOUBLE_A_INT ( d ) ( ( double ) ( int ) ( d ) == ( d ) )
 # Skipping MacroDefinition: CPL_FALLTHROUGH [ [ clang : : fallthrough ] ] ;
 
@@ -392,8 +391,8 @@ typealias GDALAsyncReaderH Ptr{Void}
 typealias GSpacing GIntBig
 
 type GDAL_GCP
-    pszId::Ptr{UInt8}
-    pszInfo::Ptr{UInt8}
+    pszId::Cstring
+    pszInfo::Cstring
     dfGCPPixel::Cdouble
     dfGCPLine::Cdouble
     dfGCPX::Cdouble
@@ -408,7 +407,7 @@ immutable Array_2_Cdouble
     d2::Cdouble
 end
 
-zero(::Type{Array_2_Cdouble}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 267:
+zero(::Type{Array_2_Cdouble}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 269:
         Array_2_Cdouble(fill(zero(Cdouble),2)...)
     end
 
@@ -435,7 +434,7 @@ immutable Array_20_Cdouble
     d20::Cdouble
 end
 
-zero(::Type{Array_20_Cdouble}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 267:
+zero(::Type{Array_20_Cdouble}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 269:
         Array_20_Cdouble(fill(zero(Cdouble),20)...)
     end
 
@@ -552,13 +551,13 @@ immutable Array_4_GByte
     d4::GByte
 end
 
-zero(::Type{Array_4_GByte}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 267:
+zero(::Type{Array_4_GByte}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 269:
         Array_4_GByte(fill(zero(GByte),4)...)
     end
 
 type GDALTransformerInfo
     abySignature::Array_4_GByte
-    pszClassName::Ptr{UInt8}
+    pszClassName::Cstring
     pfnTransform::GDALTransformerFunc
     pfnCleanup::Ptr{Void}
     pfnSerialize::Ptr{Void}
@@ -577,7 +576,7 @@ immutable Array_6_Cdouble
     d6::Cdouble
 end
 
-zero(::Type{Array_6_Cdouble}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 267:
+zero(::Type{Array_6_Cdouble}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 269:
         Array_6_Cdouble(fill(zero(Cdouble),6)...)
     end
 
@@ -677,7 +676,7 @@ immutable Array_3_Cint
     d3::Cint
 end
 
-zero(::Type{Array_3_Cint}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 267:
+zero(::Type{Array_3_Cint}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 269:
         Array_3_Cint(fill(zero(Cint),3)...)
     end
 
@@ -1207,7 +1206,7 @@ const GWKAOM_Quant = (UInt32)(6)
 typealias GDALMaskFunc Ptr{Void}
 
 type GDALWarpOptions
-    papszWarpOptions::Ptr{Ptr{UInt8}}
+    papszWarpOptions::Ptr{Cstring}
     dfWarpMemoryLimit::Cdouble
     eResampleAlg::GDALResampleAlg
     eWorkingDataType::GDALDataType

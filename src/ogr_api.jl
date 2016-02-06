@@ -17,7 +17,7 @@ Create a geometry object of the appropriate type from it's well known binary rep
 ### Returns
 OGRERR_NONE if all goes well, otherwise any of OGRERR_NOT_ENOUGH_DATA, OGRERR_UNSUPPORTED_GEOMETRY_TYPE, or OGRERR_CORRUPT_DATA may be returned.
 """
-function createfromwkb(arg1::Ptr{Cuchar},arg2::OGRSpatialReferenceH,arg3::Ptr{OGRGeometryH},arg4::Integer)
+function createfromwkb(arg1,arg2::OGRSpatialReferenceH,arg3,arg4::Integer)
     ccall((:OGR_G_CreateFromWkb,libgdal),OGRErr,(Ptr{Cuchar},OGRSpatialReferenceH,Ptr{OGRGeometryH},Cint),arg1,arg2,arg3,arg4)
 end
 
@@ -37,8 +37,8 @@ Create a geometry object of the appropriate type from it's well known text repre
 ### Returns
 OGRERR_NONE if all goes well, otherwise any of OGRERR_NOT_ENOUGH_DATA, OGRERR_UNSUPPORTED_GEOMETRY_TYPE, or OGRERR_CORRUPT_DATA may be returned.
 """
-function createfromwkt(arg1::Vector{UTF8String},arg2::OGRSpatialReferenceH,arg3::Ptr{OGRGeometryH})
-    ccall((:OGR_G_CreateFromWkt,libgdal),OGRErr,(Ptr{Ptr{UInt8}},OGRSpatialReferenceH,Ptr{OGRGeometryH}),arg1,arg2,arg3)
+function createfromwkt(arg1,arg2::OGRSpatialReferenceH,arg3)
+    ccall((:OGR_G_CreateFromWkt,libgdal),OGRErr,(Ptr{Cstring},OGRSpatialReferenceH,Ptr{OGRGeometryH}),arg1,arg2,arg3)
 end
 
 
@@ -49,7 +49,7 @@ end
                         int nBytes,
                         int * pnBytesConsumed) -> OGRErr
 """
-function createfromfgf(arg1::Ptr{Cuchar},arg2::OGRSpatialReferenceH,arg3::Ptr{OGRGeometryH},arg4::Integer,arg5::Vector{Cint})
+function createfromfgf(arg1,arg2::OGRSpatialReferenceH,arg3,arg4::Integer,arg5)
     ccall((:OGR_G_CreateFromFgf,libgdal),OGRErr,(Ptr{Cuchar},OGRSpatialReferenceH,Ptr{OGRGeometryH},Cint,Ptr{Cint}),arg1,arg2,arg3,arg4,arg5)
 end
 
@@ -210,8 +210,8 @@ Convert to another geometry type.
 ### Returns
 new geometry.
 """
-function forceto(hGeom::OGRGeometryH,eTargetType::OGRwkbGeometryType,papszOptions::Vector{UTF8String})
-    checknull(ccall((:OGR_G_ForceTo,libgdal),OGRGeometryH,(OGRGeometryH,OGRwkbGeometryType,Ptr{Ptr{UInt8}}),hGeom,eTargetType,papszOptions))
+function forceto(hGeom::OGRGeometryH,eTargetType::OGRwkbGeometryType,papszOptions)
+    checknull(ccall((:OGR_G_ForceTo,libgdal),OGRGeometryH,(OGRGeometryH,OGRwkbGeometryType,Ptr{Cstring}),hGeom,eTargetType,papszOptions))
 end
 
 
@@ -288,7 +288,7 @@ Computes and returns the bounding envelope for this geometry in the passed psEnv
 * **hGeom**: handle of the geometry to get envelope from.
 * **psEnvelope**: the structure in which to place the results.
 """
-function getenvelope(arg1::OGRGeometryH,arg2::Ptr{OGREnvelope})
+function getenvelope(arg1::OGRGeometryH,arg2)
     ccall((:OGR_G_GetEnvelope,libgdal),Void,(OGRGeometryH,Ptr{OGREnvelope}),arg1,arg2)
 end
 
@@ -303,7 +303,7 @@ Computes and returns the bounding envelope (3D) for this geometry in the passed 
 * **hGeom**: handle of the geometry to get envelope from.
 * **psEnvelope**: the structure in which to place the results.
 """
-function getenvelope3d(arg1::OGRGeometryH,arg2::Ptr{OGREnvelope3D})
+function getenvelope3d(arg1::OGRGeometryH,arg2)
     ccall((:OGR_G_GetEnvelope3D,libgdal),Void,(OGRGeometryH,Ptr{OGREnvelope3D}),arg1,arg2)
 end
 
@@ -323,7 +323,7 @@ Assign geometry from well known binary data.
 ### Returns
 OGRERR_NONE if all goes well, otherwise any of OGRERR_NOT_ENOUGH_DATA, OGRERR_UNSUPPORTED_GEOMETRY_TYPE, or OGRERR_CORRUPT_DATA may be returned.
 """
-function importfromwkb(arg1::OGRGeometryH,arg2::Ptr{Cuchar},arg3::Integer)
+function importfromwkb(arg1::OGRGeometryH,arg2,arg3::Integer)
     ccall((:OGR_G_ImportFromWkb,libgdal),OGRErr,(OGRGeometryH,Ptr{Cuchar},Cint),arg1,arg2,arg3)
 end
 
@@ -343,7 +343,7 @@ Convert a geometry well known binary format.
 ### Returns
 Currently OGRERR_NONE is always returned.
 """
-function exporttowkb(arg1::OGRGeometryH,arg2::OGRwkbByteOrder,arg3::Ptr{Cuchar})
+function exporttowkb(arg1::OGRGeometryH,arg2::OGRwkbByteOrder,arg3)
     ccall((:OGR_G_ExportToWkb,libgdal),OGRErr,(OGRGeometryH,OGRwkbByteOrder,Ptr{Cuchar}),arg1,arg2,arg3)
 end
 
@@ -363,7 +363,7 @@ Convert a geometry into SFSQL 1.2 / ISO SQL/MM Part 3 well known binary format.
 ### Returns
 Currently OGRERR_NONE is always returned.
 """
-function exporttoisowkb(arg1::OGRGeometryH,arg2::OGRwkbByteOrder,arg3::Ptr{Cuchar})
+function exporttoisowkb(arg1::OGRGeometryH,arg2::OGRwkbByteOrder,arg3)
     ccall((:OGR_G_ExportToIsoWkb,libgdal),OGRErr,(OGRGeometryH,OGRwkbByteOrder,Ptr{Cuchar}),arg1,arg2,arg3)
 end
 
@@ -397,8 +397,8 @@ Assign geometry from well known text data.
 ### Returns
 OGRERR_NONE if all goes well, otherwise any of OGRERR_NOT_ENOUGH_DATA, OGRERR_UNSUPPORTED_GEOMETRY_TYPE, or OGRERR_CORRUPT_DATA may be returned.
 """
-function importfromwkt(arg1::OGRGeometryH,arg2::Vector{UTF8String})
-    ccall((:OGR_G_ImportFromWkt,libgdal),OGRErr,(OGRGeometryH,Ptr{Ptr{UInt8}}),arg1,arg2)
+function importfromwkt(arg1::OGRGeometryH,arg2)
+    ccall((:OGR_G_ImportFromWkt,libgdal),OGRErr,(OGRGeometryH,Ptr{Cstring}),arg1,arg2)
 end
 
 
@@ -415,8 +415,8 @@ Convert a geometry into well known text format.
 ### Returns
 Currently OGRERR_NONE is always returned.
 """
-function exporttowkt(arg1::OGRGeometryH,arg2::Vector{UTF8String})
-    ccall((:OGR_G_ExportToWkt,libgdal),OGRErr,(OGRGeometryH,Ptr{Ptr{UInt8}}),arg1,arg2)
+function exporttowkt(arg1::OGRGeometryH,arg2)
+    ccall((:OGR_G_ExportToWkt,libgdal),OGRErr,(OGRGeometryH,Ptr{Cstring}),arg1,arg2)
 end
 
 
@@ -433,8 +433,8 @@ Convert a geometry into SFSQL 1.2 / ISO SQL/MM Part 3 well known text format.
 ### Returns
 Currently OGRERR_NONE is always returned.
 """
-function exporttoisowkt(arg1::OGRGeometryH,arg2::Vector{UTF8String})
-    ccall((:OGR_G_ExportToIsoWkt,libgdal),OGRErr,(OGRGeometryH,Ptr{Ptr{UInt8}}),arg1,arg2)
+function exporttoisowkt(arg1::OGRGeometryH,arg2)
+    ccall((:OGR_G_ExportToIsoWkt,libgdal),OGRErr,(OGRGeometryH,Ptr{Cstring}),arg1,arg2)
 end
 
 
@@ -466,7 +466,7 @@ Fetch WKT name for geometry type.
 name used for this geometry type in well known text format.
 """
 function getgeometryname(arg1::OGRGeometryH)
-    bytestring(ccall((:OGR_G_GetGeometryName,libgdal),Ptr{UInt8},(OGRGeometryH,),arg1))
+    ccall((:OGR_G_GetGeometryName,libgdal),Cstring,(OGRGeometryH,),arg1)
 end
 
 
@@ -482,8 +482,8 @@ Dump geometry in well known text format to indicated output file.
 * **fp**: the text file to write the geometry to.
 * **pszPrefix**: the prefix to put on each line of output.
 """
-function dumpreadable(arg1::OGRGeometryH,arg2::Ptr{FILE},arg3::AbstractString)
-    ccall((:OGR_G_DumpReadable,libgdal),Void,(OGRGeometryH,Ptr{FILE},Ptr{UInt8}),arg1,arg2,arg3)
+function dumpreadable(arg1::OGRGeometryH,arg2,arg3)
+    ccall((:OGR_G_DumpReadable,libgdal),Void,(OGRGeometryH,Ptr{FILE},Cstring),arg1,arg2,arg3)
 end
 
 
@@ -524,8 +524,8 @@ Create geometry from GML.
 ### Returns
 a geometry on success, or NULL on error.
 """
-function createfromgml(arg1::AbstractString)
-    checknull(ccall((:OGR_G_CreateFromGML,libgdal),OGRGeometryH,(Ptr{UInt8},),arg1))
+function createfromgml(arg1)
+    checknull(ccall((:OGR_G_CreateFromGML,libgdal),OGRGeometryH,(Cstring,),arg1))
 end
 
 
@@ -541,7 +541,7 @@ Convert a geometry into GML format.
 A GML fragment or NULL in case of error.
 """
 function exporttogml(arg1::OGRGeometryH)
-    bytestring(ccall((:OGR_G_ExportToGML,libgdal),Ptr{UInt8},(OGRGeometryH,),arg1))
+    ccall((:OGR_G_ExportToGML,libgdal),Cstring,(OGRGeometryH,),arg1)
 end
 
 
@@ -558,15 +558,15 @@ Convert a geometry into GML format.
 ### Returns
 A GML fragment or NULL in case of error.
 """
-function exporttogmlex(arg1::OGRGeometryH,papszOptions::Vector{UTF8String})
-    bytestring(ccall((:OGR_G_ExportToGMLEx,libgdal),Ptr{UInt8},(OGRGeometryH,Ptr{Ptr{UInt8}}),arg1,papszOptions))
+function exporttogmlex(arg1::OGRGeometryH,papszOptions)
+    ccall((:OGR_G_ExportToGMLEx,libgdal),Cstring,(OGRGeometryH,Ptr{Cstring}),arg1,papszOptions)
 end
 
 
 """
     OGR_G_CreateFromGMLTree(const CPLXMLNode * psTree) -> OGRGeometryH
 """
-function createfromgmltree(arg1::Ptr{CPLXMLNode})
+function createfromgmltree(arg1)
     checknull(ccall((:OGR_G_CreateFromGMLTree,libgdal),OGRGeometryH,(Ptr{CPLXMLNode},),arg1))
 end
 
@@ -600,8 +600,8 @@ Convert a geometry into KML format.
 ### Returns
 A KML fragment or NULL in case of error.
 """
-function exporttokml(arg1::OGRGeometryH,pszAltitudeMode::AbstractString)
-    bytestring(ccall((:OGR_G_ExportToKML,libgdal),Ptr{UInt8},(OGRGeometryH,Ptr{UInt8}),arg1,pszAltitudeMode))
+function exporttokml(arg1::OGRGeometryH,pszAltitudeMode)
+    ccall((:OGR_G_ExportToKML,libgdal),Cstring,(OGRGeometryH,Cstring),arg1,pszAltitudeMode)
 end
 
 
@@ -617,7 +617,7 @@ Convert a geometry into GeoJSON format.
 A GeoJSON fragment or NULL in case of error.
 """
 function exporttojson(arg1::OGRGeometryH)
-    bytestring(ccall((:OGR_G_ExportToJson,libgdal),Ptr{UInt8},(OGRGeometryH,),arg1))
+    ccall((:OGR_G_ExportToJson,libgdal),Cstring,(OGRGeometryH,),arg1)
 end
 
 
@@ -634,16 +634,16 @@ Convert a geometry into GeoJSON format.
 ### Returns
 A GeoJSON fragment or NULL in case of error.
 """
-function exporttojsonex(arg1::OGRGeometryH,papszOptions::Vector{UTF8String})
-    bytestring(ccall((:OGR_G_ExportToJsonEx,libgdal),Ptr{UInt8},(OGRGeometryH,Ptr{Ptr{UInt8}}),arg1,papszOptions))
+function exporttojsonex(arg1::OGRGeometryH,papszOptions)
+    ccall((:OGR_G_ExportToJsonEx,libgdal),Cstring,(OGRGeometryH,Ptr{Cstring}),arg1,papszOptions)
 end
 
 
 """
     OGR_G_CreateGeometryFromJson(const char *) -> OGRGeometryH
 """
-function creategeometryfromjson(arg1::AbstractString)
-    checknull(ccall((:OGR_G_CreateGeometryFromJson,libgdal),OGRGeometryH,(Ptr{UInt8},),arg1))
+function creategeometryfromjson(arg1)
+    checknull(ccall((:OGR_G_CreateGeometryFromJson,libgdal),OGRGeometryH,(Cstring,),arg1))
 end
 
 
@@ -1348,7 +1348,7 @@ Returns all points of line string.
 ### Returns
 the number of points
 """
-function getpoints(hGeom::OGRGeometryH,pabyX::Ptr{Void},nXStride::Integer,pabyY::Ptr{Void},nYStride::Integer,pabyZ::Ptr{Void},nZStride::Integer)
+function getpoints(hGeom::OGRGeometryH,pabyX,nXStride::Integer,pabyY,nYStride::Integer,pabyZ,nZStride::Integer)
     ccall((:OGR_G_GetPoints,libgdal),Cint,(OGRGeometryH,Ptr{Void},Cint,Ptr{Void},Cint,Ptr{Void},Cint),hGeom,pabyX,nXStride,pabyY,nYStride,pabyZ,nZStride)
 end
 
@@ -1423,7 +1423,7 @@ Fetch a point in line string or a point geometry.
 * **pdfY**: value of y coordinate.
 * **pdfZ**: value of z coordinate.
 """
-function getpoint(arg1::OGRGeometryH,iPoint::Integer,arg2::Vector{Float64},arg3::Vector{Float64},arg4::Vector{Float64})
+function getpoint(arg1::OGRGeometryH,iPoint::Integer,arg2,arg3,arg4)
     ccall((:OGR_G_GetPoint,libgdal),Void,(OGRGeometryH,Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble}),arg1,iPoint,arg2,arg3,arg4)
 end
 
@@ -1541,7 +1541,7 @@ Assign all points in a point or a line string geometry.
 * **pabyZ**: list of Z coordinates (double values) of points being assigned (defaults to NULL for 2D objects).
 * **nZStride**: the number of bytes between 2 elements of pabyZ.
 """
-function setpoints(hGeom::OGRGeometryH,nPointsIn::Integer,pabyX::Ptr{Void},nXStride::Integer,pabyY::Ptr{Void},nYStride::Integer,pabyZ::Ptr{Void},nZStride::Integer)
+function setpoints(hGeom::OGRGeometryH,nPointsIn::Integer,pabyX,nXStride::Integer,pabyY,nYStride::Integer,pabyZ,nZStride::Integer)
     ccall((:OGR_G_SetPoints,libgdal),Void,(OGRGeometryH,Cint,Ptr{Void},Cint,Ptr{Void},Cint,Ptr{Void},Cint),hGeom,nPointsIn,pabyX,nXStride,pabyY,nYStride,pabyZ,nZStride)
 end
 
@@ -1669,8 +1669,8 @@ Return, possibly approximate, linear version of this geometry.
 ### Returns
 a new geometry.
 """
-function getlineargeometry(hGeom::OGRGeometryH,dfMaxAngleStepSizeDegrees::Real,papszOptions::Vector{UTF8String})
-    checknull(ccall((:OGR_G_GetLinearGeometry,libgdal),OGRGeometryH,(OGRGeometryH,Cdouble,Ptr{Ptr{UInt8}}),hGeom,dfMaxAngleStepSizeDegrees,papszOptions))
+function getlineargeometry(hGeom::OGRGeometryH,dfMaxAngleStepSizeDegrees::Real,papszOptions)
+    checknull(ccall((:OGR_G_GetLinearGeometry,libgdal),OGRGeometryH,(OGRGeometryH,Cdouble,Ptr{Cstring}),hGeom,dfMaxAngleStepSizeDegrees,papszOptions))
 end
 
 
@@ -1687,8 +1687,8 @@ Return curve version of this geometry.
 ### Returns
 a new geometry.
 """
-function getcurvegeometry(hGeom::OGRGeometryH,papszOptions::Vector{UTF8String})
-    checknull(ccall((:OGR_G_GetCurveGeometry,libgdal),OGRGeometryH,(OGRGeometryH,Ptr{Ptr{UInt8}}),hGeom,papszOptions))
+function getcurvegeometry(hGeom::OGRGeometryH,papszOptions)
+    checknull(ccall((:OGR_G_GetCurveGeometry,libgdal),OGRGeometryH,(OGRGeometryH,Ptr{Cstring}),hGeom,papszOptions))
 end
 
 
@@ -1711,7 +1711,7 @@ Build a ring from a bunch of arcs.
 ### Returns
 an handle to the new geometry, a polygon.
 """
-function buildpolygonfromedges(hLinesAsCollection::OGRGeometryH,bBestEffort::Integer,bAutoClose::Integer,dfTolerance::Real,peErr::Ptr{OGRErr})
+function buildpolygonfromedges(hLinesAsCollection::OGRGeometryH,bBestEffort::Integer,bAutoClose::Integer,dfTolerance::Real,peErr)
     checknull(ccall((:OGRBuildPolygonFromEdges,libgdal),OGRGeometryH,(OGRGeometryH,Cint,Cint,Cdouble,Ptr{OGRErr}),hLinesAsCollection,bBestEffort,bAutoClose,dfTolerance,peErr))
 end
 
@@ -1773,8 +1773,8 @@ Create a new field definition.
 ### Returns
 handle to the new field definition.
 """
-function create(arg1::AbstractString,arg2::OGRFieldType)
-    checknull(ccall((:OGR_Fld_Create,libgdal),OGRFieldDefnH,(Ptr{UInt8},OGRFieldType),arg1,arg2))
+function create(arg1,arg2::OGRFieldType)
+    checknull(ccall((:OGR_Fld_Create,libgdal),OGRFieldDefnH,(Cstring,OGRFieldType),arg1,arg2))
 end
 
 
@@ -1801,8 +1801,8 @@ Reset the name of this field.
 * **hDefn**: handle to the field definition to apply the new name to.
 * **pszName**: the new name to apply.
 """
-function setname(arg1::OGRFieldDefnH,arg2::AbstractString)
-    ccall((:OGR_Fld_SetName,libgdal),Void,(OGRFieldDefnH,Ptr{UInt8}),arg1,arg2)
+function setname(arg1::OGRFieldDefnH,arg2)
+    ccall((:OGR_Fld_SetName,libgdal),Void,(OGRFieldDefnH,Cstring),arg1,arg2)
 end
 
 
@@ -1818,7 +1818,7 @@ Fetch name of this field.
 the name of the field definition.
 """
 function getnameref(arg1::OGRFieldDefnH)
-    bytestring(ccall((:OGR_Fld_GetNameRef,libgdal),Ptr{UInt8},(OGRFieldDefnH,),arg1))
+    ccall((:OGR_Fld_GetNameRef,libgdal),Cstring,(OGRFieldDefnH,),arg1)
 end
 
 
@@ -1995,8 +1995,8 @@ Set defining parameters for a field in one call.
 * **nPrecisionIn**: number of decimals places for formatting, defaults to zero indicating undefined.
 * **eJustifyIn**: the formatting justification (OJLeft or OJRight), defaults to OJUndefined.
 """
-function set(arg1::OGRFieldDefnH,arg2::AbstractString,arg3::OGRFieldType,arg4::Integer,arg5::Integer,arg6::OGRJustification)
-    ccall((:OGR_Fld_Set,libgdal),Void,(OGRFieldDefnH,Ptr{UInt8},OGRFieldType,Cint,Cint,OGRJustification),arg1,arg2,arg3,arg4,arg5,arg6)
+function set(arg1::OGRFieldDefnH,arg2,arg3::OGRFieldType,arg4::Integer,arg5::Integer,arg6::OGRJustification)
+    ccall((:OGR_Fld_Set,libgdal),Void,(OGRFieldDefnH,Cstring,OGRFieldType,Cint,Cint,OGRJustification),arg1,arg2,arg3,arg4,arg5,arg6)
 end
 
 
@@ -2074,7 +2074,7 @@ Get default field value.
 default field value or NULL.
 """
 function getdefault(hDefn::OGRFieldDefnH)
-    bytestring(ccall((:OGR_Fld_GetDefault,libgdal),Ptr{UInt8},(OGRFieldDefnH,),hDefn))
+    ccall((:OGR_Fld_GetDefault,libgdal),Cstring,(OGRFieldDefnH,),hDefn)
 end
 
 
@@ -2088,8 +2088,8 @@ Set default field value.
 * **hDefn**: handle to the field definition.
 * **pszDefault**: new default field value or NULL pointer.
 """
-function setdefault(hDefn::OGRFieldDefnH,arg1::AbstractString)
-    ccall((:OGR_Fld_SetDefault,libgdal),Void,(OGRFieldDefnH,Ptr{UInt8}),hDefn,arg1)
+function setdefault(hDefn::OGRFieldDefnH,arg1)
+    ccall((:OGR_Fld_SetDefault,libgdal),Void,(OGRFieldDefnH,Cstring),hDefn,arg1)
 end
 
 
@@ -2121,7 +2121,7 @@ Fetch human readable name for a field type.
 the name.
 """
 function getfieldtypename(arg1::OGRFieldType)
-    bytestring(ccall((:OGR_GetFieldTypeName,libgdal),Ptr{UInt8},(OGRFieldType,),arg1))
+    ccall((:OGR_GetFieldTypeName,libgdal),Cstring,(OGRFieldType,),arg1)
 end
 
 
@@ -2137,7 +2137,7 @@ Fetch human readable name for a field subtype.
 the name.
 """
 function getfieldsubtypename(arg1::OGRFieldSubType)
-    bytestring(ccall((:OGR_GetFieldSubTypeName,libgdal),Ptr{UInt8},(OGRFieldSubType,),arg1))
+    ccall((:OGR_GetFieldSubTypeName,libgdal),Cstring,(OGRFieldSubType,),arg1)
 end
 
 
@@ -2172,8 +2172,8 @@ Create a new field geometry definition.
 ### Returns
 handle to the new field definition.
 """
-function create(arg1::AbstractString,arg2::OGRwkbGeometryType)
-    checknull(ccall((:OGR_GFld_Create,libgdal),OGRGeomFieldDefnH,(Ptr{UInt8},OGRwkbGeometryType),arg1,arg2))
+function create(arg1,arg2::OGRwkbGeometryType)
+    checknull(ccall((:OGR_GFld_Create,libgdal),OGRGeomFieldDefnH,(Cstring,OGRwkbGeometryType),arg1,arg2))
 end
 
 
@@ -2200,8 +2200,8 @@ Reset the name of this field.
 * **hDefn**: handle to the geometry field definition to apply the new name to.
 * **pszName**: the new name to apply.
 """
-function setname(arg1::OGRGeomFieldDefnH,arg2::AbstractString)
-    ccall((:OGR_GFld_SetName,libgdal),Void,(OGRGeomFieldDefnH,Ptr{UInt8}),arg1,arg2)
+function setname(arg1::OGRGeomFieldDefnH,arg2)
+    ccall((:OGR_GFld_SetName,libgdal),Void,(OGRGeomFieldDefnH,Cstring),arg1,arg2)
 end
 
 
@@ -2217,7 +2217,7 @@ Fetch name of this field.
 the name of the geometry field definition.
 """
 function getnameref(arg1::OGRGeomFieldDefnH)
-    bytestring(ccall((:OGR_GFld_GetNameRef,libgdal),Ptr{UInt8},(OGRGeomFieldDefnH,),arg1))
+    ccall((:OGR_GFld_GetNameRef,libgdal),Cstring,(OGRGeomFieldDefnH,),arg1)
 end
 
 
@@ -2356,8 +2356,8 @@ Create a new feature definition object to hold the field definitions.
 ### Returns
 handle to the newly created feature definition.
 """
-function create(arg1::AbstractString)
-    checknull(ccall((:OGR_FD_Create,libgdal),OGRFeatureDefnH,(Ptr{UInt8},),arg1))
+function create(arg1)
+    checknull(ccall((:OGR_FD_Create,libgdal),OGRFeatureDefnH,(Cstring,),arg1))
 end
 
 
@@ -2399,7 +2399,7 @@ Get name of the OGRFeatureDefn passed as an argument.
 the name. This name is internal and should not be modified, or freed.
 """
 function getname(arg1::OGRFeatureDefnH)
-    bytestring(ccall((:OGR_FD_GetName,libgdal),Ptr{UInt8},(OGRFeatureDefnH,),arg1))
+    ccall((:OGR_FD_GetName,libgdal),Cstring,(OGRFeatureDefnH,),arg1)
 end
 
 
@@ -2450,8 +2450,8 @@ Find field by name.
 ### Returns
 the field index, or -1 if no match found.
 """
-function getfieldindex(arg1::OGRFeatureDefnH,arg2::AbstractString)
-    ccall((:OGR_FD_GetFieldIndex,libgdal),Cint,(OGRFeatureDefnH,Ptr{UInt8}),arg1,arg2)
+function getfieldindex(arg1::OGRFeatureDefnH,arg2)
+    ccall((:OGR_FD_GetFieldIndex,libgdal),Cint,(OGRFeatureDefnH,Cstring),arg1,arg2)
 end
 
 
@@ -2501,7 +2501,7 @@ Reorder the field definitions in the array of the feature definition.
 ### Returns
 OGRERR_NONE in case of success.
 """
-function reorderfielddefns(hDefn::OGRFeatureDefnH,panMap::Vector{Cint})
+function reorderfielddefns(hDefn::OGRFeatureDefnH,panMap)
     ccall((:OGR_FD_ReorderFieldDefns,libgdal),OGRErr,(OGRFeatureDefnH,Ptr{Cint}),hDefn,panMap)
 end
 
@@ -2694,8 +2694,8 @@ Find geometry field by name.
 ### Returns
 the geometry field index, or -1 if no match found.
 """
-function getgeomfieldindex(hFDefn::OGRFeatureDefnH,pszName::AbstractString)
-    ccall((:OGR_FD_GetGeomFieldIndex,libgdal),Cint,(OGRFeatureDefnH,Ptr{UInt8}),hFDefn,pszName)
+function getgeomfieldindex(hFDefn::OGRFeatureDefnH,pszName)
+    ccall((:OGR_FD_GetGeomFieldIndex,libgdal),Cint,(OGRFeatureDefnH,Cstring),hFDefn,pszName)
 end
 
 
@@ -2941,8 +2941,8 @@ Fetch the field index given field name.
 ### Returns
 the field index, or -1 if no matching field is found.
 """
-function getfieldindex(arg1::OGRFeatureH,arg2::AbstractString)
-    ccall((:OGR_F_GetFieldIndex,libgdal),Cint,(OGRFeatureH,Ptr{UInt8}),arg1,arg2)
+function getfieldindex(arg1::OGRFeatureH,arg2)
+    ccall((:OGR_F_GetFieldIndex,libgdal),Cint,(OGRFeatureH,Cstring),arg1,arg2)
 end
 
 
@@ -3065,7 +3065,7 @@ Fetch field value as a string.
 the field value. This string is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function getfieldasstring(arg1::OGRFeatureH,arg2::Integer)
-    bytestring(ccall((:OGR_F_GetFieldAsString,libgdal),Ptr{UInt8},(OGRFeatureH,Cint),arg1,arg2))
+    ccall((:OGR_F_GetFieldAsString,libgdal),Cstring,(OGRFeatureH,Cint),arg1,arg2)
 end
 
 
@@ -3084,7 +3084,7 @@ Fetch field value as a list of integers.
 ### Returns
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief. If *pnCount is zero on return the returned pointer may be NULL or non-NULL.
 """
-function getfieldasintegerlist(arg1::OGRFeatureH,arg2::Integer,arg3::Vector{Cint})
+function getfieldasintegerlist(arg1::OGRFeatureH,arg2::Integer,arg3)
     ccall((:OGR_F_GetFieldAsIntegerList,libgdal),Ptr{Cint},(OGRFeatureH,Cint,Ptr{Cint}),arg1,arg2,arg3)
 end
 
@@ -3104,7 +3104,7 @@ Fetch field value as a list of 64 bit integers.
 ### Returns
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief. If *pnCount is zero on return the returned pointer may be NULL or non-NULL.
 """
-function getfieldasinteger64list(arg1::OGRFeatureH,arg2::Integer,arg3::Vector{Cint})
+function getfieldasinteger64list(arg1::OGRFeatureH,arg2::Integer,arg3)
     ccall((:OGR_F_GetFieldAsInteger64List,libgdal),Ptr{GIntBig},(OGRFeatureH,Cint,Ptr{Cint}),arg1,arg2,arg3)
 end
 
@@ -3124,7 +3124,7 @@ Fetch field value as a list of doubles.
 ### Returns
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief. If *pnCount is zero on return the returned pointer may be NULL or non-NULL.
 """
-function getfieldasdoublelist(arg1::OGRFeatureH,arg2::Integer,arg3::Vector{Cint})
+function getfieldasdoublelist(arg1::OGRFeatureH,arg2::Integer,arg3)
     ccall((:OGR_F_GetFieldAsDoubleList,libgdal),Ptr{Cdouble},(OGRFeatureH,Cint,Ptr{Cint}),arg1,arg2,arg3)
 end
 
@@ -3143,7 +3143,7 @@ Fetch field value as a list of strings.
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function getfieldasstringlist(arg1::OGRFeatureH,arg2::Integer)
-    bytestring(unsafe_load(ccall((:OGR_F_GetFieldAsStringList,libgdal),Ptr{Ptr{UInt8}},(OGRFeatureH,Cint),arg1,arg2)))
+    ccall((:OGR_F_GetFieldAsStringList,libgdal),Ptr{Cstring},(OGRFeatureH,Cint),arg1,arg2)
 end
 
 
@@ -3162,7 +3162,7 @@ Fetch field value as binary.
 ### Returns
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
-function getfieldasbinary(arg1::OGRFeatureH,arg2::Integer,arg3::Vector{Cint})
+function getfieldasbinary(arg1::OGRFeatureH,arg2::Integer,arg3)
     ccall((:OGR_F_GetFieldAsBinary,libgdal),Ptr{GByte},(OGRFeatureH,Cint,Ptr{Cint}),arg1,arg2,arg3)
 end
 
@@ -3194,7 +3194,7 @@ Fetch field value as date and time.
 ### Returns
 TRUE on success or FALSE on failure.
 """
-function getfieldasdatetime(arg1::OGRFeatureH,arg2::Integer,arg3::Vector{Cint},arg4::Vector{Cint},arg5::Vector{Cint},arg6::Vector{Cint},arg7::Vector{Cint},arg8::Vector{Cint},arg9::Vector{Cint})
+function getfieldasdatetime(arg1::OGRFeatureH,arg2::Integer,arg3,arg4,arg5,arg6,arg7,arg8,arg9)
     ccall((:OGR_F_GetFieldAsDateTime,libgdal),Cint,(OGRFeatureH,Cint,Ptr{Cint},Ptr{Cint},Ptr{Cint},Ptr{Cint},Ptr{Cint},Ptr{Cint},Ptr{Cint}),arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9)
 end
 
@@ -3226,7 +3226,7 @@ Fetch field value as date and time.
 ### Returns
 TRUE on success or FALSE on failure.
 """
-function getfieldasdatetimeex(hFeat::OGRFeatureH,iField::Integer,pnYear::Vector{Cint},pnMonth::Vector{Cint},pnDay::Vector{Cint},pnHour::Vector{Cint},pnMinute::Vector{Cint},pfSecond::Ptr{Cfloat},pnTZFlag::Vector{Cint})
+function getfieldasdatetimeex(hFeat::OGRFeatureH,iField::Integer,pnYear,pnMonth,pnDay,pnHour,pnMinute,pfSecond,pnTZFlag)
     ccall((:OGR_F_GetFieldAsDateTimeEx,libgdal),Cint,(OGRFeatureH,Cint,Ptr{Cint},Ptr{Cint},Ptr{Cint},Ptr{Cint},Ptr{Cint},Ptr{Cfloat},Ptr{Cint}),hFeat,iField,pnYear,pnMonth,pnDay,pnHour,pnMinute,pfSecond,pnTZFlag)
 end
 
@@ -3294,8 +3294,8 @@ Set field to string value.
 * **iField**: the field to fetch, from 0 to GetFieldCount()-1.
 * **pszValue**: the value to assign.
 """
-function setfieldstring(arg1::OGRFeatureH,arg2::Integer,arg3::AbstractString)
-    ccall((:OGR_F_SetFieldString,libgdal),Void,(OGRFeatureH,Cint,Ptr{UInt8}),arg1,arg2,arg3)
+function setfieldstring(arg1::OGRFeatureH,arg2::Integer,arg3)
+    ccall((:OGR_F_SetFieldString,libgdal),Void,(OGRFeatureH,Cint,Cstring),arg1,arg2,arg3)
 end
 
 
@@ -3313,7 +3313,7 @@ Set field to list of integers value.
 * **nCount**: the number of values in the list being assigned.
 * **panValues**: the values to assign.
 """
-function setfieldintegerlist(arg1::OGRFeatureH,arg2::Integer,arg3::Integer,arg4::Vector{Cint})
+function setfieldintegerlist(arg1::OGRFeatureH,arg2::Integer,arg3::Integer,arg4)
     ccall((:OGR_F_SetFieldIntegerList,libgdal),Void,(OGRFeatureH,Cint,Cint,Ptr{Cint}),arg1,arg2,arg3,arg4)
 end
 
@@ -3332,7 +3332,7 @@ Set field to list of 64 bit integers value.
 * **nCount**: the number of values in the list being assigned.
 * **panValues**: the values to assign.
 """
-function setfieldinteger64list(arg1::OGRFeatureH,arg2::Integer,arg3::Integer,arg4::Ptr{GIntBig})
+function setfieldinteger64list(arg1::OGRFeatureH,arg2::Integer,arg3::Integer,arg4)
     ccall((:OGR_F_SetFieldInteger64List,libgdal),Void,(OGRFeatureH,Cint,Cint,Ptr{GIntBig}),arg1,arg2,arg3,arg4)
 end
 
@@ -3351,7 +3351,7 @@ Set field to list of doubles value.
 * **nCount**: the number of values in the list being assigned.
 * **padfValues**: the values to assign.
 """
-function setfielddoublelist(arg1::OGRFeatureH,arg2::Integer,arg3::Integer,arg4::Vector{Float64})
+function setfielddoublelist(arg1::OGRFeatureH,arg2::Integer,arg3::Integer,arg4)
     ccall((:OGR_F_SetFieldDoubleList,libgdal),Void,(OGRFeatureH,Cint,Cint,Ptr{Cdouble}),arg1,arg2,arg3,arg4)
 end
 
@@ -3368,8 +3368,8 @@ Set field to list of strings value.
 * **iField**: the field to set, from 0 to GetFieldCount()-1.
 * **papszValues**: the values to assign.
 """
-function setfieldstringlist(arg1::OGRFeatureH,arg2::Integer,arg3::Vector{UTF8String})
-    ccall((:OGR_F_SetFieldStringList,libgdal),Void,(OGRFeatureH,Cint,Ptr{Ptr{UInt8}}),arg1,arg2,arg3)
+function setfieldstringlist(arg1::OGRFeatureH,arg2::Integer,arg3)
+    ccall((:OGR_F_SetFieldStringList,libgdal),Void,(OGRFeatureH,Cint,Ptr{Cstring}),arg1,arg2,arg3)
 end
 
 
@@ -3385,7 +3385,7 @@ Set field.
 * **iField**: the field to fetch, from 0 to GetFieldCount()-1.
 * **psValue**: handle on the value to assign.
 """
-function setfieldraw(arg1::OGRFeatureH,arg2::Integer,arg3::Ptr{OGRField})
+function setfieldraw(arg1::OGRFeatureH,arg2::Integer,arg3)
     ccall((:OGR_F_SetFieldRaw,libgdal),Void,(OGRFeatureH,Cint,Ptr{OGRField}),arg1,arg2,arg3)
 end
 
@@ -3404,7 +3404,7 @@ Set field to binary data.
 * **nBytes**: the number of bytes in pabyData array.
 * **pabyData**: the data to apply.
 """
-function setfieldbinary(arg1::OGRFeatureH,arg2::Integer,arg3::Integer,arg4::Ptr{GByte})
+function setfieldbinary(arg1::OGRFeatureH,arg2::Integer,arg3::Integer,arg4)
     ccall((:OGR_F_SetFieldBinary,libgdal),Void,(OGRFeatureH,Cint,Cint,Ptr{GByte}),arg1,arg2,arg3,arg4)
 end
 
@@ -3514,8 +3514,8 @@ Fetch the geometry field index given geometry field name.
 ### Returns
 the geometry field index, or -1 if no matching geometry field is found.
 """
-function getgeomfieldindex(hFeat::OGRFeatureH,pszName::AbstractString)
-    ccall((:OGR_F_GetGeomFieldIndex,libgdal),Cint,(OGRFeatureH,Ptr{UInt8}),hFeat,pszName)
+function getgeomfieldindex(hFeat::OGRFeatureH,pszName)
+    ccall((:OGR_F_GetGeomFieldIndex,libgdal),Cint,(OGRFeatureH,Cstring),hFeat,pszName)
 end
 
 
@@ -3621,7 +3621,7 @@ Dump this feature in a human readable form.
 * **hFeat**: handle to the feature to dump.
 * **fpOut**: the stream to write to, such as strout.
 """
-function dumpreadable(arg1::OGRFeatureH,arg2::Ptr{FILE})
+function dumpreadable(arg1::OGRFeatureH,arg2)
     ccall((:OGR_F_DumpReadable,libgdal),Void,(OGRFeatureH,Ptr{FILE}),arg1,arg2)
 end
 
@@ -3663,7 +3663,7 @@ Set one feature from another.
 ### Returns
 OGRERR_NONE if the operation succeeds, even if some values are not transferred, otherwise an error code.
 """
-function setfromwithmap(arg1::OGRFeatureH,arg2::OGRFeatureH,arg3::Integer,arg4::Vector{Cint})
+function setfromwithmap(arg1::OGRFeatureH,arg2::OGRFeatureH,arg3::Integer,arg4)
     ccall((:OGR_F_SetFromWithMap,libgdal),OGRErr,(OGRFeatureH,OGRFeatureH,Cint,Ptr{Cint}),arg1,arg2,arg3,arg4)
 end
 
@@ -3680,7 +3680,7 @@ Fetch style string for this feature.
 a reference to a representation in string format, or NULL if there isn't one.
 """
 function getstylestring(arg1::OGRFeatureH)
-    bytestring(ccall((:OGR_F_GetStyleString,libgdal),Ptr{UInt8},(OGRFeatureH,),arg1))
+    ccall((:OGR_F_GetStyleString,libgdal),Cstring,(OGRFeatureH,),arg1)
 end
 
 
@@ -3694,8 +3694,8 @@ Set feature style string.
 * **hFeat**: handle to the feature to set style to.
 * **pszStyle**: the style string to apply to this feature, cannot be NULL.
 """
-function setstylestring(arg1::OGRFeatureH,arg2::AbstractString)
-    ccall((:OGR_F_SetStyleString,libgdal),Void,(OGRFeatureH,Ptr{UInt8}),arg1,arg2)
+function setstylestring(arg1::OGRFeatureH,arg2)
+    ccall((:OGR_F_SetStyleString,libgdal),Void,(OGRFeatureH,Cstring),arg1,arg2)
 end
 
 
@@ -3709,8 +3709,8 @@ Set feature style string.
 * **hFeat**: handle to the feature to set style to.
 * **pszStyle**: the style string to apply to this feature, cannot be NULL.
 """
-function setstylestringdirectly(arg1::OGRFeatureH,arg2::AbstractString)
-    ccall((:OGR_F_SetStyleStringDirectly,libgdal),Void,(OGRFeatureH,Ptr{UInt8}),arg1,arg2)
+function setstylestringdirectly(arg1::OGRFeatureH,arg2)
+    ccall((:OGR_F_SetStyleStringDirectly,libgdal),Void,(OGRFeatureH,Cstring),arg1,arg2)
 end
 
 
@@ -3752,7 +3752,7 @@ Returns the native data for the feature.
 a string with the native data, or NULL if there is none.
 """
 function getnativedata(arg1::OGRFeatureH)
-    bytestring(ccall((:OGR_F_GetNativeData,libgdal),Ptr{UInt8},(OGRFeatureH,),arg1))
+    ccall((:OGR_F_GetNativeData,libgdal),Cstring,(OGRFeatureH,),arg1)
 end
 
 
@@ -3766,8 +3766,8 @@ Sets the native data for the feature.
 * **hFeat**: handle to the feature.
 * **pszNativeData**: a string with the native data, or NULL if there is none.
 """
-function setnativedata(arg1::OGRFeatureH,arg2::AbstractString)
-    ccall((:OGR_F_SetNativeData,libgdal),Void,(OGRFeatureH,Ptr{UInt8}),arg1,arg2)
+function setnativedata(arg1::OGRFeatureH,arg2)
+    ccall((:OGR_F_SetNativeData,libgdal),Void,(OGRFeatureH,Cstring),arg1,arg2)
 end
 
 
@@ -3783,7 +3783,7 @@ Returns the native media type for the feature.
 a string with the native media type, or NULL if there is none.
 """
 function getnativemediatype(arg1::OGRFeatureH)
-    bytestring(ccall((:OGR_F_GetNativeMediaType,libgdal),Ptr{UInt8},(OGRFeatureH,),arg1))
+    ccall((:OGR_F_GetNativeMediaType,libgdal),Cstring,(OGRFeatureH,),arg1)
 end
 
 
@@ -3797,8 +3797,8 @@ Sets the native media type for the feature.
 * **hFeat**: handle to the feature.
 * **pszNativeMediaType**: a string with the native media type, or NULL if there is none.
 """
-function setnativemediatype(arg1::OGRFeatureH,arg2::AbstractString)
-    ccall((:OGR_F_SetNativeMediaType,libgdal),Void,(OGRFeatureH,Ptr{UInt8}),arg1,arg2)
+function setnativemediatype(arg1::OGRFeatureH,arg2)
+    ccall((:OGR_F_SetNativeMediaType,libgdal),Void,(OGRFeatureH,Cstring),arg1,arg2)
 end
 
 
@@ -3814,8 +3814,8 @@ Fill unset fields with default values that might be defined.
 * **bNotNullableOnly**: if we should fill only unset fields with a not-null constraint.
 * **papszOptions**: unused currently. Must be set to NULL.
 """
-function fillunsetwithdefault(hFeat::OGRFeatureH,bNotNullableOnly::Integer,papszOptions::Vector{UTF8String})
-    ccall((:OGR_F_FillUnsetWithDefault,libgdal),Void,(OGRFeatureH,Cint,Ptr{Ptr{UInt8}}),hFeat,bNotNullableOnly,papszOptions)
+function fillunsetwithdefault(hFeat::OGRFeatureH,bNotNullableOnly::Integer,papszOptions)
+    ccall((:OGR_F_FillUnsetWithDefault,libgdal),Void,(OGRFeatureH,Cint,Ptr{Cstring}),hFeat,bNotNullableOnly,papszOptions)
 end
 
 
@@ -3851,7 +3851,7 @@ Return the layer name.
 the layer name (must not been freed)
 """
 function getname(arg1::OGRLayerH)
-    bytestring(ccall((:OGR_L_GetName,libgdal),Ptr{UInt8},(OGRLayerH,),arg1))
+    ccall((:OGR_L_GetName,libgdal),Cstring,(OGRLayerH,),arg1)
 end
 
 
@@ -3976,8 +3976,8 @@ Set a new attribute query.
 ### Returns
 OGRERR_NONE if successfully installed, or an error code if the query expression is in error, or some other failure occurs.
 """
-function setattributefilter(arg1::OGRLayerH,arg2::AbstractString)
-    ccall((:OGR_L_SetAttributeFilter,libgdal),OGRErr,(OGRLayerH,Ptr{UInt8}),arg1,arg2)
+function setattributefilter(arg1::OGRLayerH,arg2)
+    ccall((:OGR_L_SetAttributeFilter,libgdal),OGRErr,(OGRLayerH,Cstring),arg1,arg2)
 end
 
 
@@ -4142,8 +4142,8 @@ Find the index of field in a layer.
 ### Returns
 field index, or -1 if the field doesn't exist
 """
-function findfieldindex(arg1::OGRLayerH,arg2::AbstractString,bExactMatch::Integer)
-    ccall((:OGR_L_FindFieldIndex,libgdal),Cint,(OGRLayerH,Ptr{UInt8},Cint),arg1,arg2,bExactMatch)
+function findfieldindex(arg1::OGRLayerH,arg2,bExactMatch::Integer)
+    ccall((:OGR_L_FindFieldIndex,libgdal),Cint,(OGRLayerH,Cstring,Cint),arg1,arg2,bExactMatch)
 end
 
 
@@ -4180,7 +4180,7 @@ Fetch the extent of this layer.
 ### Returns
 OGRERR_NONE on success, OGRERR_FAILURE if extent not known.
 """
-function getextent(arg1::OGRLayerH,arg2::Ptr{OGREnvelope},arg3::Integer)
+function getextent(arg1::OGRLayerH,arg2,arg3::Integer)
     ccall((:OGR_L_GetExtent,libgdal),OGRErr,(OGRLayerH,Ptr{OGREnvelope},Cint),arg1,arg2,arg3)
 end
 
@@ -4202,7 +4202,7 @@ Fetch the extent of this layer, on the specified geometry field.
 ### Returns
 OGRERR_NONE on success, OGRERR_FAILURE if extent not known.
 """
-function getextentex(arg1::OGRLayerH,iGeomField::Integer,psExtent::Ptr{OGREnvelope},bForce::Integer)
+function getextentex(arg1::OGRLayerH,iGeomField::Integer,psExtent,bForce::Integer)
     ccall((:OGR_L_GetExtentEx,libgdal),OGRErr,(OGRLayerH,Cint,Ptr{OGREnvelope},Cint),arg1,iGeomField,psExtent,bForce)
 end
 
@@ -4220,8 +4220,8 @@ Test if this layer supported the named capability.
 ### Returns
 TRUE if the layer has the requested capability, or FALSE otherwise. OGRLayers will return FALSE for any unrecognized capabilities.
 """
-function testcapability(arg1::OGRLayerH,arg2::AbstractString)
-    ccall((:OGR_L_TestCapability,libgdal),Cint,(OGRLayerH,Ptr{UInt8}),arg1,arg2)
+function testcapability(arg1::OGRLayerH,arg2)
+    ccall((:OGR_L_TestCapability,libgdal),Cint,(OGRLayerH,Cstring),arg1,arg2)
 end
 
 
@@ -4296,7 +4296,7 @@ Reorder all the fields of a layer.
 ### Returns
 OGRERR_NONE on success.
 """
-function reorderfields(arg1::OGRLayerH,panMap::Vector{Cint})
+function reorderfields(arg1::OGRLayerH,panMap)
     ccall((:OGR_L_ReorderFields,libgdal),OGRErr,(OGRLayerH,Ptr{Cint}),arg1,panMap)
 end
 
@@ -4451,7 +4451,7 @@ This method returns the name of the underlying database column being used as the
 fid column name.
 """
 function getfidcolumn(arg1::OGRLayerH)
-    bytestring(ccall((:OGR_L_GetFIDColumn,libgdal),Ptr{UInt8},(OGRLayerH,),arg1))
+    ccall((:OGR_L_GetFIDColumn,libgdal),Cstring,(OGRLayerH,),arg1)
 end
 
 
@@ -4467,7 +4467,7 @@ This method returns the name of the underlying database column being used as the
 geometry column name.
 """
 function getgeometrycolumn(arg1::OGRLayerH)
-    bytestring(ccall((:OGR_L_GetGeometryColumn,libgdal),Ptr{UInt8},(OGRLayerH,),arg1))
+    ccall((:OGR_L_GetGeometryColumn,libgdal),Cstring,(OGRLayerH,),arg1)
 end
 
 
@@ -4509,8 +4509,8 @@ Set which fields can be omitted when retrieving features from the layer.
 ### Returns
 OGRERR_NONE if all field names have been resolved (even if the driver does not support this method)
 """
-function setignoredfields(arg1::OGRLayerH,arg2::Vector{UTF8String})
-    ccall((:OGR_L_SetIgnoredFields,libgdal),OGRErr,(OGRLayerH,Ptr{Ptr{UInt8}}),arg1,arg2)
+function setignoredfields(arg1::OGRLayerH,arg2)
+    ccall((:OGR_L_SetIgnoredFields,libgdal),OGRErr,(OGRLayerH,Ptr{Cstring}),arg1,arg2)
 end
 
 
@@ -4535,8 +4535,8 @@ Intersection of two layers.
 ### Returns
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
-function intersection(arg1::OGRLayerH,arg2::OGRLayerH,arg3::OGRLayerH,arg4::Vector{UTF8String},arg5::GDALProgressFunc,arg6::Ptr{Void})
-    ccall((:OGR_L_Intersection,libgdal),OGRErr,(OGRLayerH,OGRLayerH,OGRLayerH,Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
+function intersection(arg1::OGRLayerH,arg2::OGRLayerH,arg3::OGRLayerH,arg4,arg5::GDALProgressFunc,arg6)
+    ccall((:OGR_L_Intersection,libgdal),OGRErr,(OGRLayerH,OGRLayerH,OGRLayerH,Ptr{Cstring},GDALProgressFunc,Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
 end
 
 
@@ -4561,8 +4561,8 @@ Union of two layers.
 ### Returns
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
-function union(arg1::OGRLayerH,arg2::OGRLayerH,arg3::OGRLayerH,arg4::Vector{UTF8String},arg5::GDALProgressFunc,arg6::Ptr{Void})
-    ccall((:OGR_L_Union,libgdal),OGRErr,(OGRLayerH,OGRLayerH,OGRLayerH,Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
+function union(arg1::OGRLayerH,arg2::OGRLayerH,arg3::OGRLayerH,arg4,arg5::GDALProgressFunc,arg6)
+    ccall((:OGR_L_Union,libgdal),OGRErr,(OGRLayerH,OGRLayerH,OGRLayerH,Ptr{Cstring},GDALProgressFunc,Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
 end
 
 
@@ -4587,8 +4587,8 @@ Symmetrical difference of two layers.
 ### Returns
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
-function symdifference(arg1::OGRLayerH,arg2::OGRLayerH,arg3::OGRLayerH,arg4::Vector{UTF8String},arg5::GDALProgressFunc,arg6::Ptr{Void})
-    ccall((:OGR_L_SymDifference,libgdal),OGRErr,(OGRLayerH,OGRLayerH,OGRLayerH,Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
+function symdifference(arg1::OGRLayerH,arg2::OGRLayerH,arg3::OGRLayerH,arg4,arg5::GDALProgressFunc,arg6)
+    ccall((:OGR_L_SymDifference,libgdal),OGRErr,(OGRLayerH,OGRLayerH,OGRLayerH,Ptr{Cstring},GDALProgressFunc,Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
 end
 
 
@@ -4613,8 +4613,8 @@ Identify the features of this layer with the ones from the identity layer.
 ### Returns
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
-function identity(arg1::OGRLayerH,arg2::OGRLayerH,arg3::OGRLayerH,arg4::Vector{UTF8String},arg5::GDALProgressFunc,arg6::Ptr{Void})
-    ccall((:OGR_L_Identity,libgdal),OGRErr,(OGRLayerH,OGRLayerH,OGRLayerH,Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
+function identity(arg1::OGRLayerH,arg2::OGRLayerH,arg3::OGRLayerH,arg4,arg5::GDALProgressFunc,arg6)
+    ccall((:OGR_L_Identity,libgdal),OGRErr,(OGRLayerH,OGRLayerH,OGRLayerH,Ptr{Cstring},GDALProgressFunc,Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
 end
 
 
@@ -4639,8 +4639,8 @@ Update this layer with features from the update layer.
 ### Returns
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
-function update(arg1::OGRLayerH,arg2::OGRLayerH,arg3::OGRLayerH,arg4::Vector{UTF8String},arg5::GDALProgressFunc,arg6::Ptr{Void})
-    ccall((:OGR_L_Update,libgdal),OGRErr,(OGRLayerH,OGRLayerH,OGRLayerH,Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
+function update(arg1::OGRLayerH,arg2::OGRLayerH,arg3::OGRLayerH,arg4,arg5::GDALProgressFunc,arg6)
+    ccall((:OGR_L_Update,libgdal),OGRErr,(OGRLayerH,OGRLayerH,OGRLayerH,Ptr{Cstring},GDALProgressFunc,Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
 end
 
 
@@ -4665,8 +4665,8 @@ Clip off areas that are not covered by the method layer.
 ### Returns
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
-function clip(arg1::OGRLayerH,arg2::OGRLayerH,arg3::OGRLayerH,arg4::Vector{UTF8String},arg5::GDALProgressFunc,arg6::Ptr{Void})
-    ccall((:OGR_L_Clip,libgdal),OGRErr,(OGRLayerH,OGRLayerH,OGRLayerH,Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
+function clip(arg1::OGRLayerH,arg2::OGRLayerH,arg3::OGRLayerH,arg4,arg5::GDALProgressFunc,arg6)
+    ccall((:OGR_L_Clip,libgdal),OGRErr,(OGRLayerH,OGRLayerH,OGRLayerH,Ptr{Cstring},GDALProgressFunc,Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
 end
 
 
@@ -4691,8 +4691,8 @@ Remove areas that are covered by the method layer.
 ### Returns
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
-function erase(arg1::OGRLayerH,arg2::OGRLayerH,arg3::OGRLayerH,arg4::Vector{UTF8String},arg5::GDALProgressFunc,arg6::Ptr{Void})
-    ccall((:OGR_L_Erase,libgdal),OGRErr,(OGRLayerH,OGRLayerH,OGRLayerH,Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
+function erase(arg1::OGRLayerH,arg2::OGRLayerH,arg3::OGRLayerH,arg4,arg5::GDALProgressFunc,arg6)
+    ccall((:OGR_L_Erase,libgdal),OGRErr,(OGRLayerH,OGRLayerH,OGRLayerH,Ptr{Cstring},GDALProgressFunc,Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
 end
 
 
@@ -4721,7 +4721,7 @@ Returns the name of the data source.
 pointer to an internal name string which should not be modified or freed by the caller.
 """
 function getname(arg1::OGRDataSourceH)
-    bytestring(ccall((:OGR_DS_GetName,libgdal),Ptr{UInt8},(OGRDataSourceH,),arg1))
+    ccall((:OGR_DS_GetName,libgdal),Cstring,(OGRDataSourceH,),arg1)
 end
 
 
@@ -4772,8 +4772,8 @@ Fetch a layer by name.
 ### Returns
 an handle to the layer, or NULL if the layer is not found or an error occurs.
 """
-function getlayerbyname(arg1::OGRDataSourceH,arg2::AbstractString)
-    checknull(ccall((:OGR_DS_GetLayerByName,libgdal),OGRLayerH,(OGRDataSourceH,Ptr{UInt8}),arg1,arg2))
+function getlayerbyname(arg1::OGRDataSourceH,arg2)
+    checknull(ccall((:OGR_DS_GetLayerByName,libgdal),OGRLayerH,(OGRDataSourceH,Cstring),arg1,arg2))
 end
 
 
@@ -4830,8 +4830,8 @@ This function attempts to create a new layer on the data source with the indicat
 ### Returns
 NULL is returned on failure, or a new OGRLayer handle on success.
 """
-function createlayer(arg1::OGRDataSourceH,arg2::AbstractString,arg3::OGRSpatialReferenceH,arg4::OGRwkbGeometryType,arg5::Vector{UTF8String})
-    checknull(ccall((:OGR_DS_CreateLayer,libgdal),OGRLayerH,(OGRDataSourceH,Ptr{UInt8},OGRSpatialReferenceH,OGRwkbGeometryType,Ptr{Ptr{UInt8}}),arg1,arg2,arg3,arg4,arg5))
+function createlayer(arg1::OGRDataSourceH,arg2,arg3::OGRSpatialReferenceH,arg4::OGRwkbGeometryType,arg5)
+    checknull(ccall((:OGR_DS_CreateLayer,libgdal),OGRLayerH,(OGRDataSourceH,Cstring,OGRSpatialReferenceH,OGRwkbGeometryType,Ptr{Cstring}),arg1,arg2,arg3,arg4,arg5))
 end
 
 
@@ -4852,8 +4852,8 @@ Duplicate an existing layer.
 ### Returns
 an handle to the layer, or NULL if an error occurs.
 """
-function copylayer(arg1::OGRDataSourceH,arg2::OGRLayerH,arg3::AbstractString,arg4::Vector{UTF8String})
-    checknull(ccall((:OGR_DS_CopyLayer,libgdal),OGRLayerH,(OGRDataSourceH,OGRLayerH,Ptr{UInt8},Ptr{Ptr{UInt8}}),arg1,arg2,arg3,arg4))
+function copylayer(arg1::OGRDataSourceH,arg2::OGRLayerH,arg3,arg4)
+    checknull(ccall((:OGR_DS_CopyLayer,libgdal),OGRLayerH,(OGRDataSourceH,OGRLayerH,Cstring,Ptr{Cstring}),arg1,arg2,arg3,arg4))
 end
 
 
@@ -4870,8 +4870,8 @@ Test if capability is available.
 ### Returns
 TRUE if capability available otherwise FALSE.
 """
-function testcapability(arg1::OGRDataSourceH,arg2::AbstractString)
-    ccall((:OGR_DS_TestCapability,libgdal),Cint,(OGRDataSourceH,Ptr{UInt8}),arg1,arg2)
+function testcapability(arg1::OGRDataSourceH,arg2)
+    ccall((:OGR_DS_TestCapability,libgdal),Cint,(OGRDataSourceH,Cstring),arg1,arg2)
 end
 
 
@@ -4892,8 +4892,8 @@ Execute an SQL statement against the data store.
 ### Returns
 an handle to a OGRLayer containing the results of the query. Deallocate with OGR_DS_ReleaseResultSet().
 """
-function executesql(arg1::OGRDataSourceH,arg2::AbstractString,arg3::OGRGeometryH,arg4::AbstractString)
-    checknull(ccall((:OGR_DS_ExecuteSQL,libgdal),OGRLayerH,(OGRDataSourceH,Ptr{UInt8},OGRGeometryH,Ptr{UInt8}),arg1,arg2,arg3,arg4))
+function executesql(arg1::OGRDataSourceH,arg2,arg3::OGRGeometryH,arg4)
+    checknull(ccall((:OGR_DS_ExecuteSQL,libgdal),OGRLayerH,(OGRDataSourceH,Cstring,OGRGeometryH,Cstring),arg1,arg2,arg3,arg4))
 end
 
 
@@ -4990,7 +4990,7 @@ Fetch name of driver (file format).
 driver name. This is an internal string and should not be modified or freed.
 """
 function getname(arg1::OGRSFDriverH)
-    bytestring(ccall((:OGR_Dr_GetName,libgdal),Ptr{UInt8},(OGRSFDriverH,),arg1))
+    ccall((:OGR_Dr_GetName,libgdal),Cstring,(OGRSFDriverH,),arg1)
 end
 
 
@@ -5009,8 +5009,8 @@ Attempt to open file with this driver.
 ### Returns
 NULL on error or if the pass name is not supported by this driver, otherwise an handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
 """
-function open(arg1::OGRSFDriverH,arg2::AbstractString,arg3::Integer)
-    checknull(ccall((:OGR_Dr_Open,libgdal),OGRDataSourceH,(OGRSFDriverH,Ptr{UInt8},Cint),arg1,arg2,arg3))
+function open(arg1::OGRSFDriverH,arg2,arg3::Integer)
+    checknull(ccall((:OGR_Dr_Open,libgdal),OGRDataSourceH,(OGRSFDriverH,Cstring,Cint),arg1,arg2,arg3))
 end
 
 
@@ -5027,8 +5027,8 @@ Test if capability is available.
 ### Returns
 TRUE if capability available otherwise FALSE.
 """
-function testcapability(arg1::OGRSFDriverH,arg2::AbstractString)
-    ccall((:OGR_Dr_TestCapability,libgdal),Cint,(OGRSFDriverH,Ptr{UInt8}),arg1,arg2)
+function testcapability(arg1::OGRSFDriverH,arg2)
+    ccall((:OGR_Dr_TestCapability,libgdal),Cint,(OGRSFDriverH,Cstring),arg1,arg2)
 end
 
 
@@ -5047,8 +5047,8 @@ This function attempts to create a new data source based on the passed driver.
 ### Returns
 NULL is returned on failure, or a new OGRDataSource handle on success.
 """
-function createdatasource(arg1::OGRSFDriverH,arg2::AbstractString,arg3::Vector{UTF8String})
-    checknull(ccall((:OGR_Dr_CreateDataSource,libgdal),OGRDataSourceH,(OGRSFDriverH,Ptr{UInt8},Ptr{Ptr{UInt8}}),arg1,arg2,arg3))
+function createdatasource(arg1::OGRSFDriverH,arg2,arg3)
+    checknull(ccall((:OGR_Dr_CreateDataSource,libgdal),OGRDataSourceH,(OGRSFDriverH,Cstring,Ptr{Cstring}),arg1,arg2,arg3))
 end
 
 
@@ -5069,8 +5069,8 @@ This function creates a new datasource by copying all the layers from the source
 ### Returns
 NULL is returned on failure, or a new OGRDataSource handle on success.
 """
-function copydatasource(arg1::OGRSFDriverH,arg2::OGRDataSourceH,arg3::AbstractString,arg4::Vector{UTF8String})
-    checknull(ccall((:OGR_Dr_CopyDataSource,libgdal),OGRDataSourceH,(OGRSFDriverH,OGRDataSourceH,Ptr{UInt8},Ptr{Ptr{UInt8}}),arg1,arg2,arg3,arg4))
+function copydatasource(arg1::OGRSFDriverH,arg2::OGRDataSourceH,arg3,arg4)
+    checknull(ccall((:OGR_Dr_CopyDataSource,libgdal),OGRDataSourceH,(OGRSFDriverH,OGRDataSourceH,Cstring,Ptr{Cstring}),arg1,arg2,arg3,arg4))
 end
 
 
@@ -5087,8 +5087,8 @@ Delete a datasource.
 ### Returns
 OGRERR_NONE on success, and OGRERR_UNSUPPORTED_OPERATION if this is not supported by this driver.
 """
-function deletedatasource(arg1::OGRSFDriverH,arg2::AbstractString)
-    ccall((:OGR_Dr_DeleteDataSource,libgdal),OGRErr,(OGRSFDriverH,Ptr{UInt8}),arg1,arg2)
+function deletedatasource(arg1::OGRSFDriverH,arg2)
+    ccall((:OGR_Dr_DeleteDataSource,libgdal),OGRErr,(OGRSFDriverH,Cstring),arg1,arg2)
 end
 
 
@@ -5107,8 +5107,8 @@ Open a file / data source with one of the registered drivers.
 ### Returns
 NULL on error or if the pass name is not supported by this driver, otherwise an handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
 """
-function open(arg1::AbstractString,arg2::Integer,arg3::Ptr{OGRSFDriverH})
-    checknull(ccall((:OGROpen,libgdal),OGRDataSourceH,(Ptr{UInt8},Cint,Ptr{OGRSFDriverH}),arg1,arg2,arg3))
+function open(arg1,arg2::Integer,arg3)
+    checknull(ccall((:OGROpen,libgdal),OGRDataSourceH,(Cstring,Cint,Ptr{OGRSFDriverH}),arg1,arg2,arg3))
 end
 
 
@@ -5117,8 +5117,8 @@ end
                   int bUpdate,
                   OGRSFDriverH * pahDriverList) -> OGRDataSourceH
 """
-function openshared(arg1::AbstractString,arg2::Integer,arg3::Ptr{OGRSFDriverH})
-    checknull(ccall((:OGROpenShared,libgdal),OGRDataSourceH,(Ptr{UInt8},Cint,Ptr{OGRSFDriverH}),arg1,arg2,arg3))
+function openshared(arg1,arg2::Integer,arg3)
+    checknull(ccall((:OGROpenShared,libgdal),OGRDataSourceH,(Cstring,Cint,Ptr{OGRSFDriverH}),arg1,arg2,arg3))
 end
 
 
@@ -5194,8 +5194,8 @@ Fetch the indicated driver.
 ### Returns
 the driver, or NULL if no driver with that name is found
 """
-function getdriverbyname(arg1::AbstractString)
-    checknull(ccall((:OGRGetDriverByName,libgdal),OGRSFDriverH,(Ptr{UInt8},),arg1))
+function getdriverbyname(arg1)
+    checknull(ccall((:OGRGetDriverByName,libgdal),OGRSFDriverH,(Cstring,),arg1))
 end
 
 
@@ -5278,7 +5278,7 @@ Initialize style manager from the style string of a feature.
 a reference to the style string read from the feature, or NULL in case of error.
 """
 function initfromfeature(hSM::OGRStyleMgrH,hFeat::OGRFeatureH)
-    bytestring(ccall((:OGR_SM_InitFromFeature,libgdal),Ptr{UInt8},(OGRStyleMgrH,OGRFeatureH),hSM,hFeat))
+    ccall((:OGR_SM_InitFromFeature,libgdal),Cstring,(OGRStyleMgrH,OGRFeatureH),hSM,hFeat)
 end
 
 
@@ -5295,8 +5295,8 @@ Initialize style manager from the style string.
 ### Returns
 TRUE on success, FALSE on errors.
 """
-function initstylestring(hSM::OGRStyleMgrH,pszStyleString::AbstractString)
-    ccall((:OGR_SM_InitStyleString,libgdal),Cint,(OGRStyleMgrH,Ptr{UInt8}),hSM,pszStyleString)
+function initstylestring(hSM::OGRStyleMgrH,pszStyleString)
+    ccall((:OGR_SM_InitStyleString,libgdal),Cint,(OGRStyleMgrH,Cstring),hSM,pszStyleString)
 end
 
 
@@ -5313,8 +5313,8 @@ Get the number of parts in a style.
 ### Returns
 the number of parts (style tools) in the style.
 """
-function getpartcount(hSM::OGRStyleMgrH,pszStyleString::AbstractString)
-    ccall((:OGR_SM_GetPartCount,libgdal),Cint,(OGRStyleMgrH,Ptr{UInt8}),hSM,pszStyleString)
+function getpartcount(hSM::OGRStyleMgrH,pszStyleString)
+    ccall((:OGR_SM_GetPartCount,libgdal),Cint,(OGRStyleMgrH,Cstring),hSM,pszStyleString)
 end
 
 
@@ -5333,8 +5333,8 @@ Fetch a part (style tool) from the current style.
 ### Returns
 OGRStyleToolH of the requested part (style tools) or NULL on error.
 """
-function getpart(hSM::OGRStyleMgrH,nPartId::Integer,pszStyleString::AbstractString)
-    checknull(ccall((:OGR_SM_GetPart,libgdal),OGRStyleToolH,(OGRStyleMgrH,Cint,Ptr{UInt8}),hSM,nPartId,pszStyleString))
+function getpart(hSM::OGRStyleMgrH,nPartId::Integer,pszStyleString)
+    checknull(ccall((:OGR_SM_GetPart,libgdal),OGRStyleToolH,(OGRStyleMgrH,Cint,Cstring),hSM,nPartId,pszStyleString))
 end
 
 
@@ -5371,8 +5371,8 @@ Add a style to the current style table.
 ### Returns
 TRUE on success, FALSE on errors.
 """
-function addstyle(hSM::OGRStyleMgrH,pszStyleName::AbstractString,pszStyleString::AbstractString)
-    ccall((:OGR_SM_AddStyle,libgdal),Cint,(OGRStyleMgrH,Ptr{UInt8},Ptr{UInt8}),hSM,pszStyleName,pszStyleString)
+function addstyle(hSM::OGRStyleMgrH,pszStyleName,pszStyleString)
+    ccall((:OGR_SM_AddStyle,libgdal),Cint,(OGRStyleMgrH,Cstring,Cstring),hSM,pszStyleName,pszStyleString)
 end
 
 
@@ -5469,8 +5469,8 @@ Get Style Tool parameter value as string.
 ### Returns
 the parameter value as string and sets bValueIsNull.
 """
-function getparamstr(hST::OGRStyleToolH,eParam::Integer,bValueIsNull::Vector{Cint})
-    bytestring(ccall((:OGR_ST_GetParamStr,libgdal),Ptr{UInt8},(OGRStyleToolH,Cint,Ptr{Cint}),hST,eParam,bValueIsNull))
+function getparamstr(hST::OGRStyleToolH,eParam::Integer,bValueIsNull)
+    ccall((:OGR_ST_GetParamStr,libgdal),Cstring,(OGRStyleToolH,Cint,Ptr{Cint}),hST,eParam,bValueIsNull)
 end
 
 
@@ -5489,7 +5489,7 @@ Get Style Tool parameter value as an integer.
 ### Returns
 the parameter value as integer and sets bValueIsNull.
 """
-function getparamnum(hST::OGRStyleToolH,eParam::Integer,bValueIsNull::Vector{Cint})
+function getparamnum(hST::OGRStyleToolH,eParam::Integer,bValueIsNull)
     ccall((:OGR_ST_GetParamNum,libgdal),Cint,(OGRStyleToolH,Cint,Ptr{Cint}),hST,eParam,bValueIsNull)
 end
 
@@ -5509,7 +5509,7 @@ Get Style Tool parameter value as a double.
 ### Returns
 the parameter value as double and sets bValueIsNull.
 """
-function getparamdbl(hST::OGRStyleToolH,eParam::Integer,bValueIsNull::Vector{Cint})
+function getparamdbl(hST::OGRStyleToolH,eParam::Integer,bValueIsNull)
     ccall((:OGR_ST_GetParamDbl,libgdal),Cdouble,(OGRStyleToolH,Cint,Ptr{Cint}),hST,eParam,bValueIsNull)
 end
 
@@ -5526,8 +5526,8 @@ Set Style Tool parameter value from a string.
 * **eParam**: the parameter id from the enumeration corresponding to the type of this style tool (one of the OGRSTPenParam, OGRSTBrushParam, OGRSTSymbolParam or OGRSTLabelParam enumerations)
 * **pszValue**: the new parameter value
 """
-function setparamstr(hST::OGRStyleToolH,eParam::Integer,pszValue::AbstractString)
-    ccall((:OGR_ST_SetParamStr,libgdal),Void,(OGRStyleToolH,Cint,Ptr{UInt8}),hST,eParam,pszValue)
+function setparamstr(hST::OGRStyleToolH,eParam::Integer,pszValue)
+    ccall((:OGR_ST_SetParamStr,libgdal),Void,(OGRStyleToolH,Cint,Cstring),hST,eParam,pszValue)
 end
 
 
@@ -5577,7 +5577,7 @@ Get the style string for this Style Tool.
 the style string for this style tool or "" if the hST is invalid.
 """
 function getstylestring(hST::OGRStyleToolH)
-    bytestring(ccall((:OGR_ST_GetStyleString,libgdal),Ptr{UInt8},(OGRStyleToolH,),hST))
+    ccall((:OGR_ST_GetStyleString,libgdal),Cstring,(OGRStyleToolH,),hST)
 end
 
 
@@ -5602,8 +5602,8 @@ Return the r,g,b,a components of a color encoded in #RRGGBB[AA] format.
 ### Returns
 TRUE if the color could be successfully parsed, or FALSE in case of errors.
 """
-function getrgbfromstring(hST::OGRStyleToolH,pszColor::AbstractString,pnRed::Vector{Cint},pnGreen::Vector{Cint},pnBlue::Vector{Cint},pnAlpha::Vector{Cint})
-    ccall((:OGR_ST_GetRGBFromString,libgdal),Cint,(OGRStyleToolH,Ptr{UInt8},Ptr{Cint},Ptr{Cint},Ptr{Cint},Ptr{Cint}),hST,pszColor,pnRed,pnGreen,pnBlue,pnAlpha)
+function getrgbfromstring(hST::OGRStyleToolH,pszColor,pnRed,pnGreen,pnBlue,pnAlpha)
+    ccall((:OGR_ST_GetRGBFromString,libgdal),Cint,(OGRStyleToolH,Cstring,Ptr{Cint},Ptr{Cint},Ptr{Cint},Ptr{Cint}),hST,pszColor,pnRed,pnGreen,pnBlue,pnAlpha)
 end
 
 
@@ -5648,8 +5648,8 @@ Add a new style in the table.
 ### Returns
 TRUE on success, FALSE on error
 """
-function addstyle(hStyleTable::OGRStyleTableH,pszName::AbstractString,pszStyleString::AbstractString)
-    ccall((:OGR_STBL_AddStyle,libgdal),Cint,(OGRStyleTableH,Ptr{UInt8},Ptr{UInt8}),hStyleTable,pszName,pszStyleString)
+function addstyle(hStyleTable::OGRStyleTableH,pszName,pszStyleString)
+    ccall((:OGR_STBL_AddStyle,libgdal),Cint,(OGRStyleTableH,Cstring,Cstring),hStyleTable,pszName,pszStyleString)
 end
 
 
@@ -5666,8 +5666,8 @@ Save a style table to a file.
 ### Returns
 TRUE on success, FALSE on error
 """
-function savestyletable(hStyleTable::OGRStyleTableH,pszFilename::AbstractString)
-    ccall((:OGR_STBL_SaveStyleTable,libgdal),Cint,(OGRStyleTableH,Ptr{UInt8}),hStyleTable,pszFilename)
+function savestyletable(hStyleTable::OGRStyleTableH,pszFilename)
+    ccall((:OGR_STBL_SaveStyleTable,libgdal),Cint,(OGRStyleTableH,Cstring),hStyleTable,pszFilename)
 end
 
 
@@ -5684,8 +5684,8 @@ Load a style table from a file.
 ### Returns
 TRUE on success, FALSE on error
 """
-function loadstyletable(hStyleTable::OGRStyleTableH,pszFilename::AbstractString)
-    ccall((:OGR_STBL_LoadStyleTable,libgdal),Cint,(OGRStyleTableH,Ptr{UInt8}),hStyleTable,pszFilename)
+function loadstyletable(hStyleTable::OGRStyleTableH,pszFilename)
+    ccall((:OGR_STBL_LoadStyleTable,libgdal),Cint,(OGRStyleTableH,Cstring),hStyleTable,pszFilename)
 end
 
 
@@ -5702,8 +5702,8 @@ Get a style string by name.
 ### Returns
 the style string matching the name or NULL if not found or error.
 """
-function find(hStyleTable::OGRStyleTableH,pszName::AbstractString)
-    bytestring(ccall((:OGR_STBL_Find,libgdal),Ptr{UInt8},(OGRStyleTableH,Ptr{UInt8}),hStyleTable,pszName))
+function find(hStyleTable::OGRStyleTableH,pszName)
+    ccall((:OGR_STBL_Find,libgdal),Cstring,(OGRStyleTableH,Cstring),hStyleTable,pszName)
 end
 
 
@@ -5732,7 +5732,7 @@ Get the next style string from the table.
 the next style string or NULL on error.
 """
 function getnextstyle(hStyleTable::OGRStyleTableH)
-    bytestring(ccall((:OGR_STBL_GetNextStyle,libgdal),Ptr{UInt8},(OGRStyleTableH,),hStyleTable))
+    ccall((:OGR_STBL_GetNextStyle,libgdal),Cstring,(OGRStyleTableH,),hStyleTable)
 end
 
 
@@ -5748,5 +5748,5 @@ Get the style name of the last style string fetched with OGR_STBL_GetNextStyle.
 the Name of the last style string or NULL on error.
 """
 function getlaststylename(hStyleTable::OGRStyleTableH)
-    bytestring(ccall((:OGR_STBL_GetLastStyleName,libgdal),Ptr{UInt8},(OGRStyleTableH,),hStyleTable))
+    ccall((:OGR_STBL_GetLastStyleName,libgdal),Cstring,(OGRStyleTableH,),hStyleTable)
 end

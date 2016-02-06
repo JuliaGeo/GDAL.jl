@@ -25,7 +25,7 @@ Compute optimal PCT for RGB image.
 ### Returns
 returns CE_None on success or CE_Failure if an error occurs.
 """
-function computemediancutpct(hRed::GDALRasterBandH,hGreen::GDALRasterBandH,hBlue::GDALRasterBandH,pfnIncludePixel::Ptr{Void},nColors::Integer,hColorTable::GDALColorTableH,pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void})
+function computemediancutpct(hRed::GDALRasterBandH,hGreen::GDALRasterBandH,hBlue::GDALRasterBandH,pfnIncludePixel,nColors::Integer,hColorTable::GDALColorTableH,pfnProgress::GDALProgressFunc,pProgressArg)
     ccall((:GDALComputeMedianCutPCT,libgdal),Cint,(GDALRasterBandH,GDALRasterBandH,GDALRasterBandH,Ptr{Void},Cint,GDALColorTableH,GDALProgressFunc,Ptr{Void}),hRed,hGreen,hBlue,pfnIncludePixel,nColors,hColorTable,pfnProgress,pProgressArg)
 end
 
@@ -53,7 +53,7 @@ end
 ### Returns
 CE_None on success or CE_Failure if an error occurs.
 """
-function ditherrgb2pct(hRed::GDALRasterBandH,hGreen::GDALRasterBandH,hBlue::GDALRasterBandH,hTarget::GDALRasterBandH,hColorTable::GDALColorTableH,pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void})
+function ditherrgb2pct(hRed::GDALRasterBandH,hGreen::GDALRasterBandH,hBlue::GDALRasterBandH,hTarget::GDALRasterBandH,hColorTable::GDALColorTableH,pfnProgress::GDALProgressFunc,pProgressArg)
     ccall((:GDALDitherRGB2PCT,libgdal),Cint,(GDALRasterBandH,GDALRasterBandH,GDALRasterBandH,GDALRasterBandH,GDALColorTableH,GDALProgressFunc,Ptr{Void}),hRed,hGreen,hBlue,hTarget,hColorTable,pfnProgress,pProgressArg)
 end
 
@@ -91,8 +91,8 @@ end
 
 Compute the proximity of all pixels in the image to a set of pixels in the source image.
 """
-function computeproximity(hSrcBand::GDALRasterBandH,hProximityBand::GDALRasterBandH,papszOptions::Vector{UTF8String},pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void})
-    ccall((:GDALComputeProximity,libgdal),CPLErr,(GDALRasterBandH,GDALRasterBandH,Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),hSrcBand,hProximityBand,papszOptions,pfnProgress,pProgressArg)
+function computeproximity(hSrcBand::GDALRasterBandH,hProximityBand::GDALRasterBandH,papszOptions,pfnProgress::GDALProgressFunc,pProgressArg)
+    ccall((:GDALComputeProximity,libgdal),CPLErr,(GDALRasterBandH,GDALRasterBandH,Ptr{Cstring},GDALProgressFunc,Ptr{Void}),hSrcBand,hProximityBand,papszOptions,pfnProgress,pProgressArg)
 end
 
 
@@ -121,8 +121,8 @@ Fill selected raster regions by interpolation from the edges.
 ### Returns
 CE_None on success or CE_Failure if something goes wrong.
 """
-function fillnodata(hTargetBand::GDALRasterBandH,hMaskBand::GDALRasterBandH,dfMaxSearchDist::Real,bDeprecatedOption::Integer,nSmoothingIterations::Integer,papszOptions::Vector{UTF8String},pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void})
-    ccall((:GDALFillNodata,libgdal),CPLErr,(GDALRasterBandH,GDALRasterBandH,Cdouble,Cint,Cint,Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),hTargetBand,hMaskBand,dfMaxSearchDist,bDeprecatedOption,nSmoothingIterations,papszOptions,pfnProgress,pProgressArg)
+function fillnodata(hTargetBand::GDALRasterBandH,hMaskBand::GDALRasterBandH,dfMaxSearchDist::Real,bDeprecatedOption::Integer,nSmoothingIterations::Integer,papszOptions,pfnProgress::GDALProgressFunc,pProgressArg)
+    ccall((:GDALFillNodata,libgdal),CPLErr,(GDALRasterBandH,GDALRasterBandH,Cdouble,Cint,Cint,Ptr{Cstring},GDALProgressFunc,Ptr{Void}),hTargetBand,hMaskBand,dfMaxSearchDist,bDeprecatedOption,nSmoothingIterations,papszOptions,pfnProgress,pProgressArg)
 end
 
 
@@ -151,8 +151,8 @@ Create polygon coverage from raster data.
 ### Returns
 CE_None on success or CE_Failure on a failure.
 """
-function polygonize(hSrcBand::GDALRasterBandH,hMaskBand::GDALRasterBandH,hOutLayer::OGRLayerH,iPixValField::Integer,papszOptions::Vector{UTF8String},pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void})
-    ccall((:GDALPolygonize,libgdal),CPLErr,(GDALRasterBandH,GDALRasterBandH,OGRLayerH,Cint,Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),hSrcBand,hMaskBand,hOutLayer,iPixValField,papszOptions,pfnProgress,pProgressArg)
+function polygonize(hSrcBand::GDALRasterBandH,hMaskBand::GDALRasterBandH,hOutLayer::OGRLayerH,iPixValField::Integer,papszOptions,pfnProgress::GDALProgressFunc,pProgressArg)
+    ccall((:GDALPolygonize,libgdal),CPLErr,(GDALRasterBandH,GDALRasterBandH,OGRLayerH,Cint,Ptr{Cstring},GDALProgressFunc,Ptr{Void}),hSrcBand,hMaskBand,hOutLayer,iPixValField,papszOptions,pfnProgress,pProgressArg)
 end
 
 
@@ -181,8 +181,8 @@ Create polygon coverage from raster data.
 ### Returns
 CE_None on success or CE_Failure on a failure.
 """
-function fpolygonize(hSrcBand::GDALRasterBandH,hMaskBand::GDALRasterBandH,hOutLayer::OGRLayerH,iPixValField::Integer,papszOptions::Vector{UTF8String},pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void})
-    ccall((:GDALFPolygonize,libgdal),CPLErr,(GDALRasterBandH,GDALRasterBandH,OGRLayerH,Cint,Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),hSrcBand,hMaskBand,hOutLayer,iPixValField,papszOptions,pfnProgress,pProgressArg)
+function fpolygonize(hSrcBand::GDALRasterBandH,hMaskBand::GDALRasterBandH,hOutLayer::OGRLayerH,iPixValField::Integer,papszOptions,pfnProgress::GDALProgressFunc,pProgressArg)
+    ccall((:GDALFPolygonize,libgdal),CPLErr,(GDALRasterBandH,GDALRasterBandH,OGRLayerH,Cint,Ptr{Cstring},GDALProgressFunc,Ptr{Void}),hSrcBand,hMaskBand,hOutLayer,iPixValField,papszOptions,pfnProgress,pProgressArg)
 end
 
 
@@ -211,15 +211,15 @@ Removes small raster polygons.
 ### Returns
 CE_None on success or CE_Failure if an error occurs.
 """
-function sievefilter(hSrcBand::GDALRasterBandH,hMaskBand::GDALRasterBandH,hDstBand::GDALRasterBandH,nSizeThreshold::Integer,nConnectedness::Integer,papszOptions::Vector{UTF8String},pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void})
-    ccall((:GDALSieveFilter,libgdal),CPLErr,(GDALRasterBandH,GDALRasterBandH,GDALRasterBandH,Cint,Cint,Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),hSrcBand,hMaskBand,hDstBand,nSizeThreshold,nConnectedness,papszOptions,pfnProgress,pProgressArg)
+function sievefilter(hSrcBand::GDALRasterBandH,hMaskBand::GDALRasterBandH,hDstBand::GDALRasterBandH,nSizeThreshold::Integer,nConnectedness::Integer,papszOptions,pfnProgress::GDALProgressFunc,pProgressArg)
+    ccall((:GDALSieveFilter,libgdal),CPLErr,(GDALRasterBandH,GDALRasterBandH,GDALRasterBandH,Cint,Cint,Ptr{Cstring},GDALProgressFunc,Ptr{Void}),hSrcBand,hMaskBand,hDstBand,nSizeThreshold,nConnectedness,papszOptions,pfnProgress,pProgressArg)
 end
 
 
 """
     GDALDestroyTransformer(void * pTransformArg) -> void
 """
-function destroytransformer(pTransformerArg::Ptr{Void})
+function destroytransformer(pTransformerArg)
     ccall((:GDALDestroyTransformer,libgdal),Void,(Ptr{Void},),pTransformerArg)
 end
 
@@ -233,7 +233,7 @@ end
                        double * z,
                        int * panSuccess) -> int
 """
-function usetransformer(pTransformerArg::Ptr{Void},bDstToSrc::Integer,nPointCount::Integer,x::Vector{Float64},y::Vector{Float64},z::Vector{Float64},panSuccess::Vector{Cint})
+function usetransformer(pTransformerArg,bDstToSrc::Integer,nPointCount::Integer,x,y,z,panSuccess)
     ccall((:GDALUseTransformer,libgdal),Cint,(Ptr{Void},Cint,Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Ptr{Cint}),pTransformerArg,bDstToSrc,nPointCount,x,y,z,panSuccess)
 end
 
@@ -243,7 +243,7 @@ end
                                  double dfRatioX,
                                  double dfRatioY) -> void *
 """
-function createsimilartransformer(psTransformerArg::Ptr{Void},dfSrcRatioX::Real,dfSrcRatioY::Real)
+function createsimilartransformer(psTransformerArg,dfSrcRatioX::Real,dfSrcRatioY::Real)
     ccall((:GDALCreateSimilarTransformer,libgdal),Ptr{Void},(Ptr{Void},Cdouble,Cdouble),psTransformerArg,dfSrcRatioX,dfSrcRatioY)
 end
 
@@ -271,8 +271,8 @@ Create image to image transformer.
 ### Returns
 handle suitable for use GDALGenImgProjTransform(), and to be deallocated with GDALDestroyGenImgProjTransformer().
 """
-function creategenimgprojtransformer(hSrcDS::GDALDatasetH,pszSrcWKT::AbstractString,hDstDS::GDALDatasetH,pszDstWKT::AbstractString,bGCPUseOK::Integer,dfGCPErrorThreshold::Real,nOrder::Integer)
-    ccall((:GDALCreateGenImgProjTransformer,libgdal),Ptr{Void},(GDALDatasetH,Ptr{UInt8},GDALDatasetH,Ptr{UInt8},Cint,Cdouble,Cint),hSrcDS,pszSrcWKT,hDstDS,pszDstWKT,bGCPUseOK,dfGCPErrorThreshold,nOrder)
+function creategenimgprojtransformer(hSrcDS::GDALDatasetH,pszSrcWKT,hDstDS::GDALDatasetH,pszDstWKT,bGCPUseOK::Integer,dfGCPErrorThreshold::Real,nOrder::Integer)
+    ccall((:GDALCreateGenImgProjTransformer,libgdal),Ptr{Void},(GDALDatasetH,Cstring,GDALDatasetH,Cstring,Cint,Cdouble,Cint),hSrcDS,pszSrcWKT,hDstDS,pszDstWKT,bGCPUseOK,dfGCPErrorThreshold,nOrder)
 end
 
 
@@ -291,8 +291,8 @@ Create image to image transformer.
 ### Returns
 handle suitable for use GDALGenImgProjTransform(), and to be deallocated with GDALDestroyGenImgProjTransformer() or NULL on failure.
 """
-function creategenimgprojtransformer2(hSrcDS::GDALDatasetH,hDstDS::GDALDatasetH,papszOptions::Vector{UTF8String})
-    ccall((:GDALCreateGenImgProjTransformer2,libgdal),Ptr{Void},(GDALDatasetH,GDALDatasetH,Ptr{Ptr{UInt8}}),hSrcDS,hDstDS,papszOptions)
+function creategenimgprojtransformer2(hSrcDS::GDALDatasetH,hDstDS::GDALDatasetH,papszOptions)
+    ccall((:GDALCreateGenImgProjTransformer2,libgdal),Ptr{Void},(GDALDatasetH,GDALDatasetH,Ptr{Cstring}),hSrcDS,hDstDS,papszOptions)
 end
 
 
@@ -313,8 +313,8 @@ Create image to image transformer.
 ### Returns
 handle suitable for use GDALGenImgProjTransform(), and to be deallocated with GDALDestroyGenImgProjTransformer() or NULL on failure.
 """
-function creategenimgprojtransformer3(pszSrcWKT::AbstractString,padfSrcGeoTransform::Vector{Float64},pszDstWKT::AbstractString,padfDstGeoTransform::Vector{Float64})
-    ccall((:GDALCreateGenImgProjTransformer3,libgdal),Ptr{Void},(Ptr{UInt8},Ptr{Cdouble},Ptr{UInt8},Ptr{Cdouble}),pszSrcWKT,padfSrcGeoTransform,pszDstWKT,padfDstGeoTransform)
+function creategenimgprojtransformer3(pszSrcWKT,padfSrcGeoTransform,pszDstWKT,padfDstGeoTransform)
+    ccall((:GDALCreateGenImgProjTransformer3,libgdal),Ptr{Void},(Cstring,Ptr{Cdouble},Cstring,Ptr{Cdouble}),pszSrcWKT,padfSrcGeoTransform,pszDstWKT,padfDstGeoTransform)
 end
 
 
@@ -328,7 +328,7 @@ Set GenImgProj output geotransform.
 * **hTransformArg**: the handle to update.
 * **padfGeoTransform**: the destination geotransform to apply (six doubles).
 """
-function setgenimgprojtransformerdstgeotransform(arg1::Ptr{Void},arg2::Vector{Float64})
+function setgenimgprojtransformerdstgeotransform(arg1,arg2)
     ccall((:GDALSetGenImgProjTransformerDstGeoTransform,libgdal),Void,(Ptr{Void},Ptr{Cdouble}),arg1,arg2)
 end
 
@@ -341,7 +341,7 @@ GenImgProjTransformer deallocator.
 ### Parameters
 * **hTransformArg**: the handle to deallocate.
 """
-function destroygenimgprojtransformer(arg1::Ptr{Void})
+function destroygenimgprojtransformer(arg1)
     ccall((:GDALDestroyGenImgProjTransformer,libgdal),Void,(Ptr{Void},),arg1)
 end
 
@@ -357,7 +357,7 @@ end
 
 Perform general image reprojection transformation.
 """
-function genimgprojtransform(pTransformArg::Ptr{Void},bDstToSrc::Integer,nPointCount::Integer,x::Vector{Float64},y::Vector{Float64},z::Vector{Float64},panSuccess::Vector{Cint})
+function genimgprojtransform(pTransformArg,bDstToSrc::Integer,nPointCount::Integer,x,y,z,panSuccess)
     ccall((:GDALGenImgProjTransform,libgdal),Cint,(Ptr{Void},Cint,Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Ptr{Cint}),pTransformArg,bDstToSrc,nPointCount,x,y,z,panSuccess)
 end
 
@@ -366,7 +366,7 @@ end
     GDALSetTransformerDstGeoTransform(void * pTransformArg,
                                       const double * padfGeoTransform) -> void
 """
-function settransformerdstgeotransform(arg1::Ptr{Void},arg2::Vector{Float64})
+function settransformerdstgeotransform(arg1,arg2)
     ccall((:GDALSetTransformerDstGeoTransform,libgdal),Void,(Ptr{Void},Ptr{Cdouble}),arg1,arg2)
 end
 
@@ -384,8 +384,8 @@ Create reprojection transformer.
 ### Returns
 Handle for use with GDALReprojectionTransform(), or NULL if the system fails to initialize the reprojection.
 """
-function createreprojectiontransformer(pszSrcWKT::AbstractString,pszDstWKT::AbstractString)
-    ccall((:GDALCreateReprojectionTransformer,libgdal),Ptr{Void},(Ptr{UInt8},Ptr{UInt8}),pszSrcWKT,pszDstWKT)
+function createreprojectiontransformer(pszSrcWKT,pszDstWKT)
+    ccall((:GDALCreateReprojectionTransformer,libgdal),Ptr{Void},(Cstring,Cstring),pszSrcWKT,pszDstWKT)
 end
 
 
@@ -397,7 +397,7 @@ Destroy reprojection transformation.
 ### Parameters
 * **pTransformArg**: the transformation handle returned by GDALCreateReprojectionTransformer().
 """
-function destroyreprojectiontransformer(arg1::Ptr{Void})
+function destroyreprojectiontransformer(arg1)
     ccall((:GDALDestroyReprojectionTransformer,libgdal),Void,(Ptr{Void},),arg1)
 end
 
@@ -413,7 +413,7 @@ end
 
 Perform reprojection transformation.
 """
-function reprojectiontransform(pTransformArg::Ptr{Void},bDstToSrc::Integer,nPointCount::Integer,x::Vector{Float64},y::Vector{Float64},z::Vector{Float64},panSuccess::Vector{Cint})
+function reprojectiontransform(pTransformArg,bDstToSrc::Integer,nPointCount::Integer,x,y,z,panSuccess)
     ccall((:GDALReprojectionTransform,libgdal),Cint,(Ptr{Void},Cint,Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Ptr{Cint}),pTransformArg,bDstToSrc,nPointCount,x,y,z,panSuccess)
 end
 
@@ -438,7 +438,7 @@ Create GCP based polynomial transformer.
 ### Returns
 the transform argument or NULL if creation fails.
 """
-function creategcptransformer(nGCPCount::Integer,pasGCPList::Ptr{GDAL_GCP},nReqOrder::Integer,bReversed::Integer)
+function creategcptransformer(nGCPCount::Integer,pasGCPList,nReqOrder::Integer,bReversed::Integer)
     ccall((:GDALCreateGCPTransformer,libgdal),Ptr{Void},(Cint,Ptr{GDAL_GCP},Cint,Cint),nGCPCount,pasGCPList,nReqOrder,bReversed)
 end
 
@@ -451,7 +451,7 @@ end
                                    double tolerance,
                                    int minimumGcps) -> void *
 """
-function creategcprefinetransformer(nGCPCount::Integer,pasGCPList::Ptr{GDAL_GCP},nReqOrder::Integer,bReversed::Integer,tolerance::Real,minimumGcps::Integer)
+function creategcprefinetransformer(nGCPCount::Integer,pasGCPList,nReqOrder::Integer,bReversed::Integer,tolerance::Real,minimumGcps::Integer)
     ccall((:GDALCreateGCPRefineTransformer,libgdal),Ptr{Void},(Cint,Ptr{GDAL_GCP},Cint,Cint,Cdouble,Cint),nGCPCount,pasGCPList,nReqOrder,bReversed,tolerance,minimumGcps)
 end
 
@@ -464,7 +464,7 @@ Destroy GCP transformer.
 ### Parameters
 * **pTransformArg**: the transform arg previously returned by GDALCreateGCPTransformer().
 """
-function destroygcptransformer(pTransformArg::Ptr{Void})
+function destroygcptransformer(pTransformArg)
     ccall((:GDALDestroyGCPTransformer,libgdal),Void,(Ptr{Void},),pTransformArg)
 end
 
@@ -492,7 +492,7 @@ Transforms point based on GCP derived polynomial model.
 ### Returns
 TRUE.
 """
-function gcptransform(pTransformArg::Ptr{Void},bDstToSrc::Integer,nPointCount::Integer,x::Vector{Float64},y::Vector{Float64},z::Vector{Float64},panSuccess::Vector{Cint})
+function gcptransform(pTransformArg,bDstToSrc::Integer,nPointCount::Integer,x,y,z,panSuccess)
     ccall((:GDALGCPTransform,libgdal),Cint,(Ptr{Void},Cint,Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Ptr{Cint}),pTransformArg,bDstToSrc,nPointCount,x,y,z,panSuccess)
 end
 
@@ -512,7 +512,7 @@ Create Thin Plate Spline transformer from GCPs.
 ### Returns
 the transform argument or NULL if creation fails.
 """
-function createtpstransformer(nGCPCount::Integer,pasGCPList::Ptr{GDAL_GCP},bReversed::Integer)
+function createtpstransformer(nGCPCount::Integer,pasGCPList,bReversed::Integer)
     ccall((:GDALCreateTPSTransformer,libgdal),Ptr{Void},(Cint,Ptr{GDAL_GCP},Cint),nGCPCount,pasGCPList,bReversed)
 end
 
@@ -525,7 +525,7 @@ Destroy TPS transformer.
 ### Parameters
 * **pTransformArg**: the transform arg previously returned by GDALCreateTPSTransformer().
 """
-function destroytpstransformer(pTransformArg::Ptr{Void})
+function destroytpstransformer(pTransformArg)
     ccall((:GDALDestroyTPSTransformer,libgdal),Void,(Ptr{Void},),pTransformArg)
 end
 
@@ -553,7 +553,7 @@ Transforms point based on GCP derived polynomial model.
 ### Returns
 TRUE.
 """
-function tpstransform(pTransformArg::Ptr{Void},bDstToSrc::Integer,nPointCount::Integer,x::Vector{Float64},y::Vector{Float64},z::Vector{Float64},panSuccess::Vector{Cint})
+function tpstransform(pTransformArg,bDstToSrc::Integer,nPointCount::Integer,x,y,z,panSuccess)
     ccall((:GDALTPSTransform,libgdal),Cint,(Ptr{Void},Cint,Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Ptr{Cint}),pTransformArg,bDstToSrc,nPointCount,x,y,z,panSuccess)
 end
 
@@ -561,8 +561,8 @@ end
 """
     RPCInfoToMD(GDALRPCInfo * psRPCInfo) -> char **
 """
-function rpcinfotomd(psRPCInfo::Ptr{GDALRPCInfo})
-    bytestring(unsafe_load(ccall((:RPCInfoToMD,libgdal),Ptr{Ptr{UInt8}},(Ptr{GDALRPCInfo},),psRPCInfo)))
+function rpcinfotomd(psRPCInfo)
+    ccall((:RPCInfoToMD,libgdal),Ptr{Cstring},(Ptr{GDALRPCInfo},),psRPCInfo)
 end
 
 
@@ -583,15 +583,15 @@ Create an RPC based transformer.
 ### Returns
 transformer callback data (deallocate with GDALDestroyTransformer()).
 """
-function createrpctransformer(psRPC::Ptr{GDALRPCInfo},bReversed::Integer,dfPixErrThreshold::Real,papszOptions::Vector{UTF8String})
-    ccall((:GDALCreateRPCTransformer,libgdal),Ptr{Void},(Ptr{GDALRPCInfo},Cint,Cdouble,Ptr{Ptr{UInt8}}),psRPC,bReversed,dfPixErrThreshold,papszOptions)
+function createrpctransformer(psRPC,bReversed::Integer,dfPixErrThreshold::Real,papszOptions)
+    ccall((:GDALCreateRPCTransformer,libgdal),Ptr{Void},(Ptr{GDALRPCInfo},Cint,Cdouble,Ptr{Cstring}),psRPC,bReversed,dfPixErrThreshold,papszOptions)
 end
 
 
 """
     GDALDestroyRPCTransformer(void * pTransformArg) -> void
 """
-function destroyrpctransformer(pTransformArg::Ptr{Void})
+function destroyrpctransformer(pTransformArg)
     ccall((:GDALDestroyRPCTransformer,libgdal),Void,(Ptr{Void},),pTransformArg)
 end
 
@@ -605,7 +605,7 @@ end
                      double * z,
                      int * panSuccess) -> int
 """
-function rpctransform(pTransformArg::Ptr{Void},bDstToSrc::Integer,nPointCount::Integer,x::Vector{Float64},y::Vector{Float64},z::Vector{Float64},panSuccess::Vector{Cint})
+function rpctransform(pTransformArg,bDstToSrc::Integer,nPointCount::Integer,x,y,z,panSuccess)
     ccall((:GDALRPCTransform,libgdal),Cint,(Ptr{Void},Cint,Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Ptr{Cint}),pTransformArg,bDstToSrc,nPointCount,x,y,z,panSuccess)
 end
 
@@ -615,15 +615,15 @@ end
                                 char ** papszGeolocationInfo,
                                 int bReversed) -> void *
 """
-function creategeoloctransformer(hBaseDS::GDALDatasetH,papszGeolocationInfo::Vector{UTF8String},bReversed::Integer)
-    ccall((:GDALCreateGeoLocTransformer,libgdal),Ptr{Void},(GDALDatasetH,Ptr{Ptr{UInt8}},Cint),hBaseDS,papszGeolocationInfo,bReversed)
+function creategeoloctransformer(hBaseDS::GDALDatasetH,papszGeolocationInfo,bReversed::Integer)
+    ccall((:GDALCreateGeoLocTransformer,libgdal),Ptr{Void},(GDALDatasetH,Ptr{Cstring},Cint),hBaseDS,papszGeolocationInfo,bReversed)
 end
 
 
 """
     GDALDestroyGeoLocTransformer(void * pTransformAlg) -> void
 """
-function destroygeoloctransformer(pTransformArg::Ptr{Void})
+function destroygeoloctransformer(pTransformArg)
     ccall((:GDALDestroyGeoLocTransformer,libgdal),Void,(Ptr{Void},),pTransformArg)
 end
 
@@ -637,7 +637,7 @@ end
                         double * padfZ,
                         int * panSuccess) -> int
 """
-function geoloctransform(pTransformArg::Ptr{Void},bDstToSrc::Integer,nPointCount::Integer,x::Vector{Float64},y::Vector{Float64},z::Vector{Float64},panSuccess::Vector{Cint})
+function geoloctransform(pTransformArg,bDstToSrc::Integer,nPointCount::Integer,x,y,z,panSuccess)
     ccall((:GDALGeoLocTransform,libgdal),Cint,(Ptr{Void},Cint,Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Ptr{Cint}),pTransformArg,bDstToSrc,nPointCount,x,y,z,panSuccess)
 end
 
@@ -657,7 +657,7 @@ Create an approximating transformer.
 ### Returns
 callback pointer suitable for use with GDALApproxTransform(). It should be deallocated with GDALDestroyApproxTransformer().
 """
-function createapproxtransformer(pfnRawTransformer::GDALTransformerFunc,pRawTransformerArg::Ptr{Void},dfMaxError::Real)
+function createapproxtransformer(pfnRawTransformer::GDALTransformerFunc,pRawTransformerArg,dfMaxError::Real)
     ccall((:GDALCreateApproxTransformer,libgdal),Ptr{Void},(GDALTransformerFunc,Ptr{Void},Cdouble),pfnRawTransformer,pRawTransformerArg,dfMaxError)
 end
 
@@ -666,7 +666,7 @@ end
     GDALApproxTransformerOwnsSubtransformer(void * pCBData,
                                             int bOwnFlag) -> void
 """
-function approxtransformerownssubtransformer(pCBData::Ptr{Void},bOwnFlag::Integer)
+function approxtransformerownssubtransformer(pCBData,bOwnFlag::Integer)
     ccall((:GDALApproxTransformerOwnsSubtransformer,libgdal),Void,(Ptr{Void},Cint),pCBData,bOwnFlag)
 end
 
@@ -679,7 +679,7 @@ Cleanup approximate transformer.
 ### Parameters
 * **pCBData**: callback data originally returned by GDALCreateApproxTransformer().
 """
-function destroyapproxtransformer(pApproxArg::Ptr{Void})
+function destroyapproxtransformer(pApproxArg)
     ccall((:GDALDestroyApproxTransformer,libgdal),Void,(Ptr{Void},),pApproxArg)
 end
 
@@ -695,7 +695,7 @@ end
 
 Perform approximate transformation.
 """
-function approxtransform(pTransformArg::Ptr{Void},bDstToSrc::Integer,nPointCount::Integer,x::Vector{Float64},y::Vector{Float64},z::Vector{Float64},panSuccess::Vector{Cint})
+function approxtransform(pTransformArg,bDstToSrc::Integer,nPointCount::Integer,x,y,z,panSuccess)
     ccall((:GDALApproxTransform,libgdal),Cint,(Ptr{Void},Cint,Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Ptr{Cint}),pTransformArg,bDstToSrc,nPointCount,x,y,z,panSuccess)
 end
 
@@ -727,8 +727,8 @@ Perform simple image warp.
 ### Returns
 TRUE if the operation completes, or FALSE if an error occurs.
 """
-function simpleimagewarp(hSrcDS::GDALDatasetH,hDstDS::GDALDatasetH,nBandCount::Integer,panBandList::Vector{Cint},pfnTransform::GDALTransformerFunc,pTransformArg::Ptr{Void},pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void},papszWarpOptions::Vector{UTF8String})
-    ccall((:GDALSimpleImageWarp,libgdal),Cint,(GDALDatasetH,GDALDatasetH,Cint,Ptr{Cint},GDALTransformerFunc,Ptr{Void},GDALProgressFunc,Ptr{Void},Ptr{Ptr{UInt8}}),hSrcDS,hDstDS,nBandCount,panBandList,pfnTransform,pTransformArg,pfnProgress,pProgressArg,papszWarpOptions)
+function simpleimagewarp(hSrcDS::GDALDatasetH,hDstDS::GDALDatasetH,nBandCount::Integer,panBandList,pfnTransform::GDALTransformerFunc,pTransformArg,pfnProgress::GDALProgressFunc,pProgressArg,papszWarpOptions)
+    ccall((:GDALSimpleImageWarp,libgdal),Cint,(GDALDatasetH,GDALDatasetH,Cint,Ptr{Cint},GDALTransformerFunc,Ptr{Void},GDALProgressFunc,Ptr{Void},Ptr{Cstring}),hSrcDS,hDstDS,nBandCount,panBandList,pfnTransform,pTransformArg,pfnProgress,pProgressArg,papszWarpOptions)
 end
 
 
@@ -753,7 +753,7 @@ Suggest output file size.
 ### Returns
 CE_None if successful or CE_Failure otherwise.
 """
-function suggestedwarpoutput(hSrcDS::GDALDatasetH,pfnTransformer::GDALTransformerFunc,pTransformArg::Ptr{Void},padfGeoTransformOut::Vector{Float64},pnPixels::Vector{Cint},pnLines::Vector{Cint})
+function suggestedwarpoutput(hSrcDS::GDALDatasetH,pfnTransformer::GDALTransformerFunc,pTransformArg,padfGeoTransformOut,pnPixels,pnLines)
     ccall((:GDALSuggestedWarpOutput,libgdal),CPLErr,(GDALDatasetH,GDALTransformerFunc,Ptr{Void},Ptr{Cdouble},Ptr{Cint},Ptr{Cint}),hSrcDS,pfnTransformer,pTransformArg,padfGeoTransformOut,pnPixels,pnLines)
 end
 
@@ -783,7 +783,7 @@ Suggest output file size.
 ### Returns
 CE_None if successful or CE_Failure otherwise.
 """
-function suggestedwarpoutput2(hSrcDS::GDALDatasetH,pfnTransformer::GDALTransformerFunc,pTransformArg::Ptr{Void},padfGeoTransformOut::Vector{Float64},pnPixels::Vector{Cint},pnLines::Vector{Cint},padfExtents::Vector{Float64},nOptions::Integer)
+function suggestedwarpoutput2(hSrcDS::GDALDatasetH,pfnTransformer::GDALTransformerFunc,pTransformArg,padfGeoTransformOut,pnPixels,pnLines,padfExtents,nOptions::Integer)
     ccall((:GDALSuggestedWarpOutput2,libgdal),CPLErr,(GDALDatasetH,GDALTransformerFunc,Ptr{Void},Ptr{Cdouble},Ptr{Cint},Ptr{Cint},Ptr{Cdouble},Cint),hSrcDS,pfnTransformer,pTransformArg,padfGeoTransformOut,pnPixels,pnLines,padfExtents,nOptions)
 end
 
@@ -792,7 +792,7 @@ end
     GDALSerializeTransformer(GDALTransformerFunc pfnFunc,
                              void * pTransformArg) -> CPLXMLNode *
 """
-function serializetransformer(pfnFunc::GDALTransformerFunc,pTransformArg::Ptr{Void})
+function serializetransformer(pfnFunc::GDALTransformerFunc,pTransformArg)
     ccall((:GDALSerializeTransformer,libgdal),Ptr{CPLXMLNode},(GDALTransformerFunc,Ptr{Void}),pfnFunc,pTransformArg)
 end
 
@@ -802,7 +802,7 @@ end
                                GDALTransformerFunc * ppfnFunc,
                                void ** ppTransformArg) -> CPLErr
 """
-function deserializetransformer(psTree::Ptr{CPLXMLNode},ppfnFunc::Ptr{GDALTransformerFunc},ppTransformArg::Ptr{Ptr{Void}})
+function deserializetransformer(psTree,ppfnFunc,ppTransformArg)
     ccall((:GDALDeserializeTransformer,libgdal),CPLErr,(Ptr{CPLXMLNode},Ptr{GDALTransformerFunc},Ptr{Ptr{Void}}),psTree,ppfnFunc,ppTransformArg)
 end
 
@@ -832,8 +832,8 @@ Transform locations held in bands.
 ### Returns
 CE_None on success or CE_Failure if an error occurs.
 """
-function transformgeolocations(hXBand::GDALRasterBandH,hYBand::GDALRasterBandH,hZBand::GDALRasterBandH,pfnTransformer::GDALTransformerFunc,pTransformArg::Ptr{Void},pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void},papszOptions::Vector{UTF8String})
-    ccall((:GDALTransformGeolocations,libgdal),CPLErr,(GDALRasterBandH,GDALRasterBandH,GDALRasterBandH,GDALTransformerFunc,Ptr{Void},GDALProgressFunc,Ptr{Void},Ptr{Ptr{UInt8}}),hXBand,hYBand,hZBand,pfnTransformer,pTransformArg,pfnProgress,pProgressArg,papszOptions)
+function transformgeolocations(hXBand::GDALRasterBandH,hYBand::GDALRasterBandH,hZBand::GDALRasterBandH,pfnTransformer::GDALTransformerFunc,pTransformArg,pfnProgress::GDALProgressFunc,pProgressArg,papszOptions)
+    ccall((:GDALTransformGeolocations,libgdal),CPLErr,(GDALRasterBandH,GDALRasterBandH,GDALRasterBandH,GDALTransformerFunc,Ptr{Void},GDALProgressFunc,Ptr{Void},Ptr{Cstring}),hXBand,hYBand,hZBand,pfnTransformer,pTransformArg,pfnProgress,pProgressArg,papszOptions)
 end
 
 
@@ -847,7 +847,7 @@ end
                    GDALContourWriter pfnWriter,
                    void * pCBData) -> GDALContourGeneratorH
 """
-function create(nWidth::Integer,nHeight::Integer,bNoDataSet::Integer,dfNoDataValue::Real,dfContourInterval::Real,dfContourBase::Real,pfnWriter::GDALContourWriter,pCBData::Ptr{Void})
+function create(nWidth::Integer,nHeight::Integer,bNoDataSet::Integer,dfNoDataValue::Real,dfContourInterval::Real,dfContourBase::Real,pfnWriter::GDALContourWriter,pCBData)
     checknull(ccall((:GDAL_CG_Create,libgdal),GDALContourGeneratorH,(Cint,Cint,Cint,Cdouble,Cdouble,Cdouble,GDALContourWriter,Ptr{Void}),nWidth,nHeight,bNoDataSet,dfNoDataValue,dfContourInterval,dfContourBase,pfnWriter,pCBData))
 end
 
@@ -856,7 +856,7 @@ end
     GDAL_CG_FeedLine(GDALContourGeneratorH hCG,
                      double * padfScanline) -> CPLErr
 """
-function feedline(hCG::GDALContourGeneratorH,padfScanline::Vector{Float64})
+function feedline(hCG::GDALContourGeneratorH,padfScanline)
     ccall((:GDAL_CG_FeedLine,libgdal),CPLErr,(GDALContourGeneratorH,Ptr{Cdouble}),hCG,padfScanline)
 end
 
@@ -876,7 +876,7 @@ end
                      double * padfY,
                      void * pInfo) -> CPLErr
 """
-function contourwriter(arg1::Real,arg2::Integer,arg3::Vector{Float64},arg4::Vector{Float64},pInfo::Ptr{Void})
+function contourwriter(arg1::Real,arg2::Integer,arg3,arg4,pInfo)
     ccall((:OGRContourWriter,libgdal),CPLErr,(Cdouble,Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Void}),arg1,arg2,arg3,arg4,pInfo)
 end
 
@@ -914,7 +914,7 @@ Create vector contours from raster DEM.
 ### Returns
 CE_None on success or CE_Failure if an error occurs.
 """
-function contourgenerate(hBand::GDALRasterBandH,dfContourInterval::Real,dfContourBase::Real,nFixedLevelCount::Integer,padfFixedLevels::Vector{Float64},bUseNoData::Integer,dfNoDataValue::Real,hLayer::Ptr{Void},iIDField::Integer,iElevField::Integer,pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void})
+function contourgenerate(hBand::GDALRasterBandH,dfContourInterval::Real,dfContourBase::Real,nFixedLevelCount::Integer,padfFixedLevels,bUseNoData::Integer,dfNoDataValue::Real,hLayer,iIDField::Integer,iElevField::Integer,pfnProgress::GDALProgressFunc,pProgressArg)
     ccall((:GDALContourGenerate,libgdal),CPLErr,(GDALRasterBandH,Cdouble,Cdouble,Cint,Ptr{Cdouble},Cint,Cdouble,Ptr{Void},Cint,Cint,GDALProgressFunc,Ptr{Void}),hBand,dfContourInterval,dfContourBase,nFixedLevelCount,padfFixedLevels,bUseNoData,dfNoDataValue,hLayer,iIDField,iElevField,pfnProgress,pProgressArg)
 end
 
@@ -967,8 +967,8 @@ Burn geometries into raster.
 ### Returns
 CE_None on success or CE_Failure on error.
 """
-function rasterizegeometries(hDS::GDALDatasetH,nBandCount::Integer,panBandList::Vector{Cint},nGeomCount::Integer,pahGeometries::Ptr{OGRGeometryH},pfnTransformer::GDALTransformerFunc,pTransformArg::Ptr{Void},padfGeomBurnValue::Vector{Float64},papszOptions::Vector{UTF8String},pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void})
-    ccall((:GDALRasterizeGeometries,libgdal),CPLErr,(GDALDatasetH,Cint,Ptr{Cint},Cint,Ptr{OGRGeometryH},GDALTransformerFunc,Ptr{Void},Ptr{Cdouble},Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),hDS,nBandCount,panBandList,nGeomCount,pahGeometries,pfnTransformer,pTransformArg,padfGeomBurnValue,papszOptions,pfnProgress,pProgressArg)
+function rasterizegeometries(hDS::GDALDatasetH,nBandCount::Integer,panBandList,nGeomCount::Integer,pahGeometries,pfnTransformer::GDALTransformerFunc,pTransformArg,padfGeomBurnValue,papszOptions,pfnProgress::GDALProgressFunc,pProgressArg)
+    ccall((:GDALRasterizeGeometries,libgdal),CPLErr,(GDALDatasetH,Cint,Ptr{Cint},Cint,Ptr{OGRGeometryH},GDALTransformerFunc,Ptr{Void},Ptr{Cdouble},Ptr{Cstring},GDALProgressFunc,Ptr{Void}),hDS,nBandCount,panBandList,nGeomCount,pahGeometries,pfnTransformer,pTransformArg,padfGeomBurnValue,papszOptions,pfnProgress,pProgressArg)
 end
 
 
@@ -1032,8 +1032,8 @@ Burn geometries from the specified list of layers into raster.
 ### Returns
 CE_None on success or CE_Failure on error.
 """
-function rasterizelayers(hDS::GDALDatasetH,nBandCount::Integer,panBandList::Vector{Cint},nLayerCount::Integer,pahLayers::Ptr{OGRLayerH},pfnTransformer::GDALTransformerFunc,pTransformArg::Ptr{Void},padfLayerBurnValues::Vector{Float64},papszOptions::Vector{UTF8String},pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void})
-    ccall((:GDALRasterizeLayers,libgdal),CPLErr,(GDALDatasetH,Cint,Ptr{Cint},Cint,Ptr{OGRLayerH},GDALTransformerFunc,Ptr{Void},Ptr{Cdouble},Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),hDS,nBandCount,panBandList,nLayerCount,pahLayers,pfnTransformer,pTransformArg,padfLayerBurnValues,papszOptions,pfnProgress,pProgressArg)
+function rasterizelayers(hDS::GDALDatasetH,nBandCount::Integer,panBandList,nLayerCount::Integer,pahLayers,pfnTransformer::GDALTransformerFunc,pTransformArg,padfLayerBurnValues,papszOptions,pfnProgress::GDALProgressFunc,pProgressArg)
+    ccall((:GDALRasterizeLayers,libgdal),CPLErr,(GDALDatasetH,Cint,Ptr{Cint},Cint,Ptr{OGRLayerH},GDALTransformerFunc,Ptr{Void},Ptr{Cdouble},Ptr{Cstring},GDALProgressFunc,Ptr{Void}),hDS,nBandCount,panBandList,nLayerCount,pahLayers,pfnTransformer,pTransformArg,padfLayerBurnValues,papszOptions,pfnProgress,pProgressArg)
 end
 
 
@@ -1089,8 +1089,8 @@ Burn geometries from the specified list of layer into raster.
 ### Returns
 CE_None on success or CE_Failure on error.
 """
-function rasterizelayersbuf(pData::Ptr{Void},nBufXSize::Integer,nBufYSize::Integer,eBufType::GDALDataType,nPixelSpace::Integer,nLineSpace::Integer,nLayerCount::Integer,pahLayers::Ptr{OGRLayerH},pszDstProjection::AbstractString,padfDstGeoTransform::Vector{Float64},pfnTransformer::GDALTransformerFunc,pTransformArg::Ptr{Void},dfBurnValue::Real,papszOptions::Vector{UTF8String},pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void})
-    ccall((:GDALRasterizeLayersBuf,libgdal),CPLErr,(Ptr{Void},Cint,Cint,GDALDataType,Cint,Cint,Cint,Ptr{OGRLayerH},Ptr{UInt8},Ptr{Cdouble},GDALTransformerFunc,Ptr{Void},Cdouble,Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),pData,nBufXSize,nBufYSize,eBufType,nPixelSpace,nLineSpace,nLayerCount,pahLayers,pszDstProjection,padfDstGeoTransform,pfnTransformer,pTransformArg,dfBurnValue,papszOptions,pfnProgress,pProgressArg)
+function rasterizelayersbuf(pData,nBufXSize::Integer,nBufYSize::Integer,eBufType::GDALDataType,nPixelSpace::Integer,nLineSpace::Integer,nLayerCount::Integer,pahLayers,pszDstProjection,padfDstGeoTransform,pfnTransformer::GDALTransformerFunc,pTransformArg,dfBurnValue::Real,papszOptions,pfnProgress::GDALProgressFunc,pProgressArg)
+    ccall((:GDALRasterizeLayersBuf,libgdal),CPLErr,(Ptr{Void},Cint,Cint,GDALDataType,Cint,Cint,Cint,Ptr{OGRLayerH},Cstring,Ptr{Cdouble},GDALTransformerFunc,Ptr{Void},Cdouble,Ptr{Cstring},GDALProgressFunc,Ptr{Void}),pData,nBufXSize,nBufYSize,eBufType,nPixelSpace,nLineSpace,nLayerCount,pahLayers,pszDstProjection,padfDstGeoTransform,pfnTransformer,pTransformArg,dfBurnValue,papszOptions,pfnProgress,pProgressArg)
 end
 
 
@@ -1135,7 +1135,7 @@ Create regular grid from the scattered data.
 ### Returns
 CE_None on success or CE_Failure if something goes wrong.
 """
-function gridcreate(arg1::GDALGridAlgorithm,arg2::Ptr{Void},arg3::GUInt32,arg4::Vector{Float64},arg5::Vector{Float64},arg6::Vector{Float64},arg7::Real,arg8::Real,arg9::Real,arg10::Real,arg11::GUInt32,arg12::GUInt32,arg13::GDALDataType,arg14::Ptr{Void},arg15::GDALProgressFunc,arg16::Ptr{Void})
+function gridcreate(arg1::GDALGridAlgorithm,arg2,arg3::GUInt32,arg4,arg5,arg6,arg7::Real,arg8::Real,arg9::Real,arg10::Real,arg11::GUInt32,arg12::GUInt32,arg13::GDALDataType,arg14,arg15::GDALProgressFunc,arg16)
     ccall((:GDALGridCreate,libgdal),CPLErr,(GDALGridAlgorithm,Ptr{Void},GUInt32,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Cdouble,Cdouble,Cdouble,Cdouble,GUInt32,GUInt32,GDALDataType,Ptr{Void},GDALProgressFunc,Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16)
 end
 
@@ -1163,7 +1163,7 @@ Creates a context to do regular gridding from the scattered data.
 ### Returns
 the context (to be freed with GDALGridContextFree()) or NULL in case or error
 """
-function gridcontextcreate(eAlgorithm::GDALGridAlgorithm,poOptions::Ptr{Void},nPoints::GUInt32,padfX::Vector{Float64},padfY::Vector{Float64},padfZ::Vector{Float64},bCallerWillKeepPointArraysAlive::Integer)
+function gridcontextcreate(eAlgorithm::GDALGridAlgorithm,poOptions,nPoints::GUInt32,padfX,padfY,padfZ,bCallerWillKeepPointArraysAlive::Integer)
     ccall((:GDALGridContextCreate,libgdal),Ptr{GDALGridContext},(GDALGridAlgorithm,Ptr{Void},GUInt32,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Cint),eAlgorithm,poOptions,nPoints,padfX,padfY,padfZ,bCallerWillKeepPointArraysAlive)
 end
 
@@ -1176,7 +1176,7 @@ Free a context used created by GDALGridContextCreate()
 ### Parameters
 * **psContext**: the context.
 """
-function gridcontextfree(psContext::Ptr{GDALGridContext})
+function gridcontextfree(psContext)
     ccall((:GDALGridContextFree,libgdal),Void,(Ptr{GDALGridContext},),psContext)
 end
 
@@ -1212,7 +1212,7 @@ Do the gridding of a window of a raster.
 ### Returns
 CE_None on success or CE_Failure if something goes wrong.
 """
-function gridcontextprocess(psContext::Ptr{GDALGridContext},dfXMin::Real,dfXMax::Real,dfYMin::Real,dfYMax::Real,nXSize::GUInt32,nYSize::GUInt32,eType::GDALDataType,pData::Ptr{Void},pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void})
+function gridcontextprocess(psContext,dfXMin::Real,dfXMax::Real,dfYMin::Real,dfYMax::Real,nXSize::GUInt32,nYSize::GUInt32,eType::GDALDataType,pData,pfnProgress::GDALProgressFunc,pProgressArg)
     ccall((:GDALGridContextProcess,libgdal),CPLErr,(Ptr{GDALGridContext},Cdouble,Cdouble,Cdouble,Cdouble,GUInt32,GUInt32,GDALDataType,Ptr{Void},GDALProgressFunc,Ptr{Void}),psContext,dfXMin,dfXMax,dfYMin,dfYMax,nXSize,nYSize,eType,pData,pfnProgress,pProgressArg)
 end
 
@@ -1223,8 +1223,8 @@ end
                               char ** papszOptions,
                               int * pnGCPCount) -> GDAL_GCP *
 """
-function computematchingpoints(hFirstImage::GDALDatasetH,hSecondImage::GDALDatasetH,papszOptions::Vector{UTF8String},pnGCPCount::Vector{Cint})
-    ccall((:GDALComputeMatchingPoints,libgdal),Ptr{GDAL_GCP},(GDALDatasetH,GDALDatasetH,Ptr{Ptr{UInt8}},Ptr{Cint}),hFirstImage,hSecondImage,papszOptions,pnGCPCount)
+function computematchingpoints(hFirstImage::GDALDatasetH,hSecondImage::GDALDatasetH,papszOptions,pnGCPCount)
+    ccall((:GDALComputeMatchingPoints,libgdal),Ptr{GDAL_GCP},(GDALDatasetH,GDALDatasetH,Ptr{Cstring},Ptr{Cint}),hFirstImage,hSecondImage,papszOptions,pnGCPCount)
 end
 
 
@@ -1256,7 +1256,7 @@ Computes a Delaunay triangulation of the passed points.
 ### Returns
 triangulation that must be freed with GDALTriangulationFree(), or NULL in case of error.
 """
-function triangulationcreatedelaunay(nPoints::Integer,padfX::Vector{Float64},padfY::Vector{Float64})
+function triangulationcreatedelaunay(nPoints::Integer,padfX,padfY)
     ccall((:GDALTriangulationCreateDelaunay,libgdal),Ptr{GDALTriangulation},(Cint,Ptr{Cdouble},Ptr{Cdouble}),nPoints,padfX,padfY)
 end
 
@@ -1276,7 +1276,7 @@ Computes barycentric coefficients for each triangles of the triangulation.
 ### Returns
 TRUE in case of success.
 """
-function triangulationcomputebarycentriccoefficients(psDT::Ptr{GDALTriangulation},padfX::Vector{Float64},padfY::Vector{Float64})
+function triangulationcomputebarycentriccoefficients(psDT,padfX,padfY)
     ccall((:GDALTriangulationComputeBarycentricCoefficients,libgdal),Cint,(Ptr{GDALTriangulation},Ptr{Cdouble},Ptr{Cdouble}),psDT,padfX,padfY)
 end
 
@@ -1290,7 +1290,7 @@ end
                                                    double * pdfL2,
                                                    double * pdfL3) -> int
 """
-function triangulationcomputebarycentriccoordinates(psDT::Ptr{GDALTriangulation},nFacetIdx::Integer,dfX::Real,dfY::Real,pdfL1::Vector{Float64},pdfL2::Vector{Float64},pdfL3::Vector{Float64})
+function triangulationcomputebarycentriccoordinates(psDT,nFacetIdx::Integer,dfX::Real,dfY::Real,pdfL1,pdfL2,pdfL3)
     ccall((:GDALTriangulationComputeBarycentricCoordinates,libgdal),Cint,(Ptr{GDALTriangulation},Cint,Cdouble,Cdouble,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble}),psDT,nFacetIdx,dfX,dfY,pdfL1,pdfL2,pdfL3)
 end
 
@@ -1312,7 +1312,7 @@ Returns the index of the triangle that contains the point by iterating over all 
 ### Returns
 index >= 0 of the triangle in case of success, -1 otherwise.
 """
-function triangulationfindfacetbruteforce(psDT::Ptr{GDALTriangulation},dfX::Real,dfY::Real,panOutputFacetIdx::Vector{Cint})
+function triangulationfindfacetbruteforce(psDT,dfX::Real,dfY::Real,panOutputFacetIdx)
     ccall((:GDALTriangulationFindFacetBruteForce,libgdal),Cint,(Ptr{GDALTriangulation},Cdouble,Cdouble,Ptr{Cint}),psDT,dfX,dfY,panOutputFacetIdx)
 end
 
@@ -1336,7 +1336,7 @@ Returns the index of the triangle that contains the point by walking in the tria
 ### Returns
 TRUE in case of success, -1 otherwise.
 """
-function triangulationfindfacetdirected(psDT::Ptr{GDALTriangulation},nFacetIdx::Integer,dfX::Real,dfY::Real,panOutputFacetIdx::Vector{Cint})
+function triangulationfindfacetdirected(psDT,nFacetIdx::Integer,dfX::Real,dfY::Real,panOutputFacetIdx)
     ccall((:GDALTriangulationFindFacetDirected,libgdal),Cint,(Ptr{GDALTriangulation},Cint,Cdouble,Cdouble,Ptr{Cint}),psDT,nFacetIdx,dfX,dfY,panOutputFacetIdx)
 end
 
@@ -1349,7 +1349,7 @@ Free a triangulation.
 ### Parameters
 * **psDT**: triangulation.
 """
-function triangulationfree(psDT::Ptr{GDALTriangulation})
+function triangulationfree(psDT)
     ccall((:GDALTriangulationFree,libgdal),Void,(Ptr{GDALTriangulation},),psDT)
 end
 
