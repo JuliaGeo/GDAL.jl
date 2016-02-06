@@ -93,16 +93,6 @@ function rewriter(ex::Expr)
             arg.args[2] = :Integer
         elseif arg.args[2] == :Cdouble
             arg.args[2] = :Real
-        elseif arg.args[2] == :(Ptr{Cdouble})
-            arg.args[2] = :(Vector{Float64})
-        elseif arg.args[2] == :(Ptr{Cint})
-            arg.args[2] = :(Vector{Cint})
-        elseif arg.args[2] == :(Ptr{GDALRasterIOExtraArg})
-            arg.args[2] = :GDALRasterIOExtraArg
-        elseif arg.args[2] == :(Ptr{UInt8})
-            arg.args[2] = :AbstractString
-        elseif arg.args[2] == :(Ptr{Ptr{UInt8}})
-            arg.args[2] = :(Vector{UTF8String})
         end
     end
     assert(ex.args[2].args[1].head == :ccall)
