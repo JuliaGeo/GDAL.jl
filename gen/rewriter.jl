@@ -107,9 +107,9 @@ function rewriter(ex::Expr)
     end
     # ccall return type
     rettype = ex.args[2].args[1].args[2]
-    if rettype == :(Ptr{UInt8})
+    if rettype == :(Cstring)
         ex.args[2].args[1] = Expr(:call, :bytestring, ex.args[2].args[1])
-    elseif rettype == :(Ptr{Ptr{UInt8}})
+    elseif rettype == :(Ptr{Cstring})
         ex.args[2].args[1] = Expr(:call, :unsafe_load, ex.args[2].args[1])
         ex.args[2].args[1] = Expr(:call, :bytestring, ex.args[2].args[1])
     elseif rettype in check_nullpointer

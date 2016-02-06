@@ -9,7 +9,7 @@ Return the string representation for the OGRAxisOrientation enumeration.
 an internal string
 """
 function axisenumtoname(eOrientation::OGRAxisOrientation)
-    ccall((:OSRAxisEnumToName,libgdal),Cstring,(OGRAxisOrientation,),eOrientation)
+    bytestring(ccall((:OSRAxisEnumToName,libgdal),Cstring,(OGRAxisOrientation,),eOrientation))
 end
 
 
@@ -444,7 +444,7 @@ end
 Fetch indicated attribute of named node.
 """
 function getattrvalue(hSRS::OGRSpatialReferenceH,pszName,iChild::Integer)
-    ccall((:OSRGetAttrValue,libgdal),Cstring,(OGRSpatialReferenceH,Cstring,Cint),hSRS,pszName,iChild)
+    bytestring(ccall((:OSRGetAttrValue,libgdal),Cstring,(OGRSpatialReferenceH,Cstring,Cint),hSRS,pszName,iChild))
 end
 
 
@@ -828,7 +828,7 @@ end
 Get the authority code for a node.
 """
 function getauthoritycode(hSRS::OGRSpatialReferenceH,pszTargetKey)
-    ccall((:OSRGetAuthorityCode,libgdal),Cstring,(OGRSpatialReferenceH,Cstring),hSRS,pszTargetKey)
+    bytestring(ccall((:OSRGetAuthorityCode,libgdal),Cstring,(OGRSpatialReferenceH,Cstring),hSRS,pszTargetKey))
 end
 
 
@@ -839,7 +839,7 @@ end
 Get the authority name for a node.
 """
 function getauthorityname(hSRS::OGRSpatialReferenceH,pszTargetKey)
-    ccall((:OSRGetAuthorityName,libgdal),Cstring,(OGRSpatialReferenceH,Cstring),hSRS,pszTargetKey)
+    bytestring(ccall((:OSRGetAuthorityName,libgdal),Cstring,(OGRSpatialReferenceH,Cstring),hSRS,pszTargetKey))
 end
 
 
@@ -992,7 +992,7 @@ end
 Fetch the orientation of one axis.
 """
 function getaxis(hSRS::OGRSpatialReferenceH,pszTargetKey,iAxis::Integer,peOrientation)
-    ccall((:OSRGetAxis,libgdal),Cstring,(OGRSpatialReferenceH,Cstring,Cint,Ptr{OGRAxisOrientation}),hSRS,pszTargetKey,iAxis,peOrientation)
+    bytestring(ccall((:OSRGetAxis,libgdal),Cstring,(OGRSpatialReferenceH,Cstring,Cint,Ptr{OGRAxisOrientation}),hSRS,pszTargetKey,iAxis,peOrientation))
 end
 
 
@@ -1824,7 +1824,7 @@ end
     OCTProj4Normalize(const char * pszProj4Src) -> char *
 """
 function octproj4normalize(pszProj4Src)
-    ccall((:OCTProj4Normalize,libgdal),Cstring,(Cstring,),pszProj4Src)
+    bytestring(ccall((:OCTProj4Normalize,libgdal),Cstring,(Cstring,),pszProj4Src))
 end
 
 
@@ -1845,7 +1845,7 @@ Fetch list of possible projection methods.
 Returns NULL terminated list of projection methods. This should be freed with CSLDestroy() when no longer needed.
 """
 function optgetprojectionmethods()
-    ccall((:OPTGetProjectionMethods,libgdal),Ptr{Cstring},())
+    bytestring(unsafe_load(ccall((:OPTGetProjectionMethods,libgdal),Ptr{Cstring},())))
 end
 
 
@@ -1863,7 +1863,7 @@ Fetch the parameters for a given projection method.
 returns a NULL terminated list of internal parameter names that should be freed by the caller when no longer needed. Returns NULL if projection method is unknown.
 """
 function optgetparameterlist(pszProjectionMethod,ppszUserName)
-    ccall((:OPTGetParameterList,libgdal),Ptr{Cstring},(Cstring,Ptr{Cstring}),pszProjectionMethod,ppszUserName)
+    bytestring(unsafe_load(ccall((:OPTGetParameterList,libgdal),Ptr{Cstring},(Cstring,Ptr{Cstring}),pszProjectionMethod,ppszUserName)))
 end
 
 

@@ -466,7 +466,7 @@ Fetch WKT name for geometry type.
 name used for this geometry type in well known text format.
 """
 function getgeometryname(arg1::OGRGeometryH)
-    ccall((:OGR_G_GetGeometryName,libgdal),Cstring,(OGRGeometryH,),arg1)
+    bytestring(ccall((:OGR_G_GetGeometryName,libgdal),Cstring,(OGRGeometryH,),arg1))
 end
 
 
@@ -541,7 +541,7 @@ Convert a geometry into GML format.
 A GML fragment or NULL in case of error.
 """
 function exporttogml(arg1::OGRGeometryH)
-    ccall((:OGR_G_ExportToGML,libgdal),Cstring,(OGRGeometryH,),arg1)
+    bytestring(ccall((:OGR_G_ExportToGML,libgdal),Cstring,(OGRGeometryH,),arg1))
 end
 
 
@@ -559,7 +559,7 @@ Convert a geometry into GML format.
 A GML fragment or NULL in case of error.
 """
 function exporttogmlex(arg1::OGRGeometryH,papszOptions)
-    ccall((:OGR_G_ExportToGMLEx,libgdal),Cstring,(OGRGeometryH,Ptr{Cstring}),arg1,papszOptions)
+    bytestring(ccall((:OGR_G_ExportToGMLEx,libgdal),Cstring,(OGRGeometryH,Ptr{Cstring}),arg1,papszOptions))
 end
 
 
@@ -601,7 +601,7 @@ Convert a geometry into KML format.
 A KML fragment or NULL in case of error.
 """
 function exporttokml(arg1::OGRGeometryH,pszAltitudeMode)
-    ccall((:OGR_G_ExportToKML,libgdal),Cstring,(OGRGeometryH,Cstring),arg1,pszAltitudeMode)
+    bytestring(ccall((:OGR_G_ExportToKML,libgdal),Cstring,(OGRGeometryH,Cstring),arg1,pszAltitudeMode))
 end
 
 
@@ -617,7 +617,7 @@ Convert a geometry into GeoJSON format.
 A GeoJSON fragment or NULL in case of error.
 """
 function exporttojson(arg1::OGRGeometryH)
-    ccall((:OGR_G_ExportToJson,libgdal),Cstring,(OGRGeometryH,),arg1)
+    bytestring(ccall((:OGR_G_ExportToJson,libgdal),Cstring,(OGRGeometryH,),arg1))
 end
 
 
@@ -635,7 +635,7 @@ Convert a geometry into GeoJSON format.
 A GeoJSON fragment or NULL in case of error.
 """
 function exporttojsonex(arg1::OGRGeometryH,papszOptions)
-    ccall((:OGR_G_ExportToJsonEx,libgdal),Cstring,(OGRGeometryH,Ptr{Cstring}),arg1,papszOptions)
+    bytestring(ccall((:OGR_G_ExportToJsonEx,libgdal),Cstring,(OGRGeometryH,Ptr{Cstring}),arg1,papszOptions))
 end
 
 
@@ -1818,7 +1818,7 @@ Fetch name of this field.
 the name of the field definition.
 """
 function getnameref(arg1::OGRFieldDefnH)
-    ccall((:OGR_Fld_GetNameRef,libgdal),Cstring,(OGRFieldDefnH,),arg1)
+    bytestring(ccall((:OGR_Fld_GetNameRef,libgdal),Cstring,(OGRFieldDefnH,),arg1))
 end
 
 
@@ -2074,7 +2074,7 @@ Get default field value.
 default field value or NULL.
 """
 function getdefault(hDefn::OGRFieldDefnH)
-    ccall((:OGR_Fld_GetDefault,libgdal),Cstring,(OGRFieldDefnH,),hDefn)
+    bytestring(ccall((:OGR_Fld_GetDefault,libgdal),Cstring,(OGRFieldDefnH,),hDefn))
 end
 
 
@@ -2121,7 +2121,7 @@ Fetch human readable name for a field type.
 the name.
 """
 function getfieldtypename(arg1::OGRFieldType)
-    ccall((:OGR_GetFieldTypeName,libgdal),Cstring,(OGRFieldType,),arg1)
+    bytestring(ccall((:OGR_GetFieldTypeName,libgdal),Cstring,(OGRFieldType,),arg1))
 end
 
 
@@ -2137,7 +2137,7 @@ Fetch human readable name for a field subtype.
 the name.
 """
 function getfieldsubtypename(arg1::OGRFieldSubType)
-    ccall((:OGR_GetFieldSubTypeName,libgdal),Cstring,(OGRFieldSubType,),arg1)
+    bytestring(ccall((:OGR_GetFieldSubTypeName,libgdal),Cstring,(OGRFieldSubType,),arg1))
 end
 
 
@@ -2217,7 +2217,7 @@ Fetch name of this field.
 the name of the geometry field definition.
 """
 function getnameref(arg1::OGRGeomFieldDefnH)
-    ccall((:OGR_GFld_GetNameRef,libgdal),Cstring,(OGRGeomFieldDefnH,),arg1)
+    bytestring(ccall((:OGR_GFld_GetNameRef,libgdal),Cstring,(OGRGeomFieldDefnH,),arg1))
 end
 
 
@@ -2399,7 +2399,7 @@ Get name of the OGRFeatureDefn passed as an argument.
 the name. This name is internal and should not be modified, or freed.
 """
 function getname(arg1::OGRFeatureDefnH)
-    ccall((:OGR_FD_GetName,libgdal),Cstring,(OGRFeatureDefnH,),arg1)
+    bytestring(ccall((:OGR_FD_GetName,libgdal),Cstring,(OGRFeatureDefnH,),arg1))
 end
 
 
@@ -3065,7 +3065,7 @@ Fetch field value as a string.
 the field value. This string is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function getfieldasstring(arg1::OGRFeatureH,arg2::Integer)
-    ccall((:OGR_F_GetFieldAsString,libgdal),Cstring,(OGRFeatureH,Cint),arg1,arg2)
+    bytestring(ccall((:OGR_F_GetFieldAsString,libgdal),Cstring,(OGRFeatureH,Cint),arg1,arg2))
 end
 
 
@@ -3143,7 +3143,7 @@ Fetch field value as a list of strings.
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function getfieldasstringlist(arg1::OGRFeatureH,arg2::Integer)
-    ccall((:OGR_F_GetFieldAsStringList,libgdal),Ptr{Cstring},(OGRFeatureH,Cint),arg1,arg2)
+    bytestring(unsafe_load(ccall((:OGR_F_GetFieldAsStringList,libgdal),Ptr{Cstring},(OGRFeatureH,Cint),arg1,arg2)))
 end
 
 
@@ -3680,7 +3680,7 @@ Fetch style string for this feature.
 a reference to a representation in string format, or NULL if there isn't one.
 """
 function getstylestring(arg1::OGRFeatureH)
-    ccall((:OGR_F_GetStyleString,libgdal),Cstring,(OGRFeatureH,),arg1)
+    bytestring(ccall((:OGR_F_GetStyleString,libgdal),Cstring,(OGRFeatureH,),arg1))
 end
 
 
@@ -3752,7 +3752,7 @@ Returns the native data for the feature.
 a string with the native data, or NULL if there is none.
 """
 function getnativedata(arg1::OGRFeatureH)
-    ccall((:OGR_F_GetNativeData,libgdal),Cstring,(OGRFeatureH,),arg1)
+    bytestring(ccall((:OGR_F_GetNativeData,libgdal),Cstring,(OGRFeatureH,),arg1))
 end
 
 
@@ -3783,7 +3783,7 @@ Returns the native media type for the feature.
 a string with the native media type, or NULL if there is none.
 """
 function getnativemediatype(arg1::OGRFeatureH)
-    ccall((:OGR_F_GetNativeMediaType,libgdal),Cstring,(OGRFeatureH,),arg1)
+    bytestring(ccall((:OGR_F_GetNativeMediaType,libgdal),Cstring,(OGRFeatureH,),arg1))
 end
 
 
@@ -3851,7 +3851,7 @@ Return the layer name.
 the layer name (must not been freed)
 """
 function getname(arg1::OGRLayerH)
-    ccall((:OGR_L_GetName,libgdal),Cstring,(OGRLayerH,),arg1)
+    bytestring(ccall((:OGR_L_GetName,libgdal),Cstring,(OGRLayerH,),arg1))
 end
 
 
@@ -4451,7 +4451,7 @@ This method returns the name of the underlying database column being used as the
 fid column name.
 """
 function getfidcolumn(arg1::OGRLayerH)
-    ccall((:OGR_L_GetFIDColumn,libgdal),Cstring,(OGRLayerH,),arg1)
+    bytestring(ccall((:OGR_L_GetFIDColumn,libgdal),Cstring,(OGRLayerH,),arg1))
 end
 
 
@@ -4467,7 +4467,7 @@ This method returns the name of the underlying database column being used as the
 geometry column name.
 """
 function getgeometrycolumn(arg1::OGRLayerH)
-    ccall((:OGR_L_GetGeometryColumn,libgdal),Cstring,(OGRLayerH,),arg1)
+    bytestring(ccall((:OGR_L_GetGeometryColumn,libgdal),Cstring,(OGRLayerH,),arg1))
 end
 
 
@@ -4721,7 +4721,7 @@ Returns the name of the data source.
 pointer to an internal name string which should not be modified or freed by the caller.
 """
 function getname(arg1::OGRDataSourceH)
-    ccall((:OGR_DS_GetName,libgdal),Cstring,(OGRDataSourceH,),arg1)
+    bytestring(ccall((:OGR_DS_GetName,libgdal),Cstring,(OGRDataSourceH,),arg1))
 end
 
 
@@ -4990,7 +4990,7 @@ Fetch name of driver (file format).
 driver name. This is an internal string and should not be modified or freed.
 """
 function getname(arg1::OGRSFDriverH)
-    ccall((:OGR_Dr_GetName,libgdal),Cstring,(OGRSFDriverH,),arg1)
+    bytestring(ccall((:OGR_Dr_GetName,libgdal),Cstring,(OGRSFDriverH,),arg1))
 end
 
 
@@ -5278,7 +5278,7 @@ Initialize style manager from the style string of a feature.
 a reference to the style string read from the feature, or NULL in case of error.
 """
 function initfromfeature(hSM::OGRStyleMgrH,hFeat::OGRFeatureH)
-    ccall((:OGR_SM_InitFromFeature,libgdal),Cstring,(OGRStyleMgrH,OGRFeatureH),hSM,hFeat)
+    bytestring(ccall((:OGR_SM_InitFromFeature,libgdal),Cstring,(OGRStyleMgrH,OGRFeatureH),hSM,hFeat))
 end
 
 
@@ -5470,7 +5470,7 @@ Get Style Tool parameter value as string.
 the parameter value as string and sets bValueIsNull.
 """
 function getparamstr(hST::OGRStyleToolH,eParam::Integer,bValueIsNull)
-    ccall((:OGR_ST_GetParamStr,libgdal),Cstring,(OGRStyleToolH,Cint,Ptr{Cint}),hST,eParam,bValueIsNull)
+    bytestring(ccall((:OGR_ST_GetParamStr,libgdal),Cstring,(OGRStyleToolH,Cint,Ptr{Cint}),hST,eParam,bValueIsNull))
 end
 
 
@@ -5577,7 +5577,7 @@ Get the style string for this Style Tool.
 the style string for this style tool or "" if the hST is invalid.
 """
 function getstylestring(hST::OGRStyleToolH)
-    ccall((:OGR_ST_GetStyleString,libgdal),Cstring,(OGRStyleToolH,),hST)
+    bytestring(ccall((:OGR_ST_GetStyleString,libgdal),Cstring,(OGRStyleToolH,),hST))
 end
 
 
@@ -5703,7 +5703,7 @@ Get a style string by name.
 the style string matching the name or NULL if not found or error.
 """
 function find(hStyleTable::OGRStyleTableH,pszName)
-    ccall((:OGR_STBL_Find,libgdal),Cstring,(OGRStyleTableH,Cstring),hStyleTable,pszName)
+    bytestring(ccall((:OGR_STBL_Find,libgdal),Cstring,(OGRStyleTableH,Cstring),hStyleTable,pszName))
 end
 
 
@@ -5732,7 +5732,7 @@ Get the next style string from the table.
 the next style string or NULL on error.
 """
 function getnextstyle(hStyleTable::OGRStyleTableH)
-    ccall((:OGR_STBL_GetNextStyle,libgdal),Cstring,(OGRStyleTableH,),hStyleTable)
+    bytestring(ccall((:OGR_STBL_GetNextStyle,libgdal),Cstring,(OGRStyleTableH,),hStyleTable))
 end
 
 
@@ -5748,5 +5748,5 @@ Get the style name of the last style string fetched with OGR_STBL_GetNextStyle.
 the Name of the last style string or NULL on error.
 """
 function getlaststylename(hStyleTable::OGRStyleTableH)
-    ccall((:OGR_STBL_GetLastStyleName,libgdal),Cstring,(OGRStyleTableH,),hStyleTable)
+    bytestring(ccall((:OGR_STBL_GetLastStyleName,libgdal),Cstring,(OGRStyleTableH,),hStyleTable))
 end

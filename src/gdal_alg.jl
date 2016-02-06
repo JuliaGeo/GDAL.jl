@@ -562,7 +562,7 @@ end
     RPCInfoToMD(GDALRPCInfo * psRPCInfo) -> char **
 """
 function rpcinfotomd(psRPCInfo)
-    ccall((:RPCInfoToMD,libgdal),Ptr{Cstring},(Ptr{GDALRPCInfo},),psRPCInfo)
+    bytestring(unsafe_load(ccall((:RPCInfoToMD,libgdal),Ptr{Cstring},(Ptr{GDALRPCInfo},),psRPCInfo)))
 end
 
 

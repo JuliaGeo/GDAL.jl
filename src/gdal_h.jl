@@ -41,7 +41,7 @@ Get name of data type.
 string corresponding to existing data type or NULL pointer if invalid type given.
 """
 function getdatatypename(arg1::GDALDataType)
-    ccall((:GDALGetDataTypeName,libgdal),Cstring,(GDALDataType,),arg1)
+    bytestring(ccall((:GDALGetDataTypeName,libgdal),Cstring,(GDALDataType,),arg1))
 end
 
 
@@ -113,7 +113,7 @@ Get name of AsyncStatus data type.
 string corresponding to type.
 """
 function getasyncstatustypename(arg1::GDALAsyncStatusType)
-    ccall((:GDALGetAsyncStatusTypeName,libgdal),Cstring,(GDALAsyncStatusType,),arg1)
+    bytestring(ccall((:GDALGetAsyncStatusTypeName,libgdal),Cstring,(GDALAsyncStatusType,),arg1))
 end
 
 
@@ -145,7 +145,7 @@ Get name of color interpretation.
 string corresponding to color interpretation or NULL pointer if invalid enumerator given.
 """
 function getcolorinterpretationname(arg1::GDALColorInterp)
-    ccall((:GDALGetColorInterpretationName,libgdal),Cstring,(GDALColorInterp,),arg1)
+    bytestring(ccall((:GDALGetColorInterpretationName,libgdal),Cstring,(GDALColorInterp,),arg1))
 end
 
 
@@ -177,7 +177,7 @@ Get name of palette interpretation.
 string corresponding to palette interpretation.
 """
 function getpaletteinterpretationname(arg1::GDALPaletteInterp)
-    ccall((:GDALGetPaletteInterpretationName,libgdal),Cstring,(GDALPaletteInterp,),arg1)
+    bytestring(ccall((:GDALGetPaletteInterpretationName,libgdal),Cstring,(GDALPaletteInterp,),arg1))
 end
 
 
@@ -468,7 +468,7 @@ Return the short name of a driver.
 the short name of the driver. The returned string should not be freed and is owned by the driver.
 """
 function getdrivershortname(arg1::GDALDriverH)
-    ccall((:GDALGetDriverShortName,libgdal),Cstring,(GDALDriverH,),arg1)
+    bytestring(ccall((:GDALGetDriverShortName,libgdal),Cstring,(GDALDriverH,),arg1))
 end
 
 
@@ -484,7 +484,7 @@ Return the long name of a driver.
 the long name of the driver or empty string. The returned string should not be freed and is owned by the driver.
 """
 function getdriverlongname(arg1::GDALDriverH)
-    ccall((:GDALGetDriverLongName,libgdal),Cstring,(GDALDriverH,),arg1)
+    bytestring(ccall((:GDALGetDriverLongName,libgdal),Cstring,(GDALDriverH,),arg1))
 end
 
 
@@ -500,7 +500,7 @@ Return the URL to the help that describes the driver.
 the URL to the help that describes the driver or NULL. The returned string should not be freed and is owned by the driver.
 """
 function getdriverhelptopic(arg1::GDALDriverH)
-    ccall((:GDALGetDriverHelpTopic,libgdal),Cstring,(GDALDriverH,),arg1)
+    bytestring(ccall((:GDALGetDriverHelpTopic,libgdal),Cstring,(GDALDriverH,),arg1))
 end
 
 
@@ -516,7 +516,7 @@ Return the list of creation options of the driver.
 an XML string that describes the list of creation options or empty string. The returned string should not be freed and is owned by the driver.
 """
 function getdrivercreationoptionlist(arg1::GDALDriverH)
-    ccall((:GDALGetDriverCreationOptionList,libgdal),Cstring,(GDALDriverH,),arg1)
+    bytestring(ccall((:GDALGetDriverCreationOptionList,libgdal),Cstring,(GDALDriverH,),arg1))
 end
 
 
@@ -631,7 +631,7 @@ end
 Fetch list of metadata domains.
 """
 function getmetadatadomainlist(hObject::GDALMajorObjectH)
-    ccall((:GDALGetMetadataDomainList,libgdal),Ptr{Cstring},(GDALMajorObjectH,),hObject)
+    bytestring(unsafe_load(ccall((:GDALGetMetadataDomainList,libgdal),Ptr{Cstring},(GDALMajorObjectH,),hObject)))
 end
 
 
@@ -642,7 +642,7 @@ end
 Fetch metadata.
 """
 function getmetadata(arg1::GDALMajorObjectH,arg2)
-    ccall((:GDALGetMetadata,libgdal),Ptr{Cstring},(GDALMajorObjectH,Cstring),arg1,arg2)
+    bytestring(unsafe_load(ccall((:GDALGetMetadata,libgdal),Ptr{Cstring},(GDALMajorObjectH,Cstring),arg1,arg2)))
 end
 
 
@@ -666,7 +666,7 @@ end
 Fetch single metadata item.
 """
 function getmetadataitem(arg1::GDALMajorObjectH,arg2,arg3)
-    ccall((:GDALGetMetadataItem,libgdal),Cstring,(GDALMajorObjectH,Cstring,Cstring),arg1,arg2,arg3)
+    bytestring(ccall((:GDALGetMetadataItem,libgdal),Cstring,(GDALMajorObjectH,Cstring,Cstring),arg1,arg2,arg3))
 end
 
 
@@ -689,7 +689,7 @@ end
 Fetch object description.
 """
 function getdescription(arg1::GDALMajorObjectH)
-    ccall((:GDALGetDescription,libgdal),Cstring,(GDALMajorObjectH,),arg1)
+    bytestring(ccall((:GDALGetDescription,libgdal),Cstring,(GDALMajorObjectH,),arg1))
 end
 
 
@@ -720,7 +720,7 @@ end
 Fetch files forming dataset.
 """
 function getfilelist(arg1::GDALDatasetH)
-    ccall((:GDALGetFileList,libgdal),Ptr{Cstring},(GDALDatasetH,),arg1)
+    bytestring(unsafe_load(ccall((:GDALGetFileList,libgdal),Ptr{Cstring},(GDALDatasetH,),arg1)))
 end
 
 
@@ -896,7 +896,7 @@ end
 Fetch the projection definition string for this dataset.
 """
 function getprojectionref(arg1::GDALDatasetH)
-    ccall((:GDALGetProjectionRef,libgdal),Cstring,(GDALDatasetH,),arg1)
+    bytestring(ccall((:GDALGetProjectionRef,libgdal),Cstring,(GDALDatasetH,),arg1))
 end
 
 
@@ -949,7 +949,7 @@ end
 Get output projection for GCPs.
 """
 function getgcpprojection(arg1::GDALDatasetH)
-    ccall((:GDALGetGCPProjection,libgdal),Cstring,(GDALDatasetH,),arg1)
+    bytestring(ccall((:GDALGetGCPProjection,libgdal),Cstring,(GDALDatasetH,),arg1))
 end
 
 
@@ -1671,7 +1671,7 @@ end
 Fetch the list of category names for this raster.
 """
 function getrastercategorynames(arg1::GDALRasterBandH)
-    ccall((:GDALGetRasterCategoryNames,libgdal),Ptr{Cstring},(GDALRasterBandH,),arg1)
+    bytestring(unsafe_load(ccall((:GDALGetRasterCategoryNames,libgdal),Ptr{Cstring},(GDALRasterBandH,),arg1)))
 end
 
 
@@ -1761,7 +1761,7 @@ end
 Return raster unit type.
 """
 function getrasterunittype(arg1::GDALRasterBandH)
-    ccall((:GDALGetRasterUnitType,libgdal),Cstring,(GDALRasterBandH,),arg1)
+    bytestring(ccall((:GDALGetRasterUnitType,libgdal),Cstring,(GDALRasterBandH,),arg1))
 end
 
 
@@ -2320,7 +2320,7 @@ end
                  int) -> const char *
 """
 function dectodms(arg1::Real,arg2,arg3::Integer)
-    ccall((:GDALDecToDMS,libgdal),Cstring,(Cdouble,Cstring,Cint),arg1,arg2,arg3)
+    bytestring(ccall((:GDALDecToDMS,libgdal),Cstring,(Cdouble,Cstring,Cint),arg1,arg2,arg3))
 end
 
 
@@ -2489,7 +2489,7 @@ end
 Fetch name of indicated column.
 """
 function ratgetnameofcol(arg1::GDALRasterAttributeTableH,arg2::Integer)
-    ccall((:GDALRATGetNameOfCol,libgdal),Cstring,(GDALRasterAttributeTableH,Cint),arg1,arg2)
+    bytestring(ccall((:GDALRATGetNameOfCol,libgdal),Cstring,(GDALRasterAttributeTableH,Cint),arg1,arg2))
 end
 
 
@@ -2544,7 +2544,7 @@ end
 Fetch field value as a string.
 """
 function ratgetvalueasstring(arg1::GDALRasterAttributeTableH,arg2::Integer,arg3::Integer)
-    ccall((:GDALRATGetValueAsString,libgdal),Cstring,(GDALRasterAttributeTableH,Cint,Cint),arg1,arg2,arg3)
+    bytestring(ccall((:GDALRATGetValueAsString,libgdal),Cstring,(GDALRasterAttributeTableH,Cint,Cint),arg1,arg2,arg3))
 end
 
 
