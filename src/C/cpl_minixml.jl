@@ -1,4 +1,4 @@
-# Julia wrapper for header: /usr/local/include/cpl_minixml.h
+# Julia wrapper for header: /home/martijn/bin/gdal/include/cpl_minixml.h
 # Automatically generated using Clang.jl wrap_c, version 0.0.0
 
 
@@ -200,7 +200,7 @@ end
 Create an attribute and text value.
 
 ### Parameters
-* **psParent**: the parent node to which the resulting node should be attached. May be NULL to keep as freestanding.
+* **psParent**: the parent node to which the resulting node should be attached. Must not be NULL.
 * **pszName**: the attribute name to create.
 * **pszValue**: the text to attach to the attribute. Must not be NULL.
 """
@@ -234,7 +234,7 @@ Set element value by path.
 
 ### Parameters
 * **psRoot**: the subdocument to be updated.
-* **pszPath**: the dot seperated path to the target element/attribute.
+* **pszPath**: the dot separated path to the target element/attribute.
 * **pszValue**: the text value to assign.
 
 ### Returns

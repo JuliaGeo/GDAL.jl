@@ -80,6 +80,28 @@ end
 
 
 """
+    GDALAdjustValueToDataType(GDALDataType eDT,
+                              double dfValue,
+                              int * pbClamped,
+                              int * pbRounded) -> double
+
+Adjust a value to the output data type.
+
+### Parameters
+* **eDT**: target data type.
+* **dfValue**: value to adjust.
+* **pbClamped**: pointer to a integer(boolean) to indicate if clamping has been made, or NULL
+* **pbRounded**: pointer to a integer(boolean) to indicate if rounding has been made, or NULL
+
+### Returns
+adjusted value
+"""
+function adjustvaluetodatatype(eDT::GDALDataType,dfValue::Real,pbClamped::Vector{Cint},pbRounded::Vector{Cint})
+    ccall((:GDALAdjustValueToDataType,libgdal),Cdouble,(GDALDataType,Cdouble,Ptr{Cint},Ptr{Cint}),eDT,dfValue,pbClamped,pbRounded)
+end
+
+
+"""
     GDALGetAsyncStatusTypeName(GDALAsyncStatusType) -> const char *
 
 Get name of AsyncStatus data type.
@@ -130,7 +152,7 @@ end
 """
     GDALGetColorInterpretationByName(const char * pszName) -> GDALColorInterp
 
-Get color interpreation by symbolic name.
+Get color interpretation by symbolic name.
 
 ### Parameters
 * **pszName**: string containing the symbolic name of the color interpretation.
@@ -171,12 +193,12 @@ end
 
 """
     GDALCreate(GDALDriverH hDriver,
-               const char *,
-               int,
-               int,
-               int,
-               GDALDataType,
-               char **) -> GDALDatasetH
+               const char * pszFilename,
+               int nXSize,
+               int nYSize,
+               int nBands,
+               GDALDataType eBandType,
+               char ** papszOptions) -> GDALDatasetH
 
 Create a new dataset with this driver.
 """
@@ -186,13 +208,13 @@ end
 
 
 """
-    GDALCreateCopy(GDALDriverH,
-                   const char *,
-                   GDALDatasetH,
-                   int,
-                   char **,
-                   GDALProgressFunc,
-                   void *) -> GDALDatasetH
+    GDALCreateCopy(GDALDriverH hDriver,
+                   const char * pszFilename,
+                   GDALDatasetH hSrcDS,
+                   int bStrict,
+                   char ** papszOptions,
+                   GDALProgressFunc pfnProgress,
+                   void * pProgressData) -> GDALDatasetH
 
 Create a copy of a dataset.
 """
@@ -238,8 +260,8 @@ end
 
 
 """
-    GDALOpenShared(const char *,
-                   GDALAccess) -> GDALDatasetH
+    GDALOpenShared(const char * pszFilename,
+                   GDALAccess eAccess) -> GDALDatasetH
 
 Open a raster file as a GDALDataset.
 
@@ -267,16 +289,19 @@ Open a raster or vector file as a GDALDataset.
 ### Parameters
 * **pszFilename**: the name of the file to access. In the case of exotic drivers this may not refer to a physical file, but instead contain information for the driver on how to access a dataset. It should be in UTF-8 encoding.
 * **nOpenFlags**: a combination of GDAL_OF_ flags that may be combined through logical or operator. 
-
-Driver kind: GDAL_OF_RASTER for raster drivers, GDAL_OF_VECTOR for vector drivers. If none of the value is specified, both kinds are implied. 
-
-Access mode: GDAL_OF_READONLY (exclusive)or GDAL_OF_UPDATE. 
-
-Shared mode: GDAL_OF_SHARED. If set, it allows the sharing of GDALDataset handles for a dataset with other callers that have set GDAL_OF_SHARED. In particular, GDALOpenEx() will first consult its list of currently open and shared GDALDataset's, and if the GetDescription() name for one exactly matches the pszFilename passed to GDALOpenEx() it will be referenced and returned, if GDALOpenEx() is called from the same thread. 
-
-Verbose error: GDAL_OF_VERBOSE_ERROR. If set, a failed attempt to open the file will lead to an error message to be reported.
+											
+												Driver kind: GDAL_OF_RASTER for raster drivers, GDAL_OF_VECTOR for vector drivers. If none of the value is specified, both kinds are implied. 
+											
+											
+												Access mode: GDAL_OF_READONLY (exclusive)or GDAL_OF_UPDATE. 
+											
+											
+												Shared mode: GDAL_OF_SHARED. If set, it allows the sharing of GDALDataset handles for a dataset with other callers that have set GDAL_OF_SHARED. In particular, GDALOpenEx() will first consult its list of currently open and shared GDALDataset's, and if the GetDescription() name for one exactly matches the pszFilename passed to GDALOpenEx() it will be referenced and returned, if GDALOpenEx() is called from the same thread. 
+											
+											
+												Verbose error: GDAL_OF_VERBOSE_ERROR. If set, a failed attempt to open the file will lead to an error message to be reported.
 * **papszAllowedDrivers**: NULL to consider all candidate drivers, or a NULL terminated list of strings with the driver short names that must be considered.
-* **papszOpenOptions**: NULL, or a NULL terminated list of strings with open options passed to candidate drivers. An option exists for all drivers, OVERVIEW_LEVEL=level, to select a particular overview level of a dataset. The level index starts at 0. The level number can be suffixed by "only" to specify that only this overview level must be visible, and not sub-levels. Open options are validated by default, and a warning is emitted in case the option is not recognized. In some scenarios, it might be not desirable (e.g. when not knowing which driver will open the file), so the special open option VALIDATE_OPEN_OPTIONS can be set to NO to avoid such warnings.
+* **papszOpenOptions**: NULL, or a NULL terminated list of strings with open options passed to candidate drivers. An option exists for all drivers, OVERVIEW_LEVEL=level, to select a particular overview level of a dataset. The level index starts at 0. The level number can be suffixed by "only" to specify that only this overview level must be visible, and not sub-levels. Open options are validated by default, and a warning is emitted in case the option is not recognized. In some scenarios, it might be not desirable (e.g. when not knowing which driver will open the file), so the special open option VALIDATE_OPEN_OPTIONS can be set to NO to avoid such warnings. Alternatively, since GDAL 2.1, an option name can be preceded by the @ character to indicate that it may not cause a warning if the driver doesn't declare this option.
 * **papszSiblingFiles**: NULL, or a NULL terminated list of strings that are filenames that are auxiliary to the main filename. If NULL is passed, a probing of the file system will be done.
 
 ### Returns
@@ -288,7 +313,7 @@ end
 
 
 """
-    GDALDumpOpenDatasets(FILE *) -> int
+    GDALDumpOpenDatasets(FILE * fp) -> int
 
 List open datasets.
 """
@@ -298,7 +323,7 @@ end
 
 
 """
-    GDALGetDriverByName(const char *) -> GDALDriverH
+    GDALGetDriverByName(const char * pszName) -> GDALDriverH
 
 Fetch a driver based on the short name.
 """
@@ -308,7 +333,7 @@ end
 
 
 """
-    GDALGetDriverCount(void) -> int
+    GDALGetDriverCount() -> int
 
 Fetch the number of registered drivers.
 """
@@ -318,7 +343,7 @@ end
 
 
 """
-    GDALGetDriver(int) -> GDALDriverH
+    GDALGetDriver(int iDriver) -> GDALDriverH
 
 Fetch driver by index.
 """
@@ -328,7 +353,7 @@ end
 
 
 """
-    GDALDestroyDriver(GDALDriverH) -> void
+    GDALDestroyDriver(GDALDriverH hDriver) -> void
 
 Destroy a GDALDriver.
 
@@ -341,7 +366,7 @@ end
 
 
 """
-    GDALRegisterDriver(GDALDriverH) -> int
+    GDALRegisterDriver(GDALDriverH hDriver) -> int
 
 Register a driver for use.
 """
@@ -351,7 +376,7 @@ end
 
 
 """
-    GDALDeregisterDriver(GDALDriverH) -> void
+    GDALDeregisterDriver(GDALDriverH hDriver) -> void
 
 Deregister the passed driver.
 """
@@ -379,8 +404,8 @@ end
 
 
 """
-    GDALDeleteDataset(GDALDriverH,
-                      const char *) -> CPLErr
+    GDALDeleteDataset(GDALDriverH hDriver,
+                      const char * pszFilename) -> CPLErr
 
 Delete named dataset.
 """
@@ -390,7 +415,7 @@ end
 
 
 """
-    GDALRenameDataset(GDALDriverH,
+    GDALRenameDataset(GDALDriverH hDriver,
                       const char * pszNewName,
                       const char * pszOldName) -> CPLErr
 
@@ -402,7 +427,7 @@ end
 
 
 """
-    GDALCopyDatasetFiles(GDALDriverH,
+    GDALCopyDatasetFiles(GDALDriverH hDriver,
                          const char * pszNewName,
                          const char * pszOldName) -> CPLErr
 
@@ -414,7 +439,7 @@ end
 
 
 """
-    GDALValidateCreationOptions(GDALDriverH,
+    GDALValidateCreationOptions(GDALDriverH hDriver,
                                 char ** papszCreationOptions) -> int
 
 Validate the list of creation options that are handled by a driver.
@@ -432,7 +457,7 @@ end
 
 
 """
-    GDALGetDriverShortName(GDALDriverH) -> const char *
+    GDALGetDriverShortName(GDALDriverH hDriver) -> const char *
 
 Return the short name of a driver.
 
@@ -448,7 +473,7 @@ end
 
 
 """
-    GDALGetDriverLongName(GDALDriverH) -> const char *
+    GDALGetDriverLongName(GDALDriverH hDriver) -> const char *
 
 Return the long name of a driver.
 
@@ -464,7 +489,7 @@ end
 
 
 """
-    GDALGetDriverHelpTopic(GDALDriverH) -> const char *
+    GDALGetDriverHelpTopic(GDALDriverH hDriver) -> const char *
 
 Return the URL to the help that describes the driver.
 
@@ -480,7 +505,7 @@ end
 
 
 """
-    GDALGetDriverCreationOptionList(GDALDriverH) -> const char *
+    GDALGetDriverCreationOptionList(GDALDriverH hDriver) -> const char *
 
 Return the list of creation options of the driver.
 
@@ -545,8 +570,8 @@ end
 
 
 """
-    GDALInvGeoTransform(double * padfGeoTransformIn,
-                        double * padfInvGeoTransformOut) -> int
+    GDALInvGeoTransform(double * gt_in,
+                        double * gt_out) -> int
 
 Invert Geotransform.
 
@@ -563,11 +588,11 @@ end
 
 
 """
-    GDALApplyGeoTransform(double *,
-                          double,
-                          double,
-                          double *,
-                          double *) -> void
+    GDALApplyGeoTransform(double * padfGeoTransform,
+                          double dfPixel,
+                          double dfLine,
+                          double * pdfGeoX,
+                          double * pdfGeoY) -> void
 
 Apply GeoTransform to x/y coordinate.
 
@@ -611,8 +636,8 @@ end
 
 
 """
-    GDALGetMetadata(GDALMajorObjectH,
-                    const char *) -> char **
+    GDALGetMetadata(GDALMajorObjectH hObject,
+                    const char * pszDomain) -> char **
 
 Fetch metadata.
 """
@@ -622,9 +647,9 @@ end
 
 
 """
-    GDALSetMetadata(GDALMajorObjectH,
-                    char **,
-                    const char *) -> CPLErr
+    GDALSetMetadata(GDALMajorObjectH hObject,
+                    char ** papszMD,
+                    const char * pszDomain) -> CPLErr
 
 Set metadata.
 """
@@ -634,9 +659,9 @@ end
 
 
 """
-    GDALGetMetadataItem(GDALMajorObjectH,
-                        const char *,
-                        const char *) -> const char *
+    GDALGetMetadataItem(GDALMajorObjectH hObject,
+                        const char * pszName,
+                        const char * pszDomain) -> const char *
 
 Fetch single metadata item.
 """
@@ -646,10 +671,10 @@ end
 
 
 """
-    GDALSetMetadataItem(GDALMajorObjectH,
-                        const char *,
-                        const char *,
-                        const char *) -> CPLErr
+    GDALSetMetadataItem(GDALMajorObjectH hObject,
+                        const char * pszName,
+                        const char * pszValue,
+                        const char * pszDomain) -> CPLErr
 
 Set single metadata item.
 """
@@ -659,7 +684,7 @@ end
 
 
 """
-    GDALGetDescription(GDALMajorObjectH) -> const char *
+    GDALGetDescription(GDALMajorObjectH hObject) -> const char *
 
 Fetch object description.
 """
@@ -669,8 +694,8 @@ end
 
 
 """
-    GDALSetDescription(GDALMajorObjectH,
-                       const char *) -> void
+    GDALSetDescription(GDALMajorObjectH hObject,
+                       const char * pszNewDesc) -> void
 
 Set object description.
 """
@@ -680,7 +705,7 @@ end
 
 
 """
-    GDALGetDatasetDriver(GDALDatasetH) -> GDALDriverH
+    GDALGetDatasetDriver(GDALDatasetH hDataset) -> GDALDriverH
 
 Fetch the driver to which this dataset relates.
 """
@@ -690,7 +715,7 @@ end
 
 
 """
-    GDALGetFileList(GDALDatasetH) -> char **
+    GDALGetFileList(GDALDatasetH hDS) -> char **
 
 Fetch files forming dataset.
 """
@@ -713,7 +738,7 @@ end
 
 
 """
-    GDALGetRasterXSize(GDALDatasetH) -> int
+    GDALGetRasterXSize(GDALDatasetH hDataset) -> int
 
 Fetch raster width in pixels.
 """
@@ -723,7 +748,7 @@ end
 
 
 """
-    GDALGetRasterYSize(GDALDatasetH) -> int
+    GDALGetRasterYSize(GDALDatasetH hDataset) -> int
 
 Fetch raster height in pixels.
 """
@@ -733,7 +758,7 @@ end
 
 
 """
-    GDALGetRasterCount(GDALDatasetH) -> int
+    GDALGetRasterCount(GDALDatasetH hDS) -> int
 
 Fetch the number of raster bands on this dataset.
 """
@@ -743,8 +768,8 @@ end
 
 
 """
-    GDALGetRasterBand(GDALDatasetH,
-                      int) -> GDALRasterBandH
+    GDALGetRasterBand(GDALDatasetH hDS,
+                      int nBandId) -> GDALRasterBandH
 
 Fetch a band object for a dataset.
 """
@@ -754,7 +779,7 @@ end
 
 
 """
-    GDALAddBand(GDALDatasetH hDS,
+    GDALAddBand(GDALDatasetH hDataset,
                 GDALDataType eType,
                 char ** papszOptions) -> CPLErr
 
@@ -767,16 +792,16 @@ end
 
 """
     GDALBeginAsyncReader(GDALDatasetH hDS,
-                         int nXOff,
-                         int nYOff,
-                         int nXSize,
-                         int nYSize,
+                         int xOff,
+                         int yOff,
+                         int xSize,
+                         int ySize,
                          void * pBuf,
-                         int nBufXSize,
-                         int nBufYSize,
-                         GDALDataType eBufType,
+                         int bufXSize,
+                         int bufYSize,
+                         GDALDataType bufType,
                          int nBandCount,
-                         int * panBandMap,
+                         int * bandMap,
                          int nPixelSpace,
                          int nLineSpace,
                          int nBandSpace,
@@ -789,7 +814,7 @@ end
 
 """
     GDALEndAsyncReader(GDALDatasetH hDS,
-                       GDALAsyncReaderH hAsynchReaderH) -> void
+                       GDALAsyncReaderH hAsyncReaderH) -> void
 """
 function endasyncreader(hDS::GDALDatasetH,hAsynchReaderH::GDALAsyncReaderH)
     ccall((:GDALEndAsyncReader,libgdal),Void,(GDALDatasetH,GDALAsyncReaderH),hDS,hAsynchReaderH)
@@ -799,16 +824,16 @@ end
 """
     GDALDatasetRasterIO(GDALDatasetH hDS,
                         GDALRWFlag eRWFlag,
-                        int nDSXOff,
-                        int nDSYOff,
-                        int nDSXSize,
-                        int nDSYSize,
-                        void * pBuffer,
-                        int nBXSize,
-                        int nBYSize,
-                        GDALDataType eBDataType,
+                        int nXOff,
+                        int nYOff,
+                        int nXSize,
+                        int nYSize,
+                        void * pData,
+                        int nBufXSize,
+                        int nBufYSize,
+                        GDALDataType eBufType,
                         int nBandCount,
-                        int * panBandCount,
+                        int * panBandMap,
                         int nPixelSpace,
                         int nLineSpace,
                         int nBandSpace) -> CPLErr
@@ -823,16 +848,16 @@ end
 """
     GDALDatasetRasterIOEx(GDALDatasetH hDS,
                           GDALRWFlag eRWFlag,
-                          int nDSXOff,
-                          int nDSYOff,
-                          int nDSXSize,
-                          int nDSYSize,
-                          void * pBuffer,
-                          int nBXSize,
-                          int nBYSize,
-                          GDALDataType eBDataType,
+                          int nXOff,
+                          int nYOff,
+                          int nXSize,
+                          int nYSize,
+                          void * pData,
+                          int nBufXSize,
+                          int nBufYSize,
+                          GDALDataType eBufType,
                           int nBandCount,
-                          int * panBandCount,
+                          int * panBandMap,
                           GSpacing nPixelSpace,
                           GSpacing nLineSpace,
                           GSpacing nBandSpace,
@@ -847,15 +872,15 @@ end
 
 """
     GDALDatasetAdviseRead(GDALDatasetH hDS,
-                          int nDSXOff,
-                          int nDSYOff,
-                          int nDSXSize,
-                          int nDSYSize,
-                          int nBXSize,
-                          int nBYSize,
-                          GDALDataType eBDataType,
+                          int nXOff,
+                          int nYOff,
+                          int nXSize,
+                          int nYSize,
+                          int nBufXSize,
+                          int nBufYSize,
+                          GDALDataType eDT,
                           int nBandCount,
-                          int * panBandCount,
+                          int * panBandMap,
                           char ** papszOptions) -> CPLErr
 
 Advise driver of upcoming read requests.
@@ -866,7 +891,7 @@ end
 
 
 """
-    GDALGetProjectionRef(GDALDatasetH) -> const char *
+    GDALGetProjectionRef(GDALDatasetH hDS) -> const char *
 
 Fetch the projection definition string for this dataset.
 """
@@ -876,8 +901,8 @@ end
 
 
 """
-    GDALSetProjection(GDALDatasetH,
-                      const char *) -> CPLErr
+    GDALSetProjection(GDALDatasetH hDS,
+                      const char * pszProjection) -> CPLErr
 
 Set the projection reference string for this dataset.
 """
@@ -887,8 +912,8 @@ end
 
 
 """
-    GDALGetGeoTransform(GDALDatasetH,
-                        double *) -> CPLErr
+    GDALGetGeoTransform(GDALDatasetH hDS,
+                        double * padfTransform) -> CPLErr
 
 Fetch the affine transformation coefficients.
 """
@@ -898,8 +923,8 @@ end
 
 
 """
-    GDALSetGeoTransform(GDALDatasetH,
-                        double *) -> CPLErr
+    GDALSetGeoTransform(GDALDatasetH hDS,
+                        double * padfTransform) -> CPLErr
 
 Set the affine transformation coefficients.
 """
@@ -909,7 +934,7 @@ end
 
 
 """
-    GDALGetGCPCount(GDALDatasetH) -> int
+    GDALGetGCPCount(GDALDatasetH hDS) -> int
 
 Get number of GCPs.
 """
@@ -919,7 +944,7 @@ end
 
 
 """
-    GDALGetGCPProjection(GDALDatasetH) -> const char *
+    GDALGetGCPProjection(GDALDatasetH hDS) -> const char *
 
 Get output projection for GCPs.
 """
@@ -929,7 +954,7 @@ end
 
 
 """
-    GDALGetGCPs(GDALDatasetH) -> const GDAL_GCP *
+    GDALGetGCPs(GDALDatasetH hDS) -> const GDAL_GCP *
 
 Fetch GCPs.
 """
@@ -939,10 +964,10 @@ end
 
 
 """
-    GDALSetGCPs(GDALDatasetH,
-                int,
-                const GDAL_GCP *,
-                const char *) -> CPLErr
+    GDALSetGCPs(GDALDatasetH hDS,
+                int nGCPCount,
+                const GDAL_GCP * pasGCPList,
+                const char * pszGCPProjection) -> CPLErr
 
 Assign GCPs.
 """
@@ -952,8 +977,8 @@ end
 
 
 """
-    GDALGetInternalHandle(GDALDatasetH,
-                          const char *) -> void *
+    GDALGetInternalHandle(GDALDatasetH hDS,
+                          const char * pszRequest) -> void *
 
 Fetch a format specific internally meaningful handle.
 """
@@ -963,7 +988,7 @@ end
 
 
 """
-    GDALReferenceDataset(GDALDatasetH) -> int
+    GDALReferenceDataset(GDALDatasetH hDataset) -> int
 
 Add one to dataset reference count.
 """
@@ -973,7 +998,7 @@ end
 
 
 """
-    GDALDereferenceDataset(GDALDatasetH) -> int
+    GDALDereferenceDataset(GDALDatasetH hDataset) -> int
 
 Subtract one from dataset reference count.
 """
@@ -983,14 +1008,14 @@ end
 
 
 """
-    GDALBuildOverviews(GDALDatasetH,
-                       const char *,
-                       int,
-                       int *,
-                       int,
-                       int *,
-                       GDALProgressFunc,
-                       void *) -> CPLErr
+    GDALBuildOverviews(GDALDatasetH hDataset,
+                       const char * pszResampling,
+                       int nOverviews,
+                       int * panOverviewList,
+                       int nListBands,
+                       int * panBandList,
+                       GDALProgressFunc pfnProgress,
+                       void * pProgressData) -> CPLErr
 
 Build raster overview(s)
 """
@@ -1000,7 +1025,7 @@ end
 
 
 """
-    GDALGetOpenDatasets(GDALDatasetH ** hDS,
+    GDALGetOpenDatasets(GDALDatasetH ** ppahDSList,
                         int * pnCount) -> void
 
 Fetch all open GDAL dataset handles.
@@ -1103,7 +1128,7 @@ Generate downsampled overviews.
 * **hSrcBand**: the source (base level) band.
 * **nOverviewCount**: the number of downsampled bands being generated.
 * **pahOvrBands**: the list of downsampled bands to be generated.
-* **pszResampling**: Resampling algorithm (eg. "AVERAGE").
+* **pszResampling**: Resampling algorithm (e.g. "AVERAGE").
 * **pfnProgress**: progress report function.
 * **pProgressData**: progress function callback data.
 
@@ -1116,7 +1141,7 @@ end
 
 
 """
-    GDALDatasetGetLayerCount(GDALDatasetH) -> int
+    GDALDatasetGetLayerCount(GDALDatasetH hDS) -> int
 
 Get the number of layers in this dataset.
 
@@ -1132,8 +1157,8 @@ end
 
 
 """
-    GDALDatasetGetLayer(GDALDatasetH,
-                        int) -> OGRLayerH
+    GDALDatasetGetLayer(GDALDatasetH hDS,
+                        int iLayer) -> OGRLayerH
 
 Fetch a layer by index.
 
@@ -1150,14 +1175,14 @@ end
 
 
 """
-    GDALDatasetGetLayerByName(GDALDatasetH,
-                              const char *) -> OGRLayerH
+    GDALDatasetGetLayerByName(GDALDatasetH hDS,
+                              const char * pszName) -> OGRLayerH
 
 Fetch a layer by name.
 
 ### Parameters
 * **hDS**: the dataset handle.
-* **pszLayerName**: the layer name of the layer to fetch.
+* **pszName**: the layer name of the layer to fetch.
 
 ### Returns
 the layer, or NULL if Layer is not found or an error occurs.
@@ -1168,8 +1193,8 @@ end
 
 
 """
-    GDALDatasetDeleteLayer(GDALDatasetH,
-                           int) -> OGRErr
+    GDALDatasetDeleteLayer(GDALDatasetH hDS,
+                           int iLayer) -> OGRErr
 
 Delete the indicated layer from the datasource.
 
@@ -1186,18 +1211,18 @@ end
 
 
 """
-    GDALDatasetCreateLayer(GDALDatasetH,
-                           const char *,
-                           OGRSpatialReferenceH,
-                           OGRwkbGeometryType,
-                           char **) -> OGRLayerH
+    GDALDatasetCreateLayer(GDALDatasetH hDS,
+                           const char * pszName,
+                           OGRSpatialReferenceH hSpatialRef,
+                           OGRwkbGeometryType eGType,
+                           char ** papszOptions) -> OGRLayerH
 
 This function attempts to create a new layer on the dataset with the indicated name, coordinate system, geometry type.
 
 ### Parameters
 * **hDS**: the dataset handle
 * **pszName**: the name for the new layer. This should ideally not match any existing layer on the datasource.
-* **poSpatialRef**: the coordinate system to use for the new layer, or NULL if no coordinate system is available.
+* **hSpatialRef**: the coordinate system to use for the new layer, or NULL if no coordinate system is available.
 * **eGType**: the geometry type for the layer. Use wkbUnknown if there are no constraints on the types geometry to be written.
 * **papszOptions**: a StringList of name=value options. Options are driver specific.
 
@@ -1210,10 +1235,10 @@ end
 
 
 """
-    GDALDatasetCopyLayer(GDALDatasetH,
-                         OGRLayerH,
-                         const char *,
-                         char **) -> OGRLayerH
+    GDALDatasetCopyLayer(GDALDatasetH hDS,
+                         OGRLayerH hSrcLayer,
+                         const char * pszNewName,
+                         char ** papszOptions) -> OGRLayerH
 
 Duplicate an existing layer.
 
@@ -1232,14 +1257,14 @@ end
 
 
 """
-    GDALDatasetTestCapability(GDALDatasetH,
-                              const char *) -> int
+    GDALDatasetTestCapability(GDALDatasetH hDS,
+                              const char * pszCap) -> int
 
 Test if capability is available.
 
 ### Parameters
 * **hDS**: the dataset handle.
-* **pszCapability**: the capability to test.
+* **pszCap**: the capability to test.
 
 ### Returns
 TRUE if capability available otherwise FALSE.
@@ -1250,10 +1275,10 @@ end
 
 
 """
-    GDALDatasetExecuteSQL(GDALDatasetH,
-                          const char *,
-                          OGRGeometryH,
-                          const char *) -> OGRLayerH
+    GDALDatasetExecuteSQL(GDALDatasetH hDS,
+                          const char * pszStatement,
+                          OGRGeometryH hSpatialFilter,
+                          const char * pszDialect) -> OGRLayerH
 
 Execute an SQL statement against the data store.
 
@@ -1272,14 +1297,14 @@ end
 
 
 """
-    GDALDatasetReleaseResultSet(GDALDatasetH,
-                                OGRLayerH) -> void
+    GDALDatasetReleaseResultSet(GDALDatasetH hDS,
+                                OGRLayerH hLayer) -> void
 
 Release results of ExecuteSQL().
 
 ### Parameters
 * **hDS**: the dataset handle.
-* **poResultsSet**: the result of a previous ExecuteSQL() call.
+* **hLayer**: the result of a previous ExecuteSQL() call.
 """
 function datasetreleaseresultset(arg1::GDALDatasetH,arg2::OGRLayerH)
     ccall((:GDALDatasetReleaseResultSet,libgdal),Void,(GDALDatasetH,OGRLayerH),arg1,arg2)
@@ -1287,7 +1312,7 @@ end
 
 
 """
-    GDALDatasetGetStyleTable(GDALDatasetH) -> OGRStyleTableH
+    GDALDatasetGetStyleTable(GDALDatasetH hDS) -> OGRStyleTableH
 
 Returns dataset style table.
 
@@ -1303,8 +1328,8 @@ end
 
 
 """
-    GDALDatasetSetStyleTableDirectly(GDALDatasetH,
-                                     OGRStyleTableH) -> void
+    GDALDatasetSetStyleTableDirectly(GDALDatasetH hDS,
+                                     OGRStyleTableH hStyleTable) -> void
 
 Set dataset style table.
 
@@ -1318,8 +1343,8 @@ end
 
 
 """
-    GDALDatasetSetStyleTable(GDALDatasetH,
-                             OGRStyleTableH) -> void
+    GDALDatasetSetStyleTable(GDALDatasetH hDS,
+                             OGRStyleTableH hStyleTable) -> void
 
 Set dataset style table.
 
@@ -1377,7 +1402,7 @@ end
 
 
 """
-    GDALGetRasterDataType(GDALRasterBandH) -> GDALDataType
+    GDALGetRasterDataType(GDALRasterBandH hBand) -> GDALDataType
 
 Fetch the pixel data type for this band.
 """
@@ -1387,7 +1412,7 @@ end
 
 
 """
-    GDALGetBlockSize(GDALRasterBandH,
+    GDALGetBlockSize(GDALRasterBandH hBand,
                      int * pnXSize,
                      int * pnYSize) -> void
 
@@ -1399,14 +1424,14 @@ end
 
 
 """
-    GDALRasterAdviseRead(GDALRasterBandH hRB,
-                         int nDSXOff,
-                         int nDSYOff,
-                         int nDSXSize,
-                         int nDSYSize,
-                         int nBXSize,
-                         int nBYSize,
-                         GDALDataType eBDataType,
+    GDALRasterAdviseRead(GDALRasterBandH hBand,
+                         int nXOff,
+                         int nYOff,
+                         int nXSize,
+                         int nYSize,
+                         int nBufXSize,
+                         int nBufYSize,
+                         GDALDataType eDT,
                          char ** papszOptions) -> CPLErr
 
 Advise driver of upcoming read requests.
@@ -1417,16 +1442,16 @@ end
 
 
 """
-    GDALRasterIO(GDALRasterBandH hRBand,
+    GDALRasterIO(GDALRasterBandH hBand,
                  GDALRWFlag eRWFlag,
-                 int nDSXOff,
-                 int nDSYOff,
-                 int nDSXSize,
-                 int nDSYSize,
-                 void * pBuffer,
-                 int nBXSize,
-                 int nBYSize,
-                 GDALDataType eBDataType,
+                 int nXOff,
+                 int nYOff,
+                 int nXSize,
+                 int nYSize,
+                 void * pData,
+                 int nBufXSize,
+                 int nBufYSize,
+                 GDALDataType eBufType,
                  int nPixelSpace,
                  int nLineSpace) -> CPLErr
 
@@ -1438,16 +1463,16 @@ end
 
 
 """
-    GDALRasterIOEx(GDALRasterBandH hRBand,
+    GDALRasterIOEx(GDALRasterBandH hBand,
                    GDALRWFlag eRWFlag,
-                   int nDSXOff,
-                   int nDSYOff,
-                   int nDSXSize,
-                   int nDSYSize,
-                   void * pBuffer,
-                   int nBXSize,
-                   int nBYSize,
-                   GDALDataType eBDataType,
+                   int nXOff,
+                   int nYOff,
+                   int nXSize,
+                   int nYSize,
+                   void * pData,
+                   int nBufXSize,
+                   int nBufYSize,
+                   GDALDataType eBufType,
                    GSpacing nPixelSpace,
                    GSpacing nLineSpace,
                    GDALRasterIOExtraArg * psExtraArg) -> CPLErr
@@ -1460,10 +1485,10 @@ end
 
 
 """
-    GDALReadBlock(GDALRasterBandH,
-                  int,
-                  int,
-                  void *) -> CPLErr
+    GDALReadBlock(GDALRasterBandH hBand,
+                  int nXOff,
+                  int nYOff,
+                  void * pData) -> CPLErr
 
 Read a block of image data efficiently.
 """
@@ -1473,10 +1498,10 @@ end
 
 
 """
-    GDALWriteBlock(GDALRasterBandH,
-                   int,
-                   int,
-                   void *) -> CPLErr
+    GDALWriteBlock(GDALRasterBandH hBand,
+                   int nXOff,
+                   int nYOff,
+                   void * pData) -> CPLErr
 
 Write a block of image data efficiently.
 """
@@ -1486,7 +1511,7 @@ end
 
 
 """
-    GDALGetRasterBandXSize(GDALRasterBandH) -> int
+    GDALGetRasterBandXSize(GDALRasterBandH hBand) -> int
 
 Fetch XSize of raster.
 """
@@ -1496,7 +1521,7 @@ end
 
 
 """
-    GDALGetRasterBandYSize(GDALRasterBandH) -> int
+    GDALGetRasterBandYSize(GDALRasterBandH hBand) -> int
 
 Fetch YSize of raster.
 """
@@ -1506,7 +1531,7 @@ end
 
 
 """
-    GDALGetRasterAccess(GDALRasterBandH) -> GDALAccess
+    GDALGetRasterAccess(GDALRasterBandH hBand) -> GDALAccess
 
 Find out if we have update permission for this band.
 """
@@ -1516,7 +1541,7 @@ end
 
 
 """
-    GDALGetBandNumber(GDALRasterBandH) -> int
+    GDALGetBandNumber(GDALRasterBandH hBand) -> int
 
 Fetch the band number.
 """
@@ -1526,7 +1551,7 @@ end
 
 
 """
-    GDALGetBandDataset(GDALRasterBandH) -> GDALDatasetH
+    GDALGetBandDataset(GDALRasterBandH hBand) -> GDALDatasetH
 
 Fetch the owning dataset handle.
 """
@@ -1536,7 +1561,7 @@ end
 
 
 """
-    GDALGetRasterColorInterpretation(GDALRasterBandH) -> GDALColorInterp
+    GDALGetRasterColorInterpretation(GDALRasterBandH hBand) -> GDALColorInterp
 
 How should this band be interpreted as color?
 """
@@ -1546,8 +1571,8 @@ end
 
 
 """
-    GDALSetRasterColorInterpretation(GDALRasterBandH,
-                                     GDALColorInterp) -> CPLErr
+    GDALSetRasterColorInterpretation(GDALRasterBandH hBand,
+                                     GDALColorInterp eColorInterp) -> CPLErr
 
 Set color interpretation of a band.
 """
@@ -1557,7 +1582,7 @@ end
 
 
 """
-    GDALGetRasterColorTable(GDALRasterBandH) -> GDALColorTableH
+    GDALGetRasterColorTable(GDALRasterBandH hBand) -> GDALColorTableH
 
 Fetch the color table associated with band.
 """
@@ -1567,8 +1592,8 @@ end
 
 
 """
-    GDALSetRasterColorTable(GDALRasterBandH,
-                            GDALColorTableH) -> CPLErr
+    GDALSetRasterColorTable(GDALRasterBandH hBand,
+                            GDALColorTableH hCT) -> CPLErr
 
 Set the raster color table.
 """
@@ -1578,7 +1603,7 @@ end
 
 
 """
-    GDALHasArbitraryOverviews(GDALRasterBandH) -> int
+    GDALHasArbitraryOverviews(GDALRasterBandH hBand) -> int
 
 Check for arbitrary overviews.
 """
@@ -1588,7 +1613,7 @@ end
 
 
 """
-    GDALGetOverviewCount(GDALRasterBandH) -> int
+    GDALGetOverviewCount(GDALRasterBandH hBand) -> int
 
 Return the number of overview layers available.
 """
@@ -1598,8 +1623,8 @@ end
 
 
 """
-    GDALGetOverview(GDALRasterBandH,
-                    int) -> GDALRasterBandH
+    GDALGetOverview(GDALRasterBandH hBand,
+                    int i) -> GDALRasterBandH
 
 Fetch overview raster band object.
 """
@@ -1609,8 +1634,8 @@ end
 
 
 """
-    GDALGetRasterNoDataValue(GDALRasterBandH,
-                             int *) -> double
+    GDALGetRasterNoDataValue(GDALRasterBandH hBand,
+                             int * pbSuccess) -> double
 
 Fetch the no data value for this band.
 """
@@ -1620,8 +1645,8 @@ end
 
 
 """
-    GDALSetRasterNoDataValue(GDALRasterBandH,
-                             double) -> CPLErr
+    GDALSetRasterNoDataValue(GDALRasterBandH hBand,
+                             double dfValue) -> CPLErr
 
 Set the no data value for this band.
 """
@@ -1631,7 +1656,17 @@ end
 
 
 """
-    GDALGetRasterCategoryNames(GDALRasterBandH) -> char **
+    GDALDeleteRasterNoDataValue(GDALRasterBandH hBand) -> CPLErr
+
+Remove the no data value for this band.
+"""
+function deleterasternodatavalue(arg1::GDALRasterBandH)
+    ccall((:GDALDeleteRasterNoDataValue,libgdal),CPLErr,(GDALRasterBandH,),arg1)
+end
+
+
+"""
+    GDALGetRasterCategoryNames(GDALRasterBandH hBand) -> char **
 
 Fetch the list of category names for this raster.
 """
@@ -1641,8 +1676,8 @@ end
 
 
 """
-    GDALSetRasterCategoryNames(GDALRasterBandH,
-                               char **) -> CPLErr
+    GDALSetRasterCategoryNames(GDALRasterBandH hBand,
+                               char ** papszNames) -> CPLErr
 
 Set the category names for this band.
 """
@@ -1652,7 +1687,7 @@ end
 
 
 """
-    GDALGetRasterMinimum(GDALRasterBandH,
+    GDALGetRasterMinimum(GDALRasterBandH hBand,
                          int * pbSuccess) -> double
 
 Fetch the minimum value for this band.
@@ -1663,7 +1698,7 @@ end
 
 
 """
-    GDALGetRasterMaximum(GDALRasterBandH,
+    GDALGetRasterMaximum(GDALRasterBandH hBand,
                          int * pbSuccess) -> double
 
 Fetch the maximum value for this band.
@@ -1674,7 +1709,7 @@ end
 
 
 """
-    GDALGetRasterStatistics(GDALRasterBandH,
+    GDALGetRasterStatistics(GDALRasterBandH hBand,
                             int bApproxOK,
                             int bForce,
                             double * pdfMin,
@@ -1690,7 +1725,7 @@ end
 
 
 """
-    GDALComputeRasterStatistics(GDALRasterBandH,
+    GDALComputeRasterStatistics(GDALRasterBandH hBand,
                                 int bApproxOK,
                                 double * pdfMin,
                                 double * pdfMax,
@@ -1721,7 +1756,7 @@ end
 
 
 """
-    GDALGetRasterUnitType(GDALRasterBandH) -> const char *
+    GDALGetRasterUnitType(GDALRasterBandH hBand) -> const char *
 
 Return raster unit type.
 """
@@ -1742,7 +1777,7 @@ end
 
 
 """
-    GDALGetRasterOffset(GDALRasterBandH,
+    GDALGetRasterOffset(GDALRasterBandH hBand,
                         int * pbSuccess) -> double
 
 Fetch the raster value offset.
@@ -1764,7 +1799,7 @@ end
 
 
 """
-    GDALGetRasterScale(GDALRasterBandH,
+    GDALGetRasterScale(GDALRasterBandH hBand,
                        int * pbSuccess) -> double
 
 Fetch the raster value scale.
@@ -1916,8 +1951,8 @@ end
 
 
 """
-    GDALGetRasterSampleOverview(GDALRasterBandH,
-                                int) -> GDALRasterBandH
+    GDALGetRasterSampleOverview(GDALRasterBandH hBand,
+                                int nDesiredSamples) -> GDALRasterBandH
 
 Fetch best sampling overview.
 """
@@ -1927,8 +1962,8 @@ end
 
 
 """
-    GDALGetRasterSampleOverviewEx(GDALRasterBandH,
-                                  GUIntBig) -> GDALRasterBandH
+    GDALGetRasterSampleOverviewEx(GDALRasterBandH hBand,
+                                  GUIntBig nDesiredSamples) -> GDALRasterBandH
 
 Fetch best sampling overview.
 """
@@ -1985,8 +2020,8 @@ end
 
 
 """
-    GDALSetDefaultRAT(GDALRasterBandH,
-                      GDALRasterAttributeTableH) -> CPLErr
+    GDALSetDefaultRAT(GDALRasterBandH hBand,
+                      GDALRasterAttributeTableH hRAT) -> CPLErr
 
 Set default Raster Attribute Table.
 """
@@ -2046,11 +2081,11 @@ end
 
 """
     GDALARGetNextUpdatedRegion(GDALAsyncReaderH hARIO,
-                               double dfTimeout,
-                               int * pnXBufOff,
-                               int * pnYBufOff,
-                               int * pnXBufSize,
-                               int * pnYBufSize) -> GDALAsyncStatusType
+                               double timeout,
+                               int * pnxbufoff,
+                               int * pnybufoff,
+                               int * pnxbufsize,
+                               int * pnybufsize) -> GDALAsyncStatusType
 """
 function argetnextupdatedregion(hARIO::GDALAsyncReaderH,dfTimeout::Real,pnXBufOff::Vector{Cint},pnYBufOff::Vector{Cint},pnXBufSize::Vector{Cint},pnYBufSize::Vector{Cint})
     ccall((:GDALARGetNextUpdatedRegion,libgdal),GDALAsyncStatusType,(GDALAsyncReaderH,Cdouble,Ptr{Cint},Ptr{Cint},Ptr{Cint},Ptr{Cint}),hARIO,dfTimeout,pnXBufOff,pnYBufOff,pnXBufSize,pnYBufSize)
@@ -2114,24 +2149,32 @@ end
 
 
 """
-    GDALCopyWords(void * pSrcData,
+    GDALSwapWordsEx(void * pData,
+                    int nWordSize,
+                    size_t nWordCount,
+                    int nWordSkip) -> void
+
+Byte swap words in-place.
+
+### Parameters
+* **pData**: pointer to start of data buffer.
+* **nWordSize**: size of words being swapped in bytes. Normally 2, 4 or 8.
+* **nWordCount**: the number of words to be swapped in this call.
+* **nWordSkip**: the byte offset from the start of one word to the start of the next. For packed buffers this is the same as nWordSize.
+"""
+function swapwordsex(pData::Ptr{Void},nWordSize::Integer,nWordCount::Csize_t,nWordSkip::Integer)
+    ccall((:GDALSwapWordsEx,libgdal),Void,(Ptr{Void},Cint,Csize_t,Cint),pData,nWordSize,nWordCount,nWordSkip)
+end
+
+
+"""
+    GDALCopyWords(const void * pSrcData,
                   GDALDataType eSrcType,
                   int nSrcPixelOffset,
                   void * pDstData,
                   GDALDataType eDstType,
                   int nDstPixelOffset,
                   int nWordCount) -> void
-
-Copy pixel words from buffer to buffer.
-
-### Parameters
-* **pSrcData**: Pointer to source data to be converted.
-* **eSrcType**: the source data type (see GDALDataType enum)
-* **nSrcPixelStride**: Source pixel stride (i.e. distance between 2 words), in bytes
-* **pDstData**: Pointer to buffer where destination data should go
-* **eDstType**: the destination data type (see GDALDataType enum)
-* **nDstPixelStride**: Destination pixel stride (i.e. distance between 2 words), in bytes
-* **nWordCount**: number of words to be copied
 """
 function copywords(pSrcData::Ptr{Void},eSrcType::GDALDataType,nSrcPixelOffset::Integer,pDstData::Ptr{Void},eDstType::GDALDataType,nDstPixelOffset::Integer,nWordCount::Integer)
     ccall((:GDALCopyWords,libgdal),Void,(Ptr{Void},GDALDataType,Cint,Ptr{Void},GDALDataType,Cint,Cint),pSrcData,eSrcType,nSrcPixelOffset,pDstData,eDstType,nDstPixelOffset,nWordCount)
@@ -2192,7 +2235,7 @@ Read ESRI world file.
 
 ### Parameters
 * **pszBaseFilename**: the target raster file.
-* **pszExtension**: the extension to use (ie. ".wld") or NULL to derive it from the pszBaseFilename
+* **pszExtension**: the extension to use (i.e. ".wld") or NULL to derive it from the pszBaseFilename
 * **padfGeoTransform**: the six double array into which the geotransformation should be placed.
 
 ### Returns
@@ -2212,7 +2255,7 @@ Write ESRI world file.
 
 ### Parameters
 * **pszBaseFilename**: the target raster file.
-* **pszExtension**: the extension to use (ie. ".wld"). Must not be NULL
+* **pszExtension**: the extension to use (i.e. ".wld"). Must not be NULL
 * **padfGeoTransform**: the six double array from which the geotransformation should be read.
 
 ### Returns
@@ -2311,7 +2354,7 @@ end
 
 
 """
-    GDALCreateColorTable(GDALPaletteInterp) -> GDALColorTableH
+    GDALCreateColorTable(GDALPaletteInterp eInterp) -> GDALColorTableH
 
 Construct a new color table.
 """
@@ -2321,7 +2364,7 @@ end
 
 
 """
-    GDALDestroyColorTable(GDALColorTableH) -> void
+    GDALDestroyColorTable(GDALColorTableH hTable) -> void
 
 Destroys a color table.
 """
@@ -2331,7 +2374,7 @@ end
 
 
 """
-    GDALCloneColorTable(GDALColorTableH) -> GDALColorTableH
+    GDALCloneColorTable(GDALColorTableH hTable) -> GDALColorTableH
 
 Make a copy of a color table.
 """
@@ -2341,7 +2384,7 @@ end
 
 
 """
-    GDALGetPaletteInterpretation(GDALColorTableH) -> GDALPaletteInterp
+    GDALGetPaletteInterpretation(GDALColorTableH hTable) -> GDALPaletteInterp
 
 Fetch palette interpretation.
 """
@@ -2351,7 +2394,7 @@ end
 
 
 """
-    GDALGetColorEntryCount(GDALColorTableH) -> int
+    GDALGetColorEntryCount(GDALColorTableH hTable) -> int
 
 Get number of color entries in table.
 """
@@ -2361,8 +2404,8 @@ end
 
 
 """
-    GDALGetColorEntry(GDALColorTableH,
-                      int) -> const GDALColorEntry *
+    GDALGetColorEntry(GDALColorTableH hTable,
+                      int i) -> const GDALColorEntry *
 
 Fetch a color entry from table.
 """
@@ -2372,9 +2415,9 @@ end
 
 
 """
-    GDALGetColorEntryAsRGB(GDALColorTableH,
-                           int,
-                           GDALColorEntry *) -> int
+    GDALGetColorEntryAsRGB(GDALColorTableH hTable,
+                           int i,
+                           GDALColorEntry * poEntry) -> int
 
 Fetch a table entry in RGB format.
 """
@@ -2384,9 +2427,9 @@ end
 
 
 """
-    GDALSetColorEntry(GDALColorTableH,
-                      int,
-                      const GDALColorEntry *) -> void
+    GDALSetColorEntry(GDALColorTableH hTable,
+                      int i,
+                      const GDALColorEntry * poEntry) -> void
 
 Set entry in color table.
 """
@@ -2736,7 +2779,7 @@ end
 
 
 """
-    GDALSetCacheMax(int nBytes) -> void
+    GDALSetCacheMax(int nNewSizeInBytes) -> void
 
 Set maximum cache memory.
 
@@ -2749,7 +2792,7 @@ end
 
 
 """
-    GDALGetCacheMax(void) -> int
+    GDALGetCacheMax() -> int
 
 Get maximum cache memory.
 
@@ -2762,7 +2805,7 @@ end
 
 
 """
-    GDALGetCacheUsed(void) -> int
+    GDALGetCacheUsed() -> int
 
 Get cache memory used.
 
@@ -2775,7 +2818,7 @@ end
 
 
 """
-    GDALSetCacheMax64(GIntBig nBytes) -> void
+    GDALSetCacheMax64(GIntBig nNewSizeInBytes) -> void
 
 Set maximum cache memory.
 
@@ -2788,7 +2831,7 @@ end
 
 
 """
-    GDALGetCacheMax64(void) -> GIntBig
+    GDALGetCacheMax64() -> GIntBig
 
 Get maximum cache memory.
 
@@ -2801,7 +2844,7 @@ end
 
 
 """
-    GDALGetCacheUsed64(void) -> GIntBig
+    GDALGetCacheUsed64() -> GIntBig
 
 Get cache memory used.
 
@@ -2814,7 +2857,7 @@ end
 
 
 """
-    GDALFlushCacheBlock(void) -> int
+    GDALFlushCacheBlock() -> int
 
 Try to flush one cached raster block.
 
@@ -3013,6 +3056,28 @@ a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in ca
 """
 function rasterbandgettiledvirtualmem(hBand::GDALRasterBandH,eRWFlag::GDALRWFlag,nXOff::Integer,nYOff::Integer,nXSize::Integer,nYSize::Integer,nTileXSize::Integer,nTileYSize::Integer,eBufType::GDALDataType,nCacheSize::Csize_t,bSingleThreadUsage::Integer,papszOptions::Vector{UTF8String})
     ccall((:GDALRasterBandGetTiledVirtualMem,libgdal),Ptr{CPLVirtualMem},(GDALRasterBandH,GDALRWFlag,Cint,Cint,Cint,Cint,Cint,Cint,GDALDataType,Csize_t,Cint,Ptr{Ptr{UInt8}}),hBand,eRWFlag,nXOff,nYOff,nXSize,nYSize,nTileXSize,nTileYSize,eBufType,nCacheSize,bSingleThreadUsage,papszOptions)
+end
+
+
+"""
+    GDALCreatePansharpenedVRT(const char * pszXML,
+                              GDALRasterBandH hPanchroBand,
+                              int nInputSpectralBands,
+                              GDALRasterBandH * pahInputSpectralBands) -> GDALDatasetH
+
+Create a virtual pansharpened dataset.
+
+### Parameters
+* **pszXML**: Pansharpened VRT XML where <SpectralBand> elements have no explicit SourceFilename and SourceBand. The spectral bands in the XML will be assigned the successive values of the pahInputSpectralBands array. Must not be NULL.
+* **hPanchroBand**: Panchromatic band. Must not be NULL.
+* **nInputSpectralBands**: Number of input spectral bands. Must be greater than zero.
+* **pahInputSpectralBands**: Array of nInputSpectralBands spectral bands.
+
+### Returns
+NULL on failure, or a new virtual dataset handle on success to be closed with GDALClose().
+"""
+function createpansharpenedvrt(pszXML::AbstractString,hPanchroBand::GDALRasterBandH,nInputSpectralBands::Integer,pahInputSpectralBands::Ptr{GDALRasterBandH})
+    checknull(ccall((:GDALCreatePansharpenedVRT,libgdal),GDALDatasetH,(Ptr{UInt8},GDALRasterBandH,Cint,Ptr{GDALRasterBandH}),pszXML,hPanchroBand,nInputSpectralBands,pahInputSpectralBands))
 end
 
 

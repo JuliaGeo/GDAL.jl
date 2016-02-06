@@ -1,12 +1,12 @@
-# Julia wrapper for header: /usr/local/include/cpl_progress.h
+# Julia wrapper for header: /home/martijn/bin/gdal/include/cpl_progress.h
 # Automatically generated using Clang.jl wrap_c, version 0.0.0
 
 
 
 """
-    GDALDummyProgress(CPL_UNUSED double dfComplete,
-                      CPL_UNUSED const char * pszMessage,
-                      CPL_UNUSED void * pData) -> int
+    GDALDummyProgress(double,
+                      const char *,
+                      void *) -> int
 
 Stub progress function.
 """
@@ -16,9 +16,9 @@ end
 
 
 """
-    GDALTermProgress(CPL_UNUSED double dfComplete,
-                     CPL_UNUSED const char * pszMessage,
-                     void * pProgressArg) -> int
+    GDALTermProgress(double dfComplete,
+                     const char * pszMessage,
+                     void *) -> int
 
 Simple progress report to terminal.
 

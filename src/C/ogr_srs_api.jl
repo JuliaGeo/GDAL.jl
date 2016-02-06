@@ -1,4 +1,4 @@
-# Julia wrapper for header: /usr/local/include/ogr_srs_api.h
+# Julia wrapper for header: /home/martijn/bin/gdal/include/ogr_srs_api.h
 # Automatically generated using Clang.jl wrap_c, version 0.0.0
 
 
@@ -17,7 +17,7 @@ end
 
 
 """
-    OSRNewSpatialReference(const char *) -> OGRSpatialReferenceH
+    OSRNewSpatialReference(const char * pszWKT) -> OGRSpatialReferenceH
 
 Constructor.
 """
@@ -27,7 +27,7 @@ end
 
 
 """
-    OSRCloneGeogCS(OGRSpatialReferenceH) -> OGRSpatialReferenceH
+    OSRCloneGeogCS(OGRSpatialReferenceH hSource) -> OGRSpatialReferenceH
 
 Make a duplicate of the GEOGCS node of this OGRSpatialReference object.
 """
@@ -37,7 +37,7 @@ end
 
 
 """
-    OSRClone(OGRSpatialReferenceH) -> OGRSpatialReferenceH
+    OSRClone(OGRSpatialReferenceH hSRS) -> OGRSpatialReferenceH
 
 Make a duplicate of this OGRSpatialReference.
 """
@@ -47,7 +47,7 @@ end
 
 
 """
-    OSRDestroySpatialReference(OGRSpatialReferenceH) -> void
+    OSRDestroySpatialReference(OGRSpatialReferenceH hSRS) -> void
 
 OGRSpatialReference destructor.
 
@@ -60,7 +60,7 @@ end
 
 
 """
-    OSRReference(OGRSpatialReferenceH) -> int
+    OSRReference(OGRSpatialReferenceH hSRS) -> int
 
 Increments the reference count by one.
 """
@@ -70,7 +70,7 @@ end
 
 
 """
-    OSRDereference(OGRSpatialReferenceH) -> int
+    OSRDereference(OGRSpatialReferenceH hSRS) -> int
 
 Decrements the reference count by one.
 """
@@ -80,7 +80,7 @@ end
 
 
 """
-    OSRRelease(OGRSpatialReferenceH) -> void
+    OSRRelease(OGRSpatialReferenceH hSRS) -> void
 
 Decrements the reference count by one, and destroy if zero.
 """
@@ -100,7 +100,7 @@ end
 
 
 """
-    OSRFixupOrdering(OGRSpatialReferenceH) -> OGRErr
+    OSRFixupOrdering(OGRSpatialReferenceH hSRS) -> OGRErr
 
 Correct parameter ordering to match CT Specification.
 """
@@ -110,7 +110,7 @@ end
 
 
 """
-    OSRFixup(OGRSpatialReferenceH) -> OGRErr
+    OSRFixup(OGRSpatialReferenceH hSRS) -> OGRErr
 
 Fixup as needed.
 """
@@ -120,7 +120,7 @@ end
 
 
 """
-    OSRStripCTParms(OGRSpatialReferenceH) -> OGRErr
+    OSRStripCTParms(OGRSpatialReferenceH hSRS) -> OGRErr
 
 Strip OGC CT Parameters.
 """
@@ -152,8 +152,8 @@ end
 
 
 """
-    OSRImportFromWkt(OGRSpatialReferenceH,
-                     char **) -> OGRErr
+    OSRImportFromWkt(OGRSpatialReferenceH hSRS,
+                     char ** ppszInput) -> OGRErr
 
 Import from WKT string.
 """
@@ -263,8 +263,8 @@ end
 
 
 """
-    OSRImportFromMICoordSys(OGRSpatialReferenceH,
-                            const char *) -> OGRErr
+    OSRImportFromMICoordSys(OGRSpatialReferenceH hSRS,
+                            const char * pszCoordSys) -> OGRErr
 
 Import Mapinfo style CoordSys definition.
 """
@@ -287,8 +287,8 @@ end
 
 
 """
-    OSRImportFromUrl(OGRSpatialReferenceH,
-                     const char *) -> OGRErr
+    OSRImportFromUrl(OGRSpatialReferenceH hSRS,
+                     const char * pszUrl) -> OGRErr
 
 Set spatial reference from a URL.
 """
@@ -298,8 +298,8 @@ end
 
 
 """
-    OSRExportToWkt(OGRSpatialReferenceH,
-                   char **) -> OGRErr
+    OSRExportToWkt(OGRSpatialReferenceH hSRS,
+                   char ** ppszReturn) -> OGRErr
 
 Convert this SRS into WKT format.
 """
@@ -309,11 +309,11 @@ end
 
 
 """
-    OSRExportToPrettyWkt(OGRSpatialReferenceH,
-                         char **,
-                         int) -> OGRErr
+    OSRExportToPrettyWkt(OGRSpatialReferenceH hSRS,
+                         char ** ppszReturn,
+                         int bSimplify) -> OGRErr
 
-Convert this SRS into a a nicely formatted WKT string for display to a person.
+Convert this SRS into a nicely formatted WKT string for display to a person.
 """
 function OSRExportToPrettyWkt(arg1::OGRSpatialReferenceH,arg2::Ptr{Ptr{UInt8}},arg3::Cint)
     ccall((:OSRExportToPrettyWkt,libgdal),OGRErr,(OGRSpatialReferenceH,Ptr{Ptr{UInt8}},Cint),arg1,arg2,arg3)
@@ -384,8 +384,8 @@ end
 
 
 """
-    OSRExportToMICoordSys(OGRSpatialReferenceH,
-                          char **) -> OGRErr
+    OSRExportToMICoordSys(OGRSpatialReferenceH hSRS,
+                          char ** ppszReturn) -> OGRErr
 
 Export coordinate system in Mapinfo style CoordSys format.
 """
@@ -429,8 +429,8 @@ end
 
 """
     OSRSetAttrValue(OGRSpatialReferenceH hSRS,
-                    const char * pszNodePath,
-                    const char * pszNewNodeValue) -> OGRErr
+                    const char * pszPath,
+                    const char * pszValue) -> OGRErr
 
 Set attribute value in spatial reference.
 """
@@ -441,7 +441,7 @@ end
 
 """
     OSRGetAttrValue(OGRSpatialReferenceH hSRS,
-                    const char * pszName,
+                    const char * pszKey,
                     int iChild) -> const char *
 
 Fetch indicated attribute of named node.
@@ -452,9 +452,9 @@ end
 
 
 """
-    OSRSetAngularUnits(OGRSpatialReferenceH,
-                       const char *,
-                       double) -> OGRErr
+    OSRSetAngularUnits(OGRSpatialReferenceH hSRS,
+                       const char * pszUnits,
+                       double dfInRadians) -> OGRErr
 
 Set the angular units for the geographic coordinate system.
 """
@@ -464,8 +464,8 @@ end
 
 
 """
-    OSRGetAngularUnits(OGRSpatialReferenceH,
-                       char **) -> double
+    OSRGetAngularUnits(OGRSpatialReferenceH hSRS,
+                       char ** ppszName) -> double
 
 Fetch angular geographic coordinate system units.
 """
@@ -475,9 +475,9 @@ end
 
 
 """
-    OSRSetLinearUnits(OGRSpatialReferenceH,
-                      const char *,
-                      double) -> OGRErr
+    OSRSetLinearUnits(OGRSpatialReferenceH hSRS,
+                      const char * pszUnits,
+                      double dfInMeters) -> OGRErr
 
 Set the linear units for the projection.
 """
@@ -487,10 +487,10 @@ end
 
 
 """
-    OSRSetTargetLinearUnits(OGRSpatialReferenceH,
-                            const char *,
-                            const char *,
-                            double) -> OGRErr
+    OSRSetTargetLinearUnits(OGRSpatialReferenceH hSRS,
+                            const char * pszTargetKey,
+                            const char * pszUnits,
+                            double dfInMeters) -> OGRErr
 
 Set the linear units for the target node.
 """
@@ -500,9 +500,9 @@ end
 
 
 """
-    OSRSetLinearUnitsAndUpdateParameters(OGRSpatialReferenceH,
-                                         const char *,
-                                         double) -> OGRErr
+    OSRSetLinearUnitsAndUpdateParameters(OGRSpatialReferenceH hSRS,
+                                         const char * pszUnits,
+                                         double dfInMeters) -> OGRErr
 
 Set the linear units for the projection.
 """
@@ -512,8 +512,8 @@ end
 
 
 """
-    OSRGetLinearUnits(OGRSpatialReferenceH,
-                      char **) -> double
+    OSRGetLinearUnits(OGRSpatialReferenceH hSRS,
+                      char ** ppszName) -> double
 
 Fetch linear projection units.
 """
@@ -523,9 +523,9 @@ end
 
 
 """
-    OSRGetTargetLinearUnits(OGRSpatialReferenceH,
-                            const char *,
-                            char **) -> double
+    OSRGetTargetLinearUnits(OGRSpatialReferenceH hSRS,
+                            const char * pszTargetKey,
+                            char ** ppszName) -> double
 
 Fetch linear projection units.
 """
@@ -535,8 +535,8 @@ end
 
 
 """
-    OSRGetPrimeMeridian(OGRSpatialReferenceH,
-                        char **) -> double
+    OSRGetPrimeMeridian(OGRSpatialReferenceH hSRS,
+                        char ** ppszName) -> double
 
 Fetch prime meridian info.
 """
@@ -546,7 +546,7 @@ end
 
 
 """
-    OSRIsGeographic(OGRSpatialReferenceH) -> int
+    OSRIsGeographic(OGRSpatialReferenceH hSRS) -> int
 
 Check if geographic coordinate system.
 """
@@ -556,7 +556,7 @@ end
 
 
 """
-    OSRIsLocal(OGRSpatialReferenceH) -> int
+    OSRIsLocal(OGRSpatialReferenceH hSRS) -> int
 
 Check if local coordinate system.
 """
@@ -566,7 +566,7 @@ end
 
 
 """
-    OSRIsProjected(OGRSpatialReferenceH) -> int
+    OSRIsProjected(OGRSpatialReferenceH hSRS) -> int
 
 Check if projected coordinate system.
 """
@@ -576,7 +576,7 @@ end
 
 
 """
-    OSRIsCompound(OGRSpatialReferenceH) -> int
+    OSRIsCompound(OGRSpatialReferenceH hSRS) -> int
 
 Check if the coordinate system is compound.
 """
@@ -586,7 +586,7 @@ end
 
 
 """
-    OSRIsGeocentric(OGRSpatialReferenceH) -> int
+    OSRIsGeocentric(OGRSpatialReferenceH hSRS) -> int
 
 Check if geocentric coordinate system.
 """
@@ -596,7 +596,7 @@ end
 
 
 """
-    OSRIsVertical(OGRSpatialReferenceH) -> int
+    OSRIsVertical(OGRSpatialReferenceH hSRS) -> int
 
 Check if vertical coordinate system.
 """
@@ -606,8 +606,8 @@ end
 
 
 """
-    OSRIsSameGeogCS(OGRSpatialReferenceH,
-                    OGRSpatialReferenceH) -> int
+    OSRIsSameGeogCS(OGRSpatialReferenceH hSRS1,
+                    OGRSpatialReferenceH hSRS2) -> int
 
 Do the GeogCS'es match?
 """
@@ -617,8 +617,8 @@ end
 
 
 """
-    OSRIsSameVertCS(OGRSpatialReferenceH,
-                    OGRSpatialReferenceH) -> int
+    OSRIsSameVertCS(OGRSpatialReferenceH hSRS1,
+                    OGRSpatialReferenceH hSRS2) -> int
 
 Do the VertCS'es match?
 """
@@ -628,8 +628,8 @@ end
 
 
 """
-    OSRIsSame(OGRSpatialReferenceH,
-              OGRSpatialReferenceH) -> int
+    OSRIsSame(OGRSpatialReferenceH hSRS1,
+              OGRSpatialReferenceH hSRS2) -> int
 
 Do these two spatial references describe the same system ?
 """
@@ -684,7 +684,7 @@ end
 
 """
     OSRSetFromUserInput(OGRSpatialReferenceH hSRS,
-                        const char *) -> OGRErr
+                        const char * pszDef) -> OGRErr
 
 Set spatial reference from various text formats.
 """
@@ -706,13 +706,13 @@ end
 
 """
     OSRSetTOWGS84(OGRSpatialReferenceH hSRS,
-                  double,
-                  double,
-                  double,
-                  double,
-                  double,
-                  double,
-                  double) -> OGRErr
+                  double dfDX,
+                  double dfDY,
+                  double dfDZ,
+                  double dfEX,
+                  double dfEY,
+                  double dfEZ,
+                  double dfPPM) -> OGRErr
 
 Set the Bursa-Wolf conversion to WGS84.
 """
@@ -723,8 +723,8 @@ end
 
 """
     OSRGetTOWGS84(OGRSpatialReferenceH hSRS,
-                  double *,
-                  int) -> OGRErr
+                  double * padfCoeff,
+                  int nCoeffCount) -> OGRErr
 
 Fetch TOWGS84 parameters, if available.
 """
@@ -750,12 +750,12 @@ end
     OSRSetGeogCS(OGRSpatialReferenceH hSRS,
                  const char * pszGeogName,
                  const char * pszDatumName,
-                 const char * pszEllipsoidName,
+                 const char * pszSpheroidName,
                  double dfSemiMajor,
                  double dfInvFlattening,
                  const char * pszPMName,
                  double dfPMOffset,
-                 const char * pszUnits,
+                 const char * pszAngularUnits,
                  double dfConvertToRadians) -> OGRErr
 
 Set geographic coordinate system.
@@ -779,8 +779,8 @@ end
 
 
 """
-    OSRGetSemiMajor(OGRSpatialReferenceH,
-                    OGRErr *) -> double
+    OSRGetSemiMajor(OGRSpatialReferenceH hSRS,
+                    OGRErr * pnErr) -> double
 
 Get spheroid semi major axis.
 """
@@ -790,8 +790,8 @@ end
 
 
 """
-    OSRGetSemiMinor(OGRSpatialReferenceH,
-                    OGRErr *) -> double
+    OSRGetSemiMinor(OGRSpatialReferenceH hSRS,
+                    OGRErr * pnErr) -> double
 
 Get spheroid semi minor axis.
 """
@@ -801,8 +801,8 @@ end
 
 
 """
-    OSRGetInvFlattening(OGRSpatialReferenceH,
-                        OGRErr *) -> double
+    OSRGetInvFlattening(OGRSpatialReferenceH hSRS,
+                        OGRErr * pnErr) -> double
 
 Get spheroid inverse flattening.
 """
@@ -847,8 +847,8 @@ end
 
 
 """
-    OSRSetProjection(OGRSpatialReferenceH,
-                     const char *) -> OGRErr
+    OSRSetProjection(OGRSpatialReferenceH hSRS,
+                     const char * pszProjection) -> OGRErr
 
 Set a projection name.
 """
@@ -858,9 +858,9 @@ end
 
 
 """
-    OSRSetProjParm(OGRSpatialReferenceH,
-                   const char *,
-                   double) -> OGRErr
+    OSRSetProjParm(OGRSpatialReferenceH hSRS,
+                   const char * pszParmName,
+                   double dfValue) -> OGRErr
 
 Set a projection parameter value.
 """
@@ -871,9 +871,9 @@ end
 
 """
     OSRGetProjParm(OGRSpatialReferenceH hSRS,
-                   const char * pszParmName,
-                   double dfDefault,
-                   OGRErr *) -> double
+                   const char * pszName,
+                   double dfDefaultValue,
+                   OGRErr * pnErr) -> double
 
 Fetch a projection parameter value.
 """
@@ -883,9 +883,9 @@ end
 
 
 """
-    OSRSetNormProjParm(OGRSpatialReferenceH,
-                       const char *,
-                       double) -> OGRErr
+    OSRSetNormProjParm(OGRSpatialReferenceH hSRS,
+                       const char * pszParmName,
+                       double dfValue) -> OGRErr
 
 Set a projection parameter with a normalized value.
 """
@@ -896,9 +896,9 @@ end
 
 """
     OSRGetNormProjParm(OGRSpatialReferenceH hSRS,
-                       const char * pszParmName,
-                       double dfDefault,
-                       OGRErr *) -> double
+                       const char * pszName,
+                       double dfDefaultValue,
+                       OGRErr * pnErr) -> double
 
 This function is the same as OGRSpatialReference::
 """
@@ -1000,14 +1000,17 @@ end
 
 
 """
-    OSRSetAxes(const char * pszTargetKey,
+    OSRSetAxes(OGRSpatialReferenceH hSRS,
+               const char * pszTargetKey,
                const char * pszXAxisName,
                OGRAxisOrientation eXAxisOrientation,
                const char * pszYAxisName,
                OGRAxisOrientation eYAxisOrientation) -> OGRErr
+
+Set the axes for a coordinate system.
 """
-function OSRSetAxes(pszTargetKey::Ptr{UInt8},pszXAxisName::Ptr{UInt8},eXAxisOrientation::OGRAxisOrientation,pszYAxisName::Ptr{UInt8},eYAxisOrientation::OGRAxisOrientation)
-    ccall((:OSRSetAxes,libgdal),OGRErr,(Ptr{UInt8},Ptr{UInt8},OGRAxisOrientation,Ptr{UInt8},OGRAxisOrientation),pszTargetKey,pszXAxisName,eXAxisOrientation,pszYAxisName,eYAxisOrientation)
+function OSRSetAxes(hSRS::OGRSpatialReferenceH,pszTargetKey::Ptr{UInt8},pszXAxisName::Ptr{UInt8},eXAxisOrientation::OGRAxisOrientation,pszYAxisName::Ptr{UInt8},eYAxisOrientation::OGRAxisOrientation)
+    ccall((:OSRSetAxes,libgdal),OGRErr,(OGRSpatialReferenceH,Ptr{UInt8},Ptr{UInt8},OGRAxisOrientation,Ptr{UInt8},OGRAxisOrientation),hSRS,pszTargetKey,pszXAxisName,eXAxisOrientation,pszYAxisName,eYAxisOrientation)
 end
 
 
@@ -1043,7 +1046,7 @@ end
 
 """
     OSRSetBonne(OGRSpatialReferenceH hSRS,
-                double dfStandardParallel,
+                double dfStdP1,
                 double dfCentralMeridian,
                 double dfFalseEasting,
                 double dfFalseNorthing) -> OGRErr
@@ -1157,7 +1160,7 @@ end
     OSRSetEquirectangular2(OGRSpatialReferenceH hSRS,
                            double dfCenterLat,
                            double dfCenterLong,
-                           double dfPseudoStdParallel1,
+                           double dfStdParallel1,
                            double dfFalseEasting,
                            double dfFalseNorthing) -> OGRErr
 
@@ -1274,10 +1277,27 @@ end
               double dfFalseEasting,
               double dfFalseNorthing) -> OGRErr
 
-Hotine Oblique Mercator using azimuth angle.
+Set a Hotine Oblique Mercator projection using azimuth angle.
 """
 function OSRSetHOM(hSRS::OGRSpatialReferenceH,dfCenterLat::Cdouble,dfCenterLong::Cdouble,dfAzimuth::Cdouble,dfRectToSkew::Cdouble,dfScale::Cdouble,dfFalseEasting::Cdouble,dfFalseNorthing::Cdouble)
     ccall((:OSRSetHOM,libgdal),OGRErr,(OGRSpatialReferenceH,Cdouble,Cdouble,Cdouble,Cdouble,Cdouble,Cdouble,Cdouble),hSRS,dfCenterLat,dfCenterLong,dfAzimuth,dfRectToSkew,dfScale,dfFalseEasting,dfFalseNorthing)
+end
+
+
+"""
+    OSRSetHOMAC(OGRSpatialReferenceH hSRS,
+                double dfCenterLat,
+                double dfCenterLong,
+                double dfAzimuth,
+                double dfRectToSkew,
+                double dfScale,
+                double dfFalseEasting,
+                double dfFalseNorthing) -> OGRErr
+
+Set an Oblique Mercator projection using azimuth angle.
+"""
+function OSRSetHOMAC(hSRS::OGRSpatialReferenceH,dfCenterLat::Cdouble,dfCenterLong::Cdouble,dfAzimuth::Cdouble,dfRectToSkew::Cdouble,dfScale::Cdouble,dfFalseEasting::Cdouble,dfFalseNorthing::Cdouble)
+    ccall((:OSRSetHOMAC,libgdal),OGRErr,(OGRSpatialReferenceH,Cdouble,Cdouble,Cdouble,Cdouble,Cdouble,Cdouble,Cdouble),hSRS,dfCenterLat,dfCenterLong,dfAzimuth,dfRectToSkew,dfScale,dfFalseEasting,dfFalseNorthing)
 end
 
 
@@ -1292,7 +1312,7 @@ end
                   double dfFalseEasting,
                   double dfFalseNorthing) -> OGRErr
 
-Hotine Oblique Mercator using two points on centerline.
+Set a Hotine Oblique Mercator projection using two points on projection centerline.
 """
 function OSRSetHOM2PNO(hSRS::OGRSpatialReferenceH,dfCenterLat::Cdouble,dfLat1::Cdouble,dfLong1::Cdouble,dfLat2::Cdouble,dfLong2::Cdouble,dfScale::Cdouble,dfFalseEasting::Cdouble,dfFalseNorthing::Cdouble)
     ccall((:OSRSetHOM2PNO,libgdal),OGRErr,(OGRSpatialReferenceH,Cdouble,Cdouble,Cdouble,Cdouble,Cdouble,Cdouble,Cdouble,Cdouble),hSRS,dfCenterLat,dfLat1,dfLong1,dfLat2,dfLong2,dfScale,dfFalseEasting,dfFalseNorthing)
@@ -1319,7 +1339,7 @@ end
                  double dfCenterLat,
                  double dfCenterLong,
                  double dfAzimuth,
-                 double dfPseudoStdParallelLat,
+                 double dfPseudoStdParallel1,
                  double dfScale,
                  double dfFalseEasting,
                  double dfFalseNorthing) -> OGRErr
@@ -1418,6 +1438,19 @@ Mercator.
 """
 function OSRSetMercator(hSRS::OGRSpatialReferenceH,dfCenterLat::Cdouble,dfCenterLong::Cdouble,dfScale::Cdouble,dfFalseEasting::Cdouble,dfFalseNorthing::Cdouble)
     ccall((:OSRSetMercator,libgdal),OGRErr,(OGRSpatialReferenceH,Cdouble,Cdouble,Cdouble,Cdouble,Cdouble),hSRS,dfCenterLat,dfCenterLong,dfScale,dfFalseEasting,dfFalseNorthing)
+end
+
+
+"""
+    OSRSetMercator2SP(OGRSpatialReferenceH hSRS,
+                      double dfStdP1,
+                      double dfCenterLat,
+                      double dfCenterLong,
+                      double dfFalseEasting,
+                      double dfFalseNorthing) -> OGRErr
+"""
+function OSRSetMercator2SP(hSRS::OGRSpatialReferenceH,dfStdP1::Cdouble,dfCenterLat::Cdouble,dfCenterLong::Cdouble,dfFalseEasting::Cdouble,dfFalseNorthing::Cdouble)
+    ccall((:OSRSetMercator2SP,libgdal),OGRErr,(OGRSpatialReferenceH,Cdouble,Cdouble,Cdouble,Cdouble,Cdouble),hSRS,dfStdP1,dfCenterLat,dfCenterLong,dfFalseEasting,dfFalseNorthing)
 end
 
 
@@ -1534,8 +1567,8 @@ end
 
 """
     OSRSetStereographic(OGRSpatialReferenceH hSRS,
-                        double dfCenterLat,
-                        double dfCenterLong,
+                        double dfOriginLat,
+                        double dfCMeridian,
                         double dfScale,
                         double dfFalseEasting,
                         double dfFalseNorthing) -> OGRErr
@@ -1622,8 +1655,22 @@ end
 
 
 """
+    OSRSetTPED(OGRSpatialReferenceH hSRS,
+               double dfLat1,
+               double dfLong1,
+               double dfLat2,
+               double dfLong2,
+               double dfFalseEasting,
+               double dfFalseNorthing) -> OGRErr
+"""
+function OSRSetTPED(hSRS::OGRSpatialReferenceH,dfLat1::Cdouble,dfLong1::Cdouble,dfLat2::Cdouble,dfLong2::Cdouble,dfFalseEasting::Cdouble,dfFalseNorthing::Cdouble)
+    ccall((:OSRSetTPED,libgdal),OGRErr,(OGRSpatialReferenceH,Cdouble,Cdouble,Cdouble,Cdouble,Cdouble,Cdouble),hSRS,dfLat1,dfLong1,dfLat2,dfLong2,dfFalseEasting,dfFalseNorthing)
+end
+
+
+"""
     OSRSetVDG(OGRSpatialReferenceH hSRS,
-              double dfCenterLong,
+              double dfCentralMeridian,
               double dfFalseEasting,
               double dfFalseNorthing) -> OGRErr
 
@@ -1637,13 +1684,14 @@ end
 """
     OSRSetWagner(OGRSpatialReferenceH hSRS,
                  int nVariation,
+                 double dfCenterLat,
                  double dfFalseEasting,
                  double dfFalseNorthing) -> OGRErr
 
 Wagner I  VII.
 """
-function OSRSetWagner(hSRS::OGRSpatialReferenceH,nVariation::Cint,dfFalseEasting::Cdouble,dfFalseNorthing::Cdouble)
-    ccall((:OSRSetWagner,libgdal),OGRErr,(OGRSpatialReferenceH,Cint,Cdouble,Cdouble),hSRS,nVariation,dfFalseEasting,dfFalseNorthing)
+function OSRSetWagner(hSRS::OGRSpatialReferenceH,nVariation::Cint,dfCenterLat::Cdouble,dfFalseEasting::Cdouble,dfFalseNorthing::Cdouble)
+    ccall((:OSRSetWagner,libgdal),OGRErr,(OGRSpatialReferenceH,Cint,Cdouble,Cdouble,Cdouble),hSRS,nVariation,dfCenterLat,dfFalseEasting,dfFalseNorthing)
 end
 
 
@@ -1656,6 +1704,20 @@ Quadrilateralized Spherical Cube.
 """
 function OSRSetQSC(hSRS::OGRSpatialReferenceH,dfCenterLat::Cdouble,dfCenterLong::Cdouble)
     ccall((:OSRSetQSC,libgdal),OGRErr,(OGRSpatialReferenceH,Cdouble,Cdouble),hSRS,dfCenterLat,dfCenterLong)
+end
+
+
+"""
+    OSRSetSCH(OGRSpatialReferenceH hSRS,
+              double dfPegLat,
+              double dfPegLong,
+              double dfPegHeading,
+              double dfPegHgt) -> OGRErr
+
+Spherical, Cross-track, Height.
+"""
+function OSRSetSCH(hSRS::OGRSpatialReferenceH,dfPegLat::Cdouble,dfPegLong::Cdouble,dfPegHeading::Cdouble,dfPegHgt::Cdouble)
+    ccall((:OSRSetSCH,libgdal),OGRErr,(OGRSpatialReferenceH,Cdouble,Cdouble,Cdouble,Cdouble),hSRS,dfPegLat,dfPegLong,dfPegHeading,dfPegHgt)
 end
 
 
@@ -1724,7 +1786,7 @@ end
 
 
 """
-    OCTDestroyCoordinateTransformation(OGRCoordinateTransformationH) -> void
+    OCTDestroyCoordinateTransformation(OGRCoordinateTransformationH hCT) -> void
 
 OGRCoordinateTransformation destructor.
 
@@ -1737,7 +1799,7 @@ end
 
 
 """
-    OCTTransform(OGRCoordinateTransformationH hCT,
+    OCTTransform(OGRCoordinateTransformationH hTransform,
                  int nCount,
                  double * x,
                  double * y,
@@ -1749,7 +1811,7 @@ end
 
 
 """
-    OCTTransformEx(OGRCoordinateTransformationH hCT,
+    OCTTransformEx(OGRCoordinateTransformationH hTransform,
                    int nCount,
                    double * x,
                    double * y,
@@ -1770,7 +1832,7 @@ end
 
 
 """
-    OCTCleanupProjMutex(void) -> void
+    OCTCleanupProjMutex() -> void
 """
 function OCTCleanupProjMutex()
     ccall((:OCTCleanupProjMutex,libgdal),Void,())

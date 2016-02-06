@@ -1,4 +1,4 @@
-# Julia wrapper for header: /usr/local/include/gdalwarper.h
+# Julia wrapper for header: /home/martijn/bin/gdal/include/gdalwarper.h
 # Automatically generated using Clang.jl wrap_c, version 0.0.0
 
 
@@ -24,7 +24,7 @@ end
 """
     GDALWarpDstAlphaMasker(void * pMaskFuncArg,
                            int nBandCount,
-                           CPL_UNUSED GDALDataType eType,
+                           GDALDataType eType,
                            int nXOff,
                            int nYOff,
                            int nXSize,
@@ -40,8 +40,8 @@ end
 
 """
     GDALWarpSrcAlphaMasker(void * pMaskFuncArg,
-                           CPL_UNUSED int nBandCount,
-                           CPL_UNUSED GDALDataType eType,
+                           int nBandCount,
+                           GDALDataType eType,
                            int nXOff,
                            int nYOff,
                            int nXSize,
@@ -58,8 +58,8 @@ end
 
 """
     GDALWarpSrcMaskMasker(void * pMaskFuncArg,
-                          CPL_UNUSED int nBandCount,
-                          CPL_UNUSED GDALDataType eType,
+                          int nBandCount,
+                          GDALDataType eType,
                           int nXOff,
                           int nYOff,
                           int nXSize,
@@ -75,8 +75,8 @@ end
 
 """
     GDALWarpCutlineMasker(void * pMaskFuncArg,
-                          CPL_UNUSED int nBandCount,
-                          CPL_UNUSED GDALDataType eType,
+                          int nBandCount,
+                          GDALDataType eType,
                           int nXOff,
                           int nYOff,
                           int nXSize,
@@ -136,7 +136,7 @@ end
                        GDALDatasetH hDstDS,
                        const char * pszDstWKT,
                        GDALResampleAlg eResampleAlg,
-                       CPL_UNUSED double dfWarpMemoryLimit,
+                       double dfWarpMemoryLimit,
                        double dfMaxError,
                        GDALProgressFunc pfnProgress,
                        void * pProgressArg,

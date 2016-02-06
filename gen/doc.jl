@@ -55,7 +55,7 @@ workdir = dirname(@__FILE__)
 # then run combine.xslt to create this XML file.
 xmlfile = joinpath(workdir, "all.xml")
 
-xmlstring = readall(xmlfile)
+xmlstring = readstring(xmlfile)
 et = xp_parse(xmlstring)
 functionnode(et, fname) = et["/doxygen/compounddef/sectiondef/memberdef[name='$fname']"][1]
 text(node::LibExpat.ETree, el::AbstractString) = strip(LibExpat.find(node, "$el#string"))

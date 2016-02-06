@@ -1,4 +1,4 @@
-# Julia wrapper for header: /usr/local/include/cpl_error.h
+# Julia wrapper for header: /home/martijn/bin/gdal/include/cpl_error.h
 # Automatically generated using Clang.jl wrap_c, version 0.0.0
 
 
@@ -28,7 +28,7 @@ end
 
 
 """
-    CPLGetLastErrorNo() -> int
+    CPLGetLastErrorNo() -> CPLErrorNum
 
 Fetch the last error number.
 
@@ -36,7 +36,7 @@ Fetch the last error number.
 the error number of the last error to occur, or CPLE_None (0) if there are no posted errors.
 """
 function CPLGetLastErrorNo()
-    ccall((:CPLGetLastErrorNo,libgdal),Cint,())
+    ccall((:CPLGetLastErrorNo,libgdal),CPLErrorNum,())
 end
 
 
@@ -81,13 +81,13 @@ end
 
 """
     CPLErrorSetState(CPLErr eErrClass,
-                     int err_no,
+                     CPLErrorNum err_no,
                      const char * pszMsg) -> void
 
 Restore an error state, without emitting an error.
 """
-function CPLErrorSetState(eErrClass::CPLErr,err_no::Cint,pszMsg::Ptr{UInt8})
-    ccall((:CPLErrorSetState,libgdal),Void,(CPLErr,Cint,Ptr{UInt8}),eErrClass,err_no,pszMsg)
+function CPLErrorSetState(eErrClass::CPLErr,err_no::CPLErrorNum,pszMsg::Ptr{UInt8})
+    ccall((:CPLErrorSetState,libgdal),Void,(CPLErr,CPLErrorNum,Ptr{UInt8}),eErrClass,err_no,pszMsg)
 end
 
 
@@ -101,31 +101,31 @@ end
 
 """
     CPLLoggingErrorHandler(CPLErr eErrClass,
-                           int nError,
+                           CPLErrorNum nError,
                            const char * pszErrorMsg) -> void
 """
-function CPLLoggingErrorHandler(arg1::CPLErr,arg2::Cint,arg3::Ptr{UInt8})
-    ccall((:CPLLoggingErrorHandler,libgdal),Void,(CPLErr,Cint,Ptr{UInt8}),arg1,arg2,arg3)
+function CPLLoggingErrorHandler(arg1::CPLErr,arg2::CPLErrorNum,arg3::Ptr{UInt8})
+    ccall((:CPLLoggingErrorHandler,libgdal),Void,(CPLErr,CPLErrorNum,Ptr{UInt8}),arg1,arg2,arg3)
 end
 
 
 """
     CPLDefaultErrorHandler(CPLErr eErrClass,
-                           int nError,
+                           CPLErrorNum nError,
                            const char * pszErrorMsg) -> void
 """
-function CPLDefaultErrorHandler(arg1::CPLErr,arg2::Cint,arg3::Ptr{UInt8})
-    ccall((:CPLDefaultErrorHandler,libgdal),Void,(CPLErr,Cint,Ptr{UInt8}),arg1,arg2,arg3)
+function CPLDefaultErrorHandler(arg1::CPLErr,arg2::CPLErrorNum,arg3::Ptr{UInt8})
+    ccall((:CPLDefaultErrorHandler,libgdal),Void,(CPLErr,CPLErrorNum,Ptr{UInt8}),arg1,arg2,arg3)
 end
 
 
 """
     CPLQuietErrorHandler(CPLErr eErrClass,
-                         int nError,
+                         CPLErrorNum nError,
                          const char * pszErrorMsg) -> void
 """
-function CPLQuietErrorHandler(arg1::CPLErr,arg2::Cint,arg3::Ptr{UInt8})
-    ccall((:CPLQuietErrorHandler,libgdal),Void,(CPLErr,Cint,Ptr{UInt8}),arg1,arg2,arg3)
+function CPLQuietErrorHandler(arg1::CPLErr,arg2::CPLErrorNum,arg3::Ptr{UInt8})
+    ccall((:CPLQuietErrorHandler,libgdal),Void,(CPLErr,CPLErrorNum,Ptr{UInt8}),arg1,arg2,arg3)
 end
 
 

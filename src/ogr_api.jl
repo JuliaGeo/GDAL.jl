@@ -1,10 +1,10 @@
 
 
 """
-    OGR_G_CreateFromWkb(unsigned char *,
-                        OGRSpatialReferenceH,
-                        OGRGeometryH *,
-                        int) -> OGRErr
+    OGR_G_CreateFromWkb(unsigned char * pabyData,
+                        OGRSpatialReferenceH hSRS,
+                        OGRGeometryH * phGeometry,
+                        int nBytes) -> OGRErr
 
 Create a geometry object of the appropriate type from it's well known binary representation.
 
@@ -23,9 +23,9 @@ end
 
 
 """
-    OGR_G_CreateFromWkt(char **,
-                        OGRSpatialReferenceH,
-                        OGRGeometryH *) -> OGRErr
+    OGR_G_CreateFromWkt(char ** ppszData,
+                        OGRSpatialReferenceH hSRS,
+                        OGRGeometryH * phGeometry) -> OGRErr
 
 Create a geometry object of the appropriate type from it's well known text representation.
 
@@ -43,11 +43,11 @@ end
 
 
 """
-    OGR_G_CreateFromFgf(unsigned char *,
-                        OGRSpatialReferenceH,
-                        OGRGeometryH *,
-                        int,
-                        int *) -> OGRErr
+    OGR_G_CreateFromFgf(unsigned char * pabyData,
+                        OGRSpatialReferenceH hSRS,
+                        OGRGeometryH * phGeometry,
+                        int nBytes,
+                        int * pnBytesConsumed) -> OGRErr
 """
 function createfromfgf(arg1::Ptr{Cuchar},arg2::OGRSpatialReferenceH,arg3::Ptr{OGRGeometryH},arg4::Integer,arg5::Vector{Cint})
     ccall((:OGR_G_CreateFromFgf,libgdal),OGRErr,(Ptr{Cuchar},OGRSpatialReferenceH,Ptr{OGRGeometryH},Cint,Ptr{Cint}),arg1,arg2,arg3,arg4,arg5)
@@ -55,7 +55,7 @@ end
 
 
 """
-    OGR_G_DestroyGeometry(OGRGeometryH) -> void
+    OGR_G_DestroyGeometry(OGRGeometryH hGeom) -> void
 
 Destroy geometry object.
 
@@ -68,7 +68,7 @@ end
 
 
 """
-    OGR_G_CreateGeometry(OGRwkbGeometryType) -> OGRGeometryH
+    OGR_G_CreateGeometry(OGRwkbGeometryType eGeometryType) -> OGRGeometryH
 
 Create an empty geometry of desired type.
 
@@ -88,7 +88,7 @@ end
                                double dfCenterY,
                                double dfZ,
                                double dfPrimaryRadius,
-                               double dfSecondaryAxis,
+                               double dfSecondaryRadius,
                                double dfRotation,
                                double dfStartAngle,
                                double dfEndAngle,
@@ -116,7 +116,7 @@ end
 
 
 """
-    OGR_G_ForceToPolygon(OGRGeometryH) -> OGRGeometryH
+    OGR_G_ForceToPolygon(OGRGeometryH hGeom) -> OGRGeometryH
 
 Convert to polygon.
 
@@ -132,7 +132,7 @@ end
 
 
 """
-    OGR_G_ForceToLineString(OGRGeometryH) -> OGRGeometryH
+    OGR_G_ForceToLineString(OGRGeometryH hGeom) -> OGRGeometryH
 
 Convert to line string.
 
@@ -148,7 +148,7 @@ end
 
 
 """
-    OGR_G_ForceToMultiPolygon(OGRGeometryH) -> OGRGeometryH
+    OGR_G_ForceToMultiPolygon(OGRGeometryH hGeom) -> OGRGeometryH
 
 Convert to multipolygon.
 
@@ -164,7 +164,7 @@ end
 
 
 """
-    OGR_G_ForceToMultiPoint(OGRGeometryH) -> OGRGeometryH
+    OGR_G_ForceToMultiPoint(OGRGeometryH hGeom) -> OGRGeometryH
 
 Convert to multipoint.
 
@@ -180,7 +180,7 @@ end
 
 
 """
-    OGR_G_ForceToMultiLineString(OGRGeometryH) -> OGRGeometryH
+    OGR_G_ForceToMultiLineString(OGRGeometryH hGeom) -> OGRGeometryH
 
 Convert to multilinestring.
 
@@ -216,7 +216,7 @@ end
 
 
 """
-    OGR_G_GetDimension(OGRGeometryH) -> int
+    OGR_G_GetDimension(OGRGeometryH hGeom) -> int
 
 Get the dimension of this geometry.
 
@@ -232,7 +232,7 @@ end
 
 
 """
-    OGR_G_GetCoordinateDimension(OGRGeometryH) -> int
+    OGR_G_GetCoordinateDimension(OGRGeometryH hGeom) -> int
 
 Get the dimension of the coordinates in this geometry.
 
@@ -248,8 +248,8 @@ end
 
 
 """
-    OGR_G_SetCoordinateDimension(OGRGeometryH,
-                                 int) -> void
+    OGR_G_SetCoordinateDimension(OGRGeometryH hGeom,
+                                 int nNewDimension) -> void
 
 Set the coordinate dimension.
 
@@ -263,7 +263,7 @@ end
 
 
 """
-    OGR_G_Clone(OGRGeometryH) -> OGRGeometryH
+    OGR_G_Clone(OGRGeometryH hGeom) -> OGRGeometryH
 
 Make a copy of this object.
 
@@ -279,8 +279,8 @@ end
 
 
 """
-    OGR_G_GetEnvelope(OGRGeometryH,
-                      OGREnvelope *) -> void
+    OGR_G_GetEnvelope(OGRGeometryH hGeom,
+                      OGREnvelope * psEnvelope) -> void
 
 Computes and returns the bounding envelope for this geometry in the passed psEnvelope structure.
 
@@ -294,8 +294,8 @@ end
 
 
 """
-    OGR_G_GetEnvelope3D(OGRGeometryH,
-                        OGREnvelope3D *) -> void
+    OGR_G_GetEnvelope3D(OGRGeometryH hGeom,
+                        OGREnvelope3D * psEnvelope) -> void
 
 Computes and returns the bounding envelope (3D) for this geometry in the passed psEnvelope structure.
 
@@ -309,9 +309,9 @@ end
 
 
 """
-    OGR_G_ImportFromWkb(OGRGeometryH,
-                        unsigned char *,
-                        int) -> OGRErr
+    OGR_G_ImportFromWkb(OGRGeometryH hGeom,
+                        unsigned char * pabyData,
+                        int nSize) -> OGRErr
 
 Assign geometry from well known binary data.
 
@@ -329,9 +329,9 @@ end
 
 
 """
-    OGR_G_ExportToWkb(OGRGeometryH,
-                      OGRwkbByteOrder,
-                      unsigned char *) -> OGRErr
+    OGR_G_ExportToWkb(OGRGeometryH hGeom,
+                      OGRwkbByteOrder eOrder,
+                      unsigned char * pabyDstBuffer) -> OGRErr
 
 Convert a geometry well known binary format.
 
@@ -349,9 +349,9 @@ end
 
 
 """
-    OGR_G_ExportToIsoWkb(OGRGeometryH,
-                         OGRwkbByteOrder,
-                         unsigned char *) -> OGRErr
+    OGR_G_ExportToIsoWkb(OGRGeometryH hGeom,
+                         OGRwkbByteOrder eOrder,
+                         unsigned char * pabyDstBuffer) -> OGRErr
 
 Convert a geometry into SFSQL 1.2 / ISO SQL/MM Part 3 well known binary format.
 
@@ -385,8 +385,8 @@ end
 
 
 """
-    OGR_G_ImportFromWkt(OGRGeometryH,
-                        char **) -> OGRErr
+    OGR_G_ImportFromWkt(OGRGeometryH hGeom,
+                        char ** ppszSrcText) -> OGRErr
 
 Assign geometry from well known text data.
 
@@ -403,8 +403,8 @@ end
 
 
 """
-    OGR_G_ExportToWkt(OGRGeometryH,
-                      char **) -> OGRErr
+    OGR_G_ExportToWkt(OGRGeometryH hGeom,
+                      char ** ppszSrcText) -> OGRErr
 
 Convert a geometry into well known text format.
 
@@ -421,8 +421,8 @@ end
 
 
 """
-    OGR_G_ExportToIsoWkt(OGRGeometryH,
-                         char **) -> OGRErr
+    OGR_G_ExportToIsoWkt(OGRGeometryH hGeom,
+                         char ** ppszSrcText) -> OGRErr
 
 Convert a geometry into SFSQL 1.2 / ISO SQL/MM Part 3 well known text format.
 
@@ -439,7 +439,7 @@ end
 
 
 """
-    OGR_G_GetGeometryType(OGRGeometryH) -> OGRwkbGeometryType
+    OGR_G_GetGeometryType(OGRGeometryH hGeom) -> OGRwkbGeometryType
 
 Fetch geometry type.
 
@@ -455,7 +455,7 @@ end
 
 
 """
-    OGR_G_GetGeometryName(OGRGeometryH) -> const char *
+    OGR_G_GetGeometryName(OGRGeometryH hGeom) -> const char *
 
 Fetch WKT name for geometry type.
 
@@ -471,9 +471,9 @@ end
 
 
 """
-    OGR_G_DumpReadable(OGRGeometryH,
-                       FILE *,
-                       const char *) -> void
+    OGR_G_DumpReadable(OGRGeometryH hGeom,
+                       FILE * fp,
+                       const char * pszPrefix) -> void
 
 Dump geometry in well known text format to indicated output file.
 
@@ -488,7 +488,7 @@ end
 
 
 """
-    OGR_G_FlattenTo2D(OGRGeometryH) -> void
+    OGR_G_FlattenTo2D(OGRGeometryH hGeom) -> void
 
 Convert geometry to strictly 2D.
 
@@ -501,7 +501,7 @@ end
 
 
 """
-    OGR_G_CloseRings(OGRGeometryH) -> void
+    OGR_G_CloseRings(OGRGeometryH hGeom) -> void
 
 Force rings to be closed.
 
@@ -522,7 +522,7 @@ Create geometry from GML.
 * **pszGML**: The GML fragment for the geometry.
 
 ### Returns
-a geometry on succes, or NULL on error.
+a geometry on success, or NULL on error.
 """
 function createfromgml(arg1::AbstractString)
     checknull(ccall((:OGR_G_CreateFromGML,libgdal),OGRGeometryH,(Ptr{UInt8},),arg1))
@@ -606,7 +606,7 @@ end
 
 
 """
-    OGR_G_ExportToJson(OGRGeometryH) -> char *
+    OGR_G_ExportToJson(OGRGeometryH hGeometry) -> char *
 
 Convert a geometry into GeoJSON format.
 
@@ -622,14 +622,14 @@ end
 
 
 """
-    OGR_G_ExportToJsonEx(OGRGeometryH,
+    OGR_G_ExportToJsonEx(OGRGeometryH hGeometry,
                          char ** papszOptions) -> char *
 
 Convert a geometry into GeoJSON format.
 
 ### Parameters
 * **hGeometry**: handle to the geometry.
-* **papszOptions**: a null terminated list of options. For now, only COORDINATE_PRECISION=int_number where int_number is the maximum number of figures after decimal separator to write in coordinates.
+* **papszOptions**: a null terminated list of options.
 
 ### Returns
 A GeoJSON fragment or NULL in case of error.
@@ -648,8 +648,8 @@ end
 
 
 """
-    OGR_G_AssignSpatialReference(OGRGeometryH,
-                                 OGRSpatialReferenceH) -> void
+    OGR_G_AssignSpatialReference(OGRGeometryH hGeom,
+                                 OGRSpatialReferenceH hSRS) -> void
 
 Assign spatial reference to this object.
 
@@ -663,7 +663,7 @@ end
 
 
 """
-    OGR_G_GetSpatialReference(OGRGeometryH) -> OGRSpatialReferenceH
+    OGR_G_GetSpatialReference(OGRGeometryH hGeom) -> OGRSpatialReferenceH
 
 Returns spatial reference system for geometry.
 
@@ -679,8 +679,8 @@ end
 
 
 """
-    OGR_G_Transform(OGRGeometryH,
-                    OGRCoordinateTransformationH) -> OGRErr
+    OGR_G_Transform(OGRGeometryH hGeom,
+                    OGRCoordinateTransformationH hTransform) -> OGRErr
 
 Apply arbitrary coordinate transformation to geometry.
 
@@ -697,8 +697,8 @@ end
 
 
 """
-    OGR_G_TransformTo(OGRGeometryH,
-                      OGRSpatialReferenceH) -> OGRErr
+    OGR_G_TransformTo(OGRGeometryH hGeom,
+                      OGRSpatialReferenceH hSRS) -> OGRErr
 
 Transform geometry to new spatial reference system.
 
@@ -716,7 +716,7 @@ end
 
 """
     OGR_G_Simplify(OGRGeometryH hThis,
-                   double tolerance) -> OGRGeometryH
+                   double dTolerance) -> OGRGeometryH
 
 Compute a simplified geometry.
 
@@ -734,7 +734,7 @@ end
 
 """
     OGR_G_SimplifyPreserveTopology(OGRGeometryH hThis,
-                                   double tolerance) -> OGRGeometryH
+                                   double dTolerance) -> OGRGeometryH
 
 Simplify the geometry while preserving topology.
 
@@ -747,6 +747,26 @@ the simplified geometry or NULL if an error occurs.
 """
 function simplifypreservetopology(hThis::OGRGeometryH,tolerance::Real)
     checknull(ccall((:OGR_G_SimplifyPreserveTopology,libgdal),OGRGeometryH,(OGRGeometryH,Cdouble),hThis,tolerance))
+end
+
+
+"""
+    OGR_G_DelaunayTriangulation(OGRGeometryH hThis,
+                                double dfTolerance,
+                                int bOnlyEdges) -> OGRGeometryH
+
+Return a Delaunay triangulation of the vertices of the geometry.
+
+### Parameters
+* **hThis**: the geometry.
+* **dfTolerance**: optional snapping tolerance to use for improved robustness
+* **bOnlyEdges**: if TRUE, will return a MULTILINESTRING, otherwise it will return a GEOMETRYCOLLECTION containing triangular POLYGONs.
+
+### Returns
+the geometry resulting from the Delaunay triangulation or NULL if an error occurs.
+"""
+function delaunaytriangulation(hThis::OGRGeometryH,dfTolerance::Real,bOnlyEdges::Integer)
+    checknull(ccall((:OGR_G_DelaunayTriangulation,libgdal),OGRGeometryH,(OGRGeometryH,Cdouble,Cint),hThis,dfTolerance,bOnlyEdges))
 end
 
 
@@ -766,8 +786,8 @@ end
 
 
 """
-    OGR_G_Intersects(OGRGeometryH,
-                     OGRGeometryH) -> int
+    OGR_G_Intersects(OGRGeometryH hGeom,
+                     OGRGeometryH hOtherGeom) -> int
 
 Do these features intersect?
 
@@ -784,8 +804,8 @@ end
 
 
 """
-    OGR_G_Equals(OGRGeometryH,
-                 OGRGeometryH) -> int
+    OGR_G_Equals(OGRGeometryH hGeom,
+                 OGRGeometryH hOther) -> int
 
 Returns TRUE if two geometries are equivalent.
 
@@ -802,8 +822,8 @@ end
 
 
 """
-    OGR_G_Disjoint(OGRGeometryH,
-                   OGRGeometryH) -> int
+    OGR_G_Disjoint(OGRGeometryH hThis,
+                   OGRGeometryH hOther) -> int
 
 Test for disjointness.
 
@@ -820,8 +840,8 @@ end
 
 
 """
-    OGR_G_Touches(OGRGeometryH,
-                  OGRGeometryH) -> int
+    OGR_G_Touches(OGRGeometryH hThis,
+                  OGRGeometryH hOther) -> int
 
 Test for touching.
 
@@ -838,8 +858,8 @@ end
 
 
 """
-    OGR_G_Crosses(OGRGeometryH,
-                  OGRGeometryH) -> int
+    OGR_G_Crosses(OGRGeometryH hThis,
+                  OGRGeometryH hOther) -> int
 
 Test for crossing.
 
@@ -856,8 +876,8 @@ end
 
 
 """
-    OGR_G_Within(OGRGeometryH,
-                 OGRGeometryH) -> int
+    OGR_G_Within(OGRGeometryH hThis,
+                 OGRGeometryH hOther) -> int
 
 Test for containment.
 
@@ -874,8 +894,8 @@ end
 
 
 """
-    OGR_G_Contains(OGRGeometryH,
-                   OGRGeometryH) -> int
+    OGR_G_Contains(OGRGeometryH hThis,
+                   OGRGeometryH hOther) -> int
 
 Test for containment.
 
@@ -892,8 +912,8 @@ end
 
 
 """
-    OGR_G_Overlaps(OGRGeometryH,
-                   OGRGeometryH) -> int
+    OGR_G_Overlaps(OGRGeometryH hThis,
+                   OGRGeometryH hOther) -> int
 
 Test for overlap.
 
@@ -910,7 +930,7 @@ end
 
 
 """
-    OGR_G_Boundary(OGRGeometryH) -> OGRGeometryH
+    OGR_G_Boundary(OGRGeometryH hTarget) -> OGRGeometryH
 
 Compute boundary.
 
@@ -926,7 +946,7 @@ end
 
 
 """
-    OGR_G_ConvexHull(OGRGeometryH) -> OGRGeometryH
+    OGR_G_ConvexHull(OGRGeometryH hTarget) -> OGRGeometryH
 
 Compute convex hull.
 
@@ -942,9 +962,9 @@ end
 
 
 """
-    OGR_G_Buffer(OGRGeometryH,
-                 double,
-                 int) -> OGRGeometryH
+    OGR_G_Buffer(OGRGeometryH hTarget,
+                 double dfDist,
+                 int nQuadSegs) -> OGRGeometryH
 
 Compute buffer of geometry.
 
@@ -962,8 +982,8 @@ end
 
 
 """
-    OGR_G_Intersection(OGRGeometryH,
-                       OGRGeometryH) -> OGRGeometryH
+    OGR_G_Intersection(OGRGeometryH hThis,
+                       OGRGeometryH hOther) -> OGRGeometryH
 
 Compute intersection.
 
@@ -980,8 +1000,8 @@ end
 
 
 """
-    OGR_G_Union(OGRGeometryH,
-                OGRGeometryH) -> OGRGeometryH
+    OGR_G_Union(OGRGeometryH hThis,
+                OGRGeometryH hOther) -> OGRGeometryH
 
 Compute union.
 
@@ -998,7 +1018,7 @@ end
 
 
 """
-    OGR_G_UnionCascaded(OGRGeometryH) -> OGRGeometryH
+    OGR_G_UnionCascaded(OGRGeometryH hThis) -> OGRGeometryH
 
 Compute union using cascading.
 
@@ -1014,7 +1034,7 @@ end
 
 
 """
-    OGR_G_PointOnSurface(OGRGeometryH) -> OGRGeometryH
+    OGR_G_PointOnSurface(OGRGeometryH hGeom) -> OGRGeometryH
 
 Returns a point guaranteed to lie on the surface.
 
@@ -1022,7 +1042,7 @@ Returns a point guaranteed to lie on the surface.
 * **hGeom**: the geometry to operate on.
 
 ### Returns
-a point guaranteed to lie on the surface or NULL if an error occured.
+a point guaranteed to lie on the surface or NULL if an error occurred.
 """
 function pointonsurface(arg1::OGRGeometryH)
     checknull(ccall((:OGR_G_PointOnSurface,libgdal),OGRGeometryH,(OGRGeometryH,),arg1))
@@ -1030,8 +1050,8 @@ end
 
 
 """
-    OGR_G_Difference(OGRGeometryH,
-                     OGRGeometryH) -> OGRGeometryH
+    OGR_G_Difference(OGRGeometryH hThis,
+                     OGRGeometryH hOther) -> OGRGeometryH
 
 Compute difference.
 
@@ -1048,8 +1068,8 @@ end
 
 
 """
-    OGR_G_SymDifference(OGRGeometryH,
-                        OGRGeometryH) -> OGRGeometryH
+    OGR_G_SymDifference(OGRGeometryH hThis,
+                        OGRGeometryH hOther) -> OGRGeometryH
 
 Compute symmetric difference.
 
@@ -1066,8 +1086,8 @@ end
 
 
 """
-    OGR_G_Distance(OGRGeometryH,
-                   OGRGeometryH) -> double
+    OGR_G_Distance(OGRGeometryH hFirst,
+                   OGRGeometryH hOther) -> double
 
 Compute distance between two geometries.
 
@@ -1092,7 +1112,7 @@ Compute length of a geometry.
 * **hGeom**: the geometry to operate on.
 
 ### Returns
-the lenght or 0.0 for unsupported geometry types.
+the length or 0.0 for unsupported geometry types.
 """
 function length(arg1::OGRGeometryH)
     ccall((:OGR_G_Length,libgdal),Cdouble,(OGRGeometryH,),arg1)
@@ -1116,8 +1136,8 @@ end
 
 
 """
-    OGR_G_Centroid(OGRGeometryH,
-                   OGRGeometryH) -> int
+    OGR_G_Centroid(OGRGeometryH hGeom,
+                   OGRGeometryH hCentroidPoint) -> int
 
 Compute the geometry centroid.
 
@@ -1148,7 +1168,7 @@ end
 
 
 """
-    OGR_G_Empty(OGRGeometryH) -> void
+    OGR_G_Empty(OGRGeometryH hGeom) -> void
 
 Clear geometry information.
 
@@ -1161,7 +1181,7 @@ end
 
 
 """
-    OGR_G_IsEmpty(OGRGeometryH) -> int
+    OGR_G_IsEmpty(OGRGeometryH hGeom) -> int
 
 Test if the geometry is empty.
 
@@ -1177,7 +1197,7 @@ end
 
 
 """
-    OGR_G_IsValid(OGRGeometryH) -> int
+    OGR_G_IsValid(OGRGeometryH hGeom) -> int
 
 Test if the geometry is valid.
 
@@ -1193,7 +1213,7 @@ end
 
 
 """
-    OGR_G_IsSimple(OGRGeometryH) -> int
+    OGR_G_IsSimple(OGRGeometryH hGeom) -> int
 
 Returns TRUE if the geometry is simple.
 
@@ -1209,7 +1229,7 @@ end
 
 
 """
-    OGR_G_IsRing(OGRGeometryH) -> int
+    OGR_G_IsRing(OGRGeometryH hGeom) -> int
 
 Test if the geometry is a ring.
 
@@ -1225,7 +1245,7 @@ end
 
 
 """
-    OGR_G_Polygonize(OGRGeometryH) -> OGRGeometryH
+    OGR_G_Polygonize(OGRGeometryH hTarget) -> OGRGeometryH
 
 Polygonizes a set of sparse edges.
 
@@ -1241,8 +1261,8 @@ end
 
 
 """
-    OGR_G_Intersect(OGRGeometryH,
-                    OGRGeometryH) -> int
+    OGR_G_Intersect(OGRGeometryH hGeom,
+                    OGRGeometryH hOtherGeom) -> int
 """
 function intersect(arg1::OGRGeometryH,arg2::OGRGeometryH)
     ccall((:OGR_G_Intersect,libgdal),Cint,(OGRGeometryH,OGRGeometryH),arg1,arg2)
@@ -1250,8 +1270,8 @@ end
 
 
 """
-    OGR_G_Equal(OGRGeometryH,
-                OGRGeometryH) -> int
+    OGR_G_Equal(OGRGeometryH hGeom,
+                OGRGeometryH hOther) -> int
 """
 function equal(arg1::OGRGeometryH,arg2::OGRGeometryH)
     ccall((:OGR_G_Equal,libgdal),Cint,(OGRGeometryH,OGRGeometryH),arg1,arg2)
@@ -1259,8 +1279,8 @@ end
 
 
 """
-    OGR_G_SymmetricDifference(OGRGeometryH,
-                              OGRGeometryH) -> OGRGeometryH
+    OGR_G_SymmetricDifference(OGRGeometryH hThis,
+                              OGRGeometryH hOther) -> OGRGeometryH
 
 Compute symmetric difference (deprecated)
 """
@@ -1280,7 +1300,7 @@ end
 
 
 """
-    OGR_G_GetBoundary(OGRGeometryH) -> OGRGeometryH
+    OGR_G_GetBoundary(OGRGeometryH hTarget) -> OGRGeometryH
 
 Compute boundary (deprecated)
 """
@@ -1415,6 +1435,7 @@ end
 Set number of points in a geometry.
 
 ### Parameters
+* **hGeom**: handle to the geometry.
 * **nNewPointCount**: the new number of points for geometry.
 """
 function setpointcount(hGeom::OGRGeometryH,nNewPointCount::Integer)
@@ -1513,11 +1534,11 @@ Assign all points in a point or a line string geometry.
 ### Parameters
 * **hGeom**: handle to the geometry to set the coordinates.
 * **nPointsIn**: number of points being passed in padfX and padfY.
-* **padfX**: list of X coordinates of points being assigned.
+* **pabyX**: list of X coordinates (double values) of points being assigned.
 * **nXStride**: the number of bytes between 2 elements of pabyX.
-* **padfY**: list of Y coordinates of points being assigned.
+* **pabyY**: list of Y coordinates (double values) of points being assigned.
 * **nYStride**: the number of bytes between 2 elements of pabyY.
-* **padfZ**: list of Z coordinates of points being assigned (defaults to NULL for 2D objects).
+* **pabyZ**: list of Z coordinates (double values) of points being assigned (defaults to NULL for 2D objects).
 * **nZStride**: the number of bytes between 2 elements of pabyZ.
 """
 function setpoints(hGeom::OGRGeometryH,nPointsIn::Integer,pabyX::Ptr{Void},nXStride::Integer,pabyY::Ptr{Void},nYStride::Integer,pabyZ::Ptr{Void},nZStride::Integer)
@@ -1672,7 +1693,7 @@ end
 
 
 """
-    OGRBuildPolygonFromEdges(OGRGeometryH hLinesAsCollection,
+    OGRBuildPolygonFromEdges(OGRGeometryH hLines,
                              int bBestEffort,
                              int bAutoClose,
                              double dfTolerance,
@@ -1706,7 +1727,7 @@ end
 
 
 """
-    OGRGetGenerate_DB2_V72_BYTE_ORDER(void) -> int
+    OGRGetGenerate_DB2_V72_BYTE_ORDER() -> int
 """
 function getgenerate_db2_v72_byte_order()
     ccall((:OGRGetGenerate_DB2_V72_BYTE_ORDER,libgdal),Cint,())
@@ -1740,8 +1761,8 @@ end
 
 
 """
-    OGR_Fld_Create(const char *,
-                   OGRFieldType) -> OGRFieldDefnH
+    OGR_Fld_Create(const char * pszName,
+                   OGRFieldType eType) -> OGRFieldDefnH
 
 Create a new field definition.
 
@@ -1758,7 +1779,7 @@ end
 
 
 """
-    OGR_Fld_Destroy(OGRFieldDefnH) -> void
+    OGR_Fld_Destroy(OGRFieldDefnH hDefn) -> void
 
 Destroy a field definition.
 
@@ -1771,8 +1792,8 @@ end
 
 
 """
-    OGR_Fld_SetName(OGRFieldDefnH,
-                    const char *) -> void
+    OGR_Fld_SetName(OGRFieldDefnH hDefn,
+                    const char * pszName) -> void
 
 Reset the name of this field.
 
@@ -1786,7 +1807,7 @@ end
 
 
 """
-    OGR_Fld_GetNameRef(OGRFieldDefnH) -> const char *
+    OGR_Fld_GetNameRef(OGRFieldDefnH hDefn) -> const char *
 
 Fetch name of this field.
 
@@ -1802,7 +1823,7 @@ end
 
 
 """
-    OGR_Fld_GetType(OGRFieldDefnH) -> OGRFieldType
+    OGR_Fld_GetType(OGRFieldDefnH hDefn) -> OGRFieldType
 
 Fetch type of this field.
 
@@ -1818,8 +1839,8 @@ end
 
 
 """
-    OGR_Fld_SetType(OGRFieldDefnH,
-                    OGRFieldType) -> void
+    OGR_Fld_SetType(OGRFieldDefnH hDefn,
+                    OGRFieldType eType) -> void
 
 Set the type of this field.
 
@@ -1833,7 +1854,7 @@ end
 
 
 """
-    OGR_Fld_GetSubType(OGRFieldDefnH) -> OGRFieldSubType
+    OGR_Fld_GetSubType(OGRFieldDefnH hDefn) -> OGRFieldSubType
 
 Fetch subtype of this field.
 
@@ -1849,8 +1870,8 @@ end
 
 
 """
-    OGR_Fld_SetSubType(OGRFieldDefnH,
-                       OGRFieldSubType) -> void
+    OGR_Fld_SetSubType(OGRFieldDefnH hDefn,
+                       OGRFieldSubType eSubType) -> void
 
 Set the subtype of this field.
 
@@ -1864,7 +1885,7 @@ end
 
 
 """
-    OGR_Fld_GetJustify(OGRFieldDefnH) -> OGRJustification
+    OGR_Fld_GetJustify(OGRFieldDefnH hDefn) -> OGRJustification
 
 Get the justification for this field.
 
@@ -1880,8 +1901,8 @@ end
 
 
 """
-    OGR_Fld_SetJustify(OGRFieldDefnH,
-                       OGRJustification) -> void
+    OGR_Fld_SetJustify(OGRFieldDefnH hDefn,
+                       OGRJustification eJustify) -> void
 
 Set the justification for this field.
 
@@ -1895,7 +1916,7 @@ end
 
 
 """
-    OGR_Fld_GetWidth(OGRFieldDefnH) -> int
+    OGR_Fld_GetWidth(OGRFieldDefnH hDefn) -> int
 
 Get the formatting width for this field.
 
@@ -1911,8 +1932,8 @@ end
 
 
 """
-    OGR_Fld_SetWidth(OGRFieldDefnH,
-                     int) -> void
+    OGR_Fld_SetWidth(OGRFieldDefnH hDefn,
+                     int nNewWidth) -> void
 
 Set the formatting width for this field in characters.
 
@@ -1926,7 +1947,7 @@ end
 
 
 """
-    OGR_Fld_GetPrecision(OGRFieldDefnH) -> int
+    OGR_Fld_GetPrecision(OGRFieldDefnH hDefn) -> int
 
 Get the formatting precision for this field.
 
@@ -1942,8 +1963,8 @@ end
 
 
 """
-    OGR_Fld_SetPrecision(OGRFieldDefnH,
-                         int) -> void
+    OGR_Fld_SetPrecision(OGRFieldDefnH hDefn,
+                         int nPrecision) -> void
 
 Set the formatting precision for this field in characters.
 
@@ -1957,12 +1978,12 @@ end
 
 
 """
-    OGR_Fld_Set(OGRFieldDefnH,
-                const char *,
-                OGRFieldType,
-                int,
-                int,
-                OGRJustification) -> void
+    OGR_Fld_Set(OGRFieldDefnH hDefn,
+                const char * pszNameIn,
+                OGRFieldType eTypeIn,
+                int nWidthIn,
+                int nPrecisionIn,
+                OGRJustification eJustifyIn) -> void
 
 Set defining parameters for a field in one call.
 
@@ -1997,7 +2018,7 @@ end
 
 """
     OGR_Fld_SetIgnored(OGRFieldDefnH hDefn,
-                       int) -> void
+                       int ignore) -> void
 
 Set whether this field should be omitted when fetching features.
 
@@ -2028,7 +2049,7 @@ end
 
 """
     OGR_Fld_SetNullable(OGRFieldDefnH hDefn,
-                        int) -> void
+                        int bNullableIn) -> void
 
 Set whether this field can receive null values.
 
@@ -2059,7 +2080,7 @@ end
 
 """
     OGR_Fld_SetDefault(OGRFieldDefnH hDefn,
-                       const char *) -> void
+                       const char * pszDefault) -> void
 
 Set default field value.
 
@@ -2089,7 +2110,7 @@ end
 
 
 """
-    OGR_GetFieldTypeName(OGRFieldType) -> const char *
+    OGR_GetFieldTypeName(OGRFieldType eType) -> const char *
 
 Fetch human readable name for a field type.
 
@@ -2105,7 +2126,7 @@ end
 
 
 """
-    OGR_GetFieldSubTypeName(OGRFieldSubType) -> const char *
+    OGR_GetFieldSubTypeName(OGRFieldSubType eSubType) -> const char *
 
 Fetch human readable name for a field subtype.
 
@@ -2139,8 +2160,8 @@ end
 
 
 """
-    OGR_GFld_Create(const char *,
-                    OGRwkbGeometryType) -> OGRGeomFieldDefnH
+    OGR_GFld_Create(const char * pszName,
+                    OGRwkbGeometryType eType) -> OGRGeomFieldDefnH
 
 Create a new field geometry definition.
 
@@ -2157,7 +2178,7 @@ end
 
 
 """
-    OGR_GFld_Destroy(OGRGeomFieldDefnH) -> void
+    OGR_GFld_Destroy(OGRGeomFieldDefnH hDefn) -> void
 
 Destroy a geometry field definition.
 
@@ -2170,8 +2191,8 @@ end
 
 
 """
-    OGR_GFld_SetName(OGRGeomFieldDefnH,
-                     const char *) -> void
+    OGR_GFld_SetName(OGRGeomFieldDefnH hDefn,
+                     const char * pszName) -> void
 
 Reset the name of this field.
 
@@ -2185,7 +2206,7 @@ end
 
 
 """
-    OGR_GFld_GetNameRef(OGRGeomFieldDefnH) -> const char *
+    OGR_GFld_GetNameRef(OGRGeomFieldDefnH hDefn) -> const char *
 
 Fetch name of this field.
 
@@ -2201,7 +2222,7 @@ end
 
 
 """
-    OGR_GFld_GetType(OGRGeomFieldDefnH) -> OGRwkbGeometryType
+    OGR_GFld_GetType(OGRGeomFieldDefnH hDefn) -> OGRwkbGeometryType
 
 Fetch geometry type of this field.
 
@@ -2217,8 +2238,8 @@ end
 
 
 """
-    OGR_GFld_SetType(OGRGeomFieldDefnH,
-                     OGRwkbGeometryType) -> void
+    OGR_GFld_SetType(OGRGeomFieldDefnH hDefn,
+                     OGRwkbGeometryType eType) -> void
 
 Set the geometry type of this field.
 
@@ -2232,7 +2253,7 @@ end
 
 
 """
-    OGR_GFld_GetSpatialRef(OGRGeomFieldDefnH) -> OGRSpatialReferenceH
+    OGR_GFld_GetSpatialRef(OGRGeomFieldDefnH hDefn) -> OGRSpatialReferenceH
 
 Fetch spatial reference system of this field.
 
@@ -2248,7 +2269,7 @@ end
 
 
 """
-    OGR_GFld_SetSpatialRef(OGRGeomFieldDefnH,
+    OGR_GFld_SetSpatialRef(OGRGeomFieldDefnH hDefn,
                            OGRSpatialReferenceH hSRS) -> void
 
 Set the spatial reference of this field.
@@ -2280,7 +2301,7 @@ end
 
 """
     OGR_GFld_SetNullable(OGRGeomFieldDefnH hDefn,
-                         int) -> void
+                         int bNullableIn) -> void
 
 Set whether this geometry field can receive null values.
 
@@ -2311,7 +2332,7 @@ end
 
 """
     OGR_GFld_SetIgnored(OGRGeomFieldDefnH hDefn,
-                        int) -> void
+                        int ignore) -> void
 
 Set whether this field should be omitted when fetching features.
 
@@ -2325,7 +2346,7 @@ end
 
 
 """
-    OGR_FD_Create(const char *) -> OGRFeatureDefnH
+    OGR_FD_Create(const char * pszName) -> OGRFeatureDefnH
 
 Create a new feature definition object to hold the field definitions.
 
@@ -2341,7 +2362,7 @@ end
 
 
 """
-    OGR_FD_Destroy(OGRFeatureDefnH) -> void
+    OGR_FD_Destroy(OGRFeatureDefnH hDefn) -> void
 
 Destroy a feature definition object and release all memory associated with it.
 
@@ -2354,7 +2375,7 @@ end
 
 
 """
-    OGR_FD_Release(OGRFeatureDefnH) -> void
+    OGR_FD_Release(OGRFeatureDefnH hDefn) -> void
 
 Drop a reference, and destroy if unreferenced.
 
@@ -2367,7 +2388,7 @@ end
 
 
 """
-    OGR_FD_GetName(OGRFeatureDefnH) -> const char *
+    OGR_FD_GetName(OGRFeatureDefnH hDefn) -> const char *
 
 Get name of the OGRFeatureDefn passed as an argument.
 
@@ -2383,7 +2404,7 @@ end
 
 
 """
-    OGR_FD_GetFieldCount(OGRFeatureDefnH) -> int
+    OGR_FD_GetFieldCount(OGRFeatureDefnH hDefn) -> int
 
 Fetch number of fields on the passed feature definition.
 
@@ -2399,8 +2420,8 @@ end
 
 
 """
-    OGR_FD_GetFieldDefn(OGRFeatureDefnH,
-                        int) -> OGRFieldDefnH
+    OGR_FD_GetFieldDefn(OGRFeatureDefnH hDefn,
+                        int iField) -> OGRFieldDefnH
 
 Fetch field definition of the passed feature definition.
 
@@ -2417,8 +2438,8 @@ end
 
 
 """
-    OGR_FD_GetFieldIndex(OGRFeatureDefnH,
-                         const char *) -> int
+    OGR_FD_GetFieldIndex(OGRFeatureDefnH hDefn,
+                         const char * pszFieldName) -> int
 
 Find field by name.
 
@@ -2435,8 +2456,8 @@ end
 
 
 """
-    OGR_FD_AddFieldDefn(OGRFeatureDefnH,
-                        OGRFieldDefnH) -> void
+    OGR_FD_AddFieldDefn(OGRFeatureDefnH hDefn,
+                        OGRFieldDefnH hNewField) -> void
 
 Add a new field definition to the passed feature definition.
 
@@ -2457,7 +2478,7 @@ Delete an existing field definition.
 
 ### Parameters
 * **hDefn**: handle to the feature definition.
-* **iField**: the index of the field defintion.
+* **iField**: the index of the field definition.
 
 ### Returns
 OGRERR_NONE in case of success.
@@ -2470,6 +2491,15 @@ end
 """
     OGR_FD_ReorderFieldDefns(OGRFeatureDefnH hDefn,
                              int * panMap) -> OGRErr
+
+Reorder the field definitions in the array of the feature definition.
+
+### Parameters
+* **hDefn**: handle to the feature definition.
+* **panMap**: an array of GetFieldCount() elements which is a permutation of [0, GetFieldCount()-1]. panMap is such that, for each field definition at position i after reordering, its position before reordering was panMap[i].
+
+### Returns
+OGRERR_NONE in case of success.
 """
 function reorderfielddefns(hDefn::OGRFeatureDefnH,panMap::Vector{Cint})
     ccall((:OGR_FD_ReorderFieldDefns,libgdal),OGRErr,(OGRFeatureDefnH,Ptr{Cint}),hDefn,panMap)
@@ -2477,7 +2507,7 @@ end
 
 
 """
-    OGR_FD_GetGeomType(OGRFeatureDefnH) -> OGRwkbGeometryType
+    OGR_FD_GetGeomType(OGRFeatureDefnH hDefn) -> OGRwkbGeometryType
 
 Fetch the geometry base type of the passed feature definition.
 
@@ -2493,8 +2523,8 @@ end
 
 
 """
-    OGR_FD_SetGeomType(OGRFeatureDefnH,
-                       OGRwkbGeometryType) -> void
+    OGR_FD_SetGeomType(OGRFeatureDefnH hDefn,
+                       OGRwkbGeometryType eType) -> void
 
 Assign the base geometry type for the passed layer (the same as the feature definition).
 
@@ -2508,7 +2538,7 @@ end
 
 
 """
-    OGR_FD_IsGeometryIgnored(OGRFeatureDefnH) -> int
+    OGR_FD_IsGeometryIgnored(OGRFeatureDefnH hDefn) -> int
 
 Determine whether the geometry can be omitted when fetching features.
 
@@ -2524,8 +2554,8 @@ end
 
 
 """
-    OGR_FD_SetGeometryIgnored(OGRFeatureDefnH,
-                              int) -> void
+    OGR_FD_SetGeometryIgnored(OGRFeatureDefnH hDefn,
+                              int bIgnore) -> void
 
 Set whether the geometry can be omitted when fetching features.
 
@@ -2539,7 +2569,7 @@ end
 
 
 """
-    OGR_FD_IsStyleIgnored(OGRFeatureDefnH) -> int
+    OGR_FD_IsStyleIgnored(OGRFeatureDefnH hDefn) -> int
 
 Determine whether the style can be omitted when fetching features.
 
@@ -2555,8 +2585,8 @@ end
 
 
 """
-    OGR_FD_SetStyleIgnored(OGRFeatureDefnH,
-                           int) -> void
+    OGR_FD_SetStyleIgnored(OGRFeatureDefnH hDefn,
+                           int bIgnore) -> void
 
 Set whether the style can be omitted when fetching features.
 
@@ -2570,7 +2600,7 @@ end
 
 
 """
-    OGR_FD_Reference(OGRFeatureDefnH) -> int
+    OGR_FD_Reference(OGRFeatureDefnH hDefn) -> int
 
 Increments the reference count by one.
 
@@ -2586,7 +2616,7 @@ end
 
 
 """
-    OGR_FD_Dereference(OGRFeatureDefnH) -> int
+    OGR_FD_Dereference(OGRFeatureDefnH hDefn) -> int
 
 Decrements the reference count by one.
 
@@ -2602,7 +2632,7 @@ end
 
 
 """
-    OGR_FD_GetReferenceCount(OGRFeatureDefnH) -> int
+    OGR_FD_GetReferenceCount(OGRFeatureDefnH hDefn) -> int
 
 Fetch current reference count.
 
@@ -2618,7 +2648,7 @@ end
 
 
 """
-    OGR_FD_GetGeomFieldCount(OGRFeatureDefnH hFDefn) -> int
+    OGR_FD_GetGeomFieldCount(OGRFeatureDefnH hDefn) -> int
 
 Fetch number of geometry fields on the passed feature definition.
 
@@ -2634,8 +2664,8 @@ end
 
 
 """
-    OGR_FD_GetGeomFieldDefn(OGRFeatureDefnH hFDefn,
-                            int i) -> OGRGeomFieldDefnH
+    OGR_FD_GetGeomFieldDefn(OGRFeatureDefnH hDefn,
+                            int iGeomField) -> OGRGeomFieldDefnH
 
 Fetch geometry field definition of the passed feature definition.
 
@@ -2652,8 +2682,8 @@ end
 
 
 """
-    OGR_FD_GetGeomFieldIndex(OGRFeatureDefnH hFDefn,
-                             const char * pszName) -> int
+    OGR_FD_GetGeomFieldIndex(OGRFeatureDefnH hDefn,
+                             const char * pszGeomFieldName) -> int
 
 Find geometry field by name.
 
@@ -2670,8 +2700,8 @@ end
 
 
 """
-    OGR_FD_AddGeomFieldDefn(OGRFeatureDefnH hFDefn,
-                            OGRGeomFieldDefnH hGFldDefn) -> void
+    OGR_FD_AddGeomFieldDefn(OGRFeatureDefnH hDefn,
+                            OGRGeomFieldDefnH hNewGeomField) -> void
 
 Add a new field definition to the passed feature definition.
 
@@ -2685,14 +2715,14 @@ end
 
 
 """
-    OGR_FD_DeleteGeomFieldDefn(OGRFeatureDefnH hFDefn,
+    OGR_FD_DeleteGeomFieldDefn(OGRFeatureDefnH hDefn,
                                int iGeomField) -> OGRErr
 
 Delete an existing geometry field definition.
 
 ### Parameters
 * **hDefn**: handle to the feature definition.
-* **iGeomField**: the index of the geometry field defintion.
+* **iGeomField**: the index of the geometry field definition.
 
 ### Returns
 OGRERR_NONE in case of success.
@@ -2721,7 +2751,7 @@ end
 
 
 """
-    OGR_F_Create(OGRFeatureDefnH) -> OGRFeatureH
+    OGR_F_Create(OGRFeatureDefnH hDefn) -> OGRFeatureH
 
 Feature factory.
 
@@ -2729,7 +2759,7 @@ Feature factory.
 * **hDefn**: handle to the feature class (layer) definition to which the feature will adhere.
 
 ### Returns
-an handle to the new feature object with null fields and no geometry.
+an handle to the new feature object with null fields and no geometry, or, starting with GDAL 2.1, NULL in case out of memory situation.
 """
 function create(arg1::OGRFeatureDefnH)
     checknull(ccall((:OGR_F_Create,libgdal),OGRFeatureH,(OGRFeatureDefnH,),arg1))
@@ -2737,7 +2767,7 @@ end
 
 
 """
-    OGR_F_Destroy(OGRFeatureH) -> void
+    OGR_F_Destroy(OGRFeatureH hFeat) -> void
 
 Destroy feature.
 
@@ -2750,7 +2780,7 @@ end
 
 
 """
-    OGR_F_GetDefnRef(OGRFeatureH) -> OGRFeatureDefnH
+    OGR_F_GetDefnRef(OGRFeatureH hFeat) -> OGRFeatureDefnH
 
 Fetch feature definition.
 
@@ -2766,8 +2796,8 @@ end
 
 
 """
-    OGR_F_SetGeometryDirectly(OGRFeatureH,
-                              OGRGeometryH) -> OGRErr
+    OGR_F_SetGeometryDirectly(OGRFeatureH hFeat,
+                              OGRGeometryH hGeom) -> OGRErr
 
 Set feature geometry.
 
@@ -2784,8 +2814,8 @@ end
 
 
 """
-    OGR_F_SetGeometry(OGRFeatureH,
-                      OGRGeometryH) -> OGRErr
+    OGR_F_SetGeometry(OGRFeatureH hFeat,
+                      OGRGeometryH hGeom) -> OGRErr
 
 Set feature geometry.
 
@@ -2802,7 +2832,7 @@ end
 
 
 """
-    OGR_F_GetGeometryRef(OGRFeatureH) -> OGRGeometryH
+    OGR_F_GetGeometryRef(OGRFeatureH hFeat) -> OGRGeometryH
 
 Fetch an handle to feature geometry.
 
@@ -2818,7 +2848,7 @@ end
 
 
 """
-    OGR_F_StealGeometry(OGRFeatureH) -> OGRGeometryH
+    OGR_F_StealGeometry(OGRFeatureH hFeat) -> OGRGeometryH
 
 Take away ownership of geometry.
 
@@ -2831,7 +2861,7 @@ end
 
 
 """
-    OGR_F_Clone(OGRFeatureH) -> OGRFeatureH
+    OGR_F_Clone(OGRFeatureH hFeat) -> OGRFeatureH
 
 Duplicate feature.
 
@@ -2847,8 +2877,8 @@ end
 
 
 """
-    OGR_F_Equal(OGRFeatureH,
-                OGRFeatureH) -> int
+    OGR_F_Equal(OGRFeatureH hFeat,
+                OGRFeatureH hOtherFeat) -> int
 
 Test if two features are the same.
 
@@ -2865,7 +2895,7 @@ end
 
 
 """
-    OGR_F_GetFieldCount(OGRFeatureH) -> int
+    OGR_F_GetFieldCount(OGRFeatureH hFeat) -> int
 
 Fetch number of fields on this feature This will always be the same as the field count for the OGRFeatureDefn.
 
@@ -2881,8 +2911,8 @@ end
 
 
 """
-    OGR_F_GetFieldDefnRef(OGRFeatureH,
-                          int) -> OGRFieldDefnH
+    OGR_F_GetFieldDefnRef(OGRFeatureH hFeat,
+                          int i) -> OGRFieldDefnH
 
 Fetch definition for this field.
 
@@ -2899,8 +2929,8 @@ end
 
 
 """
-    OGR_F_GetFieldIndex(OGRFeatureH,
-                        const char *) -> int
+    OGR_F_GetFieldIndex(OGRFeatureH hFeat,
+                        const char * pszName) -> int
 
 Fetch the field index given field name.
 
@@ -2917,8 +2947,8 @@ end
 
 
 """
-    OGR_F_IsFieldSet(OGRFeatureH,
-                     int) -> int
+    OGR_F_IsFieldSet(OGRFeatureH hFeat,
+                     int iField) -> int
 
 Test if a field has ever been assigned a value or not.
 
@@ -2935,8 +2965,8 @@ end
 
 
 """
-    OGR_F_UnsetField(OGRFeatureH,
-                     int) -> void
+    OGR_F_UnsetField(OGRFeatureH hFeat,
+                     int iField) -> void
 
 Clear a field, marking it as unset.
 
@@ -2950,8 +2980,8 @@ end
 
 
 """
-    OGR_F_GetRawFieldRef(OGRFeatureH,
-                         int) -> OGRField *
+    OGR_F_GetRawFieldRef(OGRFeatureH hFeat,
+                         int iField) -> OGRField *
 
 Fetch an handle to the internal field value given the index.
 
@@ -2968,8 +2998,8 @@ end
 
 
 """
-    OGR_F_GetFieldAsInteger(OGRFeatureH,
-                            int) -> int
+    OGR_F_GetFieldAsInteger(OGRFeatureH hFeat,
+                            int iField) -> int
 
 Fetch field value as integer.
 
@@ -2986,8 +3016,8 @@ end
 
 
 """
-    OGR_F_GetFieldAsInteger64(OGRFeatureH,
-                              int) -> GIntBig
+    OGR_F_GetFieldAsInteger64(OGRFeatureH hFeat,
+                              int iField) -> GIntBig
 
 Fetch field value as integer 64 bit.
 
@@ -3004,8 +3034,8 @@ end
 
 
 """
-    OGR_F_GetFieldAsDouble(OGRFeatureH,
-                           int) -> double
+    OGR_F_GetFieldAsDouble(OGRFeatureH hFeat,
+                           int iField) -> double
 
 Fetch field value as a double.
 
@@ -3022,8 +3052,8 @@ end
 
 
 """
-    OGR_F_GetFieldAsString(OGRFeatureH,
-                           int) -> const char *
+    OGR_F_GetFieldAsString(OGRFeatureH hFeat,
+                           int iField) -> const char *
 
 Fetch field value as a string.
 
@@ -3040,9 +3070,9 @@ end
 
 
 """
-    OGR_F_GetFieldAsIntegerList(OGRFeatureH,
-                                int,
-                                int *) -> const int *
+    OGR_F_GetFieldAsIntegerList(OGRFeatureH hFeat,
+                                int iField,
+                                int * pnCount) -> const int *
 
 Fetch field value as a list of integers.
 
@@ -3060,9 +3090,9 @@ end
 
 
 """
-    OGR_F_GetFieldAsInteger64List(OGRFeatureH,
-                                  int,
-                                  int *) -> const GIntBig *
+    OGR_F_GetFieldAsInteger64List(OGRFeatureH hFeat,
+                                  int iField,
+                                  int * pnCount) -> const GIntBig *
 
 Fetch field value as a list of 64 bit integers.
 
@@ -3080,9 +3110,9 @@ end
 
 
 """
-    OGR_F_GetFieldAsDoubleList(OGRFeatureH,
-                               int,
-                               int *) -> const double *
+    OGR_F_GetFieldAsDoubleList(OGRFeatureH hFeat,
+                               int iField,
+                               int * pnCount) -> const double *
 
 Fetch field value as a list of doubles.
 
@@ -3100,8 +3130,8 @@ end
 
 
 """
-    OGR_F_GetFieldAsStringList(OGRFeatureH,
-                               int) -> char **
+    OGR_F_GetFieldAsStringList(OGRFeatureH hFeat,
+                               int iField) -> char **
 
 Fetch field value as a list of strings.
 
@@ -3118,9 +3148,9 @@ end
 
 
 """
-    OGR_F_GetFieldAsBinary(OGRFeatureH,
-                           int,
-                           int *) -> GByte *
+    OGR_F_GetFieldAsBinary(OGRFeatureH hFeat,
+                           int iField,
+                           int * pnBytes) -> GByte *
 
 Fetch field value as binary.
 
@@ -3138,15 +3168,15 @@ end
 
 
 """
-    OGR_F_GetFieldAsDateTime(OGRFeatureH,
-                             int,
-                             int *,
-                             int *,
-                             int *,
-                             int *,
-                             int *,
-                             int *,
-                             int *) -> int
+    OGR_F_GetFieldAsDateTime(OGRFeatureH hFeat,
+                             int iField,
+                             int * pnYear,
+                             int * pnMonth,
+                             int * pnDay,
+                             int * pnHour,
+                             int * pnMinute,
+                             int * pnSecond,
+                             int * pnTZFlag) -> int
 
 Fetch field value as date and time.
 
@@ -3202,9 +3232,9 @@ end
 
 
 """
-    OGR_F_SetFieldInteger(OGRFeatureH,
-                          int,
-                          int) -> void
+    OGR_F_SetFieldInteger(OGRFeatureH hFeat,
+                          int iField,
+                          int nValue) -> void
 
 Set field to integer value.
 
@@ -3219,9 +3249,9 @@ end
 
 
 """
-    OGR_F_SetFieldInteger64(OGRFeatureH,
-                            int,
-                            GIntBig) -> void
+    OGR_F_SetFieldInteger64(OGRFeatureH hFeat,
+                            int iField,
+                            GIntBig nValue) -> void
 
 Set field to 64 bit integer value.
 
@@ -3236,9 +3266,9 @@ end
 
 
 """
-    OGR_F_SetFieldDouble(OGRFeatureH,
-                         int,
-                         double) -> void
+    OGR_F_SetFieldDouble(OGRFeatureH hFeat,
+                         int iField,
+                         double dfValue) -> void
 
 Set field to double value.
 
@@ -3253,9 +3283,9 @@ end
 
 
 """
-    OGR_F_SetFieldString(OGRFeatureH,
-                         int,
-                         const char *) -> void
+    OGR_F_SetFieldString(OGRFeatureH hFeat,
+                         int iField,
+                         const char * pszValue) -> void
 
 Set field to string value.
 
@@ -3270,10 +3300,10 @@ end
 
 
 """
-    OGR_F_SetFieldIntegerList(OGRFeatureH,
-                              int,
-                              int,
-                              int *) -> void
+    OGR_F_SetFieldIntegerList(OGRFeatureH hFeat,
+                              int iField,
+                              int nCount,
+                              int * panValues) -> void
 
 Set field to list of integers value.
 
@@ -3289,10 +3319,10 @@ end
 
 
 """
-    OGR_F_SetFieldInteger64List(OGRFeatureH,
-                                int,
-                                int,
-                                const GIntBig *) -> void
+    OGR_F_SetFieldInteger64List(OGRFeatureH hFeat,
+                                int iField,
+                                int nCount,
+                                const GIntBig * panValues) -> void
 
 Set field to list of 64 bit integers value.
 
@@ -3308,10 +3338,10 @@ end
 
 
 """
-    OGR_F_SetFieldDoubleList(OGRFeatureH,
-                             int,
-                             int,
-                             double *) -> void
+    OGR_F_SetFieldDoubleList(OGRFeatureH hFeat,
+                             int iField,
+                             int nCount,
+                             double * padfValues) -> void
 
 Set field to list of doubles value.
 
@@ -3327,9 +3357,9 @@ end
 
 
 """
-    OGR_F_SetFieldStringList(OGRFeatureH,
-                             int,
-                             char **) -> void
+    OGR_F_SetFieldStringList(OGRFeatureH hFeat,
+                             int iField,
+                             char ** papszValues) -> void
 
 Set field to list of strings value.
 
@@ -3344,9 +3374,9 @@ end
 
 
 """
-    OGR_F_SetFieldRaw(OGRFeatureH,
-                      int,
-                      OGRField *) -> void
+    OGR_F_SetFieldRaw(OGRFeatureH hFeat,
+                      int iField,
+                      OGRField * psValue) -> void
 
 Set field.
 
@@ -3361,10 +3391,10 @@ end
 
 
 """
-    OGR_F_SetFieldBinary(OGRFeatureH,
-                         int,
-                         int,
-                         GByte *) -> void
+    OGR_F_SetFieldBinary(OGRFeatureH hFeat,
+                         int iField,
+                         int nBytes,
+                         GByte * pabyData) -> void
 
 Set field to binary data.
 
@@ -3380,15 +3410,15 @@ end
 
 
 """
-    OGR_F_SetFieldDateTime(OGRFeatureH,
-                           int,
-                           int,
-                           int,
-                           int,
-                           int,
-                           int,
-                           int,
-                           int) -> void
+    OGR_F_SetFieldDateTime(OGRFeatureH hFeat,
+                           int iField,
+                           int nYear,
+                           int nMonth,
+                           int nDay,
+                           int nHour,
+                           int nMinute,
+                           int nSecond,
+                           int nTZFlag) -> void
 
 Set field to datetime.
 
@@ -3409,15 +3439,15 @@ end
 
 
 """
-    OGR_F_SetFieldDateTimeEx(OGRFeatureH,
-                             int,
-                             int,
-                             int,
-                             int,
-                             int,
-                             int,
-                             float,
-                             int) -> void
+    OGR_F_SetFieldDateTimeEx(OGRFeatureH hFeat,
+                             int iField,
+                             int nYear,
+                             int nMonth,
+                             int nDay,
+                             int nHour,
+                             int nMinute,
+                             float fSecond,
+                             int nTZFlag) -> void
 
 Set field to datetime.
 
@@ -3455,7 +3485,7 @@ end
 
 """
     OGR_F_GetGeomFieldDefnRef(OGRFeatureH hFeat,
-                              int iField) -> OGRGeomFieldDefnH
+                              int i) -> OGRGeomFieldDefnH
 
 Fetch definition for this geometry field.
 
@@ -3548,7 +3578,7 @@ end
 
 
 """
-    OGR_F_GetFID(OGRFeatureH) -> GIntBig
+    OGR_F_GetFID(OGRFeatureH hFeat) -> GIntBig
 
 Get feature identifier.
 
@@ -3564,8 +3594,8 @@ end
 
 
 """
-    OGR_F_SetFID(OGRFeatureH,
-                 GIntBig) -> OGRErr
+    OGR_F_SetFID(OGRFeatureH hFeat,
+                 GIntBig nFID) -> OGRErr
 
 Set the feature identifier.
 
@@ -3582,8 +3612,8 @@ end
 
 
 """
-    OGR_F_DumpReadable(OGRFeatureH,
-                       FILE *) -> void
+    OGR_F_DumpReadable(OGRFeatureH hFeat,
+                       FILE * fpOut) -> void
 
 Dump this feature in a human readable form.
 
@@ -3597,9 +3627,9 @@ end
 
 
 """
-    OGR_F_SetFrom(OGRFeatureH,
-                  OGRFeatureH,
-                  int) -> OGRErr
+    OGR_F_SetFrom(OGRFeatureH hFeat,
+                  OGRFeatureH hOtherFeat,
+                  int bForgiving) -> OGRErr
 
 Set one feature from another.
 
@@ -3617,10 +3647,10 @@ end
 
 
 """
-    OGR_F_SetFromWithMap(OGRFeatureH,
-                         OGRFeatureH,
-                         int,
-                         int *) -> OGRErr
+    OGR_F_SetFromWithMap(OGRFeatureH hFeat,
+                         OGRFeatureH hOtherFeat,
+                         int bForgiving,
+                         int * panMap) -> OGRErr
 
 Set one feature from another.
 
@@ -3639,7 +3669,7 @@ end
 
 
 """
-    OGR_F_GetStyleString(OGRFeatureH) -> const char *
+    OGR_F_GetStyleString(OGRFeatureH hFeat) -> const char *
 
 Fetch style string for this feature.
 
@@ -3655,8 +3685,8 @@ end
 
 
 """
-    OGR_F_SetStyleString(OGRFeatureH,
-                         const char *) -> void
+    OGR_F_SetStyleString(OGRFeatureH hFeat,
+                         const char * pszStyle) -> void
 
 Set feature style string.
 
@@ -3670,8 +3700,8 @@ end
 
 
 """
-    OGR_F_SetStyleStringDirectly(OGRFeatureH,
-                                 char *) -> void
+    OGR_F_SetStyleStringDirectly(OGRFeatureH hFeat,
+                                 char * pszStyle) -> void
 
 Set feature style string.
 
@@ -3685,7 +3715,7 @@ end
 
 
 """
-    OGR_F_GetStyleTable(OGRFeatureH) -> OGRStyleTableH
+    OGR_F_GetStyleTable(OGRFeatureH hFeat) -> OGRStyleTableH
 """
 function getstyletable(arg1::OGRFeatureH)
     checknull(ccall((:OGR_F_GetStyleTable,libgdal),OGRStyleTableH,(OGRFeatureH,),arg1))
@@ -3693,8 +3723,8 @@ end
 
 
 """
-    OGR_F_SetStyleTableDirectly(OGRFeatureH,
-                                OGRStyleTableH) -> void
+    OGR_F_SetStyleTableDirectly(OGRFeatureH hFeat,
+                                OGRStyleTableH hStyleTable) -> void
 """
 function setstyletabledirectly(arg1::OGRFeatureH,arg2::OGRStyleTableH)
     ccall((:OGR_F_SetStyleTableDirectly,libgdal),Void,(OGRFeatureH,OGRStyleTableH),arg1,arg2)
@@ -3702,11 +3732,73 @@ end
 
 
 """
-    OGR_F_SetStyleTable(OGRFeatureH,
-                        OGRStyleTableH) -> void
+    OGR_F_SetStyleTable(OGRFeatureH hFeat,
+                        OGRStyleTableH hStyleTable) -> void
 """
 function setstyletable(arg1::OGRFeatureH,arg2::OGRStyleTableH)
     ccall((:OGR_F_SetStyleTable,libgdal),Void,(OGRFeatureH,OGRStyleTableH),arg1,arg2)
+end
+
+
+"""
+    OGR_F_GetNativeData(OGRFeatureH hFeat) -> const char *
+
+Returns the native data for the feature.
+
+### Parameters
+* **hFeat**: handle to the feature.
+
+### Returns
+a string with the native data, or NULL if there is none.
+"""
+function getnativedata(arg1::OGRFeatureH)
+    bytestring(ccall((:OGR_F_GetNativeData,libgdal),Ptr{UInt8},(OGRFeatureH,),arg1))
+end
+
+
+"""
+    OGR_F_SetNativeData(OGRFeatureH hFeat,
+                        const char * pszNativeData) -> void
+
+Sets the native data for the feature.
+
+### Parameters
+* **hFeat**: handle to the feature.
+* **pszNativeData**: a string with the native data, or NULL if there is none.
+"""
+function setnativedata(arg1::OGRFeatureH,arg2::AbstractString)
+    ccall((:OGR_F_SetNativeData,libgdal),Void,(OGRFeatureH,Ptr{UInt8}),arg1,arg2)
+end
+
+
+"""
+    OGR_F_GetNativeMediaType(OGRFeatureH hFeat) -> const char *
+
+Returns the native media type for the feature.
+
+### Parameters
+* **hFeat**: handle to the feature.
+
+### Returns
+a string with the native media type, or NULL if there is none.
+"""
+function getnativemediatype(arg1::OGRFeatureH)
+    bytestring(ccall((:OGR_F_GetNativeMediaType,libgdal),Ptr{UInt8},(OGRFeatureH,),arg1))
+end
+
+
+"""
+    OGR_F_SetNativeMediaType(OGRFeatureH hFeat,
+                             const char * pszNativeMediaType) -> void
+
+Sets the native media type for the feature.
+
+### Parameters
+* **hFeat**: handle to the feature.
+* **pszNativeMediaType**: a string with the native media type, or NULL if there is none.
+"""
+function setnativemediatype(arg1::OGRFeatureH,arg2::AbstractString)
+    ccall((:OGR_F_SetNativeMediaType,libgdal),Void,(OGRFeatureH,Ptr{UInt8}),arg1,arg2)
 end
 
 
@@ -3728,7 +3820,7 @@ end
 
 
 """
-    OGR_F_Validate(OGRFeatureH,
+    OGR_F_Validate(OGRFeatureH hFeat,
                    int nValidateFlags,
                    int bEmitError) -> int
 
@@ -4126,7 +4218,7 @@ Test if this layer supported the named capability.
 * **pszCap**: the name of the capability to test.
 
 ### Returns
-TRUE if the layer has the requested capability, or FALSE otherwise. OGRLayers will return FALSE for any unrecognised capabilities.
+TRUE if the layer has the requested capability, or FALSE otherwise. OGRLayers will return FALSE for any unrecognized capabilities.
 """
 function testcapability(arg1::OGRLayerH,arg2::AbstractString)
     ccall((:OGR_L_TestCapability,libgdal),Cint,(OGRLayerH,Ptr{UInt8}),arg1,arg2)
@@ -4300,7 +4392,7 @@ end
 
 
 """
-    OGR_L_Reference(OGRLayerH) -> int
+    OGR_L_Reference(OGRLayerH hLayer) -> int
 """
 function reference(arg1::OGRLayerH)
     ccall((:OGR_L_Reference,libgdal),Cint,(OGRLayerH,),arg1)
@@ -4308,7 +4400,7 @@ end
 
 
 """
-    OGR_L_Dereference(OGRLayerH) -> int
+    OGR_L_Dereference(OGRLayerH hLayer) -> int
 """
 function dereference(arg1::OGRLayerH)
     ccall((:OGR_L_Dereference,libgdal),Cint,(OGRLayerH,),arg1)
@@ -4316,7 +4408,7 @@ end
 
 
 """
-    OGR_L_GetRefCount(OGRLayerH) -> int
+    OGR_L_GetRefCount(OGRLayerH hLayer) -> int
 """
 function getrefcount(arg1::OGRLayerH)
     ccall((:OGR_L_GetRefCount,libgdal),Cint,(OGRLayerH,),arg1)
@@ -4340,7 +4432,7 @@ end
 
 
 """
-    OGR_L_GetFeaturesRead(OGRLayerH) -> GIntBig
+    OGR_L_GetFeaturesRead(OGRLayerH hLayer) -> GIntBig
 """
 function getfeaturesread(arg1::OGRLayerH)
     ccall((:OGR_L_GetFeaturesRead,libgdal),GIntBig,(OGRLayerH,),arg1)
@@ -4380,7 +4472,7 @@ end
 
 
 """
-    OGR_L_GetStyleTable(OGRLayerH) -> OGRStyleTableH
+    OGR_L_GetStyleTable(OGRLayerH hLayer) -> OGRStyleTableH
 """
 function getstyletable(arg1::OGRLayerH)
     checknull(ccall((:OGR_L_GetStyleTable,libgdal),OGRStyleTableH,(OGRLayerH,),arg1))
@@ -4388,8 +4480,8 @@ end
 
 
 """
-    OGR_L_SetStyleTableDirectly(OGRLayerH,
-                                OGRStyleTableH) -> void
+    OGR_L_SetStyleTableDirectly(OGRLayerH hLayer,
+                                OGRStyleTableH hStyleTable) -> void
 """
 function setstyletabledirectly(arg1::OGRLayerH,arg2::OGRStyleTableH)
     ccall((:OGR_L_SetStyleTableDirectly,libgdal),Void,(OGRLayerH,OGRStyleTableH),arg1,arg2)
@@ -4397,8 +4489,8 @@ end
 
 
 """
-    OGR_L_SetStyleTable(OGRLayerH,
-                        OGRStyleTableH) -> void
+    OGR_L_SetStyleTable(OGRLayerH hLayer,
+                        OGRStyleTableH hStyleTable) -> void
 """
 function setstyletable(arg1::OGRLayerH,arg2::OGRStyleTableH)
     ccall((:OGR_L_SetStyleTable,libgdal),Void,(OGRLayerH,OGRStyleTableH),arg1,arg2)
@@ -4423,12 +4515,12 @@ end
 
 
 """
-    OGR_L_Intersection(OGRLayerH,
-                       OGRLayerH,
-                       OGRLayerH,
-                       char **,
-                       GDALProgressFunc,
-                       void *) -> OGRErr
+    OGR_L_Intersection(OGRLayerH pLayerInput,
+                       OGRLayerH pLayerMethod,
+                       OGRLayerH pLayerResult,
+                       char ** papszOptions,
+                       GDALProgressFunc pfnProgress,
+                       void * pProgressArg) -> OGRErr
 
 Intersection of two layers.
 
@@ -4449,12 +4541,12 @@ end
 
 
 """
-    OGR_L_Union(OGRLayerH,
-                OGRLayerH,
-                OGRLayerH,
-                char **,
-                GDALProgressFunc,
-                void *) -> OGRErr
+    OGR_L_Union(OGRLayerH pLayerInput,
+                OGRLayerH pLayerMethod,
+                OGRLayerH pLayerResult,
+                char ** papszOptions,
+                GDALProgressFunc pfnProgress,
+                void * pProgressArg) -> OGRErr
 
 Union of two layers.
 
@@ -4475,12 +4567,12 @@ end
 
 
 """
-    OGR_L_SymDifference(OGRLayerH,
-                        OGRLayerH,
-                        OGRLayerH,
-                        char **,
-                        GDALProgressFunc,
-                        void *) -> OGRErr
+    OGR_L_SymDifference(OGRLayerH pLayerInput,
+                        OGRLayerH pLayerMethod,
+                        OGRLayerH pLayerResult,
+                        char ** papszOptions,
+                        GDALProgressFunc pfnProgress,
+                        void * pProgressArg) -> OGRErr
 
 Symmetrical difference of two layers.
 
@@ -4501,12 +4593,12 @@ end
 
 
 """
-    OGR_L_Identity(OGRLayerH,
-                   OGRLayerH,
-                   OGRLayerH,
-                   char **,
-                   GDALProgressFunc,
-                   void *) -> OGRErr
+    OGR_L_Identity(OGRLayerH pLayerInput,
+                   OGRLayerH pLayerMethod,
+                   OGRLayerH pLayerResult,
+                   char ** papszOptions,
+                   GDALProgressFunc pfnProgress,
+                   void * pProgressArg) -> OGRErr
 
 Identify the features of this layer with the ones from the identity layer.
 
@@ -4527,12 +4619,12 @@ end
 
 
 """
-    OGR_L_Update(OGRLayerH,
-                 OGRLayerH,
-                 OGRLayerH,
-                 char **,
-                 GDALProgressFunc,
-                 void *) -> OGRErr
+    OGR_L_Update(OGRLayerH pLayerInput,
+                 OGRLayerH pLayerMethod,
+                 OGRLayerH pLayerResult,
+                 char ** papszOptions,
+                 GDALProgressFunc pfnProgress,
+                 void * pProgressArg) -> OGRErr
 
 Update this layer with features from the update layer.
 
@@ -4553,12 +4645,12 @@ end
 
 
 """
-    OGR_L_Clip(OGRLayerH,
-               OGRLayerH,
-               OGRLayerH,
-               char **,
-               GDALProgressFunc,
-               void *) -> OGRErr
+    OGR_L_Clip(OGRLayerH pLayerInput,
+               OGRLayerH pLayerMethod,
+               OGRLayerH pLayerResult,
+               char ** papszOptions,
+               GDALProgressFunc pfnProgress,
+               void * pProgressArg) -> OGRErr
 
 Clip off areas that are not covered by the method layer.
 
@@ -4579,12 +4671,12 @@ end
 
 
 """
-    OGR_L_Erase(OGRLayerH,
-                OGRLayerH,
-                OGRLayerH,
-                char **,
-                GDALProgressFunc,
-                void *) -> OGRErr
+    OGR_L_Erase(OGRLayerH pLayerInput,
+                OGRLayerH pLayerMethod,
+                OGRLayerH pLayerResult,
+                char ** papszOptions,
+                GDALProgressFunc pfnProgress,
+                void * pProgressArg) -> OGRErr
 
 Remove areas that are covered by the method layer.
 
@@ -4733,7 +4825,7 @@ This function attempts to create a new layer on the data source with the indicat
 * **pszName**: the name for the new layer. This should ideally not match any existing layer on the datasource.
 * **hSpatialRef**: handle to the coordinate system to use for the new layer, or NULL if no coordinate system is available.
 * **eType**: the geometry type for the layer. Use wkbUnknown if there are no constraints on the types geometry to be written.
-* **papszOptions**: a StringList of name=value options. Options are driver specific, and driver information can be found at the following url: http://www.gdal.org/ogr/ogr_formats.html
+* **papszOptions**: a StringList of name=value options. Options are driver specific, and driver information can be found at the following url: http://www.gdal.org/ogr_formats.html
 
 ### Returns
 NULL is returned on failure, or a new OGRLayer handle on success.
@@ -4821,7 +4913,7 @@ end
 
 
 """
-    OGR_DS_Reference(OGRDataSourceH) -> int
+    OGR_DS_Reference(OGRDataSourceH hDataSource) -> int
 """
 function reference(arg1::OGRDataSourceH)
     ccall((:OGR_DS_Reference,libgdal),Cint,(OGRDataSourceH,),arg1)
@@ -4829,7 +4921,7 @@ end
 
 
 """
-    OGR_DS_Dereference(OGRDataSourceH) -> int
+    OGR_DS_Dereference(OGRDataSourceH hDataSource) -> int
 """
 function dereference(arg1::OGRDataSourceH)
     ccall((:OGR_DS_Dereference,libgdal),Cint,(OGRDataSourceH,),arg1)
@@ -4837,7 +4929,7 @@ end
 
 
 """
-    OGR_DS_GetRefCount(OGRDataSourceH) -> int
+    OGR_DS_GetRefCount(OGRDataSourceH hDataSource) -> int
 """
 function getrefcount(arg1::OGRDataSourceH)
     ccall((:OGR_DS_GetRefCount,libgdal),Cint,(OGRDataSourceH,),arg1)
@@ -4845,7 +4937,7 @@ end
 
 
 """
-    OGR_DS_GetSummaryRefCount(OGRDataSourceH) -> int
+    OGR_DS_GetSummaryRefCount(OGRDataSourceH hDataSource) -> int
 """
 function getsummaryrefcount(arg1::OGRDataSourceH)
     ccall((:OGR_DS_GetSummaryRefCount,libgdal),Cint,(OGRDataSourceH,),arg1)
@@ -4853,7 +4945,7 @@ end
 
 
 """
-    OGR_DS_SyncToDisk(OGRDataSourceH) -> OGRErr
+    OGR_DS_SyncToDisk(OGRDataSourceH hDS) -> OGRErr
 """
 function synctodisk(arg1::OGRDataSourceH)
     ccall((:OGR_DS_SyncToDisk,libgdal),OGRErr,(OGRDataSourceH,),arg1)
@@ -4861,7 +4953,7 @@ end
 
 
 """
-    OGR_DS_GetStyleTable(OGRDataSourceH) -> OGRStyleTableH
+    OGR_DS_GetStyleTable(OGRDataSourceH hDS) -> OGRStyleTableH
 """
 function getstyletable(arg1::OGRDataSourceH)
     checknull(ccall((:OGR_DS_GetStyleTable,libgdal),OGRStyleTableH,(OGRDataSourceH,),arg1))
@@ -4869,8 +4961,8 @@ end
 
 
 """
-    OGR_DS_SetStyleTableDirectly(OGRDataSourceH,
-                                 OGRStyleTableH) -> void
+    OGR_DS_SetStyleTableDirectly(OGRDataSourceH hDS,
+                                 OGRStyleTableH hStyleTable) -> void
 """
 function setstyletabledirectly(arg1::OGRDataSourceH,arg2::OGRStyleTableH)
     ccall((:OGR_DS_SetStyleTableDirectly,libgdal),Void,(OGRDataSourceH,OGRStyleTableH),arg1,arg2)
@@ -4878,8 +4970,8 @@ end
 
 
 """
-    OGR_DS_SetStyleTable(OGRDataSourceH,
-                         OGRStyleTableH) -> void
+    OGR_DS_SetStyleTable(OGRDataSourceH hDS,
+                         OGRStyleTableH hStyleTable) -> void
 """
 function setstyletable(arg1::OGRDataSourceH,arg2::OGRStyleTableH)
     ccall((:OGR_DS_SetStyleTable,libgdal),Void,(OGRDataSourceH,OGRStyleTableH),arg1,arg2)
@@ -4892,7 +4984,7 @@ end
 Fetch name of driver (file format).
 
 ### Parameters
-* **hDriver**: handle to the the driver to get the name from.
+* **hDriver**: handle to the driver to get the name from.
 
 ### Returns
 driver name. This is an internal string and should not be modified or freed.
@@ -4950,7 +5042,7 @@ This function attempts to create a new data source based on the passed driver.
 ### Parameters
 * **hDriver**: handle to the driver on which data source creation is based.
 * **pszName**: the name for the new data source. UTF-8 encoded.
-* **papszOptions**: a StringList of name=value options. Options are driver specific, and driver information can be found at the following url: http://www.gdal.org/ogr/ogr_formats.html
+* **papszOptions**: a StringList of name=value options. Options are driver specific, and driver information can be found at the following url: http://www.gdal.org/ogr_formats.html
 
 ### Returns
 NULL is returned on failure, or a new OGRDataSource handle on success.
@@ -4972,7 +5064,7 @@ This function creates a new datasource by copying all the layers from the source
 * **hDriver**: handle to the driver on which data source creation is based.
 * **hSrcDS**: source datasource
 * **pszNewName**: the name for the new data source.
-* **papszOptions**: a StringList of name=value options. Options are driver specific, and driver information can be found at the following url: http://www.gdal.org/ogr/ogr_formats.html
+* **papszOptions**: a StringList of name=value options. Options are driver specific, and driver information can be found at the following url: http://www.gdal.org/ogr_formats.html
 
 ### Returns
 NULL is returned on failure, or a new OGRDataSource handle on success.
@@ -5021,9 +5113,9 @@ end
 
 
 """
-    OGROpenShared(const char *,
-                  int,
-                  OGRSFDriverH *) -> OGRDataSourceH
+    OGROpenShared(const char * pszName,
+                  int bUpdate,
+                  OGRSFDriverH * pahDriverList) -> OGRDataSourceH
 """
 function openshared(arg1::AbstractString,arg2::Integer,arg3::Ptr{OGRSFDriverH})
     checknull(ccall((:OGROpenShared,libgdal),OGRDataSourceH,(Ptr{UInt8},Cint,Ptr{OGRSFDriverH}),arg1,arg2,arg3))
@@ -5047,7 +5139,7 @@ end
 
 
 """
-    OGRRegisterDriver(OGRSFDriverH) -> void
+    OGRRegisterDriver(OGRSFDriverH hDriver) -> void
 """
 function registerdriver(arg1::OGRSFDriverH)
     ccall((:OGRRegisterDriver,libgdal),Void,(OGRSFDriverH,),arg1)
@@ -5055,7 +5147,7 @@ end
 
 
 """
-    OGRDeregisterDriver(OGRSFDriverH) -> void
+    OGRDeregisterDriver(OGRSFDriverH hDriver) -> void
 """
 function deregisterdriver(arg1::OGRSFDriverH)
     ccall((:OGRDeregisterDriver,libgdal),Void,(OGRSFDriverH,),arg1)
@@ -5108,7 +5200,7 @@ end
 
 
 """
-    OGRGetOpenDSCount(void) -> int
+    OGRGetOpenDSCount() -> int
 """
 function getopendscount()
     ccall((:OGRGetOpenDSCount,libgdal),Cint,())
@@ -5134,7 +5226,7 @@ end
 
 
 """
-    OGRCleanupAll(void) -> void
+    OGRCleanupAll() -> void
 
 Cleanup all OGR related resources.
 """
@@ -5508,7 +5600,7 @@ Return the r,g,b,a components of a color encoded in #RRGGBB[AA] format.
 * **pnAlpha**: pointer to an int in which the (optional) alpha value will be returned
 
 ### Returns
-TRUE if the color could be succesfully parsed, or FALSE in case of errors.
+TRUE if the color could be successfully parsed, or FALSE in case of errors.
 """
 function getrgbfromstring(hST::OGRStyleToolH,pszColor::AbstractString,pnRed::Vector{Cint},pnGreen::Vector{Cint},pnBlue::Vector{Cint},pnAlpha::Vector{Cint})
     ccall((:OGR_ST_GetRGBFromString,libgdal),Cint,(OGRStyleToolH,Ptr{UInt8},Ptr{Cint},Ptr{Cint},Ptr{Cint},Ptr{Cint}),hST,pszColor,pnRed,pnGreen,pnBlue,pnAlpha)

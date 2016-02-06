@@ -143,7 +143,8 @@ Create polygon coverage from raster data.
 * **hOutLayer**: the vector feature layer to which the polygons should be written.
 * **iPixValField**: the attribute field index indicating the feature attribute into which the pixel value of the polygon should be written.
 * **papszOptions**: a name/value list of additional options 
-"8CONNECTED": May be set to "8" to use 8 connectedness. Otherwise 4 connectedness will be applied to the algorithm
+											
+												"8CONNECTED": May be set to "8" to use 8 connectedness. Otherwise 4 connectedness will be applied to the algorithm
 * **pfnProgress**: callback for reporting algorithm progress matching the GDALProgressFunc() semantics. May be NULL.
 * **pProgressArg**: callback argument passed to pfnProgress.
 
@@ -172,7 +173,8 @@ Create polygon coverage from raster data.
 * **hOutLayer**: the vector feature layer to which the polygons should be written.
 * **iPixValField**: the attribute field index indicating the feature attribute into which the pixel value of the polygon should be written.
 * **papszOptions**: a name/value list of additional options 
-"8CONNECTED": May be set to "8" to use 8 connectedness. Otherwise 4 connectedness will be applied to the algorithm
+											
+												"8CONNECTED": May be set to "8" to use 8 connectedness. Otherwise 4 connectedness will be applied to the algorithm
 * **pfnProgress**: callback for reporting algorithm progress matching the GDALProgressFunc() semantics. May be NULL.
 * **pProgressArg**: callback argument passed to pfnProgress.
 
@@ -193,6 +195,21 @@ end
                     char ** papszOptions,
                     GDALProgressFunc pfnProgress,
                     void * pProgressArg) -> CPLErr
+
+Removes small raster polygons.
+
+### Parameters
+* **hSrcBand**: the source raster band to be processed.
+* **hMaskBand**: an optional mask band. All pixels in the mask band with a value other than zero will be considered suitable for inclusion in polygons.
+* **hDstBand**: the output raster band. It may be the same as hSrcBand to update the source in place.
+* **nSizeThreshold**: raster polygons with sizes smaller than this will be merged into their largest neighbour.
+* **nConnectedness**: either 4 indicating that diagonal pixels are not considered directly adjacent for polygon membership purposes or 8 indicating they are.
+* **papszOptions**: algorithm options in name=value list form. None currently supported.
+* **pfnProgress**: callback for reporting algorithm progress matching the GDALProgressFunc() semantics. May be NULL.
+* **pProgressArg**: callback argument passed to pfnProgress.
+
+### Returns
+CE_None on success or CE_Failure if an error occurs.
 """
 function sievefilter(hSrcBand::GDALRasterBandH,hMaskBand::GDALRasterBandH,hDstBand::GDALRasterBandH,nSizeThreshold::Integer,nConnectedness::Integer,papszOptions::Vector{UTF8String},pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void})
     ccall((:GDALSieveFilter,libgdal),CPLErr,(GDALRasterBandH,GDALRasterBandH,GDALRasterBandH,Cint,Cint,Ptr{Ptr{UInt8}},GDALProgressFunc,Ptr{Void}),hSrcBand,hMaskBand,hDstBand,nSizeThreshold,nConnectedness,papszOptions,pfnProgress,pProgressArg)
@@ -200,7 +217,7 @@ end
 
 
 """
-    GDALDestroyTransformer(void * pTransformerArg) -> void
+    GDALDestroyTransformer(void * pTransformArg) -> void
 """
 function destroytransformer(pTransformerArg::Ptr{Void})
     ccall((:GDALDestroyTransformer,libgdal),Void,(Ptr{Void},),pTransformerArg)
@@ -208,7 +225,7 @@ end
 
 
 """
-    GDALUseTransformer(void * pTranformerArg,
+    GDALUseTransformer(void * pTransformArg,
                        int bDstToSrc,
                        int nPointCount,
                        double * x,
@@ -216,15 +233,15 @@ end
                        double * z,
                        int * panSuccess) -> int
 """
-function usetransformer(pTranformerArg::Ptr{Void},bDstToSrc::Integer,nPointCount::Integer,x::Vector{Float64},y::Vector{Float64},z::Vector{Float64},panSuccess::Vector{Cint})
-    ccall((:GDALUseTransformer,libgdal),Cint,(Ptr{Void},Cint,Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Ptr{Cint}),pTranformerArg,bDstToSrc,nPointCount,x,y,z,panSuccess)
+function usetransformer(pTransformerArg::Ptr{Void},bDstToSrc::Integer,nPointCount::Integer,x::Vector{Float64},y::Vector{Float64},z::Vector{Float64},panSuccess::Vector{Cint})
+    ccall((:GDALUseTransformer,libgdal),Cint,(Ptr{Void},Cint,Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Ptr{Cint}),pTransformerArg,bDstToSrc,nPointCount,x,y,z,panSuccess)
 end
 
 
 """
-    GDALCreateSimilarTransformer(void * psTransformerArg,
-                                 double dfSrcRatioX,
-                                 double dfSrcRatioY) -> void *
+    GDALCreateSimilarTransformer(void * pTransformArg,
+                                 double dfRatioX,
+                                 double dfRatioY) -> void *
 """
 function createsimilartransformer(psTransformerArg::Ptr{Void},dfSrcRatioX::Real,dfSrcRatioY::Real)
     ccall((:GDALCreateSimilarTransformer,libgdal),Ptr{Void},(Ptr{Void},Cdouble,Cdouble),psTransformerArg,dfSrcRatioX,dfSrcRatioY)
@@ -239,6 +256,20 @@ end
                                     int bGCPUseOK,
                                     double dfGCPErrorThreshold,
                                     int nOrder) -> void *
+
+Create image to image transformer.
+
+### Parameters
+* **hSrcDS**: source dataset, or NULL.
+* **pszSrcWKT**: the coordinate system for the source dataset. If NULL, it will be read from the dataset itself.
+* **hDstDS**: destination dataset (or NULL).
+* **pszDstWKT**: the coordinate system for the destination dataset. If NULL, and hDstDS not NULL, it will be read from the destination dataset.
+* **bGCPUseOK**: TRUE if GCPs should be used if the geotransform is not available on the source dataset (not destination).
+* **dfGCPErrorThreshold**: ignored/deprecated.
+* **nOrder**: the maximum order to use for GCP derived polynomials if possible. Use 0 to autoselect, or -1 for thin plate splines.
+
+### Returns
+handle suitable for use GDALGenImgProjTransform(), and to be deallocated with GDALDestroyGenImgProjTransformer().
 """
 function creategenimgprojtransformer(hSrcDS::GDALDatasetH,pszSrcWKT::AbstractString,hDstDS::GDALDatasetH,pszDstWKT::AbstractString,bGCPUseOK::Integer,dfGCPErrorThreshold::Real,nOrder::Integer)
     ccall((:GDALCreateGenImgProjTransformer,libgdal),Ptr{Void},(GDALDatasetH,Ptr{UInt8},GDALDatasetH,Ptr{UInt8},Cint,Cdouble,Cint),hSrcDS,pszSrcWKT,hDstDS,pszDstWKT,bGCPUseOK,dfGCPErrorThreshold,nOrder)
@@ -288,8 +319,8 @@ end
 
 
 """
-    GDALSetGenImgProjTransformerDstGeoTransform(void *,
-                                                const double *) -> void
+    GDALSetGenImgProjTransformerDstGeoTransform(void * hTransformArg,
+                                                const double * padfGeoTransform) -> void
 
 Set GenImgProj output geotransform.
 
@@ -303,7 +334,7 @@ end
 
 
 """
-    GDALDestroyGenImgProjTransformer(void *) -> void
+    GDALDestroyGenImgProjTransformer(void * hTransformArg) -> void
 
 GenImgProjTransformer deallocator.
 
@@ -319,9 +350,9 @@ end
     GDALGenImgProjTransform(void * pTransformArg,
                             int bDstToSrc,
                             int nPointCount,
-                            double * x,
-                            double * y,
-                            double * z,
+                            double * padfX,
+                            double * padfY,
+                            double * padfZ,
                             int * panSuccess) -> int
 
 Perform general image reprojection transformation.
@@ -332,8 +363,8 @@ end
 
 
 """
-    GDALSetTransformerDstGeoTransform(void *,
-                                      const double *) -> void
+    GDALSetTransformerDstGeoTransform(void * pTransformArg,
+                                      const double * padfGeoTransform) -> void
 """
 function settransformerdstgeotransform(arg1::Ptr{Void},arg2::Vector{Float64})
     ccall((:GDALSetTransformerDstGeoTransform,libgdal),Void,(Ptr{Void},Ptr{Cdouble}),arg1,arg2)
@@ -359,7 +390,7 @@ end
 
 
 """
-    GDALDestroyReprojectionTransformer(void *) -> void
+    GDALDestroyReprojectionTransformer(void * pTransformArg) -> void
 
 Destroy reprojection transformation.
 
@@ -375,9 +406,9 @@ end
     GDALReprojectionTransform(void * pTransformArg,
                               int bDstToSrc,
                               int nPointCount,
-                              double * x,
-                              double * y,
-                              double * z,
+                              double * padfX,
+                              double * padfY,
+                              double * padfZ,
                               int * panSuccess) -> int
 
 Perform reprojection transformation.
@@ -396,6 +427,9 @@ end
 Create GCP based polynomial transformer.
 
 ### Parameters
+* **nGCPCount**: the number of GCPs in pasGCPList.
+* **pasGCPList**: an array of GCPs to be used as input.
+* **nReqOrder**: the requested polynomial order. It should be 1, 2 or 3.
 * **nGCPCount**: the number of GCPs in pasGCPList.
 * **pasGCPList**: an array of GCPs to be used as input.
 * **nReqOrder**: the requested polynomial order. It should be 1, 2 or 3.
@@ -504,6 +538,20 @@ end
                      double * y,
                      double * z,
                      int * panSuccess) -> int
+
+Transforms point based on GCP derived polynomial model.
+
+### Parameters
+* **pTransformArg**: return value from GDALCreateTPSTransformer().
+* **bDstToSrc**: TRUE if transformation is from the destination (georeferenced) coordinates to pixel/line or FALSE when transforming from pixel/line to georeferenced coordinates.
+* **nPointCount**: the number of values in the x, y and z arrays.
+* **x**: array containing the X values to be transformed.
+* **y**: array containing the Y values to be transformed.
+* **z**: array containing the Z values to be transformed.
+* **panSuccess**: array in which a flag indicating success (TRUE) or failure (FALSE) of the transformation are placed.
+
+### Returns
+TRUE.
 """
 function tpstransform(pTransformArg::Ptr{Void},bDstToSrc::Integer,nPointCount::Integer,x::Vector{Float64},y::Vector{Float64},z::Vector{Float64},panSuccess::Vector{Cint})
     ccall((:GDALTPSTransform,libgdal),Cint,(Ptr{Void},Cint,Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Ptr{Cint}),pTransformArg,bDstToSrc,nPointCount,x,y,z,panSuccess)
@@ -530,7 +578,7 @@ Create an RPC based transformer.
 * **psRPCInfo**: Definition of the RPC parameters.
 * **bReversed**: If true "forward" transformation will be lat/long to pixel/line instead of the normal pixel/line to lat/long.
 * **dfPixErrThreshold**: the error (measured in pixels) allowed in the iterative solution of pixel/line to lat/long computations (the other way is always exact given the equations).
-* **papszOptions**: Other transformer options (ie. RPC_HEIGHT=<z>).
+* **papszOptions**: Other transformer options (i.e. RPC_HEIGHT=<z>).
 
 ### Returns
 transformer callback data (deallocate with GDALDestroyTransformer()).
@@ -573,7 +621,7 @@ end
 
 
 """
-    GDALDestroyGeoLocTransformer(void * pTransformArg) -> void
+    GDALDestroyGeoLocTransformer(void * pTransformAlg) -> void
 """
 function destroygeoloctransformer(pTransformArg::Ptr{Void})
     ccall((:GDALDestroyGeoLocTransformer,libgdal),Void,(Ptr{Void},),pTransformArg)
@@ -584,9 +632,9 @@ end
     GDALGeoLocTransform(void * pTransformArg,
                         int bDstToSrc,
                         int nPointCount,
-                        double * x,
-                        double * y,
-                        double * z,
+                        double * padfX,
+                        double * padfY,
+                        double * padfZ,
                         int * panSuccess) -> int
 """
 function geoloctransform(pTransformArg::Ptr{Void},bDstToSrc::Integer,nPointCount::Integer,x::Vector{Float64},y::Vector{Float64},z::Vector{Float64},panSuccess::Vector{Cint})
@@ -595,8 +643,8 @@ end
 
 
 """
-    GDALCreateApproxTransformer(GDALTransformerFunc pfnRawTransformer,
-                                void * pRawTransformerArg,
+    GDALCreateApproxTransformer(GDALTransformerFunc pfnBaseTransformer,
+                                void * pBaseTransformArg,
                                 double dfMaxError) -> void *
 
 Create an approximating transformer.
@@ -624,7 +672,7 @@ end
 
 
 """
-    GDALDestroyApproxTransformer(void * pApproxArg) -> void
+    GDALDestroyApproxTransformer(void * pCBData) -> void
 
 Cleanup approximate transformer.
 
@@ -637,9 +685,9 @@ end
 
 
 """
-    GDALApproxTransform(void * pTransformArg,
+    GDALApproxTransform(void * pCBData,
                         int bDstToSrc,
-                        int nPointCount,
+                        int nPoints,
                         double * x,
                         double * y,
                         double * z,
@@ -717,8 +765,23 @@ end
                              double * padfGeoTransformOut,
                              int * pnPixels,
                              int * pnLines,
-                             double * padfExtents,
+                             double * padfExtent,
                              int nOptions) -> CPLErr
+
+Suggest output file size.
+
+### Parameters
+* **hSrcDS**: the input image (it is assumed the whole input images is being transformed).
+* **pfnTransformer**: the transformer function.
+* **pTransformArg**: the callback data for the transformer function.
+* **padfGeoTransformOut**: the array of six doubles in which the suggested geotransform is returned.
+* **pnPixels**: int in which the suggest pixel width of output is returned.
+* **pnLines**: int in which the suggest pixel height of output is returned.
+* **padfExtent**: Four entry array to return extents as (xmin, ymin, xmax, ymax).
+* **nOptions**: Options, currently always zero.
+
+### Returns
+CE_None if successful or CE_Failure otherwise.
 """
 function suggestedwarpoutput2(hSrcDS::GDALDatasetH,pfnTransformer::GDALTransformerFunc,pTransformArg::Ptr{Void},padfGeoTransformOut::Vector{Float64},pnPixels::Vector{Cint},pnLines::Vector{Cint},padfExtents::Vector{Float64},nOptions::Integer)
     ccall((:GDALSuggestedWarpOutput2,libgdal),CPLErr,(GDALDatasetH,GDALTransformerFunc,Ptr{Void},Ptr{Cdouble},Ptr{Cint},Ptr{Cint},Ptr{Cdouble},Cint),hSrcDS,pfnTransformer,pTransformArg,padfGeoTransformOut,pnPixels,pnLines,padfExtents,nOptions)
@@ -753,6 +816,21 @@ end
                               GDALProgressFunc pfnProgress,
                               void * pProgressArg,
                               char ** papszOptions) -> CPLErr
+
+Transform locations held in bands.
+
+### Parameters
+* **hXBand**: the band containing the X locations (usually long/easting).
+* **hYBand**: the band containing the Y locations (usually lat/northing).
+* **hZBand**: the band containing the Z locations (may be NULL).
+* **pfnTransformer**: the transformer function.
+* **pTransformArg**: the callback data for the transformer function.
+* **pfnProgress**: callback for reporting algorithm progress matching the GDALProgressFunc() semantics. May be NULL.
+* **pProgressArg**: callback argument passed to pfnProgress.
+* **papszOptions**: list of name/value options - none currently supported.
+
+### Returns
+CE_None on success or CE_Failure if an error occurs.
 """
 function transformgeolocations(hXBand::GDALRasterBandH,hYBand::GDALRasterBandH,hZBand::GDALRasterBandH,pfnTransformer::GDALTransformerFunc,pTransformArg::Ptr{Void},pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void},papszOptions::Vector{UTF8String})
     ccall((:GDALTransformGeolocations,libgdal),CPLErr,(GDALRasterBandH,GDALRasterBandH,GDALRasterBandH,GDALTransformerFunc,Ptr{Void},GDALProgressFunc,Ptr{Void},Ptr{Ptr{UInt8}}),hXBand,hYBand,hZBand,pfnTransformer,pTransformArg,pfnProgress,pProgressArg,papszOptions)
@@ -866,12 +944,23 @@ Burn geometries into raster.
 * **pTransformArg**: callback data for transformer.
 * **padfGeomBurnValue**: the array of values to burn into the raster. There should be nBandCount values for each geometry.
 * **papszOptions**: special options controlling rasterization 
-"ALL_TOUCHED": 
-May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon or that are selected by brezenhams line algorithm. Defaults to FALSE. 
-"BURN_VALUE_FROM": 
-May be set to "Z" to use the Z values of the geometries. dfBurnValue is added to this before burning. Defaults to GDALBurnValueSrc.GBV_UserBurnValue in which case just the dfBurnValue is burned. This is implemented only for points and lines for now. The M value may be supported in the future. 
-"MERGE_ALG": 
-May be REPLACE (the default) or ADD. REPLACE results in overwriting of value, while ADD adds the new value to the existing raster, suitable for heatmaps for instance.
+											
+												"ALL_TOUCHED": 
+											
+											
+												May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon or that are selected by brezenhams line algorithm. Defaults to FALSE. 
+											
+											
+												"BURN_VALUE_FROM": 
+											
+											
+												May be set to "Z" to use the Z values of the geometries. dfBurnValue is added to this before burning. Defaults to GDALBurnValueSrc.GBV_UserBurnValue in which case just the dfBurnValue is burned. This is implemented only for points and lines for now. The M value may be supported in the future. 
+											
+											
+												"MERGE_ALG": 
+											
+											
+												May be REPLACE (the default) or ADD. REPLACE results in overwriting of value, while ADD adds the new value to the existing raster, suitable for heatmaps for instance.
 * **pfnProgress**: the progress function to report completion.
 * **pProgressArg**: callback data for progress function.
 
@@ -908,16 +997,35 @@ Burn geometries from the specified list of layers into raster.
 * **pTransformArg**: callback data for transformer.
 * **padfLayerBurnValues**: the array of values to burn into the raster. There should be nBandCount values for each layer.
 * **papszOptions**: special options controlling rasterization: 
-"ATTRIBUTE": 
-Identifies an attribute field on the features to be used for a burn in value. The value will be burned into all output bands. If specified, padfLayerBurnValues will not be used and can be a NULL pointer. 
-"CHUNKYSIZE": 
-The height in lines of the chunk to operate on. The larger the chunk size the less times we need to make a pass through all the shapes. If it is not set or set to zero the default chunk size will be used. Default size will be estimated based on the GDAL cache buffer size using formula: cache_size_bytes/scanline_size_bytes, so the chunk will not exceed the cache. 
-"ALL_TOUCHED": 
-May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon or that are selected by brezenhams line algorithm. Defaults to FALSE. 
-"BURN_VALUE_FROM": 
-May be set to "Z" to use the Z values of the geometries. The value from padfLayerBurnValues or the attribute field value is added to this before burning. In default case dfBurnValue is burned as it is. This is implemented properly only for points and lines for now. Polygons will be burned using the Z value from the first point. The M value may be supported in the future. 
-"MERGE_ALG": 
-May be REPLACE (the default) or ADD. REPLACE results in overwriting of value, while ADD adds the new value to the existing raster, suitable for heatmaps for instance.
+											
+												"ATTRIBUTE": 
+											
+											
+												Identifies an attribute field on the features to be used for a burn in value. The value will be burned into all output bands. If specified, padfLayerBurnValues will not be used and can be a NULL pointer. 
+											
+											
+												"CHUNKYSIZE": 
+											
+											
+												The height in lines of the chunk to operate on. The larger the chunk size the less times we need to make a pass through all the shapes. If it is not set or set to zero the default chunk size will be used. Default size will be estimated based on the GDAL cache buffer size using formula: cache_size_bytes/scanline_size_bytes, so the chunk will not exceed the cache. 
+											
+											
+												"ALL_TOUCHED": 
+											
+											
+												May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon or that are selected by brezenhams line algorithm. Defaults to FALSE. 
+											
+											
+												"BURN_VALUE_FROM": 
+											
+											
+												May be set to "Z" to use the Z values of the geometries. The value from padfLayerBurnValues or the attribute field value is added to this before burning. In default case dfBurnValue is burned as it is. This is implemented properly only for points and lines for now. Polygons will be burned using the Z value from the first point. The M value may be supported in the future. 
+											
+											
+												"MERGE_ALG": 
+											
+											
+												May be REPLACE (the default) or ADD. REPLACE results in overwriting of value, while ADD adds the new value to the existing raster, suitable for heatmaps for instance.
 * **pfnProgress**: the progress function to report completion.
 * **pProgressArg**: callback data for progress function.
 
@@ -964,10 +1072,17 @@ Burn geometries from the specified list of layer into raster.
 * **pTransformArg**: callback data for transformer.
 * **dfBurnValue**: the value to burn into the raster.
 * **papszOptions**: special options controlling rasterization: 
-"ATTRIBUTE": 
-Identifies an attribute field on the features to be used for a burn in value. The value will be burned into all output bands. If specified, padfLayerBurnValues will not be used and can be a NULL pointer. 
-"ALL_TOUCHED": 
-May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon or that are selected by brezenhams line algorithm. Defaults to FALSE.
+											
+												"ATTRIBUTE": 
+											
+											
+												Identifies an attribute field on the features to be used for a burn in value. The value will be burned into all output bands. If specified, padfLayerBurnValues will not be used and can be a NULL pointer. 
+											
+											
+												"ALL_TOUCHED": 
+											
+											
+												May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon or that are selected by brezenhams line algorithm. Defaults to FALSE.
 * **pfnProgress**: the progress function to report completion.
 * **pProgressArg**: callback data for progress function.
 
@@ -980,28 +1095,28 @@ end
 
 
 """
-    GDALGridCreate(GDALGridAlgorithm,
-                   const void *,
-                   GUInt32,
-                   const double *,
-                   const double *,
-                   const double *,
-                   double,
-                   double,
-                   double,
-                   double,
-                   GUInt32,
-                   GUInt32,
-                   GDALDataType,
-                   void *,
-                   GDALProgressFunc,
-                   void *) -> CPLErr
+    GDALGridCreate(GDALGridAlgorithm eAlgorithm,
+                   const void * poOptions,
+                   GUInt32 nPoints,
+                   const double * padfX,
+                   const double * padfY,
+                   const double * padfZ,
+                   double dfXMin,
+                   double dfXMax,
+                   double dfYMin,
+                   double dfYMax,
+                   GUInt32 nXSize,
+                   GUInt32 nYSize,
+                   GDALDataType eType,
+                   void * pData,
+                   GDALProgressFunc pfnProgress,
+                   void * pProgressArg) -> CPLErr
 
 Create regular grid from the scattered data.
 
 ### Parameters
 * **eAlgorithm**: Gridding method.
-* **poOptions**: Options to control choosen gridding method.
+* **poOptions**: Options to control chosen gridding method.
 * **nPoints**: Number of elements in input arrays.
 * **padfX**: Input array of X coordinates.
 * **padfY**: Input array of Y coordinates.
@@ -1026,6 +1141,83 @@ end
 
 
 """
+    GDALGridContextCreate(GDALGridAlgorithm eAlgorithm,
+                          const void * poOptions,
+                          GUInt32 nPoints,
+                          const double * padfX,
+                          const double * padfY,
+                          const double * padfZ,
+                          int bCallerWillKeepPointArraysAlive) -> GDALGridContext *
+
+Creates a context to do regular gridding from the scattered data.
+
+### Parameters
+* **eAlgorithm**: Gridding method.
+* **poOptions**: Options to control chosen gridding method.
+* **nPoints**: Number of elements in input arrays.
+* **padfX**: Input array of X coordinates.
+* **padfY**: Input array of Y coordinates.
+* **padfZ**: Input array of Z values.
+* **bCallerWillKeepPointArraysAlive**: Whether the provided padfX, padfY, padfZ arrays will still be "alive" during the calls to GDALGridContextProcess(). Setting to TRUE prevent them from being duplicated in the context. If unsure, set to FALSE.
+
+### Returns
+the context (to be freed with GDALGridContextFree()) or NULL in case or error
+"""
+function gridcontextcreate(eAlgorithm::GDALGridAlgorithm,poOptions::Ptr{Void},nPoints::GUInt32,padfX::Vector{Float64},padfY::Vector{Float64},padfZ::Vector{Float64},bCallerWillKeepPointArraysAlive::Integer)
+    ccall((:GDALGridContextCreate,libgdal),Ptr{GDALGridContext},(GDALGridAlgorithm,Ptr{Void},GUInt32,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Cint),eAlgorithm,poOptions,nPoints,padfX,padfY,padfZ,bCallerWillKeepPointArraysAlive)
+end
+
+
+"""
+    GDALGridContextFree(GDALGridContext * psContext) -> void
+
+Free a context used created by GDALGridContextCreate()
+
+### Parameters
+* **psContext**: the context.
+"""
+function gridcontextfree(psContext::Ptr{GDALGridContext})
+    ccall((:GDALGridContextFree,libgdal),Void,(Ptr{GDALGridContext},),psContext)
+end
+
+
+"""
+    GDALGridContextProcess(GDALGridContext * psContext,
+                           double dfXMin,
+                           double dfXMax,
+                           double dfYMin,
+                           double dfYMax,
+                           GUInt32 nXSize,
+                           GUInt32 nYSize,
+                           GDALDataType eType,
+                           void * pData,
+                           GDALProgressFunc pfnProgress,
+                           void * pProgressArg) -> CPLErr
+
+Do the gridding of a window of a raster.
+
+### Parameters
+* **psContext**: Gridding context.
+* **dfXMin**: Lowest X border of output grid.
+* **dfXMax**: Highest X border of output grid.
+* **dfYMin**: Lowest Y border of output grid.
+* **dfYMax**: Highest Y border of output grid.
+* **nXSize**: Number of columns in output grid.
+* **nYSize**: Number of rows in output grid.
+* **eType**: Data type of output array.
+* **pData**: Pointer to array where the computed grid will be stored.
+* **pfnProgress**: a GDALProgressFunc() compatible callback function for reporting progress or NULL.
+* **pProgressArg**: argument to be passed to pfnProgress. May be NULL.
+
+### Returns
+CE_None on success or CE_Failure if something goes wrong.
+"""
+function gridcontextprocess(psContext::Ptr{GDALGridContext},dfXMin::Real,dfXMax::Real,dfYMin::Real,dfYMax::Real,nXSize::GUInt32,nYSize::GUInt32,eType::GDALDataType,pData::Ptr{Void},pfnProgress::GDALProgressFunc,pProgressArg::Ptr{Void})
+    ccall((:GDALGridContextProcess,libgdal),CPLErr,(Ptr{GDALGridContext},Cdouble,Cdouble,Cdouble,Cdouble,GUInt32,GUInt32,GDALDataType,Ptr{Void},GDALProgressFunc,Ptr{Void}),psContext,dfXMin,dfXMax,dfYMin,dfYMax,nXSize,nYSize,eType,pData,pfnProgress,pProgressArg)
+end
+
+
+"""
     GDALComputeMatchingPoints(GDALDatasetH hFirstImage,
                               GDALDatasetH hSecondImage,
                               char ** papszOptions,
@@ -1033,4 +1225,138 @@ end
 """
 function computematchingpoints(hFirstImage::GDALDatasetH,hSecondImage::GDALDatasetH,papszOptions::Vector{UTF8String},pnGCPCount::Vector{Cint})
     ccall((:GDALComputeMatchingPoints,libgdal),Ptr{GDAL_GCP},(GDALDatasetH,GDALDatasetH,Ptr{Ptr{UInt8}},Ptr{Cint}),hFirstImage,hSecondImage,papszOptions,pnGCPCount)
+end
+
+
+"""
+    GDALHasTriangulation() -> int
+
+Returns if GDAL is built with Delaunay triangulation support.
+
+### Returns
+TRUE if GDAL is built with Delaunay triangulation support.
+"""
+function hastriangulation()
+    ccall((:GDALHasTriangulation,libgdal),Cint,())
+end
+
+
+"""
+    GDALTriangulationCreateDelaunay(int nPoints,
+                                    const double * padfX,
+                                    const double * padfY) -> GDALTriangulation *
+
+Computes a Delaunay triangulation of the passed points.
+
+### Parameters
+* **nPoints**: number of points
+* **padfX**: x coordinates of the points.
+* **padfY**: y coordinates of the points.
+
+### Returns
+triangulation that must be freed with GDALTriangulationFree(), or NULL in case of error.
+"""
+function triangulationcreatedelaunay(nPoints::Integer,padfX::Vector{Float64},padfY::Vector{Float64})
+    ccall((:GDALTriangulationCreateDelaunay,libgdal),Ptr{GDALTriangulation},(Cint,Ptr{Cdouble},Ptr{Cdouble}),nPoints,padfX,padfY)
+end
+
+
+"""
+    GDALTriangulationComputeBarycentricCoefficients(GDALTriangulation * psDT,
+                                                    const double * padfX,
+                                                    const double * padfY) -> int
+
+Computes barycentric coefficients for each triangles of the triangulation.
+
+### Parameters
+* **psDT**: triangulation.
+* **padfX**: x coordinates of the points. Must be identical to the one passed to GDALTriangulationCreateDelaunay().
+* **padfY**: y coordinates of the points. Must be identical to the one passed to GDALTriangulationCreateDelaunay().
+
+### Returns
+TRUE in case of success.
+"""
+function triangulationcomputebarycentriccoefficients(psDT::Ptr{GDALTriangulation},padfX::Vector{Float64},padfY::Vector{Float64})
+    ccall((:GDALTriangulationComputeBarycentricCoefficients,libgdal),Cint,(Ptr{GDALTriangulation},Ptr{Cdouble},Ptr{Cdouble}),psDT,padfX,padfY)
+end
+
+
+"""
+    GDALTriangulationComputeBarycentricCoordinates(const GDALTriangulation * psDT,
+                                                   int nFacetIdx,
+                                                   double dfX,
+                                                   double dfY,
+                                                   double * pdfL1,
+                                                   double * pdfL2,
+                                                   double * pdfL3) -> int
+"""
+function triangulationcomputebarycentriccoordinates(psDT::Ptr{GDALTriangulation},nFacetIdx::Integer,dfX::Real,dfY::Real,pdfL1::Vector{Float64},pdfL2::Vector{Float64},pdfL3::Vector{Float64})
+    ccall((:GDALTriangulationComputeBarycentricCoordinates,libgdal),Cint,(Ptr{GDALTriangulation},Cint,Cdouble,Cdouble,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble}),psDT,nFacetIdx,dfX,dfY,pdfL1,pdfL2,pdfL3)
+end
+
+
+"""
+    GDALTriangulationFindFacetBruteForce(const GDALTriangulation * psDT,
+                                         double dfX,
+                                         double dfY,
+                                         int * panOutputFacetIdx) -> int
+
+Returns the index of the triangle that contains the point by iterating over all triangles.
+
+### Parameters
+* **psDT**: triangulation.
+* **dfX**: x coordinate of the point.
+* **dfY**: y coordinate of the point.
+* **panOutputFacetIdx**: (output) pointer to the index of the triangle.
+
+### Returns
+index >= 0 of the triangle in case of success, -1 otherwise.
+"""
+function triangulationfindfacetbruteforce(psDT::Ptr{GDALTriangulation},dfX::Real,dfY::Real,panOutputFacetIdx::Vector{Cint})
+    ccall((:GDALTriangulationFindFacetBruteForce,libgdal),Cint,(Ptr{GDALTriangulation},Cdouble,Cdouble,Ptr{Cint}),psDT,dfX,dfY,panOutputFacetIdx)
+end
+
+
+"""
+    GDALTriangulationFindFacetDirected(const GDALTriangulation * psDT,
+                                       int nFacetIdx,
+                                       double dfX,
+                                       double dfY,
+                                       int * panOutputFacetIdx) -> int
+
+Returns the index of the triangle that contains the point by walking in the triangulation.
+
+### Parameters
+* **psDT**: triangulation.
+* **nFacetIdx**: index of first triangle to start with.
+* **dfX**: x coordinate of the point.
+* **dfY**: y coordinate of the point.
+* **panOutputFacetIdx**: (output) pointer to the index of the triangle.
+
+### Returns
+TRUE in case of success, -1 otherwise.
+"""
+function triangulationfindfacetdirected(psDT::Ptr{GDALTriangulation},nFacetIdx::Integer,dfX::Real,dfY::Real,panOutputFacetIdx::Vector{Cint})
+    ccall((:GDALTriangulationFindFacetDirected,libgdal),Cint,(Ptr{GDALTriangulation},Cint,Cdouble,Cdouble,Ptr{Cint}),psDT,nFacetIdx,dfX,dfY,panOutputFacetIdx)
+end
+
+
+"""
+    GDALTriangulationFree(GDALTriangulation * psDT) -> void
+
+Free a triangulation.
+
+### Parameters
+* **psDT**: triangulation.
+"""
+function triangulationfree(psDT::Ptr{GDALTriangulation})
+    ccall((:GDALTriangulationFree,libgdal),Void,(Ptr{GDALTriangulation},),psDT)
+end
+
+
+"""
+    GDALTriangulationTerminate() -> void
+"""
+function triangulationterminate()
+    ccall((:GDALTriangulationTerminate,libgdal),Void,())
 end

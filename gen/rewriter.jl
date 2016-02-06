@@ -58,7 +58,7 @@ check_nullpointer = [
     :OGRStyleToolH
 ]
 
-parsefile(file) = parse(join(["quote", readall(file), "end"], ";"))
+parsefile(file) = parse(join(["quote", readstring(file), "end"], ";"))
 
 "rename the function to more a julian convention"
 function newfuncname(name::Symbol)
