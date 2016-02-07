@@ -6,7 +6,7 @@
 # however the index.xml doesn't seem up to date
 # with the contents of gdal/xml/
 
-# after this script, all.xml will be around 80 MB
+# after this script, doxygen.xml will be around 80 MB
 # I manually deleted everything not under
 # sectiondef, briefdescription, and detaileddescription
 # this reduces the filesize to 15 MB
@@ -15,7 +15,7 @@
 from lxml import etree
 from glob import glob
 
-outxml = 'all.xml'
+outxml = 'doxygen.xml'
 
 xmls = glob('*.xml')
 

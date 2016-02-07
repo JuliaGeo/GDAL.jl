@@ -1,8 +1,11 @@
 using LibExpat
+using DataStructures
+using Compat
 
 workdir = dirname(@__FILE__)
 include(joinpath(workdir, "doc.jl"))
 srcdir = joinpath(workdir, "../src")
+
 
 headerfiles = [
     "gdal.jl",
@@ -10,6 +13,11 @@ headerfiles = [
     "ogr_api.jl",
     "ogr_srs_api.jl"
 ]
+
+custom_rename = Dict{ASCIIString, ASCIIString}(
+    "gdalgetdriverbyname" => "gdalgetdriverbyname",
+    "ogrgetdriverbyname" => "ogrgetdriverbyname"
+)
 
 strip_prefixes = [
     (r"^gdal_cg_", ""),
@@ -31,40 +39,61 @@ strip_prefixes = [
     (r"^osr", "")
 ]
 
-# all these are typealias of Ptr{Void} and are returned by a wrapped function
+# all these are immutable without internal fields
 check_nullpointer = [
-    :FilterFunc4ValuesType,
-    :FilterFuncType,
-    :GDALAsyncReaderH,
-    :GDALColorTableH,
-    :GDALContourGeneratorH,
+    :CPLErrorHandler,
+    :GDALProgressFunc,
+    :GDALMajorObjectH,
     :GDALDatasetH,
-    :GDALDriverH,
-    :GDALRasterAttributeTableH,
     :GDALRasterBandH,
-    :GDALWarpOperationH,
+    :GDALDriverH,
+    :GDALColorTableH,
+    :GDALRasterAttributeTableH,
+    :GDALAsyncReaderH,
+    :GDALDerivedPixelFunc,
+    :GDALTransformerFunc,
+    :GDALContourWriter,
+    :GDALContourGeneratorH,
+    :OGRGeometryH,
+    :OGRSpatialReferenceH,
     :OGRCoordinateTransformationH,
-    :OGRDataSourceH,
+    :OGRFieldDefnH,
     :OGRFeatureDefnH,
     :OGRFeatureH,
-    :OGRFieldDefnH,
-    :OGRGeometryH,
-    :OGRGeomFieldDefnH,
-    :OGRLayerH,
-    :OGRSFDriverH,
-    :OGRSpatialReferenceH,
-    :OGRStyleMgrH,
     :OGRStyleTableH,
-    :OGRStyleToolH
+    :OGRLayerH,
+    :OGRDataSourceH,
+    :OGRSFDriverH,
+    :OGRStyleMgrH,
+    :OGRStyleToolH,
+    :GDALMaskFunc,
+    :GDALWarpOperationH,
+    :FilterFuncType,
+    :FilterFunc4ValuesType
 ]
+
+
+use_type_parameter = [
+    :GDALMajorObjectH,
+    :GDALDatasetH,
+    :GDALDriverH,
+    :GDALRasterBandH,
+    :OGRLayerH,
+    :OGRDataSourceH
+]
+
 
 parsefile(file) = parse(join(["quote", readstring(file), "end"], ";"))
 
 "rename the function to more a julian convention"
 function newfuncname(name::Symbol)
     name = lowercase(string(name))
-    for (pat, r) in strip_prefixes
-        name = replace(name, pat, r)
+    if name in keys(custom_rename)
+        name = custom_rename[name]
+    else
+        for (pat, r) in strip_prefixes
+            name = replace(name, pat, r)
+        end
     end
     symbol(name)
 end
@@ -85,6 +114,16 @@ function rewriter(ex::Expr)
     # turn it into a tuple, special cased in visr/Clang.jl
     # done because a block Expr gets a begin/end block when printing
 
+    partypes = OrderedDict{Symbol, Symbol}()
+    letters = 'T':-1:'A'
+    letter_index = 0
+
+    # manual override to fix ambiguity warning with OGR_Dr_Open
+    if old_funcname == :OGROpen
+        assert(ex.args[1].args[end] == :arg3)
+        ex.args[1].args[end] = :(arg3::Ptr{OGRSFDriverH})
+    end
+
     # function signature
     for arg in ex.args[1].args[2:end]
         isa(arg, Symbol) && continue # no type constraints
@@ -93,16 +132,40 @@ function rewriter(ex::Expr)
             arg.args[2] = :Integer
         elseif arg.args[2] == :Cdouble
             arg.args[2] = :Real
+        elseif arg.args[2] in check_nullpointer
+            if arg.args[2] in use_type_parameter
+                subtype = arg.args[2]
+                if subtype in keys(partypes)
+                    letter = partypes[subtype]
+                else
+                    letter_index += 1
+                    letter = symbol(letters[letter_index])
+                end
+                partypes[subtype] = letter
+                arg.args[2] = Expr(:curly, :Ptr, letter)
+            else
+                arg.args[2] = Expr(:curly, :Ptr, arg.args[2])
+            end
         end
     end
+
+    if !isempty(partypes)
+        exprarray = Expr[]
+        for (subtype, letter) in partypes
+            push!(exprarray, Expr(:<:, letter, subtype))
+
+        end
+        ex.args[1].args[1] = Expr(:curly, new_funcname, exprarray...)
+    end
+
     assert(ex.args[2].args[1].head == :ccall)
     # ccall input types
     assert(ex.args[2].args[1].args[3].head == :tuple)
     intypes = ex.args[2].args[1].args[3].args
     for i = 1:length(intypes)
-        # memory owned by julia
-        if intypes[i] == :(Ptr{GDALRasterIOExtraArg})
-            intypes[i] = :(Ref{GDALRasterIOExtraArg})
+        if intypes[i] in check_nullpointer
+            # wrap input type in Ptr{} since memory is managed by GDAL
+            intypes[i] = Expr(:curly, :Ptr, intypes[i])
         end
     end
     # ccall return type
@@ -113,9 +176,43 @@ function rewriter(ex::Expr)
         ex.args[2].args[1] = Expr(:call, :unsafe_load, ex.args[2].args[1])
         ex.args[2].args[1] = Expr(:call, :bytestring, ex.args[2].args[1])
     elseif rettype in check_nullpointer
+        # wrap output type in Ptr{} since memory is managed by GDAL
+        ex.args[2].args[1].args[2] = Expr(:curly, :Ptr, ex.args[2].args[1].args[2])
+        # wrap ccall in checknull()
         ex.args[2].args[1] = Expr(:call, :checknull, ex.args[2].args[1])
     end
     (docstr, ex)
+end
+
+
+"rewrite typealias Ptr{Void} to immutable"
+function commonrewriter(io::IOStream, ex::Expr)
+    if ex.head == :typealias && ex.args[2] == :(Ptr{Void})
+        # ex = :(immutable $(ex.args[1]); end)
+        return # write them to a separate file, list is recorded in check_nullpointer
+    end
+
+    # these need surrounding whitespace
+    if length(ex.args) == 3 && isa(ex.args[3], Expr) && ex.args[3].head == :block
+        provide_space = true
+    else
+        provide_space = false
+    end
+    provide_space && print(io, "\n")
+    println(io, "$ex")
+    provide_space && print(io, "\n")
+end
+
+
+# edit the common_file
+common_file = "common.jl"
+expr = parsefile(joinpath(srcdir, "C", common_file))
+open(joinpath(srcdir, common_file), "w") do io
+    for el in expr.args[1].args
+        if isa(el, Expr)
+            commonrewriter(io, el)
+        end
+    end
 end
 
 for headerfile in headerfiles

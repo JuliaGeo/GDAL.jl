@@ -13,7 +13,7 @@ The `wrap_gdal.jl` script finds them in the directory set in the `gdalpath` vari
 ### Prepare the GDAL Doxygen XML
 1. In the GDAL SVN, run Doxygen with `GENERATE_XML = YES`
 2. Follow the instructions in `combine_gdal_doxygen_xml.py`
-3. Copy the result to `GDAL.jl/gen/all.xml`
+3. Copy the result to `GDAL.jl/gen/doxygen.xml`
 
 ### Run the wrapping scripts
 1. Run `julia gen/wrap_gdal.jl` to generate the low level wrapping (GDAL + documentation)

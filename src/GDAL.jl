@@ -30,7 +30,8 @@ module C
 end
 
 include("C/misc.jl")
-include("C/common.jl")
+include("types.jl")
+include("common.jl")
 include("gdal_h.jl")
 include("gdal_alg.jl")
 include("ogr_api.jl")

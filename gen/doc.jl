@@ -53,7 +53,7 @@ workdir = dirname(@__FILE__)
 
 # Change GENERATE_XML to YES in the Doxyfile from the GDAL SVN
 # then run combine.xslt to create this XML file.
-xmlfile = joinpath(workdir, "all.xml")
+xmlfile = joinpath(workdir, "doxygen.xml")
 
 xmlstring = readstring(xmlfile)
 et = xp_parse(xmlstring)
