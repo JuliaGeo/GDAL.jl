@@ -8,6 +8,7 @@ abstract GDALRasterBandH <: GDALMajorObjectH
 abstract OGRLayerH <: GDALMajorObjectH
 
 abstract OGRDataSourceH <: GDALDatasetH
+abstract OGRSFDriverH <: GDALDriverH
 
 abstract GDALAsyncReaderH
 abstract GDALColorTableH
@@ -25,7 +26,6 @@ abstract OGRFeatureDefnH
 abstract OGRFeatureH
 abstract OGRFieldDefnH
 abstract OGRGeometryH
-abstract OGRSFDriverH
 abstract OGRSpatialReferenceH
 abstract OGRStyleMgrH
 abstract OGRStyleTableH

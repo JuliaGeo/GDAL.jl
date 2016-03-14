@@ -6,12 +6,6 @@
 # however the index.xml doesn't seem up to date
 # with the contents of gdal/xml/
 
-# after this script, doxygen.xml will be around 80 MB
-# I manually deleted everything not under
-# sectiondef, briefdescription, and detaileddescription
-# this reduces the filesize to 15 MB
-# LibExpat.jl froze when parsing the 80 MB version
-
 from lxml import etree
 from glob import glob
 
@@ -33,5 +27,17 @@ for xml in xmls[1:]:
     addroot = addtree.getroot()
     for child in addroot:
         root.append(child)
+
+# delete everything not under keep_elements
+# this information is currently not used anyway
+# this reduces the filesize from ~80MB to ~15MB
+# LibExpat.jl froze when parsing the ~80MB version
+
+keep_elements = ('sectiondef', 'briefdescription', 'detaileddescription')
+
+for elem in tree.xpath('/doxygen/compounddef'):
+    for subelem in elem:
+        if subelem.tag not in keep_elements:
+            elem.remove(subelem)
 
 tree.write(outxml)

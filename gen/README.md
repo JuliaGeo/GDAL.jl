@@ -11,7 +11,23 @@ For the generation process `julia 0.5-dev` based on `LLVM 3.7.1` and with
 The `wrap_gdal.jl` script finds them in the directory set in the `gdalpath` variable.
 
 ### Prepare the GDAL Doxygen XML
-1. In the GDAL SVN, run Doxygen with `GENERATE_XML = YES`
+Below are the steps needed to create an XML file from which the documentation is created. Alternatively the first two steps can be skipped by downloading the [prepared XML](https://s3.eu-central-1.amazonaws.com/visr/julia/gdal/doxygen.xml), though this file may become outdated.
+
+1. Navigate to the folder containing GDAL SVN, modify the `Doxyfile` configuration file to generate XML by changing
+   ```
+   GENERATE_XML           = NO
+   ```
+   to
+   ```
+   GENERATE_XML           = YES
+   ```
+   before running Doxygen using the command
+   ```
+   $ doxygen Doxyfile
+   ```
+
+   This should create an `xml` folder, with the xml output of the gdal documentation.
+
 2. Follow the instructions in `combine_gdal_doxygen_xml.py`
 3. Copy the result to `GDAL.jl/gen/doxygen.xml`
 

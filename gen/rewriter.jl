@@ -14,7 +14,10 @@ headerfiles = [
     "ogr_srs_api.jl"
 ]
 
+# do not use automatic function renaming for these
 custom_rename = Dict{ASCIIString, ASCIIString}(
+    # the two below would otherwise be automatically renamed to getdriverbyname
+    # with the same signature, this prevents the renaming, allowing the use of both
     "gdalgetdriverbyname" => "gdalgetdriverbyname",
     "ogrgetdriverbyname" => "ogrgetdriverbyname"
 )
@@ -114,8 +117,12 @@ function rewriter(ex::Expr)
     # turn it into a tuple, special cased in visr/Clang.jl
     # done because a block Expr gets a begin/end block when printing
 
+    # dict to map parameter types to type parameters, e.g. :GDALDriverH => :T
+    # used for adding the parametric type signatures: {T <: GDALDriverH}(hDriver::Ptr{T},
     partypes = OrderedDict{Symbol, Symbol}()
+    # choice of names for parametric type, T for first, S for second etc.
     letters = 'T':-1:'A'
+    # track which letters are already used
     letter_index = 0
 
     # manual override to fix ambiguity warning with OGR_Dr_Open
@@ -150,6 +157,7 @@ function rewriter(ex::Expr)
     end
 
     if !isempty(partypes)
+        # add type parameters
         exprarray = Expr[]
         for (subtype, letter) in partypes
             push!(exprarray, Expr(:<:, letter, subtype))
