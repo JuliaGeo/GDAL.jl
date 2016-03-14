@@ -1,46 +1,46 @@
-# Julia wrapper for header: /usr/local/include/ogr_core.h
+# Julia wrapper for header: /home/martijn/bin/gdal/include/ogr_core.h
 # Automatically generated using Clang.jl wrap_c, version 0.0.0
 
 
 
 """
-    OGRMalloc(size_t) -> void *
+    OGRMalloc(size_t size) -> void *
 """
-function OGRMalloc(arg1::Csize_t)
-    ccall((:OGRMalloc,libgdal),Ptr{Void},(Csize_t,),arg1)
+function OGRMalloc()
+    ccall((:OGRMalloc,libgdal),Ptr{Void},())
 end
 
 
 """
-    OGRCalloc(size_t,
-              size_t) -> void *
+    OGRCalloc(size_t count,
+              size_t size) -> void *
 """
-function OGRCalloc(arg1::Csize_t,arg2::Csize_t)
-    ccall((:OGRCalloc,libgdal),Ptr{Void},(Csize_t,Csize_t),arg1,arg2)
+function OGRCalloc()
+    ccall((:OGRCalloc,libgdal),Ptr{Void},())
 end
 
 
 """
-    OGRRealloc(void *,
-               size_t) -> void *
+    OGRRealloc(void * pOld,
+               size_t size) -> void *
 """
-function OGRRealloc(arg1::Ptr{Void},arg2::Csize_t)
-    ccall((:OGRRealloc,libgdal),Ptr{Void},(Ptr{Void},Csize_t),arg1,arg2)
+function OGRRealloc(arg1,size_t::Cint)
+    ccall((:OGRRealloc,libgdal),Ptr{Void},(Ptr{Void},Cint),arg1,size_t)
 end
 
 
 """
     OGRStrdup(const char *) -> char *
 """
-function OGRStrdup(arg1::Ptr{UInt8})
-    ccall((:OGRStrdup,libgdal),Ptr{UInt8},(Ptr{UInt8},),arg1)
+function OGRStrdup(arg1)
+    ccall((:OGRStrdup,libgdal),Cstring,(Cstring,),arg1)
 end
 
 
 """
-    OGRFree(void *) -> void
+    OGRFree(void * pMemory) -> void
 """
-function OGRFree(arg1::Ptr{Void})
+function OGRFree(arg1)
     ccall((:OGRFree,libgdal),Void,(Ptr{Void},),arg1)
 end
 
@@ -57,7 +57,7 @@ Fetch a human readable name corresponding to an OGRwkbGeometryType value.
 internal human readable string, or NULL on failure.
 """
 function OGRGeometryTypeToName(eType::OGRwkbGeometryType)
-    ccall((:OGRGeometryTypeToName,libgdal),Ptr{UInt8},(OGRwkbGeometryType,),eType)
+    ccall((:OGRGeometryTypeToName,libgdal),Cstring,(OGRwkbGeometryType,),eType)
 end
 
 
@@ -133,8 +133,18 @@ end
 
 """
     OGR_GT_SetModifier(OGRwkbGeometryType eType,
-                       int bSetZ,
-                       int bSetM) -> OGRwkbGeometryType
+                       int bHasZ,
+                       int bHasM) -> OGRwkbGeometryType
+
+Returns a 2D or 3D geometry type depending on parameter.
+
+### Parameters
+* **eType**: Input geometry type
+* **bHasZ**: TRUE if the output geometry type must be 3D.
+* **bHasM**: Must be set to FALSE currently.
+
+### Returns
+Output geometry type.
 """
 function OGR_GT_SetModifier(eType::OGRwkbGeometryType,bSetZ::Cint,bSetM::Cint)
     ccall((:OGR_GT_SetModifier,libgdal),OGRwkbGeometryType,(OGRwkbGeometryType,Cint,Cint),eType,bSetZ,bSetM)
@@ -176,7 +186,7 @@ end
 
 
 """
-    OGR_GT_IsCurve(OGRwkbGeometryType) -> int
+    OGR_GT_IsCurve(OGRwkbGeometryType eGeomType) -> int
 
 Return if a geometry type is an instance of Curve.
 
@@ -192,7 +202,7 @@ end
 
 
 """
-    OGR_GT_IsSurface(OGRwkbGeometryType) -> int
+    OGR_GT_IsSurface(OGRwkbGeometryType eGeomType) -> int
 
 Return if a geometry type is an instance of Surface.
 
@@ -208,7 +218,7 @@ end
 
 
 """
-    OGR_GT_IsNonLinear(OGRwkbGeometryType) -> int
+    OGR_GT_IsNonLinear(OGRwkbGeometryType eGeomType) -> int
 
 Return if a geometry type is a non-linear geometry type.
 
@@ -273,11 +283,21 @@ end
 
 """
     OGRParseDate(const char * pszInput,
-                 OGRField * psOutput,
+                 OGRField * psField,
                  int nOptions) -> int
+
+Parse date string.
+
+### Parameters
+* **pszInput**: the input date string.
+* **psField**: the OGRField that will be updated with the parsed result.
+* **nOptions**: parsing options, for now always 0.
+
+### Returns
+TRUE if apparently successful or FALSE on failure.
 """
-function OGRParseDate(pszInput::Ptr{UInt8},psOutput::Ptr{OGRField},nOptions::Cint)
-    ccall((:OGRParseDate,libgdal),Cint,(Ptr{UInt8},Ptr{OGRField},Cint),pszInput,psOutput,nOptions)
+function OGRParseDate(pszInput,psOutput,nOptions::Cint)
+    ccall((:OGRParseDate,libgdal),Cint,(Cstring,Ptr{OGRField},Cint),pszInput,psOutput,nOptions)
 end
 
 
@@ -292,8 +312,8 @@ Get runtime version information.
 ### Returns
 an internal string containing the requested information.
 """
-function GDALVersionInfo(arg1::Ptr{UInt8})
-    ccall((:GDALVersionInfo,libgdal),Ptr{UInt8},(Ptr{UInt8},),arg1)
+function GDALVersionInfo(arg1)
+    ccall((:GDALVersionInfo,libgdal),Cstring,(Cstring,),arg1)
 end
 
 
@@ -307,11 +327,11 @@ Return TRUE if GDAL library version at runtime matches nVersionMajor.nVersionMin
 ### Parameters
 * **nVersionMajor**: Major version to be tested against
 * **nVersionMinor**: Minor version to be tested against
-* **pszCallingComponentName**: If not NULL, in case of version mismatch, the method will issue a failure mentionning the name of the calling component.
+* **pszCallingComponentName**: If not NULL, in case of version mismatch, the method will issue a failure mentioning the name of the calling component.
 
 ### Returns
 TRUE if GDAL library version at runtime matches nVersionMajor.nVersionMinor, FALSE otherwise.
 """
-function GDALCheckVersion(nVersionMajor::Cint,nVersionMinor::Cint,pszCallingComponentName::Ptr{UInt8})
-    ccall((:GDALCheckVersion,libgdal),Cint,(Cint,Cint,Ptr{UInt8}),nVersionMajor,nVersionMinor,pszCallingComponentName)
+function GDALCheckVersion(nVersionMajor::Cint,nVersionMinor::Cint,pszCallingComponentName)
+    ccall((:GDALCheckVersion,libgdal),Cint,(Cint,Cint,Cstring),nVersionMajor,nVersionMinor,pszCallingComponentName)
 end

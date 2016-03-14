@@ -5,7 +5,7 @@ workdir = dirname(@__FILE__)
 srcdir = joinpath(workdir, "../src")
 include(joinpath(workdir, "doc.jl"))
 
-gdalpath = "/usr/local/include"
+gdalpath = "/home/martijn/bin/gdal/include"
 includedirs = [gdalpath]
 
 headerfiles = ["cpl_error.h",
@@ -24,6 +24,8 @@ headerpaths = [joinpath(gdalpath, h) for h in headerfiles]
 skip_expr = [:(const CPL_LSBPTR16 = x),
              :(const CPL_LSBPTR32 = x),
              :(const CPL_LSBPTR64 = x),
+             :(const CPL_WARN_DEPRECATED_IF_GDAL_COMPILATION = x),
+             :(const CPL_STATIC_ASSERT_IF_AVAILABLE = x),
              :(const CPLAssert = expr)]
 
 skip_func = [:CPLErrorV] # problem with va_list ihnorton/Clang.jl#17

@@ -2,6 +2,18 @@
 
 using Compat
 
+const CPLE_None = 0
+const CPLE_AppDefined = 1
+const CPLE_OutOfMemory = 2
+const CPLE_FileIO = 3
+const CPLE_OpenFailed = 4
+const CPLE_IllegalArg = 5
+const CPLE_NotSupported = 6
+const CPLE_AssertionFailed = 7
+const CPLE_NoWriteAccess = 8
+const CPLE_UserInterrupt = 9
+const CPLE_ObjectNull = 10
+
 # const CPLAssert = expr
 
 # begin enum CPLErr
@@ -18,18 +30,6 @@ const VALIDATE_POINTER_ERR = CE_Failure
 # Skipping MacroDefinition: VALIDATE_POINTER0 ( ptr , func ) do { if ( NULL == ptr ) { CPLErr const ret = VALIDATE_POINTER_ERR ; CPLError ( ret , CPLE_ObjectNull , "Pointer \'%s\' is NULL in \'%s\'.\n" , # ptr , ( func ) ) ; return ; } } while ( 0 )
 # Skipping MacroDefinition: VALIDATE_POINTER1 ( ptr , func , rc ) do { if ( NULL == ptr ) { CPLErr const ret = VALIDATE_POINTER_ERR ; CPLError ( ret , CPLE_ObjectNull , "Pointer \'%s\' is NULL in \'%s\'.\n" , # ptr , ( func ) ) ; return ( rc ) ; } } while ( 0 )
 
-const CPLE_None = 0
-const CPLE_AppDefined = 1
-const CPLE_OutOfMemory = 2
-const CPLE_FileIO = 3
-const CPLE_OpenFailed = 4
-const CPLE_IllegalArg = 5
-const CPLE_NotSupported = 6
-const CPLE_AssertionFailed = 7
-const CPLE_NoWriteAccess = 8
-const CPLE_UserInterrupt = 9
-const CPLE_ObjectNull = 10
-
 # begin enum ANONYMOUS_1
 typealias ANONYMOUS_1 UInt32
 const CE_None = (UInt32)(0)
@@ -39,6 +39,7 @@ const CE_Failure = (UInt32)(3)
 const CE_Fatal = (UInt32)(4)
 # end enum ANONYMOUS_1
 
+typealias CPLErrorNum Cint
 typealias CPLErrorHandler Ptr{Void}
 
 # begin enum ANONYMOUS_2
@@ -61,23 +62,21 @@ const CXT_Literal = (UInt32)(4)
 
 type CPLXMLNode
     eType::CPLXMLNodeType
-    pszValue::Ptr{UInt8}
+    pszValue::Cstring
     psNext::Ptr{CPLXMLNode}
     psChild::Ptr{CPLXMLNode}
 end
 
 # Skipping MacroDefinition: GINTBIG_MIN ( ( GIntBig ) ( 0x80000000 ) << 32 )
 # Skipping MacroDefinition: GINTBIG_MAX ( ( ( GIntBig ) ( 0x7FFFFFFF ) << 32 ) | 0xFFFFFFFFU )
+# Skipping MacroDefinition: GUINTBIG_MAX ( ( ( GUIntBig ) ( 0xFFFFFFFFU ) << 32 ) | 0xFFFFFFFFU )
 
 const CPL_FRMT_GB_WITHOUT_PREFIX = "ll"
 
 # Skipping MacroDefinition: CPL_FRMT_GIB "%" CPL_FRMT_GB_WITHOUT_PREFIX "d"
 # Skipping MacroDefinition: CPL_FRMT_GUIB "%" CPL_FRMT_GB_WITHOUT_PREFIX "u"
 # Skipping MacroDefinition: GUINTBIG_TO_DOUBLE ( x ) ( double ) ( x )
-
-const FALSE = 0
-const TRUE = 1
-
+# Skipping MacroDefinition: CPL_INT64_FITS_ON_INT32 ( x ) ( ( ( GIntBig ) ( int ) ( x ) ) == ( x ) )
 # Skipping MacroDefinition: MIN ( a , b ) ( ( a < b ) ? a : b )
 # Skipping MacroDefinition: MAX ( a , b ) ( ( a > b ) ? a : b )
 # Skipping MacroDefinition: ABS ( x ) ( ( x < 0 ) ? ( - 1 * ( x ) ) : x )
@@ -86,36 +85,36 @@ const TRUE = 1
 # Skipping MacroDefinition: STRNCASECMP ( a , b , n ) ( strncasecmp ( a , b , n ) )
 # Skipping MacroDefinition: EQUALN ( a , b , n ) ( STRNCASECMP ( a , b , n ) == 0 )
 # Skipping MacroDefinition: EQUAL ( a , b ) ( STRCASECMP ( a , b ) == 0 )
+# Skipping MacroDefinition: STARTS_WITH ( a , b ) ( strncmp ( a , b , strlen ( b ) ) == 0 )
+# Skipping MacroDefinition: STARTS_WITH_CI ( a , b ) EQUALN ( a , b , strlen ( b ) )
 # Skipping MacroDefinition: CPLIsNan ( x ) isnan ( x )
 # Skipping MacroDefinition: CPLIsInf ( x ) isinf ( x )
 # Skipping MacroDefinition: CPLIsFinite ( x ) ( ! isnan ( x ) && ! isinf ( x ) )
 
 const CPL_IS_LSB = 1
 
+# const CPL_STATIC_ASSERT_IF_AVAILABLE = x
 # Skipping MacroDefinition: CPL_SWAP16 ( x ) ( ( GUInt16 ) ( ( ( ( GUInt16 ) ( x ) & 0x00ffU ) << 8 ) | ( ( ( GUInt16 ) ( x ) & 0xff00U ) >> 8 ) ) )
 # Skipping MacroDefinition: CPL_SWAP16PTR ( x ) \
-#{ GByte byTemp , * _pabyDataT = ( GByte * ) ( x ) ; byTemp = _pabyDataT [ 0 ] ; _pabyDataT [ 0 ] = _pabyDataT [ 1 ] ; _pabyDataT [ 1 ] = byTemp ; \
+#{ GByte byTemp , * _pabyDataT = ( GByte * ) ( x ) ; CPL_STATIC_ASSERT_IF_AVAILABLE ( sizeof ( * ( x ) ) == 1 || sizeof ( * ( x ) ) == 2 ) ; byTemp = _pabyDataT [ 0 ] ; _pabyDataT [ 0 ] = _pabyDataT [ 1 ] ; _pabyDataT [ 1 ] = byTemp ; \
 #}
 # Skipping MacroDefinition: CPL_SWAP32 ( x ) ( ( GUInt32 ) ( ( ( ( GUInt32 ) ( x ) & ( GUInt32 ) 0x000000ffUL ) << 24 ) | ( ( ( GUInt32 ) ( x ) & ( GUInt32 ) 0x0000ff00UL ) << 8 ) | ( ( ( GUInt32 ) ( x ) & ( GUInt32 ) 0x00ff0000UL ) >> 8 ) | ( ( ( GUInt32 ) ( x ) & ( GUInt32 ) 0xff000000UL ) >> 24 ) ) )
 # Skipping MacroDefinition: CPL_SWAP32PTR ( x ) \
-#{ GByte byTemp , * _pabyDataT = ( GByte * ) ( x ) ; byTemp = _pabyDataT [ 0 ] ; _pabyDataT [ 0 ] = _pabyDataT [ 3 ] ; _pabyDataT [ 3 ] = byTemp ; byTemp = _pabyDataT [ 1 ] ; _pabyDataT [ 1 ] = _pabyDataT [ 2 ] ; _pabyDataT [ 2 ] = byTemp ; \
+#{ GByte byTemp , * _pabyDataT = ( GByte * ) ( x ) ; CPL_STATIC_ASSERT_IF_AVAILABLE ( sizeof ( * ( x ) ) == 1 || sizeof ( * ( x ) ) == 4 ) ; byTemp = _pabyDataT [ 0 ] ; _pabyDataT [ 0 ] = _pabyDataT [ 3 ] ; _pabyDataT [ 3 ] = byTemp ; byTemp = _pabyDataT [ 1 ] ; _pabyDataT [ 1 ] = _pabyDataT [ 2 ] ; _pabyDataT [ 2 ] = byTemp ; \
 #}
 # Skipping MacroDefinition: CPL_SWAP64PTR ( x ) \
-#{ GByte byTemp , * _pabyDataT = ( GByte * ) ( x ) ; byTemp = _pabyDataT [ 0 ] ; _pabyDataT [ 0 ] = _pabyDataT [ 7 ] ; _pabyDataT [ 7 ] = byTemp ; byTemp = _pabyDataT [ 1 ] ; _pabyDataT [ 1 ] = _pabyDataT [ 6 ] ; _pabyDataT [ 6 ] = byTemp ; byTemp = _pabyDataT [ 2 ] ; _pabyDataT [ 2 ] = _pabyDataT [ 5 ] ; _pabyDataT [ 5 ] = byTemp ; byTemp = _pabyDataT [ 3 ] ; _pabyDataT [ 3 ] = _pabyDataT [ 4 ] ; _pabyDataT [ 4 ] = byTemp ; \
+#{ GByte byTemp , * _pabyDataT = ( GByte * ) ( x ) ; CPL_STATIC_ASSERT_IF_AVAILABLE ( sizeof ( * ( x ) ) == 1 || sizeof ( * ( x ) ) == 8 ) ; byTemp = _pabyDataT [ 0 ] ; _pabyDataT [ 0 ] = _pabyDataT [ 7 ] ; _pabyDataT [ 7 ] = byTemp ; byTemp = _pabyDataT [ 1 ] ; _pabyDataT [ 1 ] = _pabyDataT [ 6 ] ; _pabyDataT [ 6 ] = byTemp ; byTemp = _pabyDataT [ 2 ] ; _pabyDataT [ 2 ] = _pabyDataT [ 5 ] ; _pabyDataT [ 5 ] = byTemp ; byTemp = _pabyDataT [ 3 ] ; _pabyDataT [ 3 ] = _pabyDataT [ 4 ] ; _pabyDataT [ 4 ] = byTemp ; \
 #}
 # Skipping MacroDefinition: CPL_SWAPDOUBLE ( p ) CPL_SWAP64PTR ( p )
 # Skipping MacroDefinition: CPL_LSBWORD16 ( x ) ( x )
 # Skipping MacroDefinition: CPL_MSBWORD16 ( x ) CPL_SWAP16 ( x )
 # Skipping MacroDefinition: CPL_LSBWORD32 ( x ) ( x )
 # Skipping MacroDefinition: CPL_MSBWORD32 ( x ) CPL_SWAP32 ( x )
-
-# const CPL_LSBPTR16 = x
+# Skipping MacroDefinition: CPL_LSBPTR16 ( x ) CPL_STATIC_ASSERT_IF_AVAILABLE ( sizeof ( * ( x ) ) == 1 || sizeof ( * ( x ) ) == 2 )
 # Skipping MacroDefinition: CPL_MSBPTR16 ( x ) CPL_SWAP16PTR ( x )
-
-# const CPL_LSBPTR32 = x
+# Skipping MacroDefinition: CPL_LSBPTR32 ( x ) CPL_STATIC_ASSERT_IF_AVAILABLE ( sizeof ( * ( x ) ) == 1 || sizeof ( * ( x ) ) == 4 )
 # Skipping MacroDefinition: CPL_MSBPTR32 ( x ) CPL_SWAP32PTR ( x )
-
-# const CPL_LSBPTR64 = x
+# Skipping MacroDefinition: CPL_LSBPTR64 ( x ) CPL_STATIC_ASSERT_IF_AVAILABLE ( sizeof ( * ( x ) ) == 1 || sizeof ( * ( x ) ) == 8 )
 # Skipping MacroDefinition: CPL_MSBPTR64 ( x ) CPL_SWAP64PTR ( x )
 # Skipping MacroDefinition: CPL_LSBINT16PTR ( x ) ( ( * ( GByte * ) ( x ) ) | ( * ( ( ( GByte * ) ( x ) ) + 1 ) << 8 ) )
 # Skipping MacroDefinition: CPL_LSBINT32PTR ( x ) ( ( * ( GByte * ) ( x ) ) | ( * ( ( ( GByte * ) ( x ) ) + 1 ) << 8 ) | ( * ( ( ( GByte * ) ( x ) ) + 2 ) << 16 ) | ( * ( ( ( GByte * ) ( x ) ) + 3 ) << 24 ) )
@@ -124,13 +123,25 @@ const CPL_IS_LSB = 1
 # Skipping MacroDefinition: CPL_LSBSINT32PTR ( x ) ( ( GInt32 ) CPL_LSBINT32PTR ( x ) )
 # Skipping MacroDefinition: CPL_LSBUINT32PTR ( x ) ( ( GUInt32 ) CPL_LSBINT32PTR ( x ) )
 # Skipping MacroDefinition: UNREFERENCED_PARAM ( param ) ( ( void ) param )
-# Skipping MacroDefinition: CPL_CVSID ( string ) static char cpl_cvsid [ ] __attribute__ ( ( used ) ) = string ;
+# Skipping MacroDefinition: CPL_CVSID ( string ) static const char cpl_cvsid [ ] __attribute__ ( ( used ) ) = string ;
 # Skipping MacroDefinition: CPL_NULL_TERMINATED __attribute__ ( ( __sentinel__ ) )
 # Skipping MacroDefinition: CPL_PRINT_FUNC_FORMAT ( format_idx , arg_idx ) __attribute__ ( ( __format__ ( __printf__ , format_idx , arg_idx ) ) )
+# Skipping MacroDefinition: CPL_SCAN_FUNC_FORMAT ( format_idx , arg_idx ) __attribute__ ( ( __format__ ( __scanf__ , format_idx , arg_idx ) ) )
 # Skipping MacroDefinition: CPL_WARN_UNUSED_RESULT __attribute__ ( ( warn_unused_result ) )
 # Skipping MacroDefinition: CPL_UNUSED __attribute ( ( __unused__ ) )
 # Skipping MacroDefinition: CPL_NO_RETURN __attribute__ ( ( noreturn ) )
+# Skipping MacroDefinition: CPL_RETURNS_NONNULL __attribute__ ( ( returns_nonnull ) )
 # Skipping MacroDefinition: CPL_WARN_DEPRECATED ( x ) __attribute__ ( ( deprecated ( x ) ) )
+
+# const CPL_WARN_DEPRECATED_IF_GDAL_COMPILATION = x
+# Skipping MacroDefinition: CPL_IS_DOUBLE_A_INT ( d ) ( ( double ) ( int ) ( d ) == ( d ) )
+# Skipping MacroDefinition: CPL_FALLTHROUGH [ [ clang : : fallthrough ] ] ;
+
+const FALSE = 0
+const TRUE = 1
+const EMULATED_BOOL = bool
+
+# Skipping MacroDefinition: VOLATILE_BOOL volatile bool
 
 typealias GInt32 Cint
 typealias GUInt32 UInt32
@@ -150,7 +161,9 @@ const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
 const GDALMD_AREA_OR_POINT = "AREA_OR_POINT"
 const GDALMD_AOP_AREA = "Area"
 const GDALMD_AOP_POINT = "Point"
-const CPLE_WrongFormat = 200
+
+# Skipping MacroDefinition: CPLE_WrongFormat ( CPLErrorNum ) 200
+
 const GDAL_DMD_LONGNAME = "DMD_LONGNAME"
 const GDAL_DMD_HELPTOPIC = "DMD_HELPTOPIC"
 const GDAL_DMD_MIMETYPE = "DMD_MIMETYPE"
@@ -168,6 +181,7 @@ const GDAL_DCAP_CREATECOPY = "DCAP_CREATECOPY"
 const GDAL_DCAP_VIRTUALIO = "DCAP_VIRTUALIO"
 const GDAL_DCAP_RASTER = "DCAP_RASTER"
 const GDAL_DCAP_VECTOR = "DCAP_VECTOR"
+const GDAL_DCAP_GNM = "DCAP_GNM"
 const GDAL_DCAP_NOTNULL_FIELDS = "DCAP_NOTNULL_FIELDS"
 const GDAL_DCAP_DEFAULT_FIELDS = "DCAP_DEFAULT_FIELDS"
 const GDAL_DCAP_NOTNULL_GEOMFIELDS = "DCAP_NOTNULL_GEOMFIELDS"
@@ -176,10 +190,16 @@ const GDAL_OF_UPDATE = 0x01
 const GDAL_OF_ALL = 0x00
 const GDAL_OF_RASTER = 0x02
 const GDAL_OF_VECTOR = 0x04
+const GDAL_OF_GNM = 0x08
 const GDAL_OF_KIND_MASK = 0x1e
 const GDAL_OF_SHARED = 0x20
 const GDAL_OF_VERBOSE_ERROR = 0x40
 const GDAL_OF_INTERNAL = 0x80
+const GDAL_OF_DEFAULT_BLOCK_ACCESS = 0
+const GDAL_OF_ARRAY_BLOCK_ACCESS = 0x0100
+const GDAL_OF_HASHSET_BLOCK_ACCESS = 0x0200
+const GDAL_OF_RESERVED_1 = 0x0300
+const GDAL_OF_BLOCK_ACCESS_MASK = 0x0300
 const GDAL_DS_LAYER_CREATIONOPTIONLIST = "DS_LAYER_CREATIONOPTIONLIST"
 
 # Skipping MacroDefinition: SRCVAL ( papoSource , eSrcType , ii ) ( eSrcType == GDT_Byte ? ( ( GByte * ) papoSource ) [ ii ] : ( eSrcType == GDT_Float32 ? ( ( float * ) papoSource ) [ ii ] : ( eSrcType == GDT_Float64 ? ( ( double * ) papoSource ) [ ii ] : ( eSrcType == GDT_Int32 ? ( ( GInt32 * ) papoSource ) [ ii ] : ( eSrcType == GDT_UInt16 ? ( ( GUInt16 * ) papoSource ) [ ii ] : ( eSrcType == GDT_Int16 ? ( ( GInt16 * ) papoSource ) [ ii ] : ( eSrcType == GDT_UInt32 ? ( ( GUInt32 * ) papoSource ) [ ii ] : ( eSrcType == GDT_CInt16 ? ( ( GInt16 * ) papoSource ) [ ii * 2 ] : ( eSrcType == GDT_CInt32 ? ( ( GInt32 * ) papoSource ) [ ii * 2 ] : ( eSrcType == GDT_CFloat32 ? ( ( float * ) papoSource ) [ ii * 2 ] : ( eSrcType == GDT_CFloat64 ? ( ( double * ) papoSource ) [ ii * 2 ] : 0 ) ) ) ) ) ) ) ) ) ) )
@@ -371,8 +391,8 @@ typealias GDALAsyncReaderH Ptr{Void}
 typealias GSpacing GIntBig
 
 type GDAL_GCP
-    pszId::Ptr{UInt8}
-    pszInfo::Ptr{UInt8}
+    pszId::Cstring
+    pszInfo::Cstring
     dfGCPPixel::Cdouble
     dfGCPLine::Cdouble
     dfGCPX::Cdouble
@@ -387,7 +407,7 @@ immutable Array_2_Cdouble
     d2::Cdouble
 end
 
-zero(::Type{Array_2_Cdouble}) = begin  # /home/martijn/.julia/v0.4/Clang/src/wrap_c.jl, line 267:
+zero(::Type{Array_2_Cdouble}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 269:
         Array_2_Cdouble(fill(zero(Cdouble),2)...)
     end
 
@@ -414,7 +434,7 @@ immutable Array_20_Cdouble
     d20::Cdouble
 end
 
-zero(::Type{Array_20_Cdouble}) = begin  # /home/martijn/.julia/v0.4/Clang/src/wrap_c.jl, line 267:
+zero(::Type{Array_20_Cdouble}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 269:
         Array_20_Cdouble(fill(zero(Cdouble),20)...)
     end
 
@@ -531,13 +551,13 @@ immutable Array_4_GByte
     d4::GByte
 end
 
-zero(::Type{Array_4_GByte}) = begin  # /home/martijn/.julia/v0.4/Clang/src/wrap_c.jl, line 267:
+zero(::Type{Array_4_GByte}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 269:
         Array_4_GByte(fill(zero(GByte),4)...)
     end
 
 type GDALTransformerInfo
     abySignature::Array_4_GByte
-    pszClassName::Ptr{UInt8}
+    pszClassName::Cstring
     pfnTransform::GDALTransformerFunc
     pfnCleanup::Ptr{Void}
     pfnSerialize::Ptr{Void}
@@ -556,7 +576,7 @@ immutable Array_6_Cdouble
     d6::Cdouble
 end
 
-zero(::Type{Array_6_Cdouble}) = begin  # /home/martijn/.julia/v0.4/Clang/src/wrap_c.jl, line 267:
+zero(::Type{Array_6_Cdouble}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 269:
         Array_6_Cdouble(fill(zero(Cdouble),6)...)
     end
 
@@ -579,6 +599,8 @@ const GGA_MetricRange = (UInt32)(6)
 const GGA_MetricCount = (UInt32)(7)
 const GGA_MetricAverageDistance = (UInt32)(8)
 const GGA_MetricAverageDistancePts = (UInt32)(9)
+const GGA_Linear = (UInt32)(10)
+const GGA_InverseDistanceToAPowerNearestNeighbor = (UInt32)(11)
 # end enum ANONYMOUS_13
 
 # begin enum GDALGridAlgorithm
@@ -592,6 +614,8 @@ const GGA_MetricRange = (UInt32)(6)
 const GGA_MetricCount = (UInt32)(7)
 const GGA_MetricAverageDistance = (UInt32)(8)
 const GGA_MetricAverageDistancePts = (UInt32)(9)
+const GGA_Linear = (UInt32)(10)
+const GGA_InverseDistanceToAPowerNearestNeighbor = (UInt32)(11)
 # end enum GDALGridAlgorithm
 
 type GDALGridInverseDistanceToAPowerOptions
@@ -602,6 +626,14 @@ type GDALGridInverseDistanceToAPowerOptions
     dfRadius1::Cdouble
     dfRadius2::Cdouble
     dfAngle::Cdouble
+    nMaxPoints::GUInt32
+    nMinPoints::GUInt32
+    dfNoDataValue::Cdouble
+end
+
+type GDALGridInverseDistanceToAPowerNearestNeighborOptions
+    dfPower::Cdouble
+    dfRadius::Cdouble
     nMaxPoints::GUInt32
     nMinPoints::GUInt32
     dfNoDataValue::Cdouble
@@ -628,6 +660,44 @@ type GDALGridDataMetricsOptions
     dfAngle::Cdouble
     nMinPoints::GUInt32
     dfNoDataValue::Cdouble
+end
+
+type GDALGridLinearOptions
+    dfRadius::Cdouble
+    dfNoDataValue::Cdouble
+end
+
+type GDALGridContext
+end
+
+immutable Array_3_Cint
+    d1::Cint
+    d2::Cint
+    d3::Cint
+end
+
+zero(::Type{Array_3_Cint}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 269:
+        Array_3_Cint(fill(zero(Cint),3)...)
+    end
+
+type GDALTriFacet
+    anVertexIdx::Array_3_Cint
+    anNeighborIdx::Array_3_Cint
+end
+
+type GDALTriBarycentricCoefficients
+    dfMul1X::Cdouble
+    dfMul1Y::Cdouble
+    dfMul2X::Cdouble
+    dfMul2Y::Cdouble
+    dfCstX::Cdouble
+    dfCstY::Cdouble
+end
+
+type GDALTriangulation
+    nFacets::Cint
+    pasFacets::Ptr{GDALTriFacet}
+    pasFacetCoefficients::Ptr{GDALTriBarycentricCoefficients}
 end
 
 typealias OGRGeometryH Ptr{Void}
@@ -674,7 +744,7 @@ const wkb25DBit = 0x80000000
 
 const ogrZMarker = 0x21125711
 
-# Skipping MacroDefinition: DB2_V72_FIX_BYTE_ORDER ( x ) ( ( ( ( x ) & 0x31 ) == ( x ) ) ? ( OGRwkbByteOrder ) ( ( x ) & 0x1 ) : ( x ) )
+# Skipping MacroDefinition: DB2_V72_FIX_BYTE_ORDER ( x ) ( ( ( ( x ) & 0x31 ) == ( x ) ) ? ( ( x ) & 0x1 ) : ( x ) )
 # Skipping MacroDefinition: DB2_V72_UNFIX_BYTE_ORDER ( x ) ( ( unsigned char ) ( OGRGeometry : : bGenerate_DB2_V72_BYTE_ORDER ? ( ( x ) | 0x30 ) : ( x ) ) )
 
 const ALTER_NAME_FLAG = 0x01
@@ -687,7 +757,7 @@ const OGR_F_VAL_NULL = 0x00000001
 const OGR_F_VAL_GEOM_TYPE = 0x00000002
 const OGR_F_VAL_WIDTH = 0x00000004
 const OGR_F_VAL_ALLOW_NULL_WHEN_DEFAULT = 0x00000008
-const OGR_F_VAL_ALL = 0x0fffffff
+const OGR_F_VAL_ALL = 0x07ffffff
 const OGRNullFID = -1
 const OGRUnsetMarker = -21121
 
@@ -1136,7 +1206,7 @@ const GWKAOM_Quant = (UInt32)(6)
 typealias GDALMaskFunc Ptr{Void}
 
 type GDALWarpOptions
-    papszWarpOptions::Ptr{Ptr{UInt8}}
+    papszWarpOptions::Ptr{Cstring}
     dfWarpMemoryLimit::Cdouble
     eResampleAlg::GDALResampleAlg
     eWorkingDataType::GDALDataType
@@ -1177,7 +1247,7 @@ typealias GDALWarpOperationH Ptr{Void}
 typealias FilterFuncType Ptr{Void}
 typealias FilterFunc4ValuesType Ptr{Void}
 
-const SRS_WKT_WGS84 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9108\"]],AUTHORITY[\"EPSG\",\"4326\"]]"
+const SRS_WKT_WGS84 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]"
 const SRS_PT_ALBERS_CONIC_EQUAL_AREA = "Albers_Conic_Equal_Area"
 const SRS_PT_AZIMUTHAL_EQUIDISTANT = "Azimuthal_Equidistant"
 const SRS_PT_CASSINI_SOLDNER = "Cassini_Soldner"
@@ -1246,6 +1316,7 @@ const SRS_PT_WINKEL_TRIPEL = "Winkel_Tripel"
 const SRS_PT_CRASTER_PARABOLIC = "Craster_Parabolic"
 const SRS_PT_LOXIMUTHAL = "Loximuthal"
 const SRS_PT_QUARTIC_AUTHALIC = "Quartic_Authalic"
+const SRS_PT_SCH = "Spherical_Cross_Track_Height"
 const SRS_PP_CENTRAL_MERIDIAN = "central_meridian"
 const SRS_PP_SCALE_FACTOR = "scale_factor"
 const SRS_PP_STANDARD_PARALLEL_1 = "standard_parallel_1"
@@ -1275,6 +1346,10 @@ const SRS_PP_LATITUDE_OF_1ST_POINT = "Latitude_Of_1st_Point"
 const SRS_PP_LONGITUDE_OF_1ST_POINT = "Longitude_Of_1st_Point"
 const SRS_PP_LATITUDE_OF_2ND_POINT = "Latitude_Of_2nd_Point"
 const SRS_PP_LONGITUDE_OF_2ND_POINT = "Longitude_Of_2nd_Point"
+const SRS_PP_PEG_POINT_LATITUDE = "peg_point_latitude"
+const SRS_PP_PEG_POINT_LONGITUDE = "peg_point_longitude"
+const SRS_PP_PEG_POINT_HEADING = "peg_point_heading"
+const SRS_PP_PEG_POINT_HEIGHT = "peg_point_height"
 const SRS_UL_METER = "Meter"
 const SRS_UL_FOOT = "Foot (International)"
 const SRS_UL_FOOT_CONV = "0.3048"

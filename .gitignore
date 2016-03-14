@@ -1,4 +1,5 @@
 /deps/deps.jl
+/gen/doxygen.xml
 *.jl.cov
 *.jl.*.cov
 *.jl.mem

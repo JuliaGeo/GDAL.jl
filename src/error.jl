@@ -33,7 +33,7 @@ function gdaljl_errorhandler(errtype::UInt32, errno::Cint, errmsg::Ptr{UInt8})
     return C_NULL
 end
 
-function checknull(ptr::Ptr{Void})
+function checknull(ptr)
     if ptr == C_NULL
         throw(GDALError("GDAL returned nothing"))
     end
