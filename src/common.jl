@@ -17,14 +17,12 @@ const CE_Warning = UInt32(2)
 const CE_Failure = UInt32(3)
 const CE_Fatal = UInt32(4)
 const VALIDATE_POINTER_ERR = CE_Failure
-typealias ANONYMOUS_1 UInt32
 const CE_None = UInt32(0)
 const CE_Debug = UInt32(1)
 const CE_Warning = UInt32(2)
 const CE_Failure = UInt32(3)
 const CE_Fatal = UInt32(4)
 typealias CPLErrorNum Cint
-typealias ANONYMOUS_2 UInt32
 const CXT_Element = UInt32(0)
 const CXT_Text = UInt32(1)
 const CXT_Attribute = UInt32(2)
@@ -103,7 +101,6 @@ const GMF_ALL_VALID = 0x01
 const GMF_PER_DATASET = 0x02
 const GMF_ALPHA = 0x04
 const GMF_NODATA = 0x08
-typealias ANONYMOUS_3 UInt32
 const GDT_Unknown = UInt32(0)
 const GDT_Byte = UInt32(1)
 const GDT_UInt16 = UInt32(2)
@@ -131,7 +128,6 @@ const GDT_CInt32 = UInt32(9)
 const GDT_CFloat32 = UInt32(10)
 const GDT_CFloat64 = UInt32(11)
 const GDT_TypeCount = UInt32(12)
-typealias ANONYMOUS_4 UInt32
 const GARIO_PENDING = UInt32(0)
 const GARIO_UPDATE = UInt32(1)
 const GARIO_ERROR = UInt32(2)
@@ -143,19 +139,16 @@ const GARIO_UPDATE = UInt32(1)
 const GARIO_ERROR = UInt32(2)
 const GARIO_COMPLETE = UInt32(3)
 const GARIO_TypeCount = UInt32(4)
-typealias ANONYMOUS_5 UInt32
 const GA_ReadOnly = UInt32(0)
 const GA_Update = UInt32(1)
 typealias GDALAccess UInt32
 const GA_ReadOnly = UInt32(0)
 const GA_Update = UInt32(1)
-typealias ANONYMOUS_6 UInt32
 const GF_Read = UInt32(0)
 const GF_Write = UInt32(1)
 typealias GDALRWFlag UInt32
 const GF_Read = UInt32(0)
 const GF_Write = UInt32(1)
-typealias ANONYMOUS_7 UInt32
 const GRIORA_NearestNeighbour = UInt32(0)
 const GRIORA_Bilinear = UInt32(1)
 const GRIORA_Cubic = UInt32(2)
@@ -186,7 +179,6 @@ type GDALRasterIOExtraArg # none, line 313:
     dfYSize::Cdouble
 end
 
-typealias ANONYMOUS_8 UInt32
 const GCI_Undefined = UInt32(0)
 const GCI_GrayIndex = UInt32(1)
 const GCI_PaletteIndex = UInt32(2)
@@ -224,7 +216,6 @@ const GCI_YCbCr_YBand = UInt32(14)
 const GCI_YCbCr_CbBand = UInt32(15)
 const GCI_YCbCr_CrBand = UInt32(16)
 const GCI_Max = UInt32(16)
-typealias ANONYMOUS_9 UInt32
 const GPI_Gray = UInt32(0)
 const GPI_RGB = UInt32(1)
 const GPI_CMYK = UInt32(2)
@@ -316,7 +307,6 @@ type GDALColorEntry # none, line 463:
     c4::Int16
 end
 
-typealias ANONYMOUS_10 UInt32
 const GFT_Integer = UInt32(0)
 const GFT_Real = UInt32(1)
 const GFT_String = UInt32(2)
@@ -324,7 +314,6 @@ typealias GDALRATFieldType UInt32
 const GFT_Integer = UInt32(0)
 const GFT_Real = UInt32(1)
 const GFT_String = UInt32(2)
-typealias ANONYMOUS_11 UInt32
 const GFU_Generic = UInt32(0)
 const GFU_PixelCount = UInt32(1)
 const GFU_Name = UInt32(2)
@@ -364,7 +353,6 @@ const GFU_GreenMax = UInt32(15)
 const GFU_BlueMax = UInt32(16)
 const GFU_AlphaMax = UInt32(17)
 const GFU_MaxCount = UInt32(18)
-typealias ANONYMOUS_12 UInt32
 const GTO_TIP = UInt32(0)
 const GTO_BIT = UInt32(1)
 const GTO_BSQ = UInt32(2)
@@ -420,7 +408,6 @@ type OGRContourWriterInfo # none, line 584:
     nNextID::Cint
 end
 
-typealias ANONYMOUS_13 UInt32
 const GGA_InverseDistanceToAPower = UInt32(1)
 const GGA_MovingAverage = UInt32(2)
 const GGA_NearestNeighbor = UInt32(3)
@@ -618,7 +605,6 @@ end
 
 typealias OGRErr Cint
 typealias OGRBoolean Cint
-typealias ANONYMOUS_14 UInt32
 const wkbUnknown = UInt32(0)
 const wkbPoint = UInt32(1)
 const wkbLineString = UInt32(2)
@@ -674,7 +660,6 @@ const wkbMultiPoint25D = UInt32(0x0000000080000004)
 const wkbMultiLineString25D = UInt32(0x0000000080000005)
 const wkbMultiPolygon25D = UInt32(0x0000000080000006)
 const wkbGeometryCollection25D = UInt32(0x0000000080000007)
-typealias ANONYMOUS_15 UInt32
 const wkbVariantOldOgc = UInt32(0)
 const wkbVariantIso = UInt32(1)
 const wkbVariantPostGIS1 = UInt32(2)
@@ -682,13 +667,11 @@ typealias OGRwkbVariant UInt32
 const wkbVariantOldOgc = UInt32(0)
 const wkbVariantIso = UInt32(1)
 const wkbVariantPostGIS1 = UInt32(2)
-typealias ANONYMOUS_16 UInt32
 const wkbXDR = UInt32(0)
 const wkbNDR = UInt32(1)
 typealias OGRwkbByteOrder UInt32
 const wkbXDR = UInt32(0)
 const wkbNDR = UInt32(1)
-typealias ANONYMOUS_17 UInt32
 const OFTInteger = UInt32(0)
 const OFTIntegerList = UInt32(1)
 const OFTReal = UInt32(2)
@@ -720,7 +703,6 @@ const OFTDateTime = UInt32(11)
 const OFTInteger64 = UInt32(12)
 const OFTInteger64List = UInt32(13)
 const OFTMaxType = UInt32(13)
-typealias ANONYMOUS_18 UInt32
 const OFSTNone = UInt32(0)
 const OFSTBoolean = UInt32(1)
 const OFSTInt16 = UInt32(2)
@@ -732,7 +714,6 @@ const OFSTBoolean = UInt32(1)
 const OFSTInt16 = UInt32(2)
 const OFSTFloat32 = UInt32(3)
 const OFSTMaxSubType = UInt32(3)
-typealias ANONYMOUS_19 UInt32
 const OJUndefined = UInt32(0)
 const OJLeft = UInt32(1)
 const OJRight = UInt32(2)
@@ -887,7 +868,6 @@ const OGRSTLabelAdjVert = UInt32(18)
 const OGRSTLabelHColor = UInt32(19)
 const OGRSTLabelOColor = UInt32(20)
 const OGRSTLabelLast = UInt32(21)
-typealias ANONYMOUS_20 UInt32
 const GRA_NearestNeighbour = UInt32(0)
 const GRA_Bilinear = UInt32(1)
 const GRA_Cubic = UInt32(2)
@@ -913,7 +893,6 @@ const GRA_Min = UInt32(9)
 const GRA_Med = UInt32(10)
 const GRA_Q1 = UInt32(11)
 const GRA_Q3 = UInt32(12)
-typealias ANONYMOUS_21 UInt32
 const GWKAOM_Average = UInt32(1)
 const GWKAOM_Fmode = UInt32(2)
 const GWKAOM_Imode = UInt32(3)
@@ -1132,7 +1111,6 @@ const SRS_DN_WGS72 = "WGS_1972"
 const SRS_DN_WGS84 = "WGS_1984"
 const SRS_WGS84_SEMIMAJOR = 6.378137e6
 const SRS_WGS84_INVFLATTENING = 298.257223563
-typealias ANONYMOUS_22 UInt32
 const OAO_Other = UInt32(0)
 const OAO_North = UInt32(1)
 const OAO_South = UInt32(2)
@@ -1148,7 +1126,6 @@ const OAO_East = UInt32(3)
 const OAO_West = UInt32(4)
 const OAO_Up = UInt32(5)
 const OAO_Down = UInt32(6)
-typealias ANONYMOUS_23 UInt32
 const ODT_HD_Min = UInt32(1000)
 const ODT_HD_Other = UInt32(1000)
 const ODT_HD_Classic = UInt32(1001)

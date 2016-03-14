@@ -202,9 +202,14 @@ end
 
 "rewrite typealias Ptr{Void} to immutable"
 function commonrewriter(io::IOStream, ex::Expr)
-    if ex.head == :typealias && ex.args[2] == :(Ptr{Void})
-        # ex = :(immutable $(ex.args[1]); end)
-        return # write them to a separate file, list is recorded in check_nullpointer
+    if ex.head == :typealias
+        if ex.args[2] == :(Ptr{Void})
+            # write them to a separate file, list is recorded in check_nullpointer
+            return
+        elseif startswith(string(ex.args[1]), "ANONYMOUS_")
+            # filter out the ANONYMOUS_* typealiases (they are not used)
+            return
+        end
     end
 
     # these need surrounding whitespace
