@@ -3,8 +3,6 @@
 
 # Reading From OGR
 
-nil = convert(Ptr{GDAL.Cstring}, C_NULL)
-
 # TODO: provide a convenient way to construct nOpenFlags
 # nOpenFlags: a combination of GDAL_OF_ flags that may be combined through logical or operator
 # Driver kind: GDAL_OF_RASTER for raster drivers, GDAL_OF_VECTOR for vector drivers. If none of the value is specified, both kinds are implied.
@@ -13,7 +11,7 @@ nil = convert(Ptr{GDAL.Cstring}, C_NULL)
 # Verbose error: GDAL_OF_VERBOSE_ERROR. If set, a failed attempt to open the file will lead to an error message to be reported.
 
 # file from GDAL SVN
-dataset = GDAL.openex("data/point.geojson", UInt32(GDAL.GDAL_OF_VECTOR), nil, nil, nil)
+dataset = GDAL.openex("data/point.geojson", GDAL.GDAL_OF_VECTOR, C_NULL, C_NULL, C_NULL)
 
 @test GDAL.datasetgetlayercount(dataset) == 1
 layer = GDAL.datasetgetlayer(dataset, 0)
@@ -51,7 +49,7 @@ GDAL.close(dataset)
 
 # Writing to OGR
 pointshapefile = "tmp/point_out"
-driver = GDAL.gdalgetdriverbyname("ESRI Shapefile")
+driver = GDAL.getdriverbyname("ESRI Shapefile")
 dataset = GDAL.create(driver, "$pointshapefile.shp", 0, 0, 0, GDAL.GDT_Unknown, C_NULL)
 nosrs = convert(Ptr{GDAL.OGRSpatialReferenceH}, C_NULL)
 layer = GDAL.datasetcreatelayer(dataset, "point_out", nosrs, GDAL.wkbPoint, C_NULL)

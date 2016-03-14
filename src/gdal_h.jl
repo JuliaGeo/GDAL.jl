@@ -304,7 +304,7 @@ Verbose error: GDAL_OF_VERBOSE_ERROR. If set, a failed attempt to open the file 
 ### Returns
 A GDALDatasetH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDataset *.
 """
-function openex(pszFilename,nOpenFlags::UInt32,papszAllowedDrivers,papszOpenOptions,papszSiblingFiles)
+function openex(pszFilename,nOpenFlags::Integer,papszAllowedDrivers,papszOpenOptions,papszSiblingFiles)
     checknull(ccall((:GDALOpenEx,libgdal),Ptr{GDALDatasetH},(Cstring,UInt32,Ptr{Cstring},Ptr{Cstring},Ptr{Cstring}),pszFilename,nOpenFlags,papszAllowedDrivers,papszOpenOptions,papszSiblingFiles))
 end
 
@@ -324,7 +324,7 @@ end
 
 Fetch a driver based on the short name.
 """
-function gdalgetdriverbyname(arg1)
+function getdriverbyname(arg1)
     checknull(ccall((:GDALGetDriverByName,libgdal),Ptr{GDALDriverH},(Cstring,),arg1))
 end
 

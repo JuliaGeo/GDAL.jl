@@ -6,7 +6,7 @@ dataset = GDAL.open("data/utmsmall.tif", GDAL.GA_ReadOnly) # file from GDAL SVN
 
 
 # Getting Dataset Information
-driver = GDAL.gdalgetdriverbyname("GTiff")
+driver = GDAL.getdriverbyname("GTiff")
 @test GDAL.getdrivershortname(driver) == "GTiff"
 @test GDAL.getdriverlongname(driver) == "GeoTIFF"
 

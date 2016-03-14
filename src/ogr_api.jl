@@ -1773,7 +1773,7 @@ Create a new field definition.
 ### Returns
 handle to the new field definition.
 """
-function create(arg1,arg2::OGRFieldType)
+function fld_create(arg1,arg2::OGRFieldType)
     checknull(ccall((:OGR_Fld_Create,libgdal),Ptr{OGRFieldDefnH},(Cstring,OGRFieldType),arg1,arg2))
 end
 
@@ -2172,7 +2172,7 @@ Create a new field geometry definition.
 ### Returns
 handle to the new field definition.
 """
-function create(arg1,arg2::OGRwkbGeometryType)
+function gfld_create(arg1,arg2::OGRwkbGeometryType)
     ccall((:OGR_GFld_Create,libgdal),OGRGeomFieldDefnH,(Cstring,OGRwkbGeometryType),arg1,arg2)
 end
 
@@ -5162,7 +5162,7 @@ Fetch the number of registered drivers.
 ### Returns
 the drivers count.
 """
-function getdrivercount()
+function ogrgetdrivercount()
     ccall((:OGRGetDriverCount,libgdal),Cint,())
 end
 
@@ -5178,7 +5178,7 @@ Fetch the indicated driver.
 ### Returns
 handle to the driver, or NULL if iDriver is out of range.
 """
-function getdriver(arg1::Integer)
+function ogrgetdriver(arg1::Integer)
     checknull(ccall((:OGRGetDriver,libgdal),Ptr{OGRSFDriverH},(Cint,),arg1))
 end
 

@@ -16,10 +16,17 @@ headerfiles = [
 
 # do not use automatic function renaming for these
 custom_rename = Dict{ASCIIString, ASCIIString}(
-    # the two below would otherwise be automatically renamed to getdriverbyname
-    # with the same signature, this prevents the renaming, allowing the use of both
-    "gdalgetdriverbyname" => "gdalgetdriverbyname",
-    "ogrgetdriverbyname" => "ogrgetdriverbyname"
+    # prevent a clash after renaming both OGR/GDAL versions to getdriverbyname
+    # since the OGR and GDAL driver system are combined in GDAL 2
+    # give preference to the GDAL versions
+    "ogrgetdriverbyname" => "ogrgetdriverbyname",
+
+    # clashes since OGRwkbGeometryType and OGRFieldType are both typealiased to UInt32
+    "ogr_fld_create" => "fld_create",
+    "ogr_gfld_create" => "gfld_create",
+
+    "ogrgetdrivercount" => "ogrgetdrivercount",
+    "ogrgetdriver" => "ogrgetdriver"
 )
 
 strip_prefixes = [
@@ -135,7 +142,7 @@ function rewriter(ex::Expr)
     for arg in ex.args[1].args[2:end]
         isa(arg, Symbol) && continue # no type constraints
         # loosen type constraints; ccall will convert the arguments
-        if arg.args[2] == :Cint
+        if arg.args[2] in [:Cint, :UInt32]
             arg.args[2] = :Integer
         elseif arg.args[2] == :Cdouble
             arg.args[2] = :Real
