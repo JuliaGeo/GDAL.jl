@@ -143,8 +143,7 @@ Create polygon coverage from raster data.
 * **hOutLayer**: the vector feature layer to which the polygons should be written.
 * **iPixValField**: the attribute field index indicating the feature attribute into which the pixel value of the polygon should be written.
 * **papszOptions**: a name/value list of additional options 
-											
-												"8CONNECTED": May be set to "8" to use 8 connectedness. Otherwise 4 connectedness will be applied to the algorithm
+"8CONNECTED": May be set to "8" to use 8 connectedness. Otherwise 4 connectedness will be applied to the algorithm
 * **pfnProgress**: callback for reporting algorithm progress matching the GDALProgressFunc() semantics. May be NULL.
 * **pProgressArg**: callback argument passed to pfnProgress.
 
@@ -173,8 +172,7 @@ Create polygon coverage from raster data.
 * **hOutLayer**: the vector feature layer to which the polygons should be written.
 * **iPixValField**: the attribute field index indicating the feature attribute into which the pixel value of the polygon should be written.
 * **papszOptions**: a name/value list of additional options 
-											
-												"8CONNECTED": May be set to "8" to use 8 connectedness. Otherwise 4 connectedness will be applied to the algorithm
+"8CONNECTED": May be set to "8" to use 8 connectedness. Otherwise 4 connectedness will be applied to the algorithm
 * **pfnProgress**: callback for reporting algorithm progress matching the GDALProgressFunc() semantics. May be NULL.
 * **pProgressArg**: callback argument passed to pfnProgress.
 
@@ -944,23 +942,12 @@ Burn geometries into raster.
 * **pTransformArg**: callback data for transformer.
 * **padfGeomBurnValue**: the array of values to burn into the raster. There should be nBandCount values for each geometry.
 * **papszOptions**: special options controlling rasterization 
-											
-												"ALL_TOUCHED": 
-											
-											
-												May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon or that are selected by brezenhams line algorithm. Defaults to FALSE. 
-											
-											
-												"BURN_VALUE_FROM": 
-											
-											
-												May be set to "Z" to use the Z values of the geometries. dfBurnValue is added to this before burning. Defaults to GDALBurnValueSrc.GBV_UserBurnValue in which case just the dfBurnValue is burned. This is implemented only for points and lines for now. The M value may be supported in the future. 
-											
-											
-												"MERGE_ALG": 
-											
-											
-												May be REPLACE (the default) or ADD. REPLACE results in overwriting of value, while ADD adds the new value to the existing raster, suitable for heatmaps for instance.
+"ALL_TOUCHED": 
+May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon or that are selected by brezenhams line algorithm. Defaults to FALSE. 
+"BURN_VALUE_FROM": 
+May be set to "Z" to use the Z values of the geometries. dfBurnValue is added to this before burning. Defaults to GDALBurnValueSrc.GBV_UserBurnValue in which case just the dfBurnValue is burned. This is implemented only for points and lines for now. The M value may be supported in the future. 
+"MERGE_ALG": 
+May be REPLACE (the default) or ADD. REPLACE results in overwriting of value, while ADD adds the new value to the existing raster, suitable for heatmaps for instance.
 * **pfnProgress**: the progress function to report completion.
 * **pProgressArg**: callback data for progress function.
 
@@ -997,35 +984,16 @@ Burn geometries from the specified list of layers into raster.
 * **pTransformArg**: callback data for transformer.
 * **padfLayerBurnValues**: the array of values to burn into the raster. There should be nBandCount values for each layer.
 * **papszOptions**: special options controlling rasterization: 
-											
-												"ATTRIBUTE": 
-											
-											
-												Identifies an attribute field on the features to be used for a burn in value. The value will be burned into all output bands. If specified, padfLayerBurnValues will not be used and can be a NULL pointer. 
-											
-											
-												"CHUNKYSIZE": 
-											
-											
-												The height in lines of the chunk to operate on. The larger the chunk size the less times we need to make a pass through all the shapes. If it is not set or set to zero the default chunk size will be used. Default size will be estimated based on the GDAL cache buffer size using formula: cache_size_bytes/scanline_size_bytes, so the chunk will not exceed the cache. 
-											
-											
-												"ALL_TOUCHED": 
-											
-											
-												May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon or that are selected by brezenhams line algorithm. Defaults to FALSE. 
-											
-											
-												"BURN_VALUE_FROM": 
-											
-											
-												May be set to "Z" to use the Z values of the geometries. The value from padfLayerBurnValues or the attribute field value is added to this before burning. In default case dfBurnValue is burned as it is. This is implemented properly only for points and lines for now. Polygons will be burned using the Z value from the first point. The M value may be supported in the future. 
-											
-											
-												"MERGE_ALG": 
-											
-											
-												May be REPLACE (the default) or ADD. REPLACE results in overwriting of value, while ADD adds the new value to the existing raster, suitable for heatmaps for instance.
+"ATTRIBUTE": 
+Identifies an attribute field on the features to be used for a burn in value. The value will be burned into all output bands. If specified, padfLayerBurnValues will not be used and can be a NULL pointer. 
+"CHUNKYSIZE": 
+The height in lines of the chunk to operate on. The larger the chunk size the less times we need to make a pass through all the shapes. If it is not set or set to zero the default chunk size will be used. Default size will be estimated based on the GDAL cache buffer size using formula: cache_size_bytes/scanline_size_bytes, so the chunk will not exceed the cache. 
+"ALL_TOUCHED": 
+May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon or that are selected by brezenhams line algorithm. Defaults to FALSE. 
+"BURN_VALUE_FROM": 
+May be set to "Z" to use the Z values of the geometries. The value from padfLayerBurnValues or the attribute field value is added to this before burning. In default case dfBurnValue is burned as it is. This is implemented properly only for points and lines for now. Polygons will be burned using the Z value from the first point. The M value may be supported in the future. 
+"MERGE_ALG": 
+May be REPLACE (the default) or ADD. REPLACE results in overwriting of value, while ADD adds the new value to the existing raster, suitable for heatmaps for instance.
 * **pfnProgress**: the progress function to report completion.
 * **pProgressArg**: callback data for progress function.
 
@@ -1072,17 +1040,10 @@ Burn geometries from the specified list of layer into raster.
 * **pTransformArg**: callback data for transformer.
 * **dfBurnValue**: the value to burn into the raster.
 * **papszOptions**: special options controlling rasterization: 
-											
-												"ATTRIBUTE": 
-											
-											
-												Identifies an attribute field on the features to be used for a burn in value. The value will be burned into all output bands. If specified, padfLayerBurnValues will not be used and can be a NULL pointer. 
-											
-											
-												"ALL_TOUCHED": 
-											
-											
-												May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon or that are selected by brezenhams line algorithm. Defaults to FALSE.
+"ATTRIBUTE": 
+Identifies an attribute field on the features to be used for a burn in value. The value will be burned into all output bands. If specified, padfLayerBurnValues will not be used and can be a NULL pointer. 
+"ALL_TOUCHED": 
+May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon or that are selected by brezenhams line algorithm. Defaults to FALSE.
 * **pfnProgress**: the progress function to report completion.
 * **pProgressArg**: callback data for progress function.
 
