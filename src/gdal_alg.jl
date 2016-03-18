@@ -845,7 +845,7 @@ end
                    GDALContourWriter pfnWriter,
                    void * pCBData) -> GDALContourGeneratorH
 """
-function create(nWidth::Integer,nHeight::Integer,bNoDataSet::Integer,dfNoDataValue::Real,dfContourInterval::Real,dfContourBase::Real,pfnWriter::Ptr{GDALContourWriter},pCBData)
+function cg_create(nWidth::Integer,nHeight::Integer,bNoDataSet::Integer,dfNoDataValue::Real,dfContourInterval::Real,dfContourBase::Real,pfnWriter::Ptr{GDALContourWriter},pCBData)
     checknull(ccall((:GDAL_CG_Create,libgdal),Ptr{GDALContourGeneratorH},(Cint,Cint,Cint,Cdouble,Cdouble,Cdouble,Ptr{GDALContourWriter},Ptr{Void}),nWidth,nHeight,bNoDataSet,dfNoDataValue,dfContourInterval,dfContourBase,pfnWriter,pCBData))
 end
 

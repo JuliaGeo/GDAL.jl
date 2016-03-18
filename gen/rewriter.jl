@@ -25,6 +25,15 @@ custom_rename = Dict{ASCIIString, ASCIIString}(
     "ogr_fld_create" => "fld_create",
     "ogr_gfld_create" => "gfld_create",
 
+    # these don't directly clash, but otherwise all are renamed to `create`
+    # this makes it easier to disambiguate them
+    "ogr_fd_create" => "fd_create",
+    "ogr_f_create" => "f_create",
+    "gdal_cg_create" => "cg_create",
+    "ogr_sm_create" => "sm_create",
+    "ogr_st_create" => "st_create",
+    "ogr_stbl_create" => "stbl_create",
+
     "ogrgetdrivercount" => "ogrgetdrivercount",
     "ogrgetdriver" => "ogrgetdriver"
 )

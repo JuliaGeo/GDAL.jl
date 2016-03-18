@@ -53,17 +53,14 @@ driver = GDAL.getdriverbyname("ESRI Shapefile")
 dataset = GDAL.create(driver, "$pointshapefile.shp", 0, 0, 0, GDAL.GDT_Unknown, C_NULL)
 nosrs = convert(Ptr{GDAL.OGRSpatialReferenceH}, C_NULL)
 layer = GDAL.datasetcreatelayer(dataset, "point_out", nosrs, GDAL.wkbPoint, C_NULL)
-# the GDAL.create function is overwritten, needs to be fixed, probably by better renaming
-# use the C submodule instead of now
-# fielddefn = GDAL.create("Name", GDAL.OFTString)
-fielddefn = convert(Ptr{GDAL.OGRFieldDefnH}, GDAL.C.OGR_Fld_Create("Name", GDAL.OFTString))
+fielddefn = GDAL.fld_create("Name", GDAL.OFTString)
 GDAL.setwidth(fielddefn, 32)
 @test GDAL.createfield(layer, fielddefn, GDAL.TRUE) == GDAL.OGRERR_NONE
 GDAL.destroy(fielddefn)
 
 # repeat to add multiple features
 featuredefn = GDAL.getlayerdefn(layer)
-feature = GDAL.create(featuredefn)
+feature = GDAL.f_create(featuredefn)
 GDAL.setfieldstring(feature, GDAL.getfieldindex(feature, "Name"), "myname")
 point = GDAL.creategeometry(GDAL.wkbPoint)
 GDAL.setpoint_2d(point, 0, 100.123, 0.123)

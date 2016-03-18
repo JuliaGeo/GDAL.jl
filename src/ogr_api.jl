@@ -2356,7 +2356,7 @@ Create a new feature definition object to hold the field definitions.
 ### Returns
 handle to the newly created feature definition.
 """
-function create(arg1)
+function fd_create(arg1)
     checknull(ccall((:OGR_FD_Create,libgdal),Ptr{OGRFeatureDefnH},(Cstring,),arg1))
 end
 
@@ -2761,7 +2761,7 @@ Feature factory.
 ### Returns
 an handle to the new feature object with null fields and no geometry, or, starting with GDAL 2.1, NULL in case out of memory situation.
 """
-function create(arg1::Ptr{OGRFeatureDefnH})
+function f_create(arg1::Ptr{OGRFeatureDefnH})
     checknull(ccall((:OGR_F_Create,libgdal),Ptr{OGRFeatureH},(Ptr{OGRFeatureDefnH},),arg1))
 end
 
@@ -5246,7 +5246,7 @@ OGRStyleMgr factory.
 ### Returns
 an handle to the new style manager object.
 """
-function create(hStyleTable::Ptr{OGRStyleTableH})
+function sm_create(hStyleTable::Ptr{OGRStyleTableH})
     checknull(ccall((:OGR_SM_Create,libgdal),Ptr{OGRStyleMgrH},(Ptr{OGRStyleTableH},),hStyleTable))
 end
 
@@ -5387,7 +5387,7 @@ OGRStyleTool factory.
 ### Returns
 an handle to the new style tool object or NULL if the creation failed.
 """
-function create(eClassId::OGRSTClassId)
+function st_create(eClassId::OGRSTClassId)
     checknull(ccall((:OGR_ST_Create,libgdal),Ptr{OGRStyleToolH},(OGRSTClassId,),eClassId))
 end
 
@@ -5615,7 +5615,7 @@ OGRStyleTable factory.
 ### Returns
 an handle to the new style table object.
 """
-function create()
+function stbl_create()
     checknull(ccall((:OGR_STBL_Create,libgdal),Ptr{OGRStyleTableH},()))
 end
 
