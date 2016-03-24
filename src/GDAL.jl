@@ -44,13 +44,11 @@ function __init__()
     funcptr = cfunction(gdaljl_errorhandler, Ptr{Void}, (UInt32, Cint, Ptr{UInt8}))
     C.CPLSetErrorHandler(funcptr)
 
-    C.GDALAllRegister()
-    versionstring = bytestring(C.GDALVersionInfo(pointer("RELEASE_NAME")))
+    # get GDAL version number
+    versionstring = bytestring(C.GDALVersionInfo("RELEASE_NAME"))
     const GDALVERSION = convert(VersionNumber, versionstring)
     if GDALVERSION < v"2.0.0"
         warn("GDAL.jl is made for GDAL 2.0 and later")
-        # deprecated in GDAL 2.0, is covered by GDALRegisterAll
-        C.OGRRegisterAll()
     end
 end
 
