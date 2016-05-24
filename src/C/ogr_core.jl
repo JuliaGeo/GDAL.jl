@@ -132,16 +132,32 @@ end
 
 
 """
+    OGR_GT_SetM(OGRwkbGeometryType eType) -> OGRwkbGeometryType
+
+Returns the measured geometry type corresponding to the passed geometry type.
+
+### Parameters
+* **eType**: Input geometry type
+
+### Returns
+measured geometry type corresponding to the passed geometry type.
+"""
+function OGR_GT_SetM(eType::OGRwkbGeometryType)
+    ccall((:OGR_GT_SetM,libgdal),OGRwkbGeometryType,(OGRwkbGeometryType,),eType)
+end
+
+
+"""
     OGR_GT_SetModifier(OGRwkbGeometryType eType,
                        int bHasZ,
                        int bHasM) -> OGRwkbGeometryType
 
-Returns a 2D or 3D geometry type depending on parameter.
+Returns a XY, XYZ, XYM or XYZM geometry type depending on parameter.
 
 ### Parameters
 * **eType**: Input geometry type
 * **bHasZ**: TRUE if the output geometry type must be 3D.
-* **bHasM**: Must be set to FALSE currently.
+* **bHasM**: TRUE if the output geometry type must be measured.
 
 ### Returns
 Output geometry type.
@@ -164,6 +180,22 @@ TRUE if the geometry type is a 3D geometry type.
 """
 function OGR_GT_HasZ(eType::OGRwkbGeometryType)
     ccall((:OGR_GT_HasZ,libgdal),Cint,(OGRwkbGeometryType,),eType)
+end
+
+
+"""
+    OGR_GT_HasM(OGRwkbGeometryType eType) -> int
+
+Return if the geometry type is a measured type.
+
+### Parameters
+* **eType**: Input geometry type
+
+### Returns
+TRUE if the geometry type is a measured type.
+"""
+function OGR_GT_HasM(eType::OGRwkbGeometryType)
+    ccall((:OGR_GT_HasM,libgdal),Cint,(OGRwkbGeometryType,),eType)
 end
 
 

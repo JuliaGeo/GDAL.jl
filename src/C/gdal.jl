@@ -20,6 +20,38 @@ end
 
 
 """
+    GDALGetDataTypeSizeBits(GDALDataType eDataType) -> int
+
+Get data type size in bits.
+
+### Parameters
+* **eDataType**: type, such as GDT_Byte.
+
+### Returns
+the number of bits or zero if it is not recognised.
+"""
+function GDALGetDataTypeSizeBits(eDataType::GDALDataType)
+    ccall((:GDALGetDataTypeSizeBits,libgdal),Cint,(GDALDataType,),eDataType)
+end
+
+
+"""
+    GDALGetDataTypeSizeBytes(GDALDataType) -> int
+
+Get data type size in bytes.
+
+### Parameters
+* **eDataType**: type, such as GDT_Byte.
+
+### Returns
+the number of bytes or zero if it is not recognised.
+"""
+function GDALGetDataTypeSizeBytes(arg1::GDALDataType)
+    ccall((:GDALGetDataTypeSizeBytes,libgdal),Cint,(GDALDataType,),arg1)
+end
+
+
+"""
     GDALDataTypeIsComplex(GDALDataType) -> int
 
 Is data type complex?
@@ -1827,8 +1859,8 @@ end
 
 Compute the min/max values for a band.
 """
-function GDALComputeRasterMinMax(hBand::GDALRasterBandH,bApproxOK::Cint,adfMinMax::Array_2_Cdouble)
-    ccall((:GDALComputeRasterMinMax,libgdal),Void,(GDALRasterBandH,Cint,Array_2_Cdouble),hBand,bApproxOK,adfMinMax)
+function GDALComputeRasterMinMax(hBand::GDALRasterBandH,bApproxOK::Cint,adfMinMax::NTuple{2,Cdouble})
+    ccall((:GDALComputeRasterMinMax,libgdal),Void,(GDALRasterBandH,Cint,NTuple{2,Cdouble}),hBand,bApproxOK,adfMinMax)
 end
 
 
