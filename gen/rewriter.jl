@@ -238,8 +238,10 @@ common_file = "common.jl"
 expr = parsefile(joinpath(srcdir, "C", common_file))
 open(joinpath(srcdir, common_file), "w") do io
     for el in expr.args[1].args
-        if isa(el, Expr)
-            commonrewriter(io, el)
+        # second part keeps out LineNumberNode
+        # which would print as a comment
+        if isa(el, Expr) && (el.head != :line)
+                commonrewriter(io, el)
         end
     end
 end
