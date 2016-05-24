@@ -692,7 +692,7 @@ end
 
 """
     OSRCopyGeogCSFrom(OGRSpatialReferenceH hSRS,
-                      OGRSpatialReferenceH hSrcSRS) -> OGRErr
+                      const OGRSpatialReferenceH hSrcSRS) -> OGRErr
 
 Copy GEOGCS from another OGRSpatialReference.
 """

@@ -10,6 +10,12 @@ const CPLE_AssertionFailed = 7
 const CPLE_NoWriteAccess = 8
 const CPLE_UserInterrupt = 9
 const CPLE_ObjectNull = 10
+const CPLE_HttpResponse = 11
+const CPLE_AWSBucketNotFound = 12
+const CPLE_AWSObjectNotFound = 13
+const CPLE_AWSAccessDenied = 14
+const CPLE_AWSInvalidCredentials = 15
+const CPLE_AWSSignatureDoesNotMatch = 16
 typealias CPLErr UInt32
 const CE_None = UInt32(0)
 const CE_Debug = UInt32(1)
@@ -35,10 +41,10 @@ const CXT_Attribute = UInt32(2)
 const CXT_Comment = UInt32(3)
 const CXT_Literal = UInt32(4)
 
-type CPLXMLNode # none, line 64:
-    eType::CPLXMLNodeType # none, line 65:
-    pszValue::Cstring # none, line 66:
-    psNext::Ptr{CPLXMLNode} # none, line 67:
+type CPLXMLNode # none, line 70:
+    eType::CPLXMLNodeType # none, line 71:
+    pszValue::Cstring # none, line 72:
+    psNext::Ptr{CPLXMLNode} # none, line 73:
     psChild::Ptr{CPLXMLNode}
 end
 
@@ -167,15 +173,15 @@ const GRIORA_Average = UInt32(5)
 const GRIORA_Mode = UInt32(6)
 const GRIORA_Gauss = UInt32(7)
 
-type GDALRasterIOExtraArg # none, line 313:
-    nVersion::Cint # none, line 314:
-    eResampleAlg::GDALRIOResampleAlg # none, line 315:
-    pfnProgress::GDALProgressFunc # none, line 316:
-    pProgressData::Ptr{Void} # none, line 317:
-    bFloatingPointWindowValidity::Cint # none, line 318:
-    dfXOff::Cdouble # none, line 319:
-    dfYOff::Cdouble # none, line 320:
-    dfXSize::Cdouble # none, line 321:
+type GDALRasterIOExtraArg # none, line 317:
+    nVersion::Cint # none, line 318:
+    eResampleAlg::GDALRIOResampleAlg # none, line 319:
+    pfnProgress::GDALProgressFunc # none, line 320:
+    pProgressData::Ptr{Void} # none, line 321:
+    bFloatingPointWindowValidity::Cint # none, line 322:
+    dfXOff::Cdouble # none, line 323:
+    dfYOff::Cdouble # none, line 324:
+    dfXSize::Cdouble # none, line 325:
     dfYSize::Cdouble
 end
 
@@ -227,83 +233,43 @@ const GPI_CMYK = UInt32(2)
 const GPI_HLS = UInt32(3)
 typealias GSpacing GIntBig
 
-type GDAL_GCP # none, line 394:
-    pszId::Cstring # none, line 395:
-    pszInfo::Cstring # none, line 396:
-    dfGCPPixel::Cdouble # none, line 397:
-    dfGCPLine::Cdouble # none, line 398:
-    dfGCPX::Cdouble # none, line 399:
-    dfGCPY::Cdouble # none, line 400:
+type GDAL_GCP # none, line 398:
+    pszId::Cstring # none, line 399:
+    pszInfo::Cstring # none, line 400:
+    dfGCPPixel::Cdouble # none, line 401:
+    dfGCPLine::Cdouble # none, line 402:
+    dfGCPX::Cdouble # none, line 403:
+    dfGCPY::Cdouble # none, line 404:
     dfGCPZ::Cdouble
 end
 
 
-immutable Array_2_Cdouble # none, line 406:
-    d1::Cdouble # none, line 407:
-    d2::Cdouble
-end
-
-zero(::Type{Array_2_Cdouble}) = begin  # none, line 410:
-        begin  # none, line 411:
-            Array_2_Cdouble(fill(zero(Cdouble),2)...)
-        end
-    end
-
-immutable Array_20_Cdouble # none, line 415:
-    d1::Cdouble # none, line 416:
-    d2::Cdouble # none, line 417:
-    d3::Cdouble # none, line 418:
-    d4::Cdouble # none, line 419:
-    d5::Cdouble # none, line 420:
-    d6::Cdouble # none, line 421:
-    d7::Cdouble # none, line 422:
-    d8::Cdouble # none, line 423:
-    d9::Cdouble # none, line 424:
-    d10::Cdouble # none, line 425:
-    d11::Cdouble # none, line 426:
-    d12::Cdouble # none, line 427:
-    d13::Cdouble # none, line 428:
-    d14::Cdouble # none, line 429:
-    d15::Cdouble # none, line 430:
-    d16::Cdouble # none, line 431:
-    d17::Cdouble # none, line 432:
-    d18::Cdouble # none, line 433:
-    d19::Cdouble # none, line 434:
-    d20::Cdouble
-end
-
-zero(::Type{Array_20_Cdouble}) = begin  # none, line 437:
-        begin  # none, line 438:
-            Array_20_Cdouble(fill(zero(Cdouble),20)...)
-        end
-    end
-
-type GDALRPCInfo # none, line 442:
-    dfLINE_OFF::Cdouble # none, line 443:
-    dfSAMP_OFF::Cdouble # none, line 444:
-    dfLAT_OFF::Cdouble # none, line 445:
-    dfLONG_OFF::Cdouble # none, line 446:
-    dfHEIGHT_OFF::Cdouble # none, line 447:
-    dfLINE_SCALE::Cdouble # none, line 448:
-    dfSAMP_SCALE::Cdouble # none, line 449:
-    dfLAT_SCALE::Cdouble # none, line 450:
-    dfLONG_SCALE::Cdouble # none, line 451:
-    dfHEIGHT_SCALE::Cdouble # none, line 452:
-    adfLINE_NUM_COEFF::Array_20_Cdouble # none, line 453:
-    adfLINE_DEN_COEFF::Array_20_Cdouble # none, line 454:
-    adfSAMP_NUM_COEFF::Array_20_Cdouble # none, line 455:
-    adfSAMP_DEN_COEFF::Array_20_Cdouble # none, line 456:
-    dfMIN_LONG::Cdouble # none, line 457:
-    dfMIN_LAT::Cdouble # none, line 458:
-    dfMAX_LONG::Cdouble # none, line 459:
+type GDALRPCInfo # none, line 410:
+    dfLINE_OFF::Cdouble # none, line 411:
+    dfSAMP_OFF::Cdouble # none, line 412:
+    dfLAT_OFF::Cdouble # none, line 413:
+    dfLONG_OFF::Cdouble # none, line 414:
+    dfHEIGHT_OFF::Cdouble # none, line 415:
+    dfLINE_SCALE::Cdouble # none, line 416:
+    dfSAMP_SCALE::Cdouble # none, line 417:
+    dfLAT_SCALE::Cdouble # none, line 418:
+    dfLONG_SCALE::Cdouble # none, line 419:
+    dfHEIGHT_SCALE::Cdouble # none, line 420:
+    adfLINE_NUM_COEFF::NTuple{20,Cdouble} # none, line 421:
+    adfLINE_DEN_COEFF::NTuple{20,Cdouble} # none, line 422:
+    adfSAMP_NUM_COEFF::NTuple{20,Cdouble} # none, line 423:
+    adfSAMP_DEN_COEFF::NTuple{20,Cdouble} # none, line 424:
+    dfMIN_LONG::Cdouble # none, line 425:
+    dfMIN_LAT::Cdouble # none, line 426:
+    dfMAX_LONG::Cdouble # none, line 427:
     dfMAX_LAT::Cdouble
 end
 
 
-type GDALColorEntry # none, line 463:
-    c1::Int16 # none, line 464:
-    c2::Int16 # none, line 465:
-    c3::Int16 # none, line 466:
+type GDALColorEntry # none, line 431:
+    c1::Int16 # none, line 432:
+    c2::Int16 # none, line 433:
+    c3::Int16 # none, line 434:
     c4::Int16
 end
 
@@ -362,49 +328,21 @@ const GTO_BIT = UInt32(1)
 const GTO_BSQ = UInt32(2)
 const GDAL_GTI2_SIGNATURE = "GTI2"
 
-immutable Array_4_GByte # none, line 548:
-    d1::GByte # none, line 549:
-    d2::GByte # none, line 550:
-    d3::GByte # none, line 551:
-    d4::GByte
-end
-
-zero(::Type{Array_4_GByte}) = begin  # none, line 554:
-        begin  # none, line 555:
-            Array_4_GByte(fill(zero(GByte),4)...)
-        end
-    end
-
-type GDALTransformerInfo # none, line 559:
-    abySignature::Array_4_GByte # none, line 560:
-    pszClassName::Cstring # none, line 561:
-    pfnTransform::GDALTransformerFunc # none, line 562:
-    pfnCleanup::Ptr{Void} # none, line 563:
-    pfnSerialize::Ptr{Void} # none, line 564:
+type GDALTransformerInfo # none, line 516:
+    abySignature::NTuple{4,GByte} # none, line 517:
+    pszClassName::Cstring # none, line 518:
+    pfnTransform::GDALTransformerFunc # none, line 519:
+    pfnCleanup::Ptr{Void} # none, line 520:
+    pfnSerialize::Ptr{Void} # none, line 521:
     pfnCreateSimilar::Ptr{Void}
 end
 
 
-immutable Array_6_Cdouble # none, line 571:
-    d1::Cdouble # none, line 572:
-    d2::Cdouble # none, line 573:
-    d3::Cdouble # none, line 574:
-    d4::Cdouble # none, line 575:
-    d5::Cdouble # none, line 576:
-    d6::Cdouble
-end
-
-zero(::Type{Array_6_Cdouble}) = begin  # none, line 579:
-        begin  # none, line 580:
-            Array_6_Cdouble(fill(zero(Cdouble),6)...)
-        end
-    end
-
-type OGRContourWriterInfo # none, line 584:
-    hLayer::Ptr{Void} # none, line 585:
-    adfGeoTransform::Array_6_Cdouble # none, line 586:
-    nElevField::Cint # none, line 587:
-    nIDField::Cint # none, line 588:
+type OGRContourWriterInfo # none, line 528:
+    hLayer::Ptr{Void} # none, line 529:
+    adfGeoTransform::NTuple{6,Cdouble} # none, line 530:
+    nElevField::Cint # none, line 531:
+    nIDField::Cint # none, line 532:
     nNextID::Cint
 end
 
@@ -432,105 +370,93 @@ const GGA_MetricAverageDistancePts = UInt32(9)
 const GGA_Linear = UInt32(10)
 const GGA_InverseDistanceToAPowerNearestNeighbor = UInt32(11)
 
-type GDALGridInverseDistanceToAPowerOptions # none, line 622:
-    dfPower::Cdouble # none, line 623:
-    dfSmoothing::Cdouble # none, line 624:
-    dfAnisotropyRatio::Cdouble # none, line 625:
-    dfAnisotropyAngle::Cdouble # none, line 626:
-    dfRadius1::Cdouble # none, line 627:
-    dfRadius2::Cdouble # none, line 628:
-    dfAngle::Cdouble # none, line 629:
-    nMaxPoints::GUInt32 # none, line 630:
-    nMinPoints::GUInt32 # none, line 631:
+type GDALGridInverseDistanceToAPowerOptions # none, line 566:
+    dfPower::Cdouble # none, line 567:
+    dfSmoothing::Cdouble # none, line 568:
+    dfAnisotropyRatio::Cdouble # none, line 569:
+    dfAnisotropyAngle::Cdouble # none, line 570:
+    dfRadius1::Cdouble # none, line 571:
+    dfRadius2::Cdouble # none, line 572:
+    dfAngle::Cdouble # none, line 573:
+    nMaxPoints::GUInt32 # none, line 574:
+    nMinPoints::GUInt32 # none, line 575:
     dfNoDataValue::Cdouble
 end
 
 
-type GDALGridInverseDistanceToAPowerNearestNeighborOptions # none, line 635:
-    dfPower::Cdouble # none, line 636:
-    dfRadius::Cdouble # none, line 637:
-    nMaxPoints::GUInt32 # none, line 638:
-    nMinPoints::GUInt32 # none, line 639:
+type GDALGridInverseDistanceToAPowerNearestNeighborOptions # none, line 579:
+    dfPower::Cdouble # none, line 580:
+    dfRadius::Cdouble # none, line 581:
+    nMaxPoints::GUInt32 # none, line 582:
+    nMinPoints::GUInt32 # none, line 583:
     dfNoDataValue::Cdouble
 end
 
 
-type GDALGridMovingAverageOptions # none, line 643:
-    dfRadius1::Cdouble # none, line 644:
-    dfRadius2::Cdouble # none, line 645:
-    dfAngle::Cdouble # none, line 646:
-    nMinPoints::GUInt32 # none, line 647:
+type GDALGridMovingAverageOptions # none, line 587:
+    dfRadius1::Cdouble # none, line 588:
+    dfRadius2::Cdouble # none, line 589:
+    dfAngle::Cdouble # none, line 590:
+    nMinPoints::GUInt32 # none, line 591:
     dfNoDataValue::Cdouble
 end
 
 
-type GDALGridNearestNeighborOptions # none, line 651:
-    dfRadius1::Cdouble # none, line 652:
-    dfRadius2::Cdouble # none, line 653:
-    dfAngle::Cdouble # none, line 654:
+type GDALGridNearestNeighborOptions # none, line 595:
+    dfRadius1::Cdouble # none, line 596:
+    dfRadius2::Cdouble # none, line 597:
+    dfAngle::Cdouble # none, line 598:
     dfNoDataValue::Cdouble
 end
 
 
-type GDALGridDataMetricsOptions # none, line 658:
-    dfRadius1::Cdouble # none, line 659:
-    dfRadius2::Cdouble # none, line 660:
-    dfAngle::Cdouble # none, line 661:
-    nMinPoints::GUInt32 # none, line 662:
+type GDALGridDataMetricsOptions # none, line 602:
+    dfRadius1::Cdouble # none, line 603:
+    dfRadius2::Cdouble # none, line 604:
+    dfAngle::Cdouble # none, line 605:
+    nMinPoints::GUInt32 # none, line 606:
     dfNoDataValue::Cdouble
 end
 
 
-type GDALGridLinearOptions # none, line 666:
-    dfRadius::Cdouble # none, line 667:
+type GDALGridLinearOptions # none, line 610:
+    dfRadius::Cdouble # none, line 611:
     dfNoDataValue::Cdouble
 end
 
 
-type GDALGridContext
+type GDALGridContext # none, line 615:
 end
 
 
-immutable Array_3_Cint # none, line 674:
-    d1::Cint # none, line 675:
-    d2::Cint # none, line 676:
-    d3::Cint
-end
-
-zero(::Type{Array_3_Cint}) = begin  # none, line 679:
-        begin  # none, line 680:
-            Array_3_Cint(fill(zero(Cint),3)...)
-        end
-    end
-
-type GDALTriFacet # none, line 684:
-    anVertexIdx::Array_3_Cint # none, line 685:
-    anNeighborIdx::Array_3_Cint
+type GDALTriFacet # none, line 618:
+    anVertexIdx::NTuple{3,Cint} # none, line 619:
+    anNeighborIdx::NTuple{3,Cint}
 end
 
 
-type GDALTriBarycentricCoefficients # none, line 689:
-    dfMul1X::Cdouble # none, line 690:
-    dfMul1Y::Cdouble # none, line 691:
-    dfMul2X::Cdouble # none, line 692:
-    dfMul2Y::Cdouble # none, line 693:
-    dfCstX::Cdouble # none, line 694:
+type GDALTriBarycentricCoefficients # none, line 623:
+    dfMul1X::Cdouble # none, line 624:
+    dfMul1Y::Cdouble # none, line 625:
+    dfMul2X::Cdouble # none, line 626:
+    dfMul2Y::Cdouble # none, line 627:
+    dfCstX::Cdouble # none, line 628:
     dfCstY::Cdouble
 end
 
 
-type GDALTriangulation # none, line 698:
-    nFacets::Cint # none, line 699:
-    pasFacets::Ptr{GDALTriFacet} # none, line 700:
+type GDALTriangulation # none, line 632:
+    nFacets::Cint # none, line 633:
+    pasFacets::Ptr{GDALTriFacet} # none, line 634:
     pasFacetCoefficients::Ptr{GDALTriBarycentricCoefficients}
 end
 
 
-type _CPLXMLNode
+type _CPLXMLNode # none, line 642:
 end
 
 
-type OGRGeomFieldDefnHS
+type OGRGeomFieldDefnHS # none, line 650:
 end
 
 typealias OGRGeomFieldDefnH Ptr{OGRGeomFieldDefnHS}
@@ -556,7 +482,7 @@ const OGR_F_VAL_NULL = 0x00000001
 const OGR_F_VAL_GEOM_TYPE = 0x00000002
 const OGR_F_VAL_WIDTH = 0x00000004
 const OGR_F_VAL_ALLOW_NULL_WHEN_DEFAULT = 0x00000008
-const OGR_F_VAL_ALL = 0x07ffffff
+const OGR_F_VAL_ALLOW_DIFFERENT_GEOM_DIM = 0x00000010
 const OGRNullFID = -1
 const OGRUnsetMarker = -21121
 const OLCRandomRead = "RandomRead"
@@ -576,30 +502,32 @@ const OLCStringsAsUTF8 = "StringsAsUTF8"
 const OLCIgnoreFields = "IgnoreFields"
 const OLCCreateGeomField = "CreateGeomField"
 const OLCCurveGeometries = "CurveGeometries"
+const OLCMeasuredGeometries = "MeasuredGeometries"
 const ODsCCreateLayer = "CreateLayer"
 const ODsCDeleteLayer = "DeleteLayer"
 const ODsCCreateGeomFieldAfterCreateLayer = "CreateGeomFieldAfterCreateLayer"
 const ODsCCurveGeometries = "CurveGeometries"
 const ODsCTransactions = "Transactions"
 const ODsCEmulatedTransactions = "EmulatedTransactions"
+const ODsCMeasuredGeometries = "MeasuredGeometries"
 const ODrCCreateDataSource = "CreateDataSource"
 const ODrCDeleteDataSource = "DeleteDataSource"
 const OLMD_FID64 = "OLMD_FID64"
 
-type OGREnvelope # none, line 796:
-    MinX::Cdouble # none, line 797:
-    MaxX::Cdouble # none, line 798:
-    MinY::Cdouble # none, line 799:
+type OGREnvelope # none, line 733:
+    MinX::Cdouble # none, line 734:
+    MaxX::Cdouble # none, line 735:
+    MinY::Cdouble # none, line 736:
     MaxY::Cdouble
 end
 
 
-type OGREnvelope3D # none, line 803:
-    MinX::Cdouble # none, line 804:
-    MaxX::Cdouble # none, line 805:
-    MinY::Cdouble # none, line 806:
-    MaxY::Cdouble # none, line 807:
-    MinZ::Cdouble # none, line 808:
+type OGREnvelope3D # none, line 740:
+    MinX::Cdouble # none, line 741:
+    MaxX::Cdouble # none, line 742:
+    MinY::Cdouble # none, line 743:
+    MaxY::Cdouble # none, line 744:
+    MinZ::Cdouble # none, line 745:
     MaxZ::Cdouble
 end
 
@@ -618,6 +546,11 @@ const wkbCompoundCurve = UInt32(9)
 const wkbCurvePolygon = UInt32(10)
 const wkbMultiCurve = UInt32(11)
 const wkbMultiSurface = UInt32(12)
+const wkbCurve = UInt32(13)
+const wkbSurface = UInt32(14)
+const wkbPolyhedralSurface = UInt32(15)
+const wkbTIN = UInt32(16)
+const wkbTriangle = UInt32(17)
 const wkbNone = UInt32(100)
 const wkbLinearRing = UInt32(101)
 const wkbCircularStringZ = UInt32(1008)
@@ -625,6 +558,45 @@ const wkbCompoundCurveZ = UInt32(1009)
 const wkbCurvePolygonZ = UInt32(1010)
 const wkbMultiCurveZ = UInt32(1011)
 const wkbMultiSurfaceZ = UInt32(1012)
+const wkbCurveZ = UInt32(1013)
+const wkbSurfaceZ = UInt32(1014)
+const wkbPolyhedralSurfaceZ = UInt32(1015)
+const wkbTINZ = UInt32(1016)
+const wkbTriangleZ = UInt32(1017)
+const wkbPointM = UInt32(2001)
+const wkbLineStringM = UInt32(2002)
+const wkbPolygonM = UInt32(2003)
+const wkbMultiPointM = UInt32(2004)
+const wkbMultiLineStringM = UInt32(2005)
+const wkbMultiPolygonM = UInt32(2006)
+const wkbGeometryCollectionM = UInt32(2007)
+const wkbCircularStringM = UInt32(2008)
+const wkbCompoundCurveM = UInt32(2009)
+const wkbCurvePolygonM = UInt32(2010)
+const wkbMultiCurveM = UInt32(2011)
+const wkbMultiSurfaceM = UInt32(2012)
+const wkbCurveM = UInt32(2013)
+const wkbSurfaceM = UInt32(2014)
+const wkbPolyhedralSurfaceM = UInt32(2015)
+const wkbTINM = UInt32(2016)
+const wkbTriangleM = UInt32(2017)
+const wkbPointZM = UInt32(3001)
+const wkbLineStringZM = UInt32(3002)
+const wkbPolygonZM = UInt32(3003)
+const wkbMultiPointZM = UInt32(3004)
+const wkbMultiLineStringZM = UInt32(3005)
+const wkbMultiPolygonZM = UInt32(3006)
+const wkbGeometryCollectionZM = UInt32(3007)
+const wkbCircularStringZM = UInt32(3008)
+const wkbCompoundCurveZM = UInt32(3009)
+const wkbCurvePolygonZM = UInt32(3010)
+const wkbMultiCurveZM = UInt32(3011)
+const wkbMultiSurfaceZM = UInt32(3012)
+const wkbCurveZM = UInt32(3013)
+const wkbSurfaceZM = UInt32(3014)
+const wkbPolyhedralSurfaceZM = UInt32(3015)
+const wkbTINZM = UInt32(3016)
+const wkbTriangleZM = UInt32(3017)
 const wkbPoint25D = UInt32(0x0000000080000001)
 const wkbLineString25D = UInt32(0x0000000080000002)
 const wkbPolygon25D = UInt32(0x0000000080000003)
@@ -646,6 +618,11 @@ const wkbCompoundCurve = UInt32(9)
 const wkbCurvePolygon = UInt32(10)
 const wkbMultiCurve = UInt32(11)
 const wkbMultiSurface = UInt32(12)
+const wkbCurve = UInt32(13)
+const wkbSurface = UInt32(14)
+const wkbPolyhedralSurface = UInt32(15)
+const wkbTIN = UInt32(16)
+const wkbTriangle = UInt32(17)
 const wkbNone = UInt32(100)
 const wkbLinearRing = UInt32(101)
 const wkbCircularStringZ = UInt32(1008)
@@ -653,6 +630,45 @@ const wkbCompoundCurveZ = UInt32(1009)
 const wkbCurvePolygonZ = UInt32(1010)
 const wkbMultiCurveZ = UInt32(1011)
 const wkbMultiSurfaceZ = UInt32(1012)
+const wkbCurveZ = UInt32(1013)
+const wkbSurfaceZ = UInt32(1014)
+const wkbPolyhedralSurfaceZ = UInt32(1015)
+const wkbTINZ = UInt32(1016)
+const wkbTriangleZ = UInt32(1017)
+const wkbPointM = UInt32(2001)
+const wkbLineStringM = UInt32(2002)
+const wkbPolygonM = UInt32(2003)
+const wkbMultiPointM = UInt32(2004)
+const wkbMultiLineStringM = UInt32(2005)
+const wkbMultiPolygonM = UInt32(2006)
+const wkbGeometryCollectionM = UInt32(2007)
+const wkbCircularStringM = UInt32(2008)
+const wkbCompoundCurveM = UInt32(2009)
+const wkbCurvePolygonM = UInt32(2010)
+const wkbMultiCurveM = UInt32(2011)
+const wkbMultiSurfaceM = UInt32(2012)
+const wkbCurveM = UInt32(2013)
+const wkbSurfaceM = UInt32(2014)
+const wkbPolyhedralSurfaceM = UInt32(2015)
+const wkbTINM = UInt32(2016)
+const wkbTriangleM = UInt32(2017)
+const wkbPointZM = UInt32(3001)
+const wkbLineStringZM = UInt32(3002)
+const wkbPolygonZM = UInt32(3003)
+const wkbMultiPointZM = UInt32(3004)
+const wkbMultiLineStringZM = UInt32(3005)
+const wkbMultiPolygonZM = UInt32(3006)
+const wkbGeometryCollectionZM = UInt32(3007)
+const wkbCircularStringZM = UInt32(3008)
+const wkbCompoundCurveZM = UInt32(3009)
+const wkbCurvePolygonZM = UInt32(3010)
+const wkbMultiCurveZM = UInt32(3011)
+const wkbMultiSurfaceZM = UInt32(3012)
+const wkbCurveZM = UInt32(3013)
+const wkbSurfaceZM = UInt32(3014)
+const wkbPolyhedralSurfaceZM = UInt32(3015)
+const wkbTINZM = UInt32(3016)
+const wkbTriangleZM = UInt32(3017)
 const wkbPoint25D = UInt32(0x0000000080000001)
 const wkbLineString25D = UInt32(0x0000000080000002)
 const wkbPolygon25D = UInt32(0x0000000080000003)
@@ -722,7 +738,7 @@ const OJUndefined = UInt32(0)
 const OJLeft = UInt32(1)
 const OJRight = UInt32(2)
 
-type OGRField # none, line 973:
+type OGRField # none, line 998:
     _OGRField::GIntBig
 end
 
@@ -907,41 +923,41 @@ const GWKAOM_Max = UInt32(4)
 const GWKAOM_Min = UInt32(5)
 const GWKAOM_Quant = UInt32(6)
 
-type GDALWarpOptions # none, line 1209:
-    papszWarpOptions::Ptr{Cstring} # none, line 1210:
-    dfWarpMemoryLimit::Cdouble # none, line 1211:
-    eResampleAlg::GDALResampleAlg # none, line 1212:
-    eWorkingDataType::GDALDataType # none, line 1213:
-    hSrcDS::GDALDatasetH # none, line 1214:
-    hDstDS::GDALDatasetH # none, line 1215:
-    nBandCount::Cint # none, line 1216:
-    panSrcBands::Ptr{Cint} # none, line 1217:
-    panDstBands::Ptr{Cint} # none, line 1218:
-    nSrcAlphaBand::Cint # none, line 1219:
-    nDstAlphaBand::Cint # none, line 1220:
-    padfSrcNoDataReal::Ptr{Cdouble} # none, line 1221:
-    padfSrcNoDataImag::Ptr{Cdouble} # none, line 1222:
-    padfDstNoDataReal::Ptr{Cdouble} # none, line 1223:
-    padfDstNoDataImag::Ptr{Cdouble} # none, line 1224:
-    pfnProgress::GDALProgressFunc # none, line 1225:
-    pProgressArg::Ptr{Void} # none, line 1226:
-    pfnTransformer::GDALTransformerFunc # none, line 1227:
-    pTransformerArg::Ptr{Void} # none, line 1228:
-    papfnSrcPerBandValidityMaskFunc::Ptr{GDALMaskFunc} # none, line 1229:
-    papSrcPerBandValidityMaskFuncArg::Ptr{Ptr{Void}} # none, line 1230:
-    pfnSrcValidityMaskFunc::GDALMaskFunc # none, line 1231:
-    pSrcValidityMaskFuncArg::Ptr{Void} # none, line 1232:
-    pfnSrcDensityMaskFunc::GDALMaskFunc # none, line 1233:
-    pSrcDensityMaskFuncArg::Ptr{Void} # none, line 1234:
-    pfnDstDensityMaskFunc::GDALMaskFunc # none, line 1235:
-    pDstDensityMaskFuncArg::Ptr{Void} # none, line 1236:
-    pfnDstValidityMaskFunc::GDALMaskFunc # none, line 1237:
-    pDstValidityMaskFuncArg::Ptr{Void} # none, line 1238:
-    pfnPreWarpChunkProcessor::Ptr{Void} # none, line 1239:
-    pPreWarpProcessorArg::Ptr{Void} # none, line 1240:
-    pfnPostWarpChunkProcessor::Ptr{Void} # none, line 1241:
-    pPostWarpProcessorArg::Ptr{Void} # none, line 1242:
-    hCutline::Ptr{Void} # none, line 1243:
+type GDALWarpOptions # none, line 1234:
+    papszWarpOptions::Ptr{Cstring} # none, line 1235:
+    dfWarpMemoryLimit::Cdouble # none, line 1236:
+    eResampleAlg::GDALResampleAlg # none, line 1237:
+    eWorkingDataType::GDALDataType # none, line 1238:
+    hSrcDS::GDALDatasetH # none, line 1239:
+    hDstDS::GDALDatasetH # none, line 1240:
+    nBandCount::Cint # none, line 1241:
+    panSrcBands::Ptr{Cint} # none, line 1242:
+    panDstBands::Ptr{Cint} # none, line 1243:
+    nSrcAlphaBand::Cint # none, line 1244:
+    nDstAlphaBand::Cint # none, line 1245:
+    padfSrcNoDataReal::Ptr{Cdouble} # none, line 1246:
+    padfSrcNoDataImag::Ptr{Cdouble} # none, line 1247:
+    padfDstNoDataReal::Ptr{Cdouble} # none, line 1248:
+    padfDstNoDataImag::Ptr{Cdouble} # none, line 1249:
+    pfnProgress::GDALProgressFunc # none, line 1250:
+    pProgressArg::Ptr{Void} # none, line 1251:
+    pfnTransformer::GDALTransformerFunc # none, line 1252:
+    pTransformerArg::Ptr{Void} # none, line 1253:
+    papfnSrcPerBandValidityMaskFunc::Ptr{GDALMaskFunc} # none, line 1254:
+    papSrcPerBandValidityMaskFuncArg::Ptr{Ptr{Void}} # none, line 1255:
+    pfnSrcValidityMaskFunc::GDALMaskFunc # none, line 1256:
+    pSrcValidityMaskFuncArg::Ptr{Void} # none, line 1257:
+    pfnSrcDensityMaskFunc::GDALMaskFunc # none, line 1258:
+    pSrcDensityMaskFuncArg::Ptr{Void} # none, line 1259:
+    pfnDstDensityMaskFunc::GDALMaskFunc # none, line 1260:
+    pDstDensityMaskFuncArg::Ptr{Void} # none, line 1261:
+    pfnDstValidityMaskFunc::GDALMaskFunc # none, line 1262:
+    pDstValidityMaskFuncArg::Ptr{Void} # none, line 1263:
+    pfnPreWarpChunkProcessor::Ptr{Void} # none, line 1264:
+    pPreWarpProcessorArg::Ptr{Void} # none, line 1265:
+    pfnPostWarpChunkProcessor::Ptr{Void} # none, line 1266:
+    pPostWarpProcessorArg::Ptr{Void} # none, line 1267:
+    hCutline::Ptr{Void} # none, line 1268:
     dfCutlineBlendDist::Cdouble
 end
 
