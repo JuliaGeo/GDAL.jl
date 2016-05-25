@@ -200,6 +200,19 @@ end
 
 
 """
+    CPLSetCurrentErrorHandlerCatchDebug(int bCatchDebug) -> void
+
+Set if the current error handler should intercept debug messages, or if they should be processed by the previous handler.
+
+### Parameters
+* **bCatchDebug**: FALSE if the current error handler should not intercept debug messages
+"""
+function CPLSetCurrentErrorHandlerCatchDebug(bCatchDebug::Cint)
+    ccall((:CPLSetCurrentErrorHandlerCatchDebug,libgdal),Void,(Cint,),bCatchDebug)
+end
+
+
+"""
     CPLPopErrorHandler() -> void
 
 Pop error handler off stack.

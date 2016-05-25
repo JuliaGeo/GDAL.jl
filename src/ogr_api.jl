@@ -240,10 +240,26 @@ Get the dimension of the coordinates in this geometry.
 * **hGeom**: handle on the geometry to get the dimension of the coordinates from.
 
 ### Returns
-in practice this will return 2 or 3. It can also return 0 in the case of an empty point.
+this will return 2 or 3.
 """
 function getcoordinatedimension(arg1::Ptr{OGRGeometryH})
     ccall((:OGR_G_GetCoordinateDimension,libgdal),Cint,(Ptr{OGRGeometryH},),arg1)
+end
+
+
+"""
+    OGR_G_CoordinateDimension(OGRGeometryH hGeom) -> int
+
+Get the dimension of the coordinates in this geometry.
+
+### Parameters
+* **hGeom**: handle on the geometry to get the dimension of the coordinates from.
+
+### Returns
+this will return 2 for XY, 3 for XYZ and XYM, and 4 for XYZM data.
+"""
+function coordinatedimension(arg1::Ptr{OGRGeometryH})
+    ccall((:OGR_G_CoordinateDimension,libgdal),Cint,(Ptr{OGRGeometryH},),arg1)
 end
 
 
@@ -259,6 +275,68 @@ Set the coordinate dimension.
 """
 function setcoordinatedimension(arg1::Ptr{OGRGeometryH},arg2::Integer)
     ccall((:OGR_G_SetCoordinateDimension,libgdal),Void,(Ptr{OGRGeometryH},Cint),arg1,arg2)
+end
+
+
+"""
+    OGR_G_Is3D(OGRGeometryH hGeom) -> int
+
+See whether this geometry has Z coordinates.
+
+### Parameters
+* **hGeom**: handle on the geometry to check whether it has Z coordinates.
+
+### Returns
+TRUE if the geometry has Z coordinates.
+"""
+function is3d(arg1::Ptr{OGRGeometryH})
+    ccall((:OGR_G_Is3D,libgdal),Cint,(Ptr{OGRGeometryH},),arg1)
+end
+
+
+"""
+    OGR_G_IsMeasured(OGRGeometryH hGeom) -> int
+
+See whether this geometry is measured.
+
+### Parameters
+* **hGeom**: handle on the geometry to check whether it is measured.
+
+### Returns
+TRUE if the geometry has M coordinates.
+"""
+function ismeasured(arg1::Ptr{OGRGeometryH})
+    ccall((:OGR_G_IsMeasured,libgdal),Cint,(Ptr{OGRGeometryH},),arg1)
+end
+
+
+"""
+    OGR_G_Set3D(OGRGeometryH hGeom,
+                int bIs3D) -> void
+
+Add or remove the Z coordinate dimension.
+
+### Parameters
+* **hGeom**: handle on the geometry to set or unset the Z dimension.
+* **bIs3D**: Should the geometry have a Z dimension, either TRUE or FALSE.
+"""
+function set3d(arg1::Ptr{OGRGeometryH},arg2::Integer)
+    ccall((:OGR_G_Set3D,libgdal),Void,(Ptr{OGRGeometryH},Cint),arg1,arg2)
+end
+
+
+"""
+    OGR_G_SetMeasured(OGRGeometryH hGeom,
+                      int bIsMeasured) -> void
+
+Set the coordinate dimension.
+
+### Parameters
+* **hGeom**: handle on the geometry to set or unset the M dimension.
+* **bIsMeasured**: Should the geometry have a M dimension, either TRUE or FALSE.
+"""
+function setmeasured(arg1::Ptr{OGRGeometryH},arg2::Integer)
+    ccall((:OGR_G_SetMeasured,libgdal),Void,(Ptr{OGRGeometryH},Cint),arg1,arg2)
 end
 
 
@@ -1354,6 +1432,38 @@ end
 
 
 """
+    OGR_G_GetPointsZM(OGRGeometryH hGeom,
+                      void * pabyX,
+                      int nXStride,
+                      void * pabyY,
+                      int nYStride,
+                      void * pabyZ,
+                      int nZStride,
+                      void * pabyM,
+                      int nMStride) -> int
+
+Returns all points of line string.
+
+### Parameters
+* **hGeom**: handle to the geometry from which to get the coordinates.
+* **pabyX**: a buffer of at least (sizeof(double) * nXStride * nPointCount) bytes, may be NULL.
+* **nXStride**: the number of bytes between 2 elements of pabyX.
+* **pabyY**: a buffer of at least (sizeof(double) * nYStride * nPointCount) bytes, may be NULL.
+* **nYStride**: the number of bytes between 2 elements of pabyY.
+* **pabyZ**: a buffer of at last size (sizeof(double) * nZStride * nPointCount) bytes, may be NULL.
+* **nZStride**: the number of bytes between 2 elements of pabyZ.
+* **pabyM**: a buffer of at last size (sizeof(double) * nMStride * nPointCount) bytes, may be NULL.
+* **nMStride**: the number of bytes between 2 elements of pabyM.
+
+### Returns
+the number of points
+"""
+function getpointszm(hGeom::Ptr{OGRGeometryH},pabyX,nXStride::Integer,pabyY,nYStride::Integer,pabyZ,nZStride::Integer,pabyM,nMStride::Integer)
+    ccall((:OGR_G_GetPointsZM,libgdal),Cint,(Ptr{OGRGeometryH},Ptr{Void},Cint,Ptr{Void},Cint,Ptr{Void},Cint,Ptr{Void},Cint),hGeom,pabyX,nXStride,pabyY,nYStride,pabyZ,nZStride,pabyM,nMStride)
+end
+
+
+"""
     OGR_G_GetX(OGRGeometryH hGeom,
                int i) -> double
 
@@ -1408,6 +1518,24 @@ end
 
 
 """
+    OGR_G_GetM(OGRGeometryH hGeom,
+               int i) -> double
+
+Fetch the m coordinate of a point from a geometry.
+
+### Parameters
+* **hGeom**: handle to the geometry from which to get the M coordinate.
+* **i**: point to get the M coordinate.
+
+### Returns
+the M coordinate of this point.
+"""
+function getm(arg1::Ptr{OGRGeometryH},arg2::Integer)
+    ccall((:OGR_G_GetM,libgdal),Cdouble,(Ptr{OGRGeometryH},Cint),arg1,arg2)
+end
+
+
+"""
     OGR_G_GetPoint(OGRGeometryH hGeom,
                    int i,
                    double * pdfX,
@@ -1425,6 +1553,29 @@ Fetch a point in line string or a point geometry.
 """
 function getpoint(arg1::Ptr{OGRGeometryH},iPoint::Integer,arg2,arg3,arg4)
     ccall((:OGR_G_GetPoint,libgdal),Void,(Ptr{OGRGeometryH},Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble}),arg1,iPoint,arg2,arg3,arg4)
+end
+
+
+"""
+    OGR_G_GetPointZM(OGRGeometryH hGeom,
+                     int i,
+                     double * pdfX,
+                     double * pdfY,
+                     double * pdfZ,
+                     double * pdfM) -> void
+
+Fetch a point in line string or a point geometry.
+
+### Parameters
+* **hGeom**: handle to the geometry from which to get the coordinates.
+* **i**: the vertex to fetch, from 0 to getNumPoints()-1, zero for a point.
+* **pdfX**: value of x coordinate.
+* **pdfY**: value of y coordinate.
+* **pdfZ**: value of z coordinate.
+* **pdfM**: value of m coordinate.
+"""
+function getpointzm(arg1::Ptr{OGRGeometryH},iPoint::Integer,arg2,arg3,arg4,arg5)
+    ccall((:OGR_G_GetPointZM,libgdal),Void,(Ptr{OGRGeometryH},Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble}),arg1,iPoint,arg2,arg3,arg4,arg5)
 end
 
 
@@ -1484,6 +1635,50 @@ end
 
 
 """
+    OGR_G_SetPointM(OGRGeometryH hGeom,
+                    int i,
+                    double dfX,
+                    double dfY,
+                    double dfM) -> void
+
+Set the location of a vertex in a point or linestring geometry.
+
+### Parameters
+* **hGeom**: handle to the geometry to add a vertex to.
+* **i**: the index of the vertex to assign (zero based) or zero for a point.
+* **dfX**: input X coordinate to assign.
+* **dfY**: input Y coordinate to assign.
+* **dfM**: input M coordinate to assign.
+"""
+function setpointm(arg1::Ptr{OGRGeometryH},iPoint::Integer,arg2::Real,arg3::Real,arg4::Real)
+    ccall((:OGR_G_SetPointM,libgdal),Void,(Ptr{OGRGeometryH},Cint,Cdouble,Cdouble,Cdouble),arg1,iPoint,arg2,arg3,arg4)
+end
+
+
+"""
+    OGR_G_SetPointZM(OGRGeometryH hGeom,
+                     int i,
+                     double dfX,
+                     double dfY,
+                     double dfZ,
+                     double dfM) -> void
+
+Set the location of a vertex in a point or linestring geometry.
+
+### Parameters
+* **hGeom**: handle to the geometry to add a vertex to.
+* **i**: the index of the vertex to assign (zero based) or zero for a point.
+* **dfX**: input X coordinate to assign.
+* **dfY**: input Y coordinate to assign.
+* **dfZ**: input Z coordinate to assign.
+* **dfM**: input M coordinate to assign.
+"""
+function setpointzm(arg1::Ptr{OGRGeometryH},iPoint::Integer,arg2::Real,arg3::Real,arg4::Real,arg5::Real)
+    ccall((:OGR_G_SetPointZM,libgdal),Void,(Ptr{OGRGeometryH},Cint,Cdouble,Cdouble,Cdouble,Cdouble),arg1,iPoint,arg2,arg3,arg4,arg5)
+end
+
+
+"""
     OGR_G_AddPoint(OGRGeometryH hGeom,
                    double dfX,
                    double dfY,
@@ -1520,6 +1715,46 @@ end
 
 
 """
+    OGR_G_AddPointM(OGRGeometryH hGeom,
+                    double dfX,
+                    double dfY,
+                    double dfM) -> void
+
+Add a point to a geometry (line string or point).
+
+### Parameters
+* **hGeom**: handle to the geometry to add a point to.
+* **dfX**: x coordinate of point to add.
+* **dfY**: y coordinate of point to add.
+* **dfM**: m coordinate of point to add.
+"""
+function addpointm(arg1::Ptr{OGRGeometryH},arg2::Real,arg3::Real,arg4::Real)
+    ccall((:OGR_G_AddPointM,libgdal),Void,(Ptr{OGRGeometryH},Cdouble,Cdouble,Cdouble),arg1,arg2,arg3,arg4)
+end
+
+
+"""
+    OGR_G_AddPointZM(OGRGeometryH hGeom,
+                     double dfX,
+                     double dfY,
+                     double dfZ,
+                     double dfM) -> void
+
+Add a point to a geometry (line string or point).
+
+### Parameters
+* **hGeom**: handle to the geometry to add a point to.
+* **dfX**: x coordinate of point to add.
+* **dfY**: y coordinate of point to add.
+* **dfZ**: z coordinate of point to add.
+* **dfM**: m coordinate of point to add.
+"""
+function addpointzm(arg1::Ptr{OGRGeometryH},arg2::Real,arg3::Real,arg4::Real,arg5::Real)
+    ccall((:OGR_G_AddPointZM,libgdal),Void,(Ptr{OGRGeometryH},Cdouble,Cdouble,Cdouble,Cdouble),arg1,arg2,arg3,arg4,arg5)
+end
+
+
+"""
     OGR_G_SetPoints(OGRGeometryH hGeom,
                     int nPointsIn,
                     void * pabyX,
@@ -1543,6 +1778,37 @@ Assign all points in a point or a line string geometry.
 """
 function setpoints(hGeom::Ptr{OGRGeometryH},nPointsIn::Integer,pabyX,nXStride::Integer,pabyY,nYStride::Integer,pabyZ,nZStride::Integer)
     ccall((:OGR_G_SetPoints,libgdal),Void,(Ptr{OGRGeometryH},Cint,Ptr{Void},Cint,Ptr{Void},Cint,Ptr{Void},Cint),hGeom,nPointsIn,pabyX,nXStride,pabyY,nYStride,pabyZ,nZStride)
+end
+
+
+"""
+    OGR_G_SetPointsZM(OGRGeometryH hGeom,
+                      int nPointsIn,
+                      void * pabyX,
+                      int nXStride,
+                      void * pabyY,
+                      int nYStride,
+                      void * pabyZ,
+                      int nZStride,
+                      void * pabyM,
+                      int nMStride) -> void
+
+Assign all points in a point or a line string geometry.
+
+### Parameters
+* **hGeom**: handle to the geometry to set the coordinates.
+* **nPointsIn**: number of points being passed in padfX and padfY.
+* **pabyX**: list of X coordinates (double values) of points being assigned.
+* **nXStride**: the number of bytes between 2 elements of pabyX.
+* **pabyY**: list of Y coordinates (double values) of points being assigned.
+* **nYStride**: the number of bytes between 2 elements of pabyY.
+* **pabyZ**: list of Z coordinates (double values) of points being assigned (if not NULL, upgrades the geometry to have Z coordinate).
+* **nZStride**: the number of bytes between 2 elements of pabyZ.
+* **pabyM**: list of M coordinates (double values) of points being assigned (if not NULL, upgrades the geometry to have M coordinate).
+* **nMStride**: the number of bytes between 2 elements of pabyM.
+"""
+function setpointszm(hGeom::Ptr{OGRGeometryH},nPointsIn::Integer,pabyX,nXStride::Integer,pabyY,nYStride::Integer,pabyZ,nZStride::Integer,pabyM,nMStride::Integer)
+    ccall((:OGR_G_SetPointsZM,libgdal),Void,(Ptr{OGRGeometryH},Cint,Ptr{Void},Cint,Ptr{Void},Cint,Ptr{Void},Cint,Ptr{Void},Cint),hGeom,nPointsIn,pabyX,nXStride,pabyY,nYStride,pabyZ,nZStride,pabyM,nMStride)
 end
 
 

@@ -13,6 +13,12 @@ const CPLE_AssertionFailed = 7
 const CPLE_NoWriteAccess = 8
 const CPLE_UserInterrupt = 9
 const CPLE_ObjectNull = 10
+const CPLE_HttpResponse = 11
+const CPLE_AWSBucketNotFound = 12
+const CPLE_AWSObjectNotFound = 13
+const CPLE_AWSAccessDenied = 14
+const CPLE_AWSInvalidCredentials = 15
+const CPLE_AWSSignatureDoesNotMatch = 16
 
 # const CPLAssert = expr
 
@@ -132,8 +138,6 @@ const CPL_IS_LSB = 1
 # Skipping MacroDefinition: CPL_NO_RETURN __attribute__ ( ( noreturn ) )
 # Skipping MacroDefinition: CPL_RETURNS_NONNULL __attribute__ ( ( returns_nonnull ) )
 # Skipping MacroDefinition: CPL_WARN_DEPRECATED ( x ) __attribute__ ( ( deprecated ( x ) ) )
-
-# const CPL_WARN_DEPRECATED_IF_GDAL_COMPILATION = x
 # Skipping MacroDefinition: CPL_IS_DOUBLE_A_INT ( d ) ( ( double ) ( int ) ( d ) == ( d ) )
 # Skipping MacroDefinition: CPL_FALLTHROUGH [ [ clang : : fallthrough ] ] ;
 
@@ -402,42 +406,6 @@ end
 
 typealias GDALDerivedPixelFunc Ptr{Void}
 
-immutable Array_2_Cdouble
-    d1::Cdouble
-    d2::Cdouble
-end
-
-zero(::Type{Array_2_Cdouble}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 269:
-        Array_2_Cdouble(fill(zero(Cdouble),2)...)
-    end
-
-immutable Array_20_Cdouble
-    d1::Cdouble
-    d2::Cdouble
-    d3::Cdouble
-    d4::Cdouble
-    d5::Cdouble
-    d6::Cdouble
-    d7::Cdouble
-    d8::Cdouble
-    d9::Cdouble
-    d10::Cdouble
-    d11::Cdouble
-    d12::Cdouble
-    d13::Cdouble
-    d14::Cdouble
-    d15::Cdouble
-    d16::Cdouble
-    d17::Cdouble
-    d18::Cdouble
-    d19::Cdouble
-    d20::Cdouble
-end
-
-zero(::Type{Array_20_Cdouble}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 269:
-        Array_20_Cdouble(fill(zero(Cdouble),20)...)
-    end
-
 type GDALRPCInfo
     dfLINE_OFF::Cdouble
     dfSAMP_OFF::Cdouble
@@ -449,10 +417,10 @@ type GDALRPCInfo
     dfLAT_SCALE::Cdouble
     dfLONG_SCALE::Cdouble
     dfHEIGHT_SCALE::Cdouble
-    adfLINE_NUM_COEFF::Array_20_Cdouble
-    adfLINE_DEN_COEFF::Array_20_Cdouble
-    adfSAMP_NUM_COEFF::Array_20_Cdouble
-    adfSAMP_DEN_COEFF::Array_20_Cdouble
+    adfLINE_NUM_COEFF::NTuple{20,Cdouble}
+    adfLINE_DEN_COEFF::NTuple{20,Cdouble}
+    adfSAMP_NUM_COEFF::NTuple{20,Cdouble}
+    adfSAMP_DEN_COEFF::NTuple{20,Cdouble}
     dfMIN_LONG::Cdouble
     dfMIN_LAT::Cdouble
     dfMAX_LONG::Cdouble
@@ -544,19 +512,8 @@ const GDAL_GTI2_SIGNATURE = "GTI2"
 
 typealias GDALTransformerFunc Ptr{Void}
 
-immutable Array_4_GByte
-    d1::GByte
-    d2::GByte
-    d3::GByte
-    d4::GByte
-end
-
-zero(::Type{Array_4_GByte}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 269:
-        Array_4_GByte(fill(zero(GByte),4)...)
-    end
-
 type GDALTransformerInfo
-    abySignature::Array_4_GByte
+    abySignature::NTuple{4,GByte}
     pszClassName::Cstring
     pfnTransform::GDALTransformerFunc
     pfnCleanup::Ptr{Void}
@@ -567,22 +524,9 @@ end
 typealias GDALContourWriter Ptr{Void}
 typealias GDALContourGeneratorH Ptr{Void}
 
-immutable Array_6_Cdouble
-    d1::Cdouble
-    d2::Cdouble
-    d3::Cdouble
-    d4::Cdouble
-    d5::Cdouble
-    d6::Cdouble
-end
-
-zero(::Type{Array_6_Cdouble}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 269:
-        Array_6_Cdouble(fill(zero(Cdouble),6)...)
-    end
-
 type OGRContourWriterInfo
     hLayer::Ptr{Void}
-    adfGeoTransform::Array_6_Cdouble
+    adfGeoTransform::NTuple{6,Cdouble}
     nElevField::Cint
     nIDField::Cint
     nNextID::Cint
@@ -670,19 +614,9 @@ end
 type GDALGridContext
 end
 
-immutable Array_3_Cint
-    d1::Cint
-    d2::Cint
-    d3::Cint
-end
-
-zero(::Type{Array_3_Cint}) = begin  # /home/martijn/.julia/v0.5/Clang/src/wrap_c.jl, line 269:
-        Array_3_Cint(fill(zero(Cint),3)...)
-    end
-
 type GDALTriFacet
-    anVertexIdx::Array_3_Cint
-    anNeighborIdx::Array_3_Cint
+    anVertexIdx::NTuple{3,Cint}
+    anNeighborIdx::NTuple{3,Cint}
 end
 
 type GDALTriBarycentricCoefficients
@@ -732,15 +666,13 @@ const OGRERR_FAILURE = 6
 const OGRERR_UNSUPPORTED_SRS = 7
 const OGRERR_INVALID_HANDLE = 8
 const OGRERR_NON_EXISTING_FEATURE = 9
-
-# Skipping MacroDefinition: wkbCurve ( ( OGRwkbGeometryType ) 13 )
-# Skipping MacroDefinition: wkbSurface ( ( OGRwkbGeometryType ) 14 )
-
 const wkb25DBit = 0x80000000
 
 # Skipping MacroDefinition: wkbFlatten ( x ) OGR_GT_Flatten ( ( OGRwkbGeometryType ) ( x ) )
-# Skipping MacroDefinition: wkbHasZ ( x ) OGR_GT_HasZ ( x )
+# Skipping MacroDefinition: wkbHasZ ( x ) ( OGR_GT_HasZ ( x ) != 0 )
 # Skipping MacroDefinition: wkbSetZ ( x ) OGR_GT_SetZ ( x )
+# Skipping MacroDefinition: wkbHasM ( x ) ( OGR_GT_HasM ( x ) != 0 )
+# Skipping MacroDefinition: wkbSetM ( x ) OGR_GT_SetM ( x )
 
 const ogrZMarker = 0x21125711
 
@@ -757,7 +689,10 @@ const OGR_F_VAL_NULL = 0x00000001
 const OGR_F_VAL_GEOM_TYPE = 0x00000002
 const OGR_F_VAL_WIDTH = 0x00000004
 const OGR_F_VAL_ALLOW_NULL_WHEN_DEFAULT = 0x00000008
-const OGR_F_VAL_ALL = 0x07ffffff
+const OGR_F_VAL_ALLOW_DIFFERENT_GEOM_DIM = 0x00000010
+
+# Skipping MacroDefinition: OGR_F_VAL_ALL ( 0x7FFFFFFF & ~ OGR_F_VAL_ALLOW_DIFFERENT_GEOM_DIM )
+
 const OGRNullFID = -1
 const OGRUnsetMarker = -21121
 
@@ -780,12 +715,14 @@ const OLCStringsAsUTF8 = "StringsAsUTF8"
 const OLCIgnoreFields = "IgnoreFields"
 const OLCCreateGeomField = "CreateGeomField"
 const OLCCurveGeometries = "CurveGeometries"
+const OLCMeasuredGeometries = "MeasuredGeometries"
 const ODsCCreateLayer = "CreateLayer"
 const ODsCDeleteLayer = "DeleteLayer"
 const ODsCCreateGeomFieldAfterCreateLayer = "CreateGeomFieldAfterCreateLayer"
 const ODsCCurveGeometries = "CurveGeometries"
 const ODsCTransactions = "Transactions"
 const ODsCEmulatedTransactions = "EmulatedTransactions"
+const ODsCMeasuredGeometries = "MeasuredGeometries"
 const ODrCCreateDataSource = "CreateDataSource"
 const ODrCDeleteDataSource = "DeleteDataSource"
 const OLMD_FID64 = "OLMD_FID64"
@@ -826,6 +763,11 @@ const wkbCompoundCurve = (UInt32)(9)
 const wkbCurvePolygon = (UInt32)(10)
 const wkbMultiCurve = (UInt32)(11)
 const wkbMultiSurface = (UInt32)(12)
+const wkbCurve = (UInt32)(13)
+const wkbSurface = (UInt32)(14)
+const wkbPolyhedralSurface = (UInt32)(15)
+const wkbTIN = (UInt32)(16)
+const wkbTriangle = (UInt32)(17)
 const wkbNone = (UInt32)(100)
 const wkbLinearRing = (UInt32)(101)
 const wkbCircularStringZ = (UInt32)(1008)
@@ -833,6 +775,45 @@ const wkbCompoundCurveZ = (UInt32)(1009)
 const wkbCurvePolygonZ = (UInt32)(1010)
 const wkbMultiCurveZ = (UInt32)(1011)
 const wkbMultiSurfaceZ = (UInt32)(1012)
+const wkbCurveZ = (UInt32)(1013)
+const wkbSurfaceZ = (UInt32)(1014)
+const wkbPolyhedralSurfaceZ = (UInt32)(1015)
+const wkbTINZ = (UInt32)(1016)
+const wkbTriangleZ = (UInt32)(1017)
+const wkbPointM = (UInt32)(2001)
+const wkbLineStringM = (UInt32)(2002)
+const wkbPolygonM = (UInt32)(2003)
+const wkbMultiPointM = (UInt32)(2004)
+const wkbMultiLineStringM = (UInt32)(2005)
+const wkbMultiPolygonM = (UInt32)(2006)
+const wkbGeometryCollectionM = (UInt32)(2007)
+const wkbCircularStringM = (UInt32)(2008)
+const wkbCompoundCurveM = (UInt32)(2009)
+const wkbCurvePolygonM = (UInt32)(2010)
+const wkbMultiCurveM = (UInt32)(2011)
+const wkbMultiSurfaceM = (UInt32)(2012)
+const wkbCurveM = (UInt32)(2013)
+const wkbSurfaceM = (UInt32)(2014)
+const wkbPolyhedralSurfaceM = (UInt32)(2015)
+const wkbTINM = (UInt32)(2016)
+const wkbTriangleM = (UInt32)(2017)
+const wkbPointZM = (UInt32)(3001)
+const wkbLineStringZM = (UInt32)(3002)
+const wkbPolygonZM = (UInt32)(3003)
+const wkbMultiPointZM = (UInt32)(3004)
+const wkbMultiLineStringZM = (UInt32)(3005)
+const wkbMultiPolygonZM = (UInt32)(3006)
+const wkbGeometryCollectionZM = (UInt32)(3007)
+const wkbCircularStringZM = (UInt32)(3008)
+const wkbCompoundCurveZM = (UInt32)(3009)
+const wkbCurvePolygonZM = (UInt32)(3010)
+const wkbMultiCurveZM = (UInt32)(3011)
+const wkbMultiSurfaceZM = (UInt32)(3012)
+const wkbCurveZM = (UInt32)(3013)
+const wkbSurfaceZM = (UInt32)(3014)
+const wkbPolyhedralSurfaceZM = (UInt32)(3015)
+const wkbTINZM = (UInt32)(3016)
+const wkbTriangleZM = (UInt32)(3017)
 const wkbPoint25D = (UInt32)(0x0000000080000001)
 const wkbLineString25D = (UInt32)(0x0000000080000002)
 const wkbPolygon25D = (UInt32)(0x0000000080000003)
@@ -857,6 +838,11 @@ const wkbCompoundCurve = (UInt32)(9)
 const wkbCurvePolygon = (UInt32)(10)
 const wkbMultiCurve = (UInt32)(11)
 const wkbMultiSurface = (UInt32)(12)
+const wkbCurve = (UInt32)(13)
+const wkbSurface = (UInt32)(14)
+const wkbPolyhedralSurface = (UInt32)(15)
+const wkbTIN = (UInt32)(16)
+const wkbTriangle = (UInt32)(17)
 const wkbNone = (UInt32)(100)
 const wkbLinearRing = (UInt32)(101)
 const wkbCircularStringZ = (UInt32)(1008)
@@ -864,6 +850,45 @@ const wkbCompoundCurveZ = (UInt32)(1009)
 const wkbCurvePolygonZ = (UInt32)(1010)
 const wkbMultiCurveZ = (UInt32)(1011)
 const wkbMultiSurfaceZ = (UInt32)(1012)
+const wkbCurveZ = (UInt32)(1013)
+const wkbSurfaceZ = (UInt32)(1014)
+const wkbPolyhedralSurfaceZ = (UInt32)(1015)
+const wkbTINZ = (UInt32)(1016)
+const wkbTriangleZ = (UInt32)(1017)
+const wkbPointM = (UInt32)(2001)
+const wkbLineStringM = (UInt32)(2002)
+const wkbPolygonM = (UInt32)(2003)
+const wkbMultiPointM = (UInt32)(2004)
+const wkbMultiLineStringM = (UInt32)(2005)
+const wkbMultiPolygonM = (UInt32)(2006)
+const wkbGeometryCollectionM = (UInt32)(2007)
+const wkbCircularStringM = (UInt32)(2008)
+const wkbCompoundCurveM = (UInt32)(2009)
+const wkbCurvePolygonM = (UInt32)(2010)
+const wkbMultiCurveM = (UInt32)(2011)
+const wkbMultiSurfaceM = (UInt32)(2012)
+const wkbCurveM = (UInt32)(2013)
+const wkbSurfaceM = (UInt32)(2014)
+const wkbPolyhedralSurfaceM = (UInt32)(2015)
+const wkbTINM = (UInt32)(2016)
+const wkbTriangleM = (UInt32)(2017)
+const wkbPointZM = (UInt32)(3001)
+const wkbLineStringZM = (UInt32)(3002)
+const wkbPolygonZM = (UInt32)(3003)
+const wkbMultiPointZM = (UInt32)(3004)
+const wkbMultiLineStringZM = (UInt32)(3005)
+const wkbMultiPolygonZM = (UInt32)(3006)
+const wkbGeometryCollectionZM = (UInt32)(3007)
+const wkbCircularStringZM = (UInt32)(3008)
+const wkbCompoundCurveZM = (UInt32)(3009)
+const wkbCurvePolygonZM = (UInt32)(3010)
+const wkbMultiCurveZM = (UInt32)(3011)
+const wkbMultiSurfaceZM = (UInt32)(3012)
+const wkbCurveZM = (UInt32)(3013)
+const wkbSurfaceZM = (UInt32)(3014)
+const wkbPolyhedralSurfaceZM = (UInt32)(3015)
+const wkbTINZM = (UInt32)(3016)
+const wkbTriangleZM = (UInt32)(3017)
 const wkbPoint25D = (UInt32)(0x0000000080000001)
 const wkbLineString25D = (UInt32)(0x0000000080000002)
 const wkbPolygon25D = (UInt32)(0x0000000080000003)

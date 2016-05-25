@@ -575,7 +575,7 @@ Create an RPC based transformer.
 ### Parameters
 * **psRPCInfo**: Definition of the RPC parameters.
 * **bReversed**: If true "forward" transformation will be lat/long to pixel/line instead of the normal pixel/line to lat/long.
-* **dfPixErrThreshold**: the error (measured in pixels) allowed in the iterative solution of pixel/line to lat/long computations (the other way is always exact given the equations).
+* **dfPixErrThreshold**: the error (measured in pixels) allowed in the iterative solution of pixel/line to lat/long computations (the other way is always exact given the equations). Starting with GDAL 2.1, this may also be set through the RPC_PIXEL_ERROR_THRESHOLD transformer option.
 * **papszOptions**: Other transformer options (i.e. RPC_HEIGHT=<z>).
 
 ### Returns
