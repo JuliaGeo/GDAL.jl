@@ -12,11 +12,13 @@ function isgdal2(name, handle)
 end
 
 libgdal = library_dependency("libgdal",
-                             aliases=["gdal","gdal210","gdal201","gdal200",
+                             aliases=["gdal","gdal201","gdal200",
                                       "gdal_w32","gdal_w64"],
                              validate=isgdal2)
 
-@windows_only provides(Conda.Manager, "libgdal", libgdal)
-@unix_only provides(Conda.Manager, "libgdal", libgdal)
+# conda-forge has a well maintained gdal recipe
+# https://github.com/conda-forge/gdal-feedstock
+Conda.add_channel("conda-forge")
+provides(Conda.Manager, "gdal", libgdal)
 
 @BinDeps.install Dict(:libgdal => :libgdal)
