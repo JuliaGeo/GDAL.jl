@@ -6,7 +6,6 @@ using Conda
 libgdal = library_dependency("libgdal", aliases=["gdal","gdal111","gdal201",
                                                  "gdal_w32","gdal_w64","libgdal-20"])
 
-# install older gdal on windows
 @windows_only begin
     using WinRPM
     push!(WinRPM.sources, "http://download.opensuse.org/repositories/home:yeesian/openSUSE_13.2")
