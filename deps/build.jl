@@ -1,19 +1,18 @@
 using BinDeps
-using Conda
 
 @BinDeps.setup
 
-function isgdal2(name, handle)
+function version_check(name, handle)
     fptr = Libdl.dlsym(handle, :GDALVersionInfo)
     versionptr = ccall(fptr,Cstring,(Cstring,),"RELEASE_NAME")
     versionstring = bytestring(versionptr)
     gdalversion = convert(VersionNumber, versionstring)
-    gdalversion >= v"2.0.0"
+    gdalversion >= v"2.1.0"
 end
 
 libgdal = library_dependency("libgdal",
                              aliases=["gdal","gdal201", "gdal_w32","gdal_w64","libgdal-20"],
-                             validate=isgdal2)
+                             validate=version_check)
 
 @windows_only begin
     using WinRPM
@@ -21,6 +20,13 @@ libgdal = library_dependency("libgdal",
     WinRPM.update()
     provides(WinRPM.RPM, "gdal", [libgdal], os = :Windows)
 end
-@unix_only provides(Conda.Manager, "libgdal", libgdal)
+
+@unix_only begin
+    using Conda
+    # conda-forge has an up to date gdal recipe
+    # https://github.com/conda-forge/gdal-feedstock
+    Conda.add_channel("conda-forge")
+    provides(Conda.Manager, "gdal", libgdal)
+end
 
 @BinDeps.install Dict(:libgdal => :libgdal)
