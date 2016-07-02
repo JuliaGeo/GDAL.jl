@@ -52,7 +52,6 @@ const CPL_FRMT_GB_WITHOUT_PREFIX = "ll"
 const CPL_IS_LSB = 1
 const FALSE = 0
 const TRUE = 1
-const EMULATED_BOOL = bool
 typealias GInt32 Cint
 typealias GUInt32 UInt32
 typealias GInt16 Int16

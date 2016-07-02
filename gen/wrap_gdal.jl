@@ -26,7 +26,8 @@ skip_expr = [:(const CPL_LSBPTR16 = x),
              :(const CPL_LSBPTR64 = x),
              :(const CPL_WARN_DEPRECATED_IF_GDAL_COMPILATION = x),
              :(const CPL_STATIC_ASSERT_IF_AVAILABLE = x),
-             :(const CPLAssert = expr)]
+             :(const CPLAssert = expr),
+             :(const EMULATED_BOOL = bool)]
 
 skip_func = [:CPLErrorV] # problem with va_list ihnorton/Clang.jl#17
 
