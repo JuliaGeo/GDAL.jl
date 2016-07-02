@@ -143,8 +143,8 @@ const CPL_IS_LSB = 1
 
 const FALSE = 0
 const TRUE = 1
-const EMULATED_BOOL = bool
 
+# const EMULATED_BOOL = bool
 # Skipping MacroDefinition: VOLATILE_BOOL volatile bool
 
 typealias GInt32 Cint
