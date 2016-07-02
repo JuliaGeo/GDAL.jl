@@ -1272,6 +1272,26 @@ typealias GDALWarpOperationH Ptr{Void}
 typealias FilterFuncType Ptr{Void}
 typealias FilterFunc4ValuesType Ptr{Void}
 
+const VRT_NODATA_UNSET = -1234.56
+
+typealias VRTImageReadFunc Ptr{Void}
+typealias VRTDriverH Ptr{Void}
+typealias VRTSourceH Ptr{Void}
+typealias VRTSimpleSourceH Ptr{Void}
+typealias VRTAveragedSourceH Ptr{Void}
+typealias VRTComplexSourceH Ptr{Void}
+typealias VRTFilteredSourceH Ptr{Void}
+typealias VRTKernelFilteredSourceH Ptr{Void}
+typealias VRTAverageFilteredSourceH Ptr{Void}
+typealias VRTFuncSourceH Ptr{Void}
+typealias VRTDatasetH Ptr{Void}
+typealias VRTWarpedDatasetH Ptr{Void}
+typealias VRTRasterBandH Ptr{Void}
+typealias VRTSourcedRasterBandH Ptr{Void}
+typealias VRTWarpedRasterBandH Ptr{Void}
+typealias VRTDerivedRasterBandH Ptr{Void}
+typealias VRTRawRasterBandH Ptr{Void}
+
 const SRS_WKT_WGS84 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]"
 const SRS_PT_ALBERS_CONIC_EQUAL_AREA = "Albers_Conic_Equal_Area"
 const SRS_PT_AZIMUTHAL_EQUIDISTANT = "Azimuthal_Equidistant"

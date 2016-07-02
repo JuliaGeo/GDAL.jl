@@ -8,7 +8,10 @@ abstract GDALRasterBandH <: GDALMajorObjectH
 abstract OGRLayerH <: GDALMajorObjectH
 
 abstract OGRDataSourceH <: GDALDatasetH
+abstract VRTDatasetH <: GDALDatasetH
+
 abstract OGRSFDriverH <: GDALDriverH
+abstract VRTDriverH <: GDALDriverH
 
 abstract GDALAsyncReaderH
 abstract GDALColorTableH
@@ -34,3 +37,19 @@ abstract OGRStyleToolH
 abstract CPLErrorHandler
 abstract FilterFunc4ValuesType
 abstract FilterFuncType
+
+abstract VRTImageReadFunc
+abstract VRTSourceH
+abstract VRTSimpleSourceH
+abstract VRTAveragedSourceH
+abstract VRTComplexSourceH
+abstract VRTFilteredSourceH
+abstract VRTKernelFilteredSourceH
+abstract VRTAverageFilteredSourceH
+abstract VRTFuncSourceH
+abstract VRTWarpedDatasetH
+abstract VRTRasterBandH
+abstract VRTSourcedRasterBandH
+abstract VRTWarpedRasterBandH
+abstract VRTDerivedRasterBandH
+abstract VRTRawRasterBandH
