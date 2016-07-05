@@ -15,6 +15,7 @@ headerfiles = ["cpl_error.h",
                "gdal.h",
                "gdal_alg.h",
                "gdalwarper.h",
+               "gdal_vrt.h",
                "ogr_api.h",
                "ogr_core.h",
                "ogr_srs_api.h"]

@@ -23,6 +23,7 @@ cd(dirname(@__FILE__)) do
 
     include("tutorial_raster.jl")
     include("tutorial_vector.jl")
+    include("tutorial_vrt.jl")
 end
 
 GDAL.destroydrivermanager()

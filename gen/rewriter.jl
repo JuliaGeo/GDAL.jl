@@ -10,6 +10,7 @@ srcdir = joinpath(workdir, "../src")
 headerfiles = [
     "gdal.jl",
     "gdal_alg.jl",
+    "gdal_vrt.jl",
     "ogr_api.jl",
     "ogr_srs_api.jl"
 ]
@@ -88,9 +89,25 @@ check_nullpointer = [
     :GDALMaskFunc,
     :GDALWarpOperationH,
     :FilterFuncType,
-    :FilterFunc4ValuesType
-]
-
+    :FilterFunc4ValuesType,
+    :VRTAveragedSourceH,
+    :VRTAverageFilteredSourceH,
+    :VRTComplexSourceH,
+    :VRTDatasetH,
+    :VRTDerivedRasterBandH,
+    :VRTDriverH,
+    :VRTFilteredSourceH,
+    :VRTFuncSourceH,
+    :VRTImageReadFunc,
+    :VRTKernelFilteredSourceH,
+    :VRTRasterBandH,
+    :VRTRawRasterBandH,
+    :VRTSimpleSourceH,
+    :VRTSourcedRasterBandH,
+    :VRTSourceH,
+    :VRTWarpedDatasetH,
+    :VRTWarpedRasterBandH
+ ]
 
 use_type_parameter = [
     :GDALMajorObjectH,
