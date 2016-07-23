@@ -209,6 +209,8 @@ function rewriter(ex::Expr)
         if intypes[i] in check_nullpointer
             # wrap input type in Ptr{} since memory is managed by GDAL
             intypes[i] = Expr(:curly, :Ptr, intypes[i])
+        elseif intypes[i] == :(Ptr{Cstring})
+            intypes[i] = :StringList
         end
     end
     # ccall return type
@@ -216,6 +218,7 @@ function rewriter(ex::Expr)
     if rettype == :(Cstring)
         ex.args[2].args[1] = Expr(:call, :bytestring, ex.args[2].args[1])
     elseif rettype == :(Ptr{Cstring})
+        # TODO: this only unpacks the first of a list of strings
         ex.args[2].args[1] = Expr(:call, :unsafe_load, ex.args[2].args[1])
         ex.args[2].args[1] = Expr(:call, :bytestring, ex.args[2].args[1])
     elseif rettype in check_nullpointer
