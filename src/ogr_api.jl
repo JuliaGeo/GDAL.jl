@@ -3526,7 +3526,7 @@ Set field to 64 bit integer value.
 * **iField**: the field to fetch, from 0 to GetFieldCount()-1.
 * **nValue**: the value to assign.
 """
-function setfieldinteger64(arg1::Ptr{OGRFeatureH},arg2::Integer,arg3::GIntBig)
+function setfieldinteger64(arg1::Ptr{OGRFeatureH},arg2::Integer,arg3::Integer)
     ccall((:OGR_F_SetFieldInteger64,libgdal),Void,(Ptr{OGRFeatureH},Cint,GIntBig),arg1,arg2,arg3)
 end
 
@@ -3872,7 +3872,7 @@ Set the feature identifier.
 ### Returns
 On success OGRERR_NONE, or on failure some other value.
 """
-function setfid(arg1::Ptr{OGRFeatureH},arg2::GIntBig)
+function setfid(arg1::Ptr{OGRFeatureH},arg2::Integer)
     ccall((:OGR_F_SetFID,libgdal),OGRErr,(Ptr{OGRFeatureH},GIntBig),arg1,arg2)
 end
 
@@ -4289,7 +4289,7 @@ Move read cursor to the nIndex'th feature in the current resultset.
 ### Returns
 OGRERR_NONE on success or an error code.
 """
-function setnextbyindex{T <: OGRLayerH}(arg1::Ptr{T},arg2::GIntBig)
+function setnextbyindex{T <: OGRLayerH}(arg1::Ptr{T},arg2::Integer)
     ccall((:OGR_L_SetNextByIndex,libgdal),OGRErr,(Ptr{OGRLayerH},GIntBig),arg1,arg2)
 end
 
@@ -4307,7 +4307,7 @@ Fetch a feature by its identifier.
 ### Returns
 an handle to a feature now owned by the caller, or NULL on failure.
 """
-function getfeature{T <: OGRLayerH}(arg1::Ptr{T},arg2::GIntBig)
+function getfeature{T <: OGRLayerH}(arg1::Ptr{T},arg2::Integer)
     checknull(ccall((:OGR_L_GetFeature,libgdal),Ptr{OGRFeatureH},(Ptr{OGRLayerH},GIntBig),arg1,arg2))
 end
 
@@ -4361,7 +4361,7 @@ Delete feature from layer.
 ### Returns
 OGRERR_NONE if the operation works, otherwise an appropriate error code (e.g OGRERR_NON_EXISTING_FEATURE if the feature does not exist).
 """
-function deletefeature{T <: OGRLayerH}(arg1::Ptr{T},arg2::GIntBig)
+function deletefeature{T <: OGRLayerH}(arg1::Ptr{T},arg2::Integer)
     ccall((:OGR_L_DeleteFeature,libgdal),OGRErr,(Ptr{OGRLayerH},GIntBig),arg1,arg2)
 end
 

@@ -2854,7 +2854,7 @@ Set maximum cache memory.
 ### Parameters
 * **nNewSizeInBytes**: the maximum number of bytes for caching.
 """
-function setcachemax64(nBytes::GIntBig)
+function setcachemax64(nBytes::Integer)
     ccall((:GDALSetCacheMax64,libgdal),Void,(GIntBig,),nBytes)
 end
 
@@ -2943,7 +2943,7 @@ Create a CPLVirtualMem object from a GDAL dataset object.
 ### Returns
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
-function datasetgetvirtualmem{T <: GDALDatasetH}(hDS::Ptr{T},eRWFlag::GDALRWFlag,nXOff::Integer,nYOff::Integer,nXSize::Integer,nYSize::Integer,nBufXSize::Integer,nBufYSize::Integer,eBufType::GDALDataType,nBandCount::Integer,panBandMap,nPixelSpace::Integer,nLineSpace::GIntBig,nBandSpace::GIntBig,nCacheSize::Csize_t,nPageSizeHint::Csize_t,bSingleThreadUsage::Integer,papszOptions)
+function datasetgetvirtualmem{T <: GDALDatasetH}(hDS::Ptr{T},eRWFlag::GDALRWFlag,nXOff::Integer,nYOff::Integer,nXSize::Integer,nYSize::Integer,nBufXSize::Integer,nBufYSize::Integer,eBufType::GDALDataType,nBandCount::Integer,panBandMap,nPixelSpace::Integer,nLineSpace::Integer,nBandSpace::Integer,nCacheSize::Csize_t,nPageSizeHint::Csize_t,bSingleThreadUsage::Integer,papszOptions)
     ccall((:GDALDatasetGetVirtualMem,libgdal),Ptr{CPLVirtualMem},(Ptr{GDALDatasetH},GDALRWFlag,Cint,Cint,Cint,Cint,Cint,Cint,GDALDataType,Cint,Ptr{Cint},Cint,GIntBig,GIntBig,Csize_t,Csize_t,Cint,Ptr{Cstring}),hDS,eRWFlag,nXOff,nYOff,nXSize,nYSize,nBufXSize,nBufYSize,eBufType,nBandCount,panBandMap,nPixelSpace,nLineSpace,nBandSpace,nCacheSize,nPageSizeHint,bSingleThreadUsage,papszOptions)
 end
 
@@ -2987,7 +2987,7 @@ Create a CPLVirtualMem object from a GDAL raster band object.
 ### Returns
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
-function rasterbandgetvirtualmem{T <: GDALRasterBandH}(hBand::Ptr{T},eRWFlag::GDALRWFlag,nXOff::Integer,nYOff::Integer,nXSize::Integer,nYSize::Integer,nBufXSize::Integer,nBufYSize::Integer,eBufType::GDALDataType,nPixelSpace::Integer,nLineSpace::GIntBig,nCacheSize::Csize_t,nPageSizeHint::Csize_t,bSingleThreadUsage::Integer,papszOptions)
+function rasterbandgetvirtualmem{T <: GDALRasterBandH}(hBand::Ptr{T},eRWFlag::GDALRWFlag,nXOff::Integer,nYOff::Integer,nXSize::Integer,nYSize::Integer,nBufXSize::Integer,nBufYSize::Integer,eBufType::GDALDataType,nPixelSpace::Integer,nLineSpace::Integer,nCacheSize::Csize_t,nPageSizeHint::Csize_t,bSingleThreadUsage::Integer,papszOptions)
     ccall((:GDALRasterBandGetVirtualMem,libgdal),Ptr{CPLVirtualMem},(Ptr{GDALRasterBandH},GDALRWFlag,Cint,Cint,Cint,Cint,Cint,Cint,GDALDataType,Cint,GIntBig,Csize_t,Csize_t,Cint,Ptr{Cstring}),hBand,eRWFlag,nXOff,nYOff,nXSize,nYSize,nBufXSize,nBufYSize,eBufType,nPixelSpace,nLineSpace,nCacheSize,nPageSizeHint,bSingleThreadUsage,papszOptions)
 end
 
