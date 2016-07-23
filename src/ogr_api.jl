@@ -4801,7 +4801,7 @@ Intersection of two layers.
 ### Returns
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
-function intersection{T <: OGRLayerH}(arg1::Ptr{T},arg2::Ptr{T},arg3::Ptr{T},arg4,arg5::Ptr{GDALProgressFunc},arg6)
+function intersection{T <: OGRLayerH}(arg1::Ptr{T},arg2::Ptr{T},arg3::Ptr{T},arg4,arg5::Any,arg6)
     ccall((:OGR_L_Intersection,libgdal),OGRErr,(Ptr{OGRLayerH},Ptr{OGRLayerH},Ptr{OGRLayerH},StringList,Ptr{GDALProgressFunc},Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
 end
 
@@ -4827,7 +4827,7 @@ Union of two layers.
 ### Returns
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
-function union{T <: OGRLayerH}(arg1::Ptr{T},arg2::Ptr{T},arg3::Ptr{T},arg4,arg5::Ptr{GDALProgressFunc},arg6)
+function union{T <: OGRLayerH}(arg1::Ptr{T},arg2::Ptr{T},arg3::Ptr{T},arg4,arg5::Any,arg6)
     ccall((:OGR_L_Union,libgdal),OGRErr,(Ptr{OGRLayerH},Ptr{OGRLayerH},Ptr{OGRLayerH},StringList,Ptr{GDALProgressFunc},Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
 end
 
@@ -4853,7 +4853,7 @@ Symmetrical difference of two layers.
 ### Returns
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
-function symdifference{T <: OGRLayerH}(arg1::Ptr{T},arg2::Ptr{T},arg3::Ptr{T},arg4,arg5::Ptr{GDALProgressFunc},arg6)
+function symdifference{T <: OGRLayerH}(arg1::Ptr{T},arg2::Ptr{T},arg3::Ptr{T},arg4,arg5::Any,arg6)
     ccall((:OGR_L_SymDifference,libgdal),OGRErr,(Ptr{OGRLayerH},Ptr{OGRLayerH},Ptr{OGRLayerH},StringList,Ptr{GDALProgressFunc},Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
 end
 
@@ -4879,7 +4879,7 @@ Identify the features of this layer with the ones from the identity layer.
 ### Returns
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
-function identity{T <: OGRLayerH}(arg1::Ptr{T},arg2::Ptr{T},arg3::Ptr{T},arg4,arg5::Ptr{GDALProgressFunc},arg6)
+function identity{T <: OGRLayerH}(arg1::Ptr{T},arg2::Ptr{T},arg3::Ptr{T},arg4,arg5::Any,arg6)
     ccall((:OGR_L_Identity,libgdal),OGRErr,(Ptr{OGRLayerH},Ptr{OGRLayerH},Ptr{OGRLayerH},StringList,Ptr{GDALProgressFunc},Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
 end
 
@@ -4905,7 +4905,7 @@ Update this layer with features from the update layer.
 ### Returns
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
-function update{T <: OGRLayerH}(arg1::Ptr{T},arg2::Ptr{T},arg3::Ptr{T},arg4,arg5::Ptr{GDALProgressFunc},arg6)
+function update{T <: OGRLayerH}(arg1::Ptr{T},arg2::Ptr{T},arg3::Ptr{T},arg4,arg5::Any,arg6)
     ccall((:OGR_L_Update,libgdal),OGRErr,(Ptr{OGRLayerH},Ptr{OGRLayerH},Ptr{OGRLayerH},StringList,Ptr{GDALProgressFunc},Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
 end
 
@@ -4931,7 +4931,7 @@ Clip off areas that are not covered by the method layer.
 ### Returns
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
-function clip{T <: OGRLayerH}(arg1::Ptr{T},arg2::Ptr{T},arg3::Ptr{T},arg4,arg5::Ptr{GDALProgressFunc},arg6)
+function clip{T <: OGRLayerH}(arg1::Ptr{T},arg2::Ptr{T},arg3::Ptr{T},arg4,arg5::Any,arg6)
     ccall((:OGR_L_Clip,libgdal),OGRErr,(Ptr{OGRLayerH},Ptr{OGRLayerH},Ptr{OGRLayerH},StringList,Ptr{GDALProgressFunc},Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
 end
 
@@ -4957,7 +4957,7 @@ Remove areas that are covered by the method layer.
 ### Returns
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
-function erase{T <: OGRLayerH}(arg1::Ptr{T},arg2::Ptr{T},arg3::Ptr{T},arg4,arg5::Ptr{GDALProgressFunc},arg6)
+function erase{T <: OGRLayerH}(arg1::Ptr{T},arg2::Ptr{T},arg3::Ptr{T},arg4,arg5::Any,arg6)
     ccall((:OGR_L_Erase,libgdal),OGRErr,(Ptr{OGRLayerH},Ptr{OGRLayerH},Ptr{OGRLayerH},StringList,Ptr{GDALProgressFunc},Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6)
 end
 

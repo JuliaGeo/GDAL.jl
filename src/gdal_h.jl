@@ -250,7 +250,7 @@ end
 
 Create a copy of a dataset.
 """
-function createcopy{T <: GDALDriverH,S <: GDALDatasetH}(arg1::Ptr{T},arg2,arg3::Ptr{S},arg4::Integer,arg5,arg6::Ptr{GDALProgressFunc},arg7)
+function createcopy{T <: GDALDriverH,S <: GDALDatasetH}(arg1::Ptr{T},arg2,arg3::Ptr{S},arg4::Integer,arg5,arg6::Any,arg7)
     checknull(ccall((:GDALCreateCopy,libgdal),Ptr{GDALDatasetH},(Ptr{GDALDriverH},Cstring,Ptr{GDALDatasetH},Cint,StringList,Ptr{GDALProgressFunc},Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6,arg7))
 end
 
@@ -1048,7 +1048,7 @@ end
 
 Build raster overview(s)
 """
-function buildoverviews{T <: GDALDatasetH}(arg1::Ptr{T},arg2,arg3::Integer,arg4,arg5::Integer,arg6,arg7::Ptr{GDALProgressFunc},arg8)
+function buildoverviews{T <: GDALDatasetH}(arg1::Ptr{T},arg2,arg3::Integer,arg4,arg5::Integer,arg6,arg7::Any,arg8)
     ccall((:GDALBuildOverviews,libgdal),CPLErr,(Ptr{GDALDatasetH},Cstring,Cint,Ptr{Cint},Cint,Ptr{Cint},Ptr{GDALProgressFunc},Ptr{Void}),arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8)
 end
 
@@ -1114,7 +1114,7 @@ Copy all dataset raster data.
 ### Returns
 CE_None on success, or CE_Failure on failure.
 """
-function datasetcopywholeraster{T <: GDALDatasetH}(hSrcDS::Ptr{T},hDstDS::Ptr{T},papszOptions,pfnProgress::Ptr{GDALProgressFunc},pProgressData)
+function datasetcopywholeraster{T <: GDALDatasetH}(hSrcDS::Ptr{T},hDstDS::Ptr{T},papszOptions,pfnProgress::Any,pProgressData)
     ccall((:GDALDatasetCopyWholeRaster,libgdal),CPLErr,(Ptr{GDALDatasetH},Ptr{GDALDatasetH},StringList,Ptr{GDALProgressFunc},Ptr{Void}),hSrcDS,hDstDS,papszOptions,pfnProgress,pProgressData)
 end
 
@@ -1138,7 +1138,7 @@ Copy all raster band raster data.
 ### Returns
 CE_None on success, or CE_Failure on failure.
 """
-function rasterbandcopywholeraster{T <: GDALRasterBandH}(hSrcBand::Ptr{T},hDstBand::Ptr{T},papszOptions,pfnProgress::Ptr{GDALProgressFunc},pProgressData)
+function rasterbandcopywholeraster{T <: GDALRasterBandH}(hSrcBand::Ptr{T},hDstBand::Ptr{T},papszOptions,pfnProgress::Any,pProgressData)
     ccall((:GDALRasterBandCopyWholeRaster,libgdal),CPLErr,(Ptr{GDALRasterBandH},Ptr{GDALRasterBandH},StringList,Ptr{GDALProgressFunc},Ptr{Void}),hSrcBand,hDstBand,papszOptions,pfnProgress,pProgressData)
 end
 
@@ -1164,7 +1164,7 @@ Generate downsampled overviews.
 ### Returns
 CE_None on success or CE_Failure on failure.
 """
-function regenerateoverviews{T <: GDALRasterBandH}(hSrcBand::Ptr{T},nOverviewCount::Integer,pahOverviewBands,pszResampling,pfnProgress::Ptr{GDALProgressFunc},pProgressData)
+function regenerateoverviews{T <: GDALRasterBandH}(hSrcBand::Ptr{T},nOverviewCount::Integer,pahOverviewBands,pszResampling,pfnProgress::Any,pProgressData)
     ccall((:GDALRegenerateOverviews,libgdal),CPLErr,(Ptr{GDALRasterBandH},Cint,Ptr{GDALRasterBandH},Cstring,Ptr{GDALProgressFunc},Ptr{Void}),hSrcBand,nOverviewCount,pahOverviewBands,pszResampling,pfnProgress,pProgressData)
 end
 
@@ -1765,7 +1765,7 @@ end
 
 Compute image statistics.
 """
-function computerasterstatistics{T <: GDALRasterBandH}(arg1::Ptr{T},bApproxOK::Integer,pdfMin,pdfMax,pdfMean,pdfStdDev,pfnProgress::Ptr{GDALProgressFunc},pProgressData)
+function computerasterstatistics{T <: GDALRasterBandH}(arg1::Ptr{T},bApproxOK::Integer,pdfMin,pdfMax,pdfMean,pdfStdDev,pfnProgress::Any,pProgressData)
     ccall((:GDALComputeRasterStatistics,libgdal),CPLErr,(Ptr{GDALRasterBandH},Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Ptr{Cdouble},Ptr{GDALProgressFunc},Ptr{Void}),arg1,bApproxOK,pdfMin,pdfMax,pdfMean,pdfStdDev,pfnProgress,pProgressData)
 end
 
@@ -1884,7 +1884,7 @@ end
 
 Compute raster histogram.
 """
-function getrasterhistogram{T <: GDALRasterBandH}(hBand::Ptr{T},dfMin::Real,dfMax::Real,nBuckets::Integer,panHistogram,bIncludeOutOfRange::Integer,bApproxOK::Integer,pfnProgress::Ptr{GDALProgressFunc},pProgressData)
+function getrasterhistogram{T <: GDALRasterBandH}(hBand::Ptr{T},dfMin::Real,dfMax::Real,nBuckets::Integer,panHistogram,bIncludeOutOfRange::Integer,bApproxOK::Integer,pfnProgress::Any,pProgressData)
     ccall((:GDALGetRasterHistogram,libgdal),CPLErr,(Ptr{GDALRasterBandH},Cdouble,Cdouble,Cint,Ptr{Cint},Cint,Cint,Ptr{GDALProgressFunc},Ptr{Void}),hBand,dfMin,dfMax,nBuckets,panHistogram,bIncludeOutOfRange,bApproxOK,pfnProgress,pProgressData)
 end
 
@@ -1902,7 +1902,7 @@ end
 
 Compute raster histogram.
 """
-function getrasterhistogramex{T <: GDALRasterBandH}(hBand::Ptr{T},dfMin::Real,dfMax::Real,nBuckets::Integer,panHistogram,bIncludeOutOfRange::Integer,bApproxOK::Integer,pfnProgress::Ptr{GDALProgressFunc},pProgressData)
+function getrasterhistogramex{T <: GDALRasterBandH}(hBand::Ptr{T},dfMin::Real,dfMax::Real,nBuckets::Integer,panHistogram,bIncludeOutOfRange::Integer,bApproxOK::Integer,pfnProgress::Any,pProgressData)
     ccall((:GDALGetRasterHistogramEx,libgdal),CPLErr,(Ptr{GDALRasterBandH},Cdouble,Cdouble,Cint,Ptr{GUIntBig},Cint,Cint,Ptr{GDALProgressFunc},Ptr{Void}),hBand,dfMin,dfMax,nBuckets,panHistogram,bIncludeOutOfRange,bApproxOK,pfnProgress,pProgressData)
 end
 
@@ -1919,7 +1919,7 @@ end
 
 Fetch default raster histogram.
 """
-function getdefaulthistogram{T <: GDALRasterBandH}(hBand::Ptr{T},pdfMin,pdfMax,pnBuckets,ppanHistogram,bForce::Integer,pfnProgress::Ptr{GDALProgressFunc},pProgressData)
+function getdefaulthistogram{T <: GDALRasterBandH}(hBand::Ptr{T},pdfMin,pdfMax,pnBuckets,ppanHistogram,bForce::Integer,pfnProgress::Any,pProgressData)
     ccall((:GDALGetDefaultHistogram,libgdal),CPLErr,(Ptr{GDALRasterBandH},Ptr{Cdouble},Ptr{Cdouble},Ptr{Cint},Ptr{Ptr{Cint}},Cint,Ptr{GDALProgressFunc},Ptr{Void}),hBand,pdfMin,pdfMax,pnBuckets,ppanHistogram,bForce,pfnProgress,pProgressData)
 end
 
@@ -1936,7 +1936,7 @@ end
 
 Fetch default raster histogram.
 """
-function getdefaulthistogramex{T <: GDALRasterBandH}(hBand::Ptr{T},pdfMin,pdfMax,pnBuckets,ppanHistogram,bForce::Integer,pfnProgress::Ptr{GDALProgressFunc},pProgressData)
+function getdefaulthistogramex{T <: GDALRasterBandH}(hBand::Ptr{T},pdfMin,pdfMax,pnBuckets,ppanHistogram,bForce::Integer,pfnProgress::Any,pProgressData)
     ccall((:GDALGetDefaultHistogramEx,libgdal),CPLErr,(Ptr{GDALRasterBandH},Ptr{Cdouble},Ptr{Cdouble},Ptr{Cint},Ptr{Ptr{GUIntBig}},Cint,Ptr{GDALProgressFunc},Ptr{Void}),hBand,pdfMin,pdfMax,pnBuckets,ppanHistogram,bForce,pfnProgress,pProgressData)
 end
 
@@ -2021,7 +2021,7 @@ end
                          GDALProgressFunc pfnProgress,
                          void * pProgressData) -> CPLErr
 """
-function computebandstats{T <: GDALRasterBandH}(hBand::Ptr{T},nSampleStep::Integer,pdfMean,pdfStdDev,pfnProgress::Ptr{GDALProgressFunc},pProgressData)
+function computebandstats{T <: GDALRasterBandH}(hBand::Ptr{T},nSampleStep::Integer,pdfMean,pdfStdDev,pfnProgress::Any,pProgressData)
     ccall((:GDALComputeBandStats,libgdal),CPLErr,(Ptr{GDALRasterBandH},Cint,Ptr{Cdouble},Ptr{Cdouble},Ptr{GDALProgressFunc},Ptr{Void}),hBand,nSampleStep,pdfMean,pdfStdDev,pfnProgress,pProgressData)
 end
 
@@ -2033,7 +2033,7 @@ end
                                     GDALProgressFunc pfnProgress,
                                     void * pProgressData) -> CPLErr
 """
-function overviewmagnitudecorrection{T <: GDALRasterBandH}(hBaseBand::Ptr{T},nOverviewCount::Integer,pahOverviews,pfnProgress::Ptr{GDALProgressFunc},pProgressData)
+function overviewmagnitudecorrection{T <: GDALRasterBandH}(hBaseBand::Ptr{T},nOverviewCount::Integer,pahOverviews,pfnProgress::Any,pProgressData)
     ccall((:GDALOverviewMagnitudeCorrection,libgdal),CPLErr,(Ptr{GDALRasterBandH},Cint,Ptr{GDALRasterBandH},Ptr{GDALProgressFunc},Ptr{Void}),hBaseBand,nOverviewCount,pahOverviews,pfnProgress,pProgressData)
 end
 

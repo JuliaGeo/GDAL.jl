@@ -174,6 +174,8 @@ function rewriter(ex::Expr)
             arg.args[2] = :Real
         elseif arg.args[2] == :GIntBig
             arg.args[2] = :Integer
+        elseif arg.args[2] == :GDALProgressFunc
+            arg.args[2] = :Any
         elseif arg.args[2] in check_nullpointer
             if arg.args[2] in use_type_parameter
                 subtype = arg.args[2]
