@@ -217,7 +217,7 @@ end
 
 
 """
-    GDALAllRegister(void) -> void
+    GDALAllRegister() -> void
 
 Register all known configured GDAL drivers.
 """

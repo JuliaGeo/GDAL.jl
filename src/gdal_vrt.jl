@@ -40,7 +40,7 @@ end
                char **) -> int
 """
 function vrtaddband(arg1::Ptr{VRTDatasetH},arg2::GDALDataType,arg3)
-    ccall((:VRTAddBand,libgdal),Cint,(Ptr{VRTDatasetH},GDALDataType,Ptr{Cstring}),arg1,arg2,arg3)
+    ccall((:VRTAddBand,libgdal),Cint,(Ptr{VRTDatasetH},GDALDataType,StringList),arg1,arg2,arg3)
 end
 
 

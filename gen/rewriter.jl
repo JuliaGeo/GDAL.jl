@@ -172,6 +172,10 @@ function rewriter(ex::Expr)
             arg.args[2] = :Integer
         elseif arg.args[2] == :Cdouble
             arg.args[2] = :Real
+        elseif arg.args[2] == :GIntBig
+            arg.args[2] = :Integer
+        elseif arg.args[2] == :GDALProgressFunc
+            arg.args[2] = :Any
         elseif arg.args[2] in check_nullpointer
             if arg.args[2] in use_type_parameter
                 subtype = arg.args[2]
@@ -207,6 +211,8 @@ function rewriter(ex::Expr)
         if intypes[i] in check_nullpointer
             # wrap input type in Ptr{} since memory is managed by GDAL
             intypes[i] = Expr(:curly, :Ptr, intypes[i])
+        elseif intypes[i] == :(Ptr{Cstring})
+            intypes[i] = :StringList
         end
     end
     # ccall return type
@@ -214,6 +220,7 @@ function rewriter(ex::Expr)
     if rettype == :(Cstring)
         ex.args[2].args[1] = Expr(:call, :bytestring, ex.args[2].args[1])
     elseif rettype == :(Ptr{Cstring})
+        # TODO: this only unpacks the first of a list of strings
         ex.args[2].args[1] = Expr(:call, :unsafe_load, ex.args[2].args[1])
         ex.args[2].args[1] = Expr(:call, :bytestring, ex.args[2].args[1])
     elseif rettype in check_nullpointer

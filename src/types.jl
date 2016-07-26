@@ -53,3 +53,8 @@ abstract VRTSourcedRasterBandH
 abstract VRTWarpedRasterBandH
 abstract VRTDerivedRasterBandH
 abstract VRTRawRasterBandH
+
+
+# C functions that take an argument of the type char** can be called
+# by using a Ptr{Ptr{UInt8}} type within Julia.
+typealias StringList Ptr{Ptr{UInt8}}
