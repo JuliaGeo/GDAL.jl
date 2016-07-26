@@ -1,6 +1,5 @@
 using LibExpat
 using DataStructures
-using Compat
 
 workdir = dirname(@__FILE__)
 include(joinpath(workdir, "doc.jl"))
@@ -16,7 +15,7 @@ headerfiles = [
 ]
 
 # do not use automatic function renaming for these
-custom_rename = Dict{ASCIIString, ASCIIString}(
+custom_rename = Dict{String, String}(
     # prevent a clash after renaming both OGR/GDAL versions to getdriverbyname
     # since the OGR and GDAL driver system are combined in GDAL 2
     # give preference to the GDAL versions
@@ -131,7 +130,7 @@ function newfuncname(name::Symbol)
             name = replace(name, pat, r)
         end
     end
-    symbol(name)
+    Symbol(name)
 end
 
 "rewrite certain expressions"
@@ -183,7 +182,7 @@ function rewriter(ex::Expr)
                     letter = partypes[subtype]
                 else
                     letter_index += 1
-                    letter = symbol(letters[letter_index])
+                    letter = Symbol(letters[letter_index])
                 end
                 partypes[subtype] = letter
                 arg.args[2] = Expr(:curly, :Ptr, letter)
