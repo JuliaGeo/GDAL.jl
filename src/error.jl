@@ -27,7 +27,7 @@ function Base.showerror(io::IO, err::GDALError)
 end
 
 function gdaljl_errorhandler(errtype::UInt32, errno::Cint, errmsg::Ptr{UInt8})
-    throw(GDALError(errortype[errtype], errno, bytestring(errmsg)))
+    throw(GDALError(errortype[errtype], errno, unsafe_string(errmsg)))
     # it currently never returns but cfunction needs a guaranteed return type
     # return NULL to come back to the default behavior
     return C_NULL

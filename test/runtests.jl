@@ -1,7 +1,8 @@
 using GDAL
 using Base.Test
+using Compat
 
-info(bytestring(GDAL.C.GDALVersionInfo("--version")))
+info(unsafe_string(GDAL.C.GDALVersionInfo("--version")))
 
 # drivers
 # before being able to use any drivers, they must be registered first

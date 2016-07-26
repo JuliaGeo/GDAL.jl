@@ -73,7 +73,7 @@ Get name of data type.
 string corresponding to existing data type or NULL pointer if invalid type given.
 """
 function getdatatypename(arg1::GDALDataType)
-    bytestring(ccall((:GDALGetDataTypeName,libgdal),Cstring,(GDALDataType,),arg1))
+    unsafe_string(ccall((:GDALGetDataTypeName,libgdal),Cstring,(GDALDataType,),arg1))
 end
 
 
@@ -145,7 +145,7 @@ Get name of AsyncStatus data type.
 string corresponding to type.
 """
 function getasyncstatustypename(arg1::GDALAsyncStatusType)
-    bytestring(ccall((:GDALGetAsyncStatusTypeName,libgdal),Cstring,(GDALAsyncStatusType,),arg1))
+    unsafe_string(ccall((:GDALGetAsyncStatusTypeName,libgdal),Cstring,(GDALAsyncStatusType,),arg1))
 end
 
 
@@ -177,7 +177,7 @@ Get name of color interpretation.
 string corresponding to color interpretation or NULL pointer if invalid enumerator given.
 """
 function getcolorinterpretationname(arg1::GDALColorInterp)
-    bytestring(ccall((:GDALGetColorInterpretationName,libgdal),Cstring,(GDALColorInterp,),arg1))
+    unsafe_string(ccall((:GDALGetColorInterpretationName,libgdal),Cstring,(GDALColorInterp,),arg1))
 end
 
 
@@ -209,7 +209,7 @@ Get name of palette interpretation.
 string corresponding to palette interpretation.
 """
 function getpaletteinterpretationname(arg1::GDALPaletteInterp)
-    bytestring(ccall((:GDALGetPaletteInterpretationName,libgdal),Cstring,(GDALPaletteInterp,),arg1))
+    unsafe_string(ccall((:GDALGetPaletteInterpretationName,libgdal),Cstring,(GDALPaletteInterp,),arg1))
 end
 
 
@@ -497,7 +497,7 @@ Return the short name of a driver.
 the short name of the driver. The returned string should not be freed and is owned by the driver.
 """
 function getdrivershortname{T <: GDALDriverH}(arg1::Ptr{T})
-    bytestring(ccall((:GDALGetDriverShortName,libgdal),Cstring,(Ptr{GDALDriverH},),arg1))
+    unsafe_string(ccall((:GDALGetDriverShortName,libgdal),Cstring,(Ptr{GDALDriverH},),arg1))
 end
 
 
@@ -513,7 +513,7 @@ Return the long name of a driver.
 the long name of the driver or empty string. The returned string should not be freed and is owned by the driver.
 """
 function getdriverlongname{T <: GDALDriverH}(arg1::Ptr{T})
-    bytestring(ccall((:GDALGetDriverLongName,libgdal),Cstring,(Ptr{GDALDriverH},),arg1))
+    unsafe_string(ccall((:GDALGetDriverLongName,libgdal),Cstring,(Ptr{GDALDriverH},),arg1))
 end
 
 
@@ -529,7 +529,7 @@ Return the URL to the help that describes the driver.
 the URL to the help that describes the driver or NULL. The returned string should not be freed and is owned by the driver.
 """
 function getdriverhelptopic{T <: GDALDriverH}(arg1::Ptr{T})
-    bytestring(ccall((:GDALGetDriverHelpTopic,libgdal),Cstring,(Ptr{GDALDriverH},),arg1))
+    unsafe_string(ccall((:GDALGetDriverHelpTopic,libgdal),Cstring,(Ptr{GDALDriverH},),arg1))
 end
 
 
@@ -545,7 +545,7 @@ Return the list of creation options of the driver.
 an XML string that describes the list of creation options or empty string. The returned string should not be freed and is owned by the driver.
 """
 function getdrivercreationoptionlist{T <: GDALDriverH}(arg1::Ptr{T})
-    bytestring(ccall((:GDALGetDriverCreationOptionList,libgdal),Cstring,(Ptr{GDALDriverH},),arg1))
+    unsafe_string(ccall((:GDALGetDriverCreationOptionList,libgdal),Cstring,(Ptr{GDALDriverH},),arg1))
 end
 
 
@@ -660,7 +660,7 @@ end
 Fetch list of metadata domains.
 """
 function getmetadatadomainlist{T <: GDALMajorObjectH}(hObject::Ptr{T})
-    bytestring(unsafe_load(ccall((:GDALGetMetadataDomainList,libgdal),Ptr{Cstring},(Ptr{GDALMajorObjectH},),hObject)))
+    unsafe_string(unsafe_load(ccall((:GDALGetMetadataDomainList,libgdal),Ptr{Cstring},(Ptr{GDALMajorObjectH},),hObject)))
 end
 
 
@@ -671,7 +671,7 @@ end
 Fetch metadata.
 """
 function getmetadata{T <: GDALMajorObjectH}(arg1::Ptr{T},arg2)
-    bytestring(unsafe_load(ccall((:GDALGetMetadata,libgdal),Ptr{Cstring},(Ptr{GDALMajorObjectH},Cstring),arg1,arg2)))
+    unsafe_string(unsafe_load(ccall((:GDALGetMetadata,libgdal),Ptr{Cstring},(Ptr{GDALMajorObjectH},Cstring),arg1,arg2)))
 end
 
 
@@ -695,7 +695,7 @@ end
 Fetch single metadata item.
 """
 function getmetadataitem{T <: GDALMajorObjectH}(arg1::Ptr{T},arg2,arg3)
-    bytestring(ccall((:GDALGetMetadataItem,libgdal),Cstring,(Ptr{GDALMajorObjectH},Cstring,Cstring),arg1,arg2,arg3))
+    unsafe_string(ccall((:GDALGetMetadataItem,libgdal),Cstring,(Ptr{GDALMajorObjectH},Cstring,Cstring),arg1,arg2,arg3))
 end
 
 
@@ -718,7 +718,7 @@ end
 Fetch object description.
 """
 function getdescription{T <: GDALMajorObjectH}(arg1::Ptr{T})
-    bytestring(ccall((:GDALGetDescription,libgdal),Cstring,(Ptr{GDALMajorObjectH},),arg1))
+    unsafe_string(ccall((:GDALGetDescription,libgdal),Cstring,(Ptr{GDALMajorObjectH},),arg1))
 end
 
 
@@ -749,7 +749,7 @@ end
 Fetch files forming dataset.
 """
 function getfilelist{T <: GDALDatasetH}(arg1::Ptr{T})
-    bytestring(unsafe_load(ccall((:GDALGetFileList,libgdal),Ptr{Cstring},(Ptr{GDALDatasetH},),arg1)))
+    unsafe_string(unsafe_load(ccall((:GDALGetFileList,libgdal),Ptr{Cstring},(Ptr{GDALDatasetH},),arg1)))
 end
 
 
@@ -925,7 +925,7 @@ end
 Fetch the projection definition string for this dataset.
 """
 function getprojectionref{T <: GDALDatasetH}(arg1::Ptr{T})
-    bytestring(ccall((:GDALGetProjectionRef,libgdal),Cstring,(Ptr{GDALDatasetH},),arg1))
+    unsafe_string(ccall((:GDALGetProjectionRef,libgdal),Cstring,(Ptr{GDALDatasetH},),arg1))
 end
 
 
@@ -978,7 +978,7 @@ end
 Get output projection for GCPs.
 """
 function getgcpprojection{T <: GDALDatasetH}(arg1::Ptr{T})
-    bytestring(ccall((:GDALGetGCPProjection,libgdal),Cstring,(Ptr{GDALDatasetH},),arg1))
+    unsafe_string(ccall((:GDALGetGCPProjection,libgdal),Cstring,(Ptr{GDALDatasetH},),arg1))
 end
 
 
@@ -1700,7 +1700,7 @@ end
 Fetch the list of category names for this raster.
 """
 function getrastercategorynames{T <: GDALRasterBandH}(arg1::Ptr{T})
-    bytestring(unsafe_load(ccall((:GDALGetRasterCategoryNames,libgdal),Ptr{Cstring},(Ptr{GDALRasterBandH},),arg1)))
+    unsafe_string(unsafe_load(ccall((:GDALGetRasterCategoryNames,libgdal),Ptr{Cstring},(Ptr{GDALRasterBandH},),arg1)))
 end
 
 
@@ -1790,7 +1790,7 @@ end
 Return raster unit type.
 """
 function getrasterunittype{T <: GDALRasterBandH}(arg1::Ptr{T})
-    bytestring(ccall((:GDALGetRasterUnitType,libgdal),Cstring,(Ptr{GDALRasterBandH},),arg1))
+    unsafe_string(ccall((:GDALGetRasterUnitType,libgdal),Cstring,(Ptr{GDALRasterBandH},),arg1))
 end
 
 
@@ -2349,7 +2349,7 @@ end
                  int) -> const char *
 """
 function dectodms(arg1::Real,arg2,arg3::Integer)
-    bytestring(ccall((:GDALDecToDMS,libgdal),Cstring,(Cdouble,Cstring,Cint),arg1,arg2,arg3))
+    unsafe_string(ccall((:GDALDecToDMS,libgdal),Cstring,(Cdouble,Cstring,Cint),arg1,arg2,arg3))
 end
 
 
@@ -2518,7 +2518,7 @@ end
 Fetch name of indicated column.
 """
 function ratgetnameofcol(arg1::Ptr{GDALRasterAttributeTableH},arg2::Integer)
-    bytestring(ccall((:GDALRATGetNameOfCol,libgdal),Cstring,(Ptr{GDALRasterAttributeTableH},Cint),arg1,arg2))
+    unsafe_string(ccall((:GDALRATGetNameOfCol,libgdal),Cstring,(Ptr{GDALRasterAttributeTableH},Cint),arg1,arg2))
 end
 
 
@@ -2573,7 +2573,7 @@ end
 Fetch field value as a string.
 """
 function ratgetvalueasstring(arg1::Ptr{GDALRasterAttributeTableH},arg2::Integer,arg3::Integer)
-    bytestring(ccall((:GDALRATGetValueAsString,libgdal),Cstring,(Ptr{GDALRasterAttributeTableH},Cint,Cint),arg1,arg2,arg3))
+    unsafe_string(ccall((:GDALRATGetValueAsString,libgdal),Cstring,(Ptr{GDALRasterAttributeTableH},Cint,Cint),arg1,arg2,arg3))
 end
 
 

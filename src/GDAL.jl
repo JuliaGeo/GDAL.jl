@@ -1,5 +1,7 @@
 module GDAL
 
+using Compat
+
 # this can go when all ccalls are done in the C submodule
 const depfile = joinpath(dirname(@__FILE__), "..", "deps", "deps.jl")
 if isfile(depfile)
@@ -47,7 +49,7 @@ function __init__()
     C.CPLSetErrorHandler(funcptr)
 
     # get GDAL version number
-    versionstring = bytestring(C.GDALVersionInfo("RELEASE_NAME"))
+    versionstring = unsafe_string(C.GDALVersionInfo("RELEASE_NAME"))
     const GDALVERSION = convert(VersionNumber, versionstring)
     if GDALVERSION < v"2.0.0"
         warn("GDAL.jl is made for GDAL 2.0 and later")

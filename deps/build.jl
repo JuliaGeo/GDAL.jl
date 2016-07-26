@@ -5,7 +5,7 @@ using BinDeps
 function version_check(name, handle)
     fptr = Libdl.dlsym(handle, :GDALVersionInfo)
     versionptr = ccall(fptr,Cstring,(Cstring,),"RELEASE_NAME")
-    versionstring = bytestring(versionptr)
+    versionstring = unsafe_string(versionptr)
     gdalversion = convert(VersionNumber, versionstring)
     gdalversion >= v"2.1.0"
 end

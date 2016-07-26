@@ -218,11 +218,11 @@ function rewriter(ex::Expr)
     # ccall return type
     rettype = ex.args[2].args[1].args[2]
     if rettype == :(Cstring)
-        ex.args[2].args[1] = Expr(:call, :bytestring, ex.args[2].args[1])
+        ex.args[2].args[1] = Expr(:call, :unsafe_string, ex.args[2].args[1])
     elseif rettype == :(Ptr{Cstring})
         # TODO: this only unpacks the first of a list of strings
         ex.args[2].args[1] = Expr(:call, :unsafe_load, ex.args[2].args[1])
-        ex.args[2].args[1] = Expr(:call, :bytestring, ex.args[2].args[1])
+        ex.args[2].args[1] = Expr(:call, :unsafe_string, ex.args[2].args[1])
     elseif rettype in check_nullpointer
         # wrap output type in Ptr{} since memory is managed by GDAL
         ex.args[2].args[1].args[2] = Expr(:curly, :Ptr, ex.args[2].args[1].args[2])
