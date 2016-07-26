@@ -1,5 +1,5 @@
 
-errortype = Dict{UInt32, ASCIIString}(
+errortype = Dict{UInt32, AbstractString}(
     0 => "None",
     1 => "Debug",
     2 => "Warning",
