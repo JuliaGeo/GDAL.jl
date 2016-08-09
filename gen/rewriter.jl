@@ -10,6 +10,7 @@ headerfiles = [
     "gdal.jl",
     "gdal_alg.jl",
     "gdal_vrt.jl",
+    "gdal_utils.jl",
     "ogr_api.jl",
     "ogr_srs_api.jl"
 ]
