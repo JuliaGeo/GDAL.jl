@@ -15,14 +15,14 @@ libgdal = library_dependency("libgdal",
                              aliases=["gdal","gdal201", "gdal_w32","gdal_w64","libgdal-20"],
                              validate=version_check)
 
-@windows_only begin
+if is_windows()
     using WinRPM
     push!(WinRPM.sources, "http://download.opensuse.org/repositories/home:yeesian/openSUSE_13.2")
     WinRPM.update()
     provides(WinRPM.RPM, "gdal", [libgdal], os = :Windows)
 end
 
-@unix_only begin
+if is_unix()
     using Conda
     # conda-forge has an up to date gdal recipe
     # https://github.com/conda-forge/gdal-feedstock
