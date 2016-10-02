@@ -17,7 +17,7 @@ options = GDAL.translateoptionsnew(optvec, C_NULL)
 ds_tiny_asc = GDAL.translate("data/utmtiny.asc", ds_small, options, C_NULL)
 GDAL.translateoptionsfree(options)
 GDAL.close(ds_tiny_asc)
-@test readstring("data/utmtiny.asc") == """
+@test replace(readstring("data/utmtiny.asc"), "\r", "") == """
     ncols        5
     nrows        5
     xllcorner    440720.000000000000
@@ -63,14 +63,13 @@ GDAL.warpappoptionsfree(options)
 GDAL.close(ds_warped)
 
 
-
 # GDALDEMProcessing
 # calculate hillshade
 options = GDAL.demprocessingoptionsnew(["-of","AAIGrid"], C_NULL)
 ds_dempr = GDAL.demprocessing("data/utmtiny-hillshade.asc", ds_tiny, "hillshade", C_NULL, options, C_NULL)
 GDAL.demprocessingoptionsfree(options)
 GDAL.close(ds_dempr)
-@test readstring("data/utmtiny-hillshade.asc") == """
+@test replace(readstring("data/utmtiny-hillshade.asc"), "\r", "") == """
     ncols        5
     nrows        5
     xllcorner    440720.000000000000
@@ -149,8 +148,9 @@ dstcsv = """
     100,0,0,a
     100.2785,0.0893,3,b
     """
-@test readstring("data/point.csv") == dstcsv
+@test replace(readstring("data/point.csv"), "\r", "") == dstcsv
 rm("data/point.csv")
+
 
 GDAL.close(ds_small)
 GDAL.close(ds_tiny)
