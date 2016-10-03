@@ -961,6 +961,78 @@ type GDALWarpOptions # none, line 1234:
 end
 
 const VRT_NODATA_UNSET = -1234.56
+
+type GDALInfoOptions # none, line 1296:
+end
+
+
+type GDALInfoOptionsForBinary # none, line 1299:
+end
+
+
+type GDALTranslateOptions # none, line 1302:
+end
+
+
+type GDALTranslateOptionsForBinary # none, line 1305:
+end
+
+
+type GDALWarpAppOptions # none, line 1308:
+end
+
+
+type GDALWarpAppOptionsForBinary # none, line 1311:
+end
+
+
+type GDALVectorTranslateOptions # none, line 1314:
+end
+
+
+type GDALVectorTranslateOptionsForBinary # none, line 1317:
+end
+
+
+type GDALDEMProcessingOptions # none, line 1320:
+end
+
+
+type GDALDEMProcessingOptionsForBinary # none, line 1323:
+end
+
+
+type GDALNearblackOptions # none, line 1326:
+end
+
+
+type GDALNearblackOptionsForBinary # none, line 1329:
+end
+
+
+type GDALGridOptions # none, line 1332:
+end
+
+
+type GDALGridOptionsForBinary # none, line 1335:
+end
+
+
+type GDALRasterizeOptions # none, line 1338:
+end
+
+
+type GDALRasterizeOptionsForBinary # none, line 1341:
+end
+
+
+type GDALBuildVRTOptions # none, line 1344:
+end
+
+
+type GDALBuildVRTOptionsForBinary # none, line 1347:
+end
+
 const SRS_WKT_WGS84 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]"
 const SRS_PT_ALBERS_CONIC_EQUAL_AREA = "Albers_Conic_Equal_Area"
 const SRS_PT_AZIMUTHAL_EQUIDISTANT = "Azimuthal_Equidistant"

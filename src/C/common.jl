@@ -1292,6 +1292,60 @@ typealias VRTWarpedRasterBandH Ptr{Void}
 typealias VRTDerivedRasterBandH Ptr{Void}
 typealias VRTRawRasterBandH Ptr{Void}
 
+type GDALInfoOptions
+end
+
+type GDALInfoOptionsForBinary
+end
+
+type GDALTranslateOptions
+end
+
+type GDALTranslateOptionsForBinary
+end
+
+type GDALWarpAppOptions
+end
+
+type GDALWarpAppOptionsForBinary
+end
+
+type GDALVectorTranslateOptions
+end
+
+type GDALVectorTranslateOptionsForBinary
+end
+
+type GDALDEMProcessingOptions
+end
+
+type GDALDEMProcessingOptionsForBinary
+end
+
+type GDALNearblackOptions
+end
+
+type GDALNearblackOptionsForBinary
+end
+
+type GDALGridOptions
+end
+
+type GDALGridOptionsForBinary
+end
+
+type GDALRasterizeOptions
+end
+
+type GDALRasterizeOptionsForBinary
+end
+
+type GDALBuildVRTOptions
+end
+
+type GDALBuildVRTOptionsForBinary
+end
+
 const SRS_WKT_WGS84 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]"
 const SRS_PT_ALBERS_CONIC_EQUAL_AREA = "Albers_Conic_Equal_Area"
 const SRS_PT_AZIMUTHAL_EQUIDISTANT = "Azimuthal_Equidistant"

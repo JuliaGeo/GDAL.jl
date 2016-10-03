@@ -1,6 +1,7 @@
 using GDAL
 using Base.Test
 using Compat
+using JSON
 
 info(unsafe_string(GDAL.C.GDALVersionInfo("--version")))
 
@@ -25,6 +26,11 @@ cd(dirname(@__FILE__)) do
     include("tutorial_raster.jl")
     include("tutorial_vector.jl")
     include("tutorial_vrt.jl")
+    # several conversions for ccall are only added in v0.5
+    # since we'll drop v0.4 support soon, we keep this out for now
+    if VERSION >= v"0.5"
+        include("gdal_utils.jl")
+    end
 end
 
 GDAL.destroydrivermanager()
