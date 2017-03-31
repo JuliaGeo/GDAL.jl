@@ -20,6 +20,9 @@ info(GDAL.ogrgetdrivercount(), " OGR drivers found")
 # whilst the rewritten API throws a GDALError
 @test_throws GDAL.GDALError GDAL.getdriverbyname("NonExistent")
 
+srs = GDAL.newspatialreference(C_NULL)
+GDAL.importfromepsg(srs, 4326) # fails if GDAL_DATA is not set correctly
+
 cd(dirname(@__FILE__)) do
     isdir("tmp") || mkpath("tmp") # ensure it exists
 

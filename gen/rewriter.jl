@@ -35,6 +35,10 @@ custom_rename = Dict{String, String}(
     "ogr_st_create" => "st_create",
     "ogr_stbl_create" => "stbl_create",
 
+    # prevent overwriting Base functions
+    "gdalinfo" => "Base.info",
+
+    # prevent automatic renaming
     "ogrgetdrivercount" => "ogrgetdrivercount",
     "ogrgetdriver" => "ogrgetdriver"
 )
