@@ -1,7 +1,5 @@
 # Automatically generated using Clang.jl wrap_c, version 0.0.0
 
-using Compat
-
 const CPLE_None = 0
 const CPLE_AppDefined = 1
 const CPLE_OutOfMemory = 2
