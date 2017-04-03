@@ -1,5 +1,4 @@
-julia 0.4
+julia 0.5
 BinDeps
-Compat
 @unix Conda
 @windows WinRPM
