@@ -15,7 +15,7 @@ const CPLE_AWSObjectNotFound = 13
 const CPLE_AWSAccessDenied = 14
 const CPLE_AWSInvalidCredentials = 15
 const CPLE_AWSSignatureDoesNotMatch = 16
-typealias CPLErr UInt32
+const CPLErr = UInt32
 const CE_None = UInt32(0)
 const CE_Debug = UInt32(1)
 const CE_Warning = UInt32(2)
@@ -27,13 +27,13 @@ const CE_Debug = UInt32(1)
 const CE_Warning = UInt32(2)
 const CE_Failure = UInt32(3)
 const CE_Fatal = UInt32(4)
-typealias CPLErrorNum Cint
+const CPLErrorNum = Cint
 const CXT_Element = UInt32(0)
 const CXT_Text = UInt32(1)
 const CXT_Attribute = UInt32(2)
 const CXT_Comment = UInt32(3)
 const CXT_Literal = UInt32(4)
-typealias CPLXMLNodeType UInt32
+const CPLXMLNodeType = UInt32
 const CXT_Element = UInt32(0)
 const CXT_Text = UInt32(1)
 const CXT_Attribute = UInt32(2)
@@ -51,15 +51,15 @@ const CPL_FRMT_GB_WITHOUT_PREFIX = "ll"
 const CPL_IS_LSB = 1
 const FALSE = 0
 const TRUE = 1
-typealias GInt32 Cint
-typealias GUInt32 UInt32
-typealias GInt16 Int16
-typealias GUInt16 UInt16
-typealias GByte Cuchar
-typealias GBool Cint
-typealias GIntBig Clonglong
-typealias GUIntBig Culonglong
-typealias GPtrDiff_t GIntBig
+const GInt32 = Cint
+const GUInt32 = UInt32
+const GInt16 = Int16
+const GUInt16 = UInt16
+const GByte = Cuchar
+const GBool = Cint
+const GIntBig = Clonglong
+const GUIntBig = Culonglong
+const GPtrDiff_t = GIntBig
 const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
 const GDALMD_AREA_OR_POINT = "AREA_OR_POINT"
 const GDALMD_AOP_AREA = "Area"
@@ -118,7 +118,7 @@ const GDT_CInt32 = UInt32(9)
 const GDT_CFloat32 = UInt32(10)
 const GDT_CFloat64 = UInt32(11)
 const GDT_TypeCount = UInt32(12)
-typealias GDALDataType UInt32
+const GDALDataType = UInt32
 const GDT_Unknown = UInt32(0)
 const GDT_Byte = UInt32(1)
 const GDT_UInt16 = UInt32(2)
@@ -137,7 +137,7 @@ const GARIO_UPDATE = UInt32(1)
 const GARIO_ERROR = UInt32(2)
 const GARIO_COMPLETE = UInt32(3)
 const GARIO_TypeCount = UInt32(4)
-typealias GDALAsyncStatusType UInt32
+const GDALAsyncStatusType = UInt32
 const GARIO_PENDING = UInt32(0)
 const GARIO_UPDATE = UInt32(1)
 const GARIO_ERROR = UInt32(2)
@@ -145,12 +145,12 @@ const GARIO_COMPLETE = UInt32(3)
 const GARIO_TypeCount = UInt32(4)
 const GA_ReadOnly = UInt32(0)
 const GA_Update = UInt32(1)
-typealias GDALAccess UInt32
+const GDALAccess = UInt32
 const GA_ReadOnly = UInt32(0)
 const GA_Update = UInt32(1)
 const GF_Read = UInt32(0)
 const GF_Write = UInt32(1)
-typealias GDALRWFlag UInt32
+const GDALRWFlag = UInt32
 const GF_Read = UInt32(0)
 const GF_Write = UInt32(1)
 const GRIORA_NearestNeighbour = UInt32(0)
@@ -161,7 +161,7 @@ const GRIORA_Lanczos = UInt32(4)
 const GRIORA_Average = UInt32(5)
 const GRIORA_Mode = UInt32(6)
 const GRIORA_Gauss = UInt32(7)
-typealias GDALRIOResampleAlg UInt32
+const GDALRIOResampleAlg = UInt32
 const GRIORA_NearestNeighbour = UInt32(0)
 const GRIORA_Bilinear = UInt32(1)
 const GRIORA_Cubic = UInt32(2)
@@ -201,7 +201,7 @@ const GCI_YCbCr_YBand = UInt32(14)
 const GCI_YCbCr_CbBand = UInt32(15)
 const GCI_YCbCr_CrBand = UInt32(16)
 const GCI_Max = UInt32(16)
-typealias GDALColorInterp UInt32
+const GDALColorInterp = UInt32
 const GCI_Undefined = UInt32(0)
 const GCI_GrayIndex = UInt32(1)
 const GCI_PaletteIndex = UInt32(2)
@@ -224,12 +224,12 @@ const GPI_Gray = UInt32(0)
 const GPI_RGB = UInt32(1)
 const GPI_CMYK = UInt32(2)
 const GPI_HLS = UInt32(3)
-typealias GDALPaletteInterp UInt32
+const GDALPaletteInterp = UInt32
 const GPI_Gray = UInt32(0)
 const GPI_RGB = UInt32(1)
 const GPI_CMYK = UInt32(2)
 const GPI_HLS = UInt32(3)
-typealias GSpacing GIntBig
+const GSpacing = GIntBig
 
 type GDAL_GCP # none, line 398:
     pszId::Cstring # none, line 399:
@@ -274,7 +274,7 @@ end
 const GFT_Integer = UInt32(0)
 const GFT_Real = UInt32(1)
 const GFT_String = UInt32(2)
-typealias GDALRATFieldType UInt32
+const GDALRATFieldType = UInt32
 const GFT_Integer = UInt32(0)
 const GFT_Real = UInt32(1)
 const GFT_String = UInt32(2)
@@ -297,7 +297,7 @@ const GFU_GreenMax = UInt32(15)
 const GFU_BlueMax = UInt32(16)
 const GFU_AlphaMax = UInt32(17)
 const GFU_MaxCount = UInt32(18)
-typealias GDALRATFieldUsage UInt32
+const GDALRATFieldUsage = UInt32
 const GFU_Generic = UInt32(0)
 const GFU_PixelCount = UInt32(1)
 const GFU_Name = UInt32(2)
@@ -320,7 +320,7 @@ const GFU_MaxCount = UInt32(18)
 const GTO_TIP = UInt32(0)
 const GTO_BIT = UInt32(1)
 const GTO_BSQ = UInt32(2)
-typealias GDALTileOrganization UInt32
+const GDALTileOrganization = UInt32
 const GTO_TIP = UInt32(0)
 const GTO_BIT = UInt32(1)
 const GTO_BSQ = UInt32(2)
@@ -355,7 +355,7 @@ const GGA_MetricAverageDistance = UInt32(8)
 const GGA_MetricAverageDistancePts = UInt32(9)
 const GGA_Linear = UInt32(10)
 const GGA_InverseDistanceToAPowerNearestNeighbor = UInt32(11)
-typealias GDALGridAlgorithm UInt32
+const GDALGridAlgorithm = UInt32
 const GGA_InverseDistanceToAPower = UInt32(1)
 const GGA_MovingAverage = UInt32(2)
 const GGA_NearestNeighbor = UInt32(3)
@@ -457,7 +457,7 @@ end
 type OGRGeomFieldDefnHS # none, line 650:
 end
 
-typealias OGRGeomFieldDefnH Ptr{OGRGeomFieldDefnHS}
+const OGRGeomFieldDefnH = Ptr{OGRGeomFieldDefnHS}
 const OGRERR_NONE = 0
 const OGRERR_NOT_ENOUGH_DATA = 1
 const OGRERR_NOT_ENOUGH_MEMORY = 2
@@ -529,8 +529,8 @@ type OGREnvelope3D # none, line 740:
     MaxZ::Cdouble
 end
 
-typealias OGRErr Cint
-typealias OGRBoolean Cint
+const OGRErr = Cint
+const OGRBoolean = Cint
 const wkbUnknown = UInt32(0)
 const wkbPoint = UInt32(1)
 const wkbLineString = UInt32(2)
@@ -602,7 +602,7 @@ const wkbMultiPoint25D = UInt32(0x0000000080000004)
 const wkbMultiLineString25D = UInt32(0x0000000080000005)
 const wkbMultiPolygon25D = UInt32(0x0000000080000006)
 const wkbGeometryCollection25D = UInt32(0x0000000080000007)
-typealias OGRwkbGeometryType UInt32
+const OGRwkbGeometryType = UInt32
 const wkbUnknown = UInt32(0)
 const wkbPoint = UInt32(1)
 const wkbLineString = UInt32(2)
@@ -677,13 +677,13 @@ const wkbGeometryCollection25D = UInt32(0x0000000080000007)
 const wkbVariantOldOgc = UInt32(0)
 const wkbVariantIso = UInt32(1)
 const wkbVariantPostGIS1 = UInt32(2)
-typealias OGRwkbVariant UInt32
+const OGRwkbVariant = UInt32
 const wkbVariantOldOgc = UInt32(0)
 const wkbVariantIso = UInt32(1)
 const wkbVariantPostGIS1 = UInt32(2)
 const wkbXDR = UInt32(0)
 const wkbNDR = UInt32(1)
-typealias OGRwkbByteOrder UInt32
+const OGRwkbByteOrder = UInt32
 const wkbXDR = UInt32(0)
 const wkbNDR = UInt32(1)
 const OFTInteger = UInt32(0)
@@ -701,7 +701,7 @@ const OFTDateTime = UInt32(11)
 const OFTInteger64 = UInt32(12)
 const OFTInteger64List = UInt32(13)
 const OFTMaxType = UInt32(13)
-typealias OGRFieldType UInt32
+const OGRFieldType = UInt32
 const OFTInteger = UInt32(0)
 const OFTIntegerList = UInt32(1)
 const OFTReal = UInt32(2)
@@ -722,7 +722,7 @@ const OFSTBoolean = UInt32(1)
 const OFSTInt16 = UInt32(2)
 const OFSTFloat32 = UInt32(3)
 const OFSTMaxSubType = UInt32(3)
-typealias OGRFieldSubType UInt32
+const OGRFieldSubType = UInt32
 const OFSTNone = UInt32(0)
 const OFSTBoolean = UInt32(1)
 const OFSTInt16 = UInt32(2)
@@ -731,7 +731,7 @@ const OFSTMaxSubType = UInt32(3)
 const OJUndefined = UInt32(0)
 const OJLeft = UInt32(1)
 const OJRight = UInt32(2)
-typealias OGRJustification UInt32
+const OGRJustification = UInt32
 const OJUndefined = UInt32(0)
 const OJLeft = UInt32(1)
 const OJRight = UInt32(2)
@@ -740,35 +740,35 @@ type OGRField # none, line 998:
     _OGRField::GIntBig
 end
 
-typealias ogr_style_tool_class_id UInt32
+const ogr_style_tool_class_id = UInt32
 const OGRSTCNone = UInt32(0)
 const OGRSTCPen = UInt32(1)
 const OGRSTCBrush = UInt32(2)
 const OGRSTCSymbol = UInt32(3)
 const OGRSTCLabel = UInt32(4)
 const OGRSTCVector = UInt32(5)
-typealias OGRSTClassId UInt32
+const OGRSTClassId = UInt32
 const OGRSTCNone = UInt32(0)
 const OGRSTCPen = UInt32(1)
 const OGRSTCBrush = UInt32(2)
 const OGRSTCSymbol = UInt32(3)
 const OGRSTCLabel = UInt32(4)
 const OGRSTCVector = UInt32(5)
-typealias ogr_style_tool_units_id UInt32
+const ogr_style_tool_units_id = UInt32
 const OGRSTUGround = UInt32(0)
 const OGRSTUPixel = UInt32(1)
 const OGRSTUPoints = UInt32(2)
 const OGRSTUMM = UInt32(3)
 const OGRSTUCM = UInt32(4)
 const OGRSTUInches = UInt32(5)
-typealias OGRSTUnitId UInt32
+const OGRSTUnitId = UInt32
 const OGRSTUGround = UInt32(0)
 const OGRSTUPixel = UInt32(1)
 const OGRSTUPoints = UInt32(2)
 const OGRSTUMM = UInt32(3)
 const OGRSTUCM = UInt32(4)
 const OGRSTUInches = UInt32(5)
-typealias ogr_style_tool_param_pen_id UInt32
+const ogr_style_tool_param_pen_id = UInt32
 const OGRSTPenColor = UInt32(0)
 const OGRSTPenWidth = UInt32(1)
 const OGRSTPenPattern = UInt32(2)
@@ -778,7 +778,7 @@ const OGRSTPenCap = UInt32(5)
 const OGRSTPenJoin = UInt32(6)
 const OGRSTPenPriority = UInt32(7)
 const OGRSTPenLast = UInt32(8)
-typealias OGRSTPenParam UInt32
+const OGRSTPenParam = UInt32
 const OGRSTPenColor = UInt32(0)
 const OGRSTPenWidth = UInt32(1)
 const OGRSTPenPattern = UInt32(2)
@@ -788,7 +788,7 @@ const OGRSTPenCap = UInt32(5)
 const OGRSTPenJoin = UInt32(6)
 const OGRSTPenPriority = UInt32(7)
 const OGRSTPenLast = UInt32(8)
-typealias ogr_style_tool_param_brush_id UInt32
+const ogr_style_tool_param_brush_id = UInt32
 const OGRSTBrushFColor = UInt32(0)
 const OGRSTBrushBColor = UInt32(1)
 const OGRSTBrushId = UInt32(2)
@@ -798,7 +798,7 @@ const OGRSTBrushDx = UInt32(5)
 const OGRSTBrushDy = UInt32(6)
 const OGRSTBrushPriority = UInt32(7)
 const OGRSTBrushLast = UInt32(8)
-typealias OGRSTBrushParam UInt32
+const OGRSTBrushParam = UInt32
 const OGRSTBrushFColor = UInt32(0)
 const OGRSTBrushBColor = UInt32(1)
 const OGRSTBrushId = UInt32(2)
@@ -808,7 +808,7 @@ const OGRSTBrushDx = UInt32(5)
 const OGRSTBrushDy = UInt32(6)
 const OGRSTBrushPriority = UInt32(7)
 const OGRSTBrushLast = UInt32(8)
-typealias ogr_style_tool_param_symbol_id UInt32
+const ogr_style_tool_param_symbol_id = UInt32
 const OGRSTSymbolId = UInt32(0)
 const OGRSTSymbolAngle = UInt32(1)
 const OGRSTSymbolColor = UInt32(2)
@@ -822,7 +822,7 @@ const OGRSTSymbolPriority = UInt32(9)
 const OGRSTSymbolFontName = UInt32(10)
 const OGRSTSymbolOColor = UInt32(11)
 const OGRSTSymbolLast = UInt32(12)
-typealias OGRSTSymbolParam UInt32
+const OGRSTSymbolParam = UInt32
 const OGRSTSymbolId = UInt32(0)
 const OGRSTSymbolAngle = UInt32(1)
 const OGRSTSymbolColor = UInt32(2)
@@ -836,7 +836,7 @@ const OGRSTSymbolPriority = UInt32(9)
 const OGRSTSymbolFontName = UInt32(10)
 const OGRSTSymbolOColor = UInt32(11)
 const OGRSTSymbolLast = UInt32(12)
-typealias ogr_style_tool_param_label_id UInt32
+const ogr_style_tool_param_label_id = UInt32
 const OGRSTLabelFontName = UInt32(0)
 const OGRSTLabelSize = UInt32(1)
 const OGRSTLabelTextString = UInt32(2)
@@ -859,7 +859,7 @@ const OGRSTLabelAdjVert = UInt32(18)
 const OGRSTLabelHColor = UInt32(19)
 const OGRSTLabelOColor = UInt32(20)
 const OGRSTLabelLast = UInt32(21)
-typealias OGRSTLabelParam UInt32
+const OGRSTLabelParam = UInt32
 const OGRSTLabelFontName = UInt32(0)
 const OGRSTLabelSize = UInt32(1)
 const OGRSTLabelTextString = UInt32(2)
@@ -894,7 +894,7 @@ const GRA_Min = UInt32(9)
 const GRA_Med = UInt32(10)
 const GRA_Q1 = UInt32(11)
 const GRA_Q3 = UInt32(12)
-typealias GDALResampleAlg UInt32
+const GDALResampleAlg = UInt32
 const GRA_NearestNeighbour = UInt32(0)
 const GRA_Bilinear = UInt32(1)
 const GRA_Cubic = UInt32(2)
@@ -913,7 +913,7 @@ const GWKAOM_Imode = UInt32(3)
 const GWKAOM_Max = UInt32(4)
 const GWKAOM_Min = UInt32(5)
 const GWKAOM_Quant = UInt32(6)
-typealias GWKAverageOrModeAlg UInt32
+const GWKAverageOrModeAlg = UInt32
 const GWKAOM_Average = UInt32(1)
 const GWKAOM_Fmode = UInt32(2)
 const GWKAOM_Imode = UInt32(3)
@@ -1205,7 +1205,7 @@ const OAO_East = UInt32(3)
 const OAO_West = UInt32(4)
 const OAO_Up = UInt32(5)
 const OAO_Down = UInt32(6)
-typealias OGRAxisOrientation UInt32
+const OGRAxisOrientation = UInt32
 const OAO_Other = UInt32(0)
 const OAO_North = UInt32(1)
 const OAO_South = UInt32(2)
@@ -1229,7 +1229,7 @@ const ODT_VD_Depth = UInt32(2006)
 const ODT_VD_Max = UInt32(2999)
 const ODT_LD_Min = UInt32(10000)
 const ODT_LD_Max = UInt32(32767)
-typealias OGRDatumType UInt32
+const OGRDatumType = UInt32
 const ODT_HD_Min = UInt32(1000)
 const ODT_HD_Other = UInt32(1000)
 const ODT_HD_Classic = UInt32(1001)

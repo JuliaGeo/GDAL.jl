@@ -21,7 +21,7 @@ const CPLE_AWSSignatureDoesNotMatch = 16
 # const CPLAssert = expr
 
 # begin enum CPLErr
-typealias CPLErr UInt32
+const CPLErr = UInt32
 const CE_None = (UInt32)(0)
 const CE_Debug = (UInt32)(1)
 const CE_Warning = (UInt32)(2)
@@ -35,7 +35,7 @@ const VALIDATE_POINTER_ERR = CE_Failure
 # Skipping MacroDefinition: VALIDATE_POINTER1 ( ptr , func , rc ) do { if ( NULL == ptr ) { CPLErr const ret = VALIDATE_POINTER_ERR ; CPLError ( ret , CPLE_ObjectNull , "Pointer \'%s\' is NULL in \'%s\'.\n" , # ptr , ( func ) ) ; return ( rc ) ; } } while ( 0 )
 
 # begin enum ANONYMOUS_1
-typealias ANONYMOUS_1 UInt32
+const ANONYMOUS_1 = UInt32
 const CE_None = (UInt32)(0)
 const CE_Debug = (UInt32)(1)
 const CE_Warning = (UInt32)(2)
@@ -43,11 +43,11 @@ const CE_Failure = (UInt32)(3)
 const CE_Fatal = (UInt32)(4)
 # end enum ANONYMOUS_1
 
-typealias CPLErrorNum Cint
-typealias CPLErrorHandler Ptr{Void}
+const CPLErrorNum = Cint
+const CPLErrorHandler = Ptr{Void}
 
 # begin enum ANONYMOUS_2
-typealias ANONYMOUS_2 UInt32
+const ANONYMOUS_2 = UInt32
 const CXT_Element = (UInt32)(0)
 const CXT_Text = (UInt32)(1)
 const CXT_Attribute = (UInt32)(2)
@@ -56,7 +56,7 @@ const CXT_Literal = (UInt32)(4)
 # end enum ANONYMOUS_2
 
 # begin enum CPLXMLNodeType
-typealias CPLXMLNodeType UInt32
+const CPLXMLNodeType = UInt32
 const CXT_Element = (UInt32)(0)
 const CXT_Text = (UInt32)(1)
 const CXT_Attribute = (UInt32)(2)
@@ -145,16 +145,16 @@ const TRUE = 1
 # const EMULATED_BOOL = bool
 # Skipping MacroDefinition: VOLATILE_BOOL volatile bool
 
-typealias GInt32 Cint
-typealias GUInt32 UInt32
-typealias GInt16 Int16
-typealias GUInt16 UInt16
-typealias GByte Cuchar
-typealias GBool Cint
-typealias GIntBig Clonglong
-typealias GUIntBig Culonglong
-typealias GPtrDiff_t GIntBig
-typealias GDALProgressFunc Ptr{Void}
+const GInt32 = Cint
+const GUInt32 = UInt32
+const GInt16 = Int16
+const GUInt16 = UInt16
+const GByte = Cuchar
+const GBool = Cint
+const GIntBig = Clonglong
+const GUIntBig = Culonglong
+const GPtrDiff_t = GIntBig
+const GDALProgressFunc = Ptr{Void}
 
 const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
 
@@ -212,7 +212,7 @@ const GMF_ALPHA = 0x04
 const GMF_NODATA = 0x08
 
 # begin enum ANONYMOUS_3
-typealias ANONYMOUS_3 UInt32
+const ANONYMOUS_3 = UInt32
 const GDT_Unknown = (UInt32)(0)
 const GDT_Byte = (UInt32)(1)
 const GDT_UInt16 = (UInt32)(2)
@@ -229,7 +229,7 @@ const GDT_TypeCount = (UInt32)(12)
 # end enum ANONYMOUS_3
 
 # begin enum GDALDataType
-typealias GDALDataType UInt32
+const GDALDataType = UInt32
 const GDT_Unknown = (UInt32)(0)
 const GDT_Byte = (UInt32)(1)
 const GDT_UInt16 = (UInt32)(2)
@@ -246,7 +246,7 @@ const GDT_TypeCount = (UInt32)(12)
 # end enum GDALDataType
 
 # begin enum ANONYMOUS_4
-typealias ANONYMOUS_4 UInt32
+const ANONYMOUS_4 = UInt32
 const GARIO_PENDING = (UInt32)(0)
 const GARIO_UPDATE = (UInt32)(1)
 const GARIO_ERROR = (UInt32)(2)
@@ -255,7 +255,7 @@ const GARIO_TypeCount = (UInt32)(4)
 # end enum ANONYMOUS_4
 
 # begin enum GDALAsyncStatusType
-typealias GDALAsyncStatusType UInt32
+const GDALAsyncStatusType = UInt32
 const GARIO_PENDING = (UInt32)(0)
 const GARIO_UPDATE = (UInt32)(1)
 const GARIO_ERROR = (UInt32)(2)
@@ -264,31 +264,31 @@ const GARIO_TypeCount = (UInt32)(4)
 # end enum GDALAsyncStatusType
 
 # begin enum ANONYMOUS_5
-typealias ANONYMOUS_5 UInt32
+const ANONYMOUS_5 = UInt32
 const GA_ReadOnly = (UInt32)(0)
 const GA_Update = (UInt32)(1)
 # end enum ANONYMOUS_5
 
 # begin enum GDALAccess
-typealias GDALAccess UInt32
+const GDALAccess = UInt32
 const GA_ReadOnly = (UInt32)(0)
 const GA_Update = (UInt32)(1)
 # end enum GDALAccess
 
 # begin enum ANONYMOUS_6
-typealias ANONYMOUS_6 UInt32
+const ANONYMOUS_6 = UInt32
 const GF_Read = (UInt32)(0)
 const GF_Write = (UInt32)(1)
 # end enum ANONYMOUS_6
 
 # begin enum GDALRWFlag
-typealias GDALRWFlag UInt32
+const GDALRWFlag = UInt32
 const GF_Read = (UInt32)(0)
 const GF_Write = (UInt32)(1)
 # end enum GDALRWFlag
 
 # begin enum ANONYMOUS_7
-typealias ANONYMOUS_7 UInt32
+const ANONYMOUS_7 = UInt32
 const GRIORA_NearestNeighbour = (UInt32)(0)
 const GRIORA_Bilinear = (UInt32)(1)
 const GRIORA_Cubic = (UInt32)(2)
@@ -300,7 +300,7 @@ const GRIORA_Gauss = (UInt32)(7)
 # end enum ANONYMOUS_7
 
 # begin enum GDALRIOResampleAlg
-typealias GDALRIOResampleAlg UInt32
+const GDALRIOResampleAlg = UInt32
 const GRIORA_NearestNeighbour = (UInt32)(0)
 const GRIORA_Bilinear = (UInt32)(1)
 const GRIORA_Cubic = (UInt32)(2)
@@ -324,7 +324,7 @@ type GDALRasterIOExtraArg
 end
 
 # begin enum ANONYMOUS_8
-typealias ANONYMOUS_8 UInt32
+const ANONYMOUS_8 = UInt32
 const GCI_Undefined = (UInt32)(0)
 const GCI_GrayIndex = (UInt32)(1)
 const GCI_PaletteIndex = (UInt32)(2)
@@ -346,7 +346,7 @@ const GCI_Max = (UInt32)(16)
 # end enum ANONYMOUS_8
 
 # begin enum GDALColorInterp
-typealias GDALColorInterp UInt32
+const GDALColorInterp = UInt32
 const GCI_Undefined = (UInt32)(0)
 const GCI_GrayIndex = (UInt32)(1)
 const GCI_PaletteIndex = (UInt32)(2)
@@ -368,7 +368,7 @@ const GCI_Max = (UInt32)(16)
 # end enum GDALColorInterp
 
 # begin enum ANONYMOUS_9
-typealias ANONYMOUS_9 UInt32
+const ANONYMOUS_9 = UInt32
 const GPI_Gray = (UInt32)(0)
 const GPI_RGB = (UInt32)(1)
 const GPI_CMYK = (UInt32)(2)
@@ -376,21 +376,21 @@ const GPI_HLS = (UInt32)(3)
 # end enum ANONYMOUS_9
 
 # begin enum GDALPaletteInterp
-typealias GDALPaletteInterp UInt32
+const GDALPaletteInterp = UInt32
 const GPI_Gray = (UInt32)(0)
 const GPI_RGB = (UInt32)(1)
 const GPI_CMYK = (UInt32)(2)
 const GPI_HLS = (UInt32)(3)
 # end enum GDALPaletteInterp
 
-typealias GDALMajorObjectH Ptr{Void}
-typealias GDALDatasetH Ptr{Void}
-typealias GDALRasterBandH Ptr{Void}
-typealias GDALDriverH Ptr{Void}
-typealias GDALColorTableH Ptr{Void}
-typealias GDALRasterAttributeTableH Ptr{Void}
-typealias GDALAsyncReaderH Ptr{Void}
-typealias GSpacing GIntBig
+const GDALMajorObjectH = Ptr{Void}
+const GDALDatasetH = Ptr{Void}
+const GDALRasterBandH = Ptr{Void}
+const GDALDriverH = Ptr{Void}
+const GDALColorTableH = Ptr{Void}
+const GDALRasterAttributeTableH = Ptr{Void}
+const GDALAsyncReaderH = Ptr{Void}
+const GSpacing = GIntBig
 
 type GDAL_GCP
     pszId::Cstring
@@ -402,7 +402,7 @@ type GDAL_GCP
     dfGCPZ::Cdouble
 end
 
-typealias GDALDerivedPixelFunc Ptr{Void}
+const GDALDerivedPixelFunc = Ptr{Void}
 
 type GDALRPCInfo
     dfLINE_OFF::Cdouble
@@ -433,21 +433,21 @@ type GDALColorEntry
 end
 
 # begin enum ANONYMOUS_10
-typealias ANONYMOUS_10 UInt32
+const ANONYMOUS_10 = UInt32
 const GFT_Integer = (UInt32)(0)
 const GFT_Real = (UInt32)(1)
 const GFT_String = (UInt32)(2)
 # end enum ANONYMOUS_10
 
 # begin enum GDALRATFieldType
-typealias GDALRATFieldType UInt32
+const GDALRATFieldType = UInt32
 const GFT_Integer = (UInt32)(0)
 const GFT_Real = (UInt32)(1)
 const GFT_String = (UInt32)(2)
 # end enum GDALRATFieldType
 
 # begin enum ANONYMOUS_11
-typealias ANONYMOUS_11 UInt32
+const ANONYMOUS_11 = UInt32
 const GFU_Generic = (UInt32)(0)
 const GFU_PixelCount = (UInt32)(1)
 const GFU_Name = (UInt32)(2)
@@ -470,7 +470,7 @@ const GFU_MaxCount = (UInt32)(18)
 # end enum ANONYMOUS_11
 
 # begin enum GDALRATFieldUsage
-typealias GDALRATFieldUsage UInt32
+const GDALRATFieldUsage = UInt32
 const GFU_Generic = (UInt32)(0)
 const GFU_PixelCount = (UInt32)(1)
 const GFU_Name = (UInt32)(2)
@@ -493,14 +493,14 @@ const GFU_MaxCount = (UInt32)(18)
 # end enum GDALRATFieldUsage
 
 # begin enum ANONYMOUS_12
-typealias ANONYMOUS_12 UInt32
+const ANONYMOUS_12 = UInt32
 const GTO_TIP = (UInt32)(0)
 const GTO_BIT = (UInt32)(1)
 const GTO_BSQ = (UInt32)(2)
 # end enum ANONYMOUS_12
 
 # begin enum GDALTileOrganization
-typealias GDALTileOrganization UInt32
+const GDALTileOrganization = UInt32
 const GTO_TIP = (UInt32)(0)
 const GTO_BIT = (UInt32)(1)
 const GTO_BSQ = (UInt32)(2)
@@ -508,7 +508,7 @@ const GTO_BSQ = (UInt32)(2)
 
 const GDAL_GTI2_SIGNATURE = "GTI2"
 
-typealias GDALTransformerFunc Ptr{Void}
+const GDALTransformerFunc = Ptr{Void}
 
 type GDALTransformerInfo
     abySignature::NTuple{4,GByte}
@@ -519,8 +519,8 @@ type GDALTransformerInfo
     pfnCreateSimilar::Ptr{Void}
 end
 
-typealias GDALContourWriter Ptr{Void}
-typealias GDALContourGeneratorH Ptr{Void}
+const GDALContourWriter = Ptr{Void}
+const GDALContourGeneratorH = Ptr{Void}
 
 type OGRContourWriterInfo
     hLayer::Ptr{Void}
@@ -531,7 +531,7 @@ type OGRContourWriterInfo
 end
 
 # begin enum ANONYMOUS_13
-typealias ANONYMOUS_13 UInt32
+const ANONYMOUS_13 = UInt32
 const GGA_InverseDistanceToAPower = (UInt32)(1)
 const GGA_MovingAverage = (UInt32)(2)
 const GGA_NearestNeighbor = (UInt32)(3)
@@ -546,7 +546,7 @@ const GGA_InverseDistanceToAPowerNearestNeighbor = (UInt32)(11)
 # end enum ANONYMOUS_13
 
 # begin enum GDALGridAlgorithm
-typealias GDALGridAlgorithm UInt32
+const GDALGridAlgorithm = UInt32
 const GGA_InverseDistanceToAPower = (UInt32)(1)
 const GGA_MovingAverage = (UInt32)(2)
 const GGA_NearestNeighbor = (UInt32)(3)
@@ -632,27 +632,27 @@ type GDALTriangulation
     pasFacetCoefficients::Ptr{GDALTriBarycentricCoefficients}
 end
 
-typealias OGRGeometryH Ptr{Void}
-typealias OGRSpatialReferenceH Ptr{Void}
-typealias OGRCoordinateTransformationH Ptr{Void}
+const OGRGeometryH = Ptr{Void}
+const OGRSpatialReferenceH = Ptr{Void}
+const OGRCoordinateTransformationH = Ptr{Void}
 
 type _CPLXMLNode
 end
 
-typealias OGRFieldDefnH Ptr{Void}
-typealias OGRFeatureDefnH Ptr{Void}
-typealias OGRFeatureH Ptr{Void}
-typealias OGRStyleTableH Ptr{Void}
+const OGRFieldDefnH = Ptr{Void}
+const OGRFeatureDefnH = Ptr{Void}
+const OGRFeatureH = Ptr{Void}
+const OGRStyleTableH = Ptr{Void}
 
 type OGRGeomFieldDefnHS
 end
 
-typealias OGRGeomFieldDefnH Ptr{OGRGeomFieldDefnHS}
-typealias OGRLayerH Ptr{Void}
-typealias OGRDataSourceH Ptr{Void}
-typealias OGRSFDriverH Ptr{Void}
-typealias OGRStyleMgrH Ptr{Void}
-typealias OGRStyleToolH Ptr{Void}
+const OGRGeomFieldDefnH = Ptr{OGRGeomFieldDefnHS}
+const OGRLayerH = Ptr{Void}
+const OGRDataSourceH = Ptr{Void}
+const OGRSFDriverH = Ptr{Void}
+const OGRStyleMgrH = Ptr{Void}
+const OGRStyleToolH = Ptr{Void}
 
 const OGRERR_NONE = 0
 const OGRERR_NOT_ENOUGH_DATA = 1
@@ -743,11 +743,11 @@ type OGREnvelope3D
     MaxZ::Cdouble
 end
 
-typealias OGRErr Cint
-typealias OGRBoolean Cint
+const OGRErr = Cint
+const OGRBoolean = Cint
 
 # begin enum ANONYMOUS_14
-typealias ANONYMOUS_14 UInt32
+const ANONYMOUS_14 = UInt32
 const wkbUnknown = (UInt32)(0)
 const wkbPoint = (UInt32)(1)
 const wkbLineString = (UInt32)(2)
@@ -822,7 +822,7 @@ const wkbGeometryCollection25D = (UInt32)(0x0000000080000007)
 # end enum ANONYMOUS_14
 
 # begin enum OGRwkbGeometryType
-typealias OGRwkbGeometryType UInt32
+const OGRwkbGeometryType = UInt32
 const wkbUnknown = (UInt32)(0)
 const wkbPoint = (UInt32)(1)
 const wkbLineString = (UInt32)(2)
@@ -897,33 +897,33 @@ const wkbGeometryCollection25D = (UInt32)(0x0000000080000007)
 # end enum OGRwkbGeometryType
 
 # begin enum ANONYMOUS_15
-typealias ANONYMOUS_15 UInt32
+const ANONYMOUS_15 = UInt32
 const wkbVariantOldOgc = (UInt32)(0)
 const wkbVariantIso = (UInt32)(1)
 const wkbVariantPostGIS1 = (UInt32)(2)
 # end enum ANONYMOUS_15
 
 # begin enum OGRwkbVariant
-typealias OGRwkbVariant UInt32
+const OGRwkbVariant = UInt32
 const wkbVariantOldOgc = (UInt32)(0)
 const wkbVariantIso = (UInt32)(1)
 const wkbVariantPostGIS1 = (UInt32)(2)
 # end enum OGRwkbVariant
 
 # begin enum ANONYMOUS_16
-typealias ANONYMOUS_16 UInt32
+const ANONYMOUS_16 = UInt32
 const wkbXDR = (UInt32)(0)
 const wkbNDR = (UInt32)(1)
 # end enum ANONYMOUS_16
 
 # begin enum OGRwkbByteOrder
-typealias OGRwkbByteOrder UInt32
+const OGRwkbByteOrder = UInt32
 const wkbXDR = (UInt32)(0)
 const wkbNDR = (UInt32)(1)
 # end enum OGRwkbByteOrder
 
 # begin enum ANONYMOUS_17
-typealias ANONYMOUS_17 UInt32
+const ANONYMOUS_17 = UInt32
 const OFTInteger = (UInt32)(0)
 const OFTIntegerList = (UInt32)(1)
 const OFTReal = (UInt32)(2)
@@ -942,7 +942,7 @@ const OFTMaxType = (UInt32)(13)
 # end enum ANONYMOUS_17
 
 # begin enum OGRFieldType
-typealias OGRFieldType UInt32
+const OGRFieldType = UInt32
 const OFTInteger = (UInt32)(0)
 const OFTIntegerList = (UInt32)(1)
 const OFTReal = (UInt32)(2)
@@ -961,7 +961,7 @@ const OFTMaxType = (UInt32)(13)
 # end enum OGRFieldType
 
 # begin enum ANONYMOUS_18
-typealias ANONYMOUS_18 UInt32
+const ANONYMOUS_18 = UInt32
 const OFSTNone = (UInt32)(0)
 const OFSTBoolean = (UInt32)(1)
 const OFSTInt16 = (UInt32)(2)
@@ -970,7 +970,7 @@ const OFSTMaxSubType = (UInt32)(3)
 # end enum ANONYMOUS_18
 
 # begin enum OGRFieldSubType
-typealias OGRFieldSubType UInt32
+const OGRFieldSubType = UInt32
 const OFSTNone = (UInt32)(0)
 const OFSTBoolean = (UInt32)(1)
 const OFSTInt16 = (UInt32)(2)
@@ -979,14 +979,14 @@ const OFSTMaxSubType = (UInt32)(3)
 # end enum OGRFieldSubType
 
 # begin enum ANONYMOUS_19
-typealias ANONYMOUS_19 UInt32
+const ANONYMOUS_19 = UInt32
 const OJUndefined = (UInt32)(0)
 const OJLeft = (UInt32)(1)
 const OJRight = (UInt32)(2)
 # end enum ANONYMOUS_19
 
 # begin enum OGRJustification
-typealias OGRJustification UInt32
+const OGRJustification = UInt32
 const OJUndefined = (UInt32)(0)
 const OJLeft = (UInt32)(1)
 const OJRight = (UInt32)(2)
@@ -997,7 +997,7 @@ type OGRField
 end
 
 # begin enum ogr_style_tool_class_id
-typealias ogr_style_tool_class_id UInt32
+const ogr_style_tool_class_id = UInt32
 const OGRSTCNone = (UInt32)(0)
 const OGRSTCPen = (UInt32)(1)
 const OGRSTCBrush = (UInt32)(2)
@@ -1007,7 +1007,7 @@ const OGRSTCVector = (UInt32)(5)
 # end enum ogr_style_tool_class_id
 
 # begin enum OGRSTClassId
-typealias OGRSTClassId UInt32
+const OGRSTClassId = UInt32
 const OGRSTCNone = (UInt32)(0)
 const OGRSTCPen = (UInt32)(1)
 const OGRSTCBrush = (UInt32)(2)
@@ -1017,7 +1017,7 @@ const OGRSTCVector = (UInt32)(5)
 # end enum OGRSTClassId
 
 # begin enum ogr_style_tool_units_id
-typealias ogr_style_tool_units_id UInt32
+const ogr_style_tool_units_id = UInt32
 const OGRSTUGround = (UInt32)(0)
 const OGRSTUPixel = (UInt32)(1)
 const OGRSTUPoints = (UInt32)(2)
@@ -1027,7 +1027,7 @@ const OGRSTUInches = (UInt32)(5)
 # end enum ogr_style_tool_units_id
 
 # begin enum OGRSTUnitId
-typealias OGRSTUnitId UInt32
+const OGRSTUnitId = UInt32
 const OGRSTUGround = (UInt32)(0)
 const OGRSTUPixel = (UInt32)(1)
 const OGRSTUPoints = (UInt32)(2)
@@ -1037,7 +1037,7 @@ const OGRSTUInches = (UInt32)(5)
 # end enum OGRSTUnitId
 
 # begin enum ogr_style_tool_param_pen_id
-typealias ogr_style_tool_param_pen_id UInt32
+const ogr_style_tool_param_pen_id = UInt32
 const OGRSTPenColor = (UInt32)(0)
 const OGRSTPenWidth = (UInt32)(1)
 const OGRSTPenPattern = (UInt32)(2)
@@ -1050,7 +1050,7 @@ const OGRSTPenLast = (UInt32)(8)
 # end enum ogr_style_tool_param_pen_id
 
 # begin enum OGRSTPenParam
-typealias OGRSTPenParam UInt32
+const OGRSTPenParam = UInt32
 const OGRSTPenColor = (UInt32)(0)
 const OGRSTPenWidth = (UInt32)(1)
 const OGRSTPenPattern = (UInt32)(2)
@@ -1063,7 +1063,7 @@ const OGRSTPenLast = (UInt32)(8)
 # end enum OGRSTPenParam
 
 # begin enum ogr_style_tool_param_brush_id
-typealias ogr_style_tool_param_brush_id UInt32
+const ogr_style_tool_param_brush_id = UInt32
 const OGRSTBrushFColor = (UInt32)(0)
 const OGRSTBrushBColor = (UInt32)(1)
 const OGRSTBrushId = (UInt32)(2)
@@ -1076,7 +1076,7 @@ const OGRSTBrushLast = (UInt32)(8)
 # end enum ogr_style_tool_param_brush_id
 
 # begin enum OGRSTBrushParam
-typealias OGRSTBrushParam UInt32
+const OGRSTBrushParam = UInt32
 const OGRSTBrushFColor = (UInt32)(0)
 const OGRSTBrushBColor = (UInt32)(1)
 const OGRSTBrushId = (UInt32)(2)
@@ -1089,7 +1089,7 @@ const OGRSTBrushLast = (UInt32)(8)
 # end enum OGRSTBrushParam
 
 # begin enum ogr_style_tool_param_symbol_id
-typealias ogr_style_tool_param_symbol_id UInt32
+const ogr_style_tool_param_symbol_id = UInt32
 const OGRSTSymbolId = (UInt32)(0)
 const OGRSTSymbolAngle = (UInt32)(1)
 const OGRSTSymbolColor = (UInt32)(2)
@@ -1106,7 +1106,7 @@ const OGRSTSymbolLast = (UInt32)(12)
 # end enum ogr_style_tool_param_symbol_id
 
 # begin enum OGRSTSymbolParam
-typealias OGRSTSymbolParam UInt32
+const OGRSTSymbolParam = UInt32
 const OGRSTSymbolId = (UInt32)(0)
 const OGRSTSymbolAngle = (UInt32)(1)
 const OGRSTSymbolColor = (UInt32)(2)
@@ -1123,7 +1123,7 @@ const OGRSTSymbolLast = (UInt32)(12)
 # end enum OGRSTSymbolParam
 
 # begin enum ogr_style_tool_param_label_id
-typealias ogr_style_tool_param_label_id UInt32
+const ogr_style_tool_param_label_id = UInt32
 const OGRSTLabelFontName = (UInt32)(0)
 const OGRSTLabelSize = (UInt32)(1)
 const OGRSTLabelTextString = (UInt32)(2)
@@ -1149,7 +1149,7 @@ const OGRSTLabelLast = (UInt32)(21)
 # end enum ogr_style_tool_param_label_id
 
 # begin enum OGRSTLabelParam
-typealias OGRSTLabelParam UInt32
+const OGRSTLabelParam = UInt32
 const OGRSTLabelFontName = (UInt32)(0)
 const OGRSTLabelSize = (UInt32)(1)
 const OGRSTLabelTextString = (UInt32)(2)
@@ -1175,7 +1175,7 @@ const OGRSTLabelLast = (UInt32)(21)
 # end enum OGRSTLabelParam
 
 # begin enum ANONYMOUS_20
-typealias ANONYMOUS_20 UInt32
+const ANONYMOUS_20 = UInt32
 const GRA_NearestNeighbour = (UInt32)(0)
 const GRA_Bilinear = (UInt32)(1)
 const GRA_Cubic = (UInt32)(2)
@@ -1191,7 +1191,7 @@ const GRA_Q3 = (UInt32)(12)
 # end enum ANONYMOUS_20
 
 # begin enum GDALResampleAlg
-typealias GDALResampleAlg UInt32
+const GDALResampleAlg = UInt32
 const GRA_NearestNeighbour = (UInt32)(0)
 const GRA_Bilinear = (UInt32)(1)
 const GRA_Cubic = (UInt32)(2)
@@ -1207,7 +1207,7 @@ const GRA_Q3 = (UInt32)(12)
 # end enum GDALResampleAlg
 
 # begin enum ANONYMOUS_21
-typealias ANONYMOUS_21 UInt32
+const ANONYMOUS_21 = UInt32
 const GWKAOM_Average = (UInt32)(1)
 const GWKAOM_Fmode = (UInt32)(2)
 const GWKAOM_Imode = (UInt32)(3)
@@ -1217,7 +1217,7 @@ const GWKAOM_Quant = (UInt32)(6)
 # end enum ANONYMOUS_21
 
 # begin enum GWKAverageOrModeAlg
-typealias GWKAverageOrModeAlg UInt32
+const GWKAverageOrModeAlg = UInt32
 const GWKAOM_Average = (UInt32)(1)
 const GWKAOM_Fmode = (UInt32)(2)
 const GWKAOM_Imode = (UInt32)(3)
@@ -1226,7 +1226,7 @@ const GWKAOM_Min = (UInt32)(5)
 const GWKAOM_Quant = (UInt32)(6)
 # end enum GWKAverageOrModeAlg
 
-typealias GDALMaskFunc Ptr{Void}
+const GDALMaskFunc = Ptr{Void}
 
 type GDALWarpOptions
     papszWarpOptions::Ptr{Cstring}
@@ -1266,29 +1266,29 @@ type GDALWarpOptions
     dfCutlineBlendDist::Cdouble
 end
 
-typealias GDALWarpOperationH Ptr{Void}
-typealias FilterFuncType Ptr{Void}
-typealias FilterFunc4ValuesType Ptr{Void}
+const GDALWarpOperationH = Ptr{Void}
+const FilterFuncType = Ptr{Void}
+const FilterFunc4ValuesType = Ptr{Void}
 
 const VRT_NODATA_UNSET = -1234.56
 
-typealias VRTImageReadFunc Ptr{Void}
-typealias VRTDriverH Ptr{Void}
-typealias VRTSourceH Ptr{Void}
-typealias VRTSimpleSourceH Ptr{Void}
-typealias VRTAveragedSourceH Ptr{Void}
-typealias VRTComplexSourceH Ptr{Void}
-typealias VRTFilteredSourceH Ptr{Void}
-typealias VRTKernelFilteredSourceH Ptr{Void}
-typealias VRTAverageFilteredSourceH Ptr{Void}
-typealias VRTFuncSourceH Ptr{Void}
-typealias VRTDatasetH Ptr{Void}
-typealias VRTWarpedDatasetH Ptr{Void}
-typealias VRTRasterBandH Ptr{Void}
-typealias VRTSourcedRasterBandH Ptr{Void}
-typealias VRTWarpedRasterBandH Ptr{Void}
-typealias VRTDerivedRasterBandH Ptr{Void}
-typealias VRTRawRasterBandH Ptr{Void}
+const VRTImageReadFunc = Ptr{Void}
+const VRTDriverH = Ptr{Void}
+const VRTSourceH = Ptr{Void}
+const VRTSimpleSourceH = Ptr{Void}
+const VRTAveragedSourceH = Ptr{Void}
+const VRTComplexSourceH = Ptr{Void}
+const VRTFilteredSourceH = Ptr{Void}
+const VRTKernelFilteredSourceH = Ptr{Void}
+const VRTAverageFilteredSourceH = Ptr{Void}
+const VRTFuncSourceH = Ptr{Void}
+const VRTDatasetH = Ptr{Void}
+const VRTWarpedDatasetH = Ptr{Void}
+const VRTRasterBandH = Ptr{Void}
+const VRTSourcedRasterBandH = Ptr{Void}
+const VRTWarpedRasterBandH = Ptr{Void}
+const VRTDerivedRasterBandH = Ptr{Void}
+const VRTRawRasterBandH = Ptr{Void}
 
 type GDALInfoOptions
 end
@@ -1512,7 +1512,7 @@ const SRS_WGS84_SEMIMAJOR = 6.378137e6
 const SRS_WGS84_INVFLATTENING = 298.257223563
 
 # begin enum ANONYMOUS_22
-typealias ANONYMOUS_22 UInt32
+const ANONYMOUS_22 = UInt32
 const OAO_Other = (UInt32)(0)
 const OAO_North = (UInt32)(1)
 const OAO_South = (UInt32)(2)
@@ -1523,7 +1523,7 @@ const OAO_Down = (UInt32)(6)
 # end enum ANONYMOUS_22
 
 # begin enum OGRAxisOrientation
-typealias OGRAxisOrientation UInt32
+const OGRAxisOrientation = UInt32
 const OAO_Other = (UInt32)(0)
 const OAO_North = (UInt32)(1)
 const OAO_South = (UInt32)(2)
@@ -1534,7 +1534,7 @@ const OAO_Down = (UInt32)(6)
 # end enum OGRAxisOrientation
 
 # begin enum ANONYMOUS_23
-typealias ANONYMOUS_23 UInt32
+const ANONYMOUS_23 = UInt32
 const ODT_HD_Min = (UInt32)(1000)
 const ODT_HD_Other = (UInt32)(1000)
 const ODT_HD_Classic = (UInt32)(1001)
@@ -1554,7 +1554,7 @@ const ODT_LD_Max = (UInt32)(32767)
 # end enum ANONYMOUS_23
 
 # begin enum OGRDatumType
-typealias OGRDatumType UInt32
+const OGRDatumType = UInt32
 const ODT_HD_Min = (UInt32)(1000)
 const ODT_HD_Other = (UInt32)(1000)
 const ODT_HD_Classic = (UInt32)(1001)

@@ -1,1 +1,1 @@
-typealias FILE Void # not sure if this works
+const FILE = Void # not sure if this works
