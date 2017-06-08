@@ -86,7 +86,7 @@ function __init__()
 
     # get GDAL version number
     versionstring = unsafe_string(C.GDALVersionInfo("RELEASE_NAME"))
-    const GDALVERSION = convert(VersionNumber, versionstring)
+    global const GDALVERSION = convert(VersionNumber, versionstring)
     if GDALVERSION < v"2.0.0"
         warn("GDAL.jl is made for GDAL 2.0 and later")
     end

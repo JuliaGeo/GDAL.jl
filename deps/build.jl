@@ -11,7 +11,8 @@ function version_check(name, handle)
 end
 
 libgdal = library_dependency("libgdal",
-                             aliases=["gdal","gdal201", "gdal_w32","gdal_w64","libgdal-20"],
+                             aliases=["gdal","gdal201", "gdal202",
+                             "gdal_w32","gdal_w64","libgdal-20"],
                              validate=version_check)
 
 if is_windows()
