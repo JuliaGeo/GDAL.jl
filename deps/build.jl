@@ -17,7 +17,7 @@ libgdal = library_dependency("libgdal",
 
 if is_windows()
     using WinRPM
-    push!(WinRPM.sources, "http://download.opensuse.org/repositories/home:yeesian/openSUSE_13.2")
+    push!(WinRPM.sources, "http://download.opensuse.org/repositories/home:yeesian/openSUSE_Leap_42.2")
     WinRPM.update()
     provides(WinRPM.RPM, "gdal", [libgdal], os = :Windows)
 end
