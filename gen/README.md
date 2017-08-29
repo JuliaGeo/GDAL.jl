@@ -4,8 +4,8 @@ GDAL.jl generation documentation
 ### Install Clang.jl
 Because a few tricks are used to be able to properly write documentation,
 this fork of Clang.jl is used: https://github.com/visr/Clang.jl (branch gdal)
-For the generation process `julia 0.5-dev` based on `LLVM 3.7.1` and with
-`BUILD_LLVM_CLANG=1` in `Make.user` is used.
+For the generation process `visr/julia-0.6+` is used, since it includes `0d95a1f`,
+which fixes printing `<:MyType`, which is at time of writing only on master.
 
 ### Make sure you have the GDAL header files
 The `wrap_gdal.jl` script finds them in the directory set in the `gdalpath` variable.
