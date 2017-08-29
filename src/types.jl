@@ -1,60 +1,61 @@
 # http://www.gdal.org/classGDALMajorObject.html
 
-@compat abstract type GDALMajorObjectH end
+abstract type GDALMajorObjectH end
 
-@compat abstract type GDALDatasetH <: GDALMajorObjectH end
-@compat abstract type GDALDriverH <: GDALMajorObjectH end
-@compat abstract type GDALRasterBandH <: GDALMajorObjectH end
-@compat abstract type OGRLayerH <: GDALMajorObjectH end
+abstract type GDALDatasetH <: GDALMajorObjectH end
+abstract type GDALDriverH <: GDALMajorObjectH end
+abstract type GDALRasterBandH <: GDALMajorObjectH end
+abstract type OGRLayerH <: GDALMajorObjectH end
 
-@compat abstract type OGRDataSourceH <: GDALDatasetH end
-@compat abstract type VRTDatasetH <: GDALDatasetH end
+abstract type OGRDataSourceH <: GDALDatasetH end
+abstract type VRTDatasetH <: GDALDatasetH end
 
-@compat abstract type OGRSFDriverH <: GDALDriverH end
-@compat abstract type VRTDriverH <: GDALDriverH end
+abstract type OGRSFDriverH <: GDALDriverH end
+abstract type VRTDriverH <: GDALDriverH end
 
-@compat abstract type GDALAsyncReaderH end
-@compat abstract type GDALColorTableH end
-@compat abstract type GDALContourGeneratorH end
-@compat abstract type GDALContourWriter end
-@compat abstract type GDALDerivedPixelFunc end
-@compat abstract type GDALMaskFunc end
-@compat abstract type GDALProgressFunc end
-@compat abstract type GDALRasterAttributeTableH end
-@compat abstract type GDALTransformerFunc end
-@compat abstract type GDALWarpOperationH end
+abstract type GDALAsyncReaderH end
+abstract type GDALColorTableH end
+abstract type GDALContourGeneratorH end
+abstract type GDALContourWriter end
+abstract type GDALDerivedPixelFunc end
+abstract type GDALMaskFunc end
+abstract type GDALProgressFunc end
+abstract type GDALRasterAttributeTableH end
+abstract type GDALTransformerFunc end
+abstract type GDALWarpOperationH end
 
-@compat abstract type OGRCoordinateTransformationH end
-@compat abstract type OGRFeatureDefnH end
-@compat abstract type OGRFeatureH end
-@compat abstract type OGRFieldDefnH end
-@compat abstract type OGRGeometryH end
-@compat abstract type OGRSpatialReferenceH end
-@compat abstract type OGRStyleMgrH end
-@compat abstract type OGRStyleTableH end
-@compat abstract type OGRStyleToolH end
+abstract type OGRCoordinateTransformationH end
+abstract type OGRFeatureDefnH end
+abstract type OGRFeatureH end
+abstract type OGRFieldDefnH end
+abstract type OGRGeomFieldDefnH end
+abstract type OGRGeometryH end
+abstract type OGRSpatialReferenceH end
+abstract type OGRStyleMgrH end
+abstract type OGRStyleTableH end
+abstract type OGRStyleToolH end
 
-@compat abstract type CPLErrorHandler end
-@compat abstract type FilterFunc4ValuesType end
-@compat abstract type FilterFuncType end
+abstract type CPLErrorHandler end
+abstract type FilterFunc4ValuesType end
+abstract type FilterFuncType end
 
-@compat abstract type VRTImageReadFunc end
-@compat abstract type VRTSourceH end
-@compat abstract type VRTSimpleSourceH end
-@compat abstract type VRTAveragedSourceH end
-@compat abstract type VRTComplexSourceH end
-@compat abstract type VRTFilteredSourceH end
-@compat abstract type VRTKernelFilteredSourceH end
-@compat abstract type VRTAverageFilteredSourceH end
-@compat abstract type VRTFuncSourceH end
-@compat abstract type VRTWarpedDatasetH end
-@compat abstract type VRTRasterBandH end
-@compat abstract type VRTSourcedRasterBandH end
-@compat abstract type VRTWarpedRasterBandH end
-@compat abstract type VRTDerivedRasterBandH end
-@compat abstract type VRTRawRasterBandH end
+abstract type VRTImageReadFunc end
+abstract type VRTSourceH end
+abstract type VRTSimpleSourceH end
+abstract type VRTAveragedSourceH end
+abstract type VRTComplexSourceH end
+abstract type VRTFilteredSourceH end
+abstract type VRTKernelFilteredSourceH end
+abstract type VRTAverageFilteredSourceH end
+abstract type VRTFuncSourceH end
+abstract type VRTWarpedDatasetH end
+abstract type VRTRasterBandH end
+abstract type VRTSourcedRasterBandH end
+abstract type VRTWarpedRasterBandH end
+abstract type VRTDerivedRasterBandH end
+abstract type VRTRawRasterBandH end
 
-
-# C functions that take an argument of the type char** can be called
-# by using a Ptr{Ptr{UInt8}} type within Julia.
-const StringList = Ptr{Ptr{UInt8}}
+abstract type CPLFileFinder end
+abstract type CPLVirtualMemCachePageCbk end
+abstract type CPLVirtualMemFreeUserData end
+abstract type CPLVirtualMemUnCachePageCbk end

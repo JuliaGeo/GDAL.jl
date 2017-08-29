@@ -1,12 +1,12 @@
-using LibExpat
 using DataStructures
 
-workdir = dirname(@__FILE__)
-include(joinpath(workdir, "doc.jl"))
-srcdir = joinpath(workdir, "../src")
+const workdir = @__DIR__
+const srcdir = joinpath(workdir, "../src")
 
-
-headerfiles = [
+# Subset of headerfiles in wrap_gdal.jl which is wrapped outside of
+# the C submodule. Note that the common.jl from C is fully rewritten, and
+# includes the full set.
+const headerfiles = [
     "gdal.jl",
     "gdal_alg.jl",
     "gdal_vrt.jl",
@@ -16,7 +16,7 @@ headerfiles = [
 ]
 
 # do not use automatic function renaming for these
-custom_rename = Dict{String, String}(
+const custom_rename = Dict{String, String}(
     # prevent a clash after renaming both OGR/GDAL versions to getdriverbyname
     # since the OGR and GDAL driver system are combined in GDAL 2
     # give preference to the GDAL versions
@@ -43,7 +43,7 @@ custom_rename = Dict{String, String}(
     "ogrgetdriver" => "ogrgetdriver"
 )
 
-strip_prefixes = [
+const strip_prefixes = [
     (r"^gdal_cg_", ""),
     (r"^gdal_", ""),
     (r"^gdal", ""),
@@ -63,67 +63,40 @@ strip_prefixes = [
     (r"^osr", "")
 ]
 
-# all these are immutable without internal fields
-check_nullpointer = [
-    :CPLErrorHandler,
-    :GDALProgressFunc,
-    :GDALMajorObjectH,
-    :GDALDatasetH,
-    :GDALRasterBandH,
-    :GDALDriverH,
-    :GDALColorTableH,
-    :GDALRasterAttributeTableH,
-    :GDALAsyncReaderH,
-    :GDALDerivedPixelFunc,
-    :GDALTransformerFunc,
-    :GDALContourWriter,
-    :GDALContourGeneratorH,
-    :OGRGeometryH,
-    :OGRSpatialReferenceH,
-    :OGRCoordinateTransformationH,
-    :OGRFieldDefnH,
-    :OGRFeatureDefnH,
-    :OGRFeatureH,
-    :OGRStyleTableH,
-    :OGRLayerH,
-    :OGRDataSourceH,
-    :OGRSFDriverH,
-    :OGRStyleMgrH,
-    :OGRStyleToolH,
-    :GDALMaskFunc,
-    :GDALWarpOperationH,
-    :FilterFuncType,
-    :FilterFunc4ValuesType,
-    :VRTAveragedSourceH,
-    :VRTAverageFilteredSourceH,
-    :VRTComplexSourceH,
-    :VRTDatasetH,
-    :VRTDerivedRasterBandH,
-    :VRTDriverH,
-    :VRTFilteredSourceH,
-    :VRTFuncSourceH,
-    :VRTImageReadFunc,
-    :VRTKernelFilteredSourceH,
-    :VRTRasterBandH,
-    :VRTRawRasterBandH,
-    :VRTSimpleSourceH,
-    :VRTSourcedRasterBandH,
-    :VRTSourceH,
-    :VRTWarpedDatasetH,
-    :VRTWarpedRasterBandH
- ]
-
-use_type_parameter = [
-    :GDALMajorObjectH,
-    :GDALDatasetH,
-    :GDALDriverH,
-    :GDALRasterBandH,
-    :OGRLayerH,
-    :OGRDataSourceH
-]
-
-
 parsefile(file) = parse(join(["quote", readstring(file), "end"], ";"))
+
+"check if an expression is a line, which records line numbers"
+isline(ex::Expr) = ex.head === :line
+
+# check if opaquepointers is still in sync with the handwritten types.jl
+# the set of opaquepointers must equal the set found in types.jl
+# first we get the set of types found in types.jl
+# plus the set of types that are used as supertypes
+function typeset(path::String)
+    typecode = parsefile(path)
+    # filter out line comments
+    abstypes = filter(!isline, typecode.args[1].args)
+    # get GDALDatasetH from abstract type GDALDatasetH <: GDALMajorObjectH end
+    getsym(x::Expr) = x.args[1]
+    getsym(x::Symbol) = x
+    typenames = Set{Symbol}()
+    supertypes = Set{Symbol}()
+    for abstype in abstypes
+        absdef = abstype.args[1]
+        typename = getsym(absdef)
+        push!(typenames, typename)
+        if (absdef isa Expr) && (absdef.head === :<:)
+            # used as supertypes
+            push!(supertypes, absdef.args[2])
+        end
+    end
+    typenames, supertypes
+end
+
+# supertypes is derived from types.jl and used in rewriting
+# typenames is derived from types.jl and used later on
+# to check if types.jl is still complete
+typenames, supertypes = typeset("src/types.jl")
 
 "rename the function to more a julian convention"
 function newfuncname(name::Symbol)
@@ -140,27 +113,13 @@ end
 
 "rewrite certain expressions"
 function rewriter(ex::Expr)
-    orig_ex = copy(ex)
-
     # rename function name
-    old_funcname = ex.args[1].args[1]
+    old_funcname = ex.args[1].args[1]::Symbol
     new_funcname = newfuncname(old_funcname)
     ex.args[1].args[1] = new_funcname
-    shift!(ex.args[2].args) # removes LineNumberNode
 
-    # add docstring
-    fnode = functionnode(et, string(old_funcname))
-    docstr = build_docstring(fnode)
-    # turn it into a tuple, special cased in visr/Clang.jl
-    # done because a block Expr gets a begin/end block when printing
-
-    # dict to map parameter types to type parameters, e.g. :GDALDriverH => :T
-    # used for adding the parametric type signatures: {T <: GDALDriverH}(hDriver::Ptr{T},
-    partypes = OrderedDict{Symbol, Symbol}()
-    # choice of names for parametric type, T for first, S for second etc.
-    letters = 'T':-1:'A'
-    # track which letters are already used
-    letter_index = 0
+    # filter out line number comments on function name
+    filter!(!isline, ex.args[2].args)
 
     # manual override to fix ambiguity warning with OGR_Dr_Open
     if old_funcname == :OGROpen
@@ -172,106 +131,110 @@ function rewriter(ex::Expr)
     for arg in ex.args[1].args[2:end]
         isa(arg, Symbol) && continue # no type constraints
         # loosen type constraints; ccall will convert the arguments
-        if arg.args[2] in [:Cint, :UInt32]
+        sigtype = arg.args[2]
+        if sigtype in [:Cint, :UInt32]
             arg.args[2] = :Integer
-        elseif arg.args[2] == :Cdouble
+        elseif sigtype == :Cdouble
             arg.args[2] = :Real
-        elseif arg.args[2] == :GIntBig
+        elseif sigtype == :GIntBig
             arg.args[2] = :Integer
-        elseif arg.args[2] == :GDALProgressFunc
+        elseif sigtype == :GDALProgressFunc  # is also in opaquepointers
             arg.args[2] = :Any
-        elseif arg.args[2] in check_nullpointer
-            if arg.args[2] in use_type_parameter
-                subtype = arg.args[2]
-                if subtype in keys(partypes)
-                    letter = partypes[subtype]
-                else
-                    letter_index += 1
-                    letter = Symbol(letters[letter_index])
-                end
-                partypes[subtype] = letter
-                arg.args[2] = Expr(:curly, :Ptr, letter)
+        elseif sigtype in opaquepointers
+            if sigtype in supertypes
+                # allow subtypes as well
+                # example: getmetadataitem(x::Ref{<:GDALMajorObjectH})
+                # is expected to work for Ptr{GDALDriverH} as well
+                arg.args[2] = :(Ref{<:$sigtype})
             else
-                arg.args[2] = Expr(:curly, :Ptr, arg.args[2])
+                arg.args[2] = :(Ref{$sigtype})
             end
         end
     end
 
-    if !isempty(partypes)
-        # add type parameters
-        exprarray = Expr[]
-        for (subtype, letter) in partypes
-            push!(exprarray, Expr(:<:, letter, subtype))
-
-        end
-        ex.args[1].args[1] = Expr(:curly, new_funcname, exprarray...)
-    end
-
-    assert(ex.args[2].args[1].head == :ccall)
+    assert(ex.args[2].args[1].args[1] == :ccall)
+    ccall_call = ex.args[2].args[1]
     # ccall input types
-    assert(ex.args[2].args[1].args[3].head == :tuple)
-    intypes = ex.args[2].args[1].args[3].args
-    for i = 1:length(intypes)
-        if intypes[i] in check_nullpointer
-            # wrap input type in Ptr{} since memory is managed by GDAL
-            intypes[i] = Expr(:curly, :Ptr, intypes[i])
-        elseif intypes[i] == :(Ptr{Cstring})
-            intypes[i] = :StringList
+    assert(ccall_call.args[4].head == :tuple)
+    intypes = ccall_call.args[4].args
+    for (i, intype) in enumerate(intypes)
+        if intype in opaquepointers
+            # in C the opaque pointers are all typedef void *, i.e. Ptr{Void}
+            intypes[i] = :(Ptr{Void})
+        elseif intype == :(Ptr{Cstring})
+            intypes[i] = :StringList  # see misc.jl
         end
     end
-    # ccall return type
-    rettype = ex.args[2].args[1].args[2]
+    # modify ccall return type or wrap entire ccall based on return type
+    rettype = ccall_call.args[3]::Union{Symbol, Expr} # Expr for Ptr{T}
     if rettype == :(Cstring)
-        ex.args[2].args[1] = Expr(:call, :unsafe_string, ex.args[2].args[1])
+        ex.args[2].args[1] = :(unsafe_string($ccall_call))
     elseif rettype == :(Ptr{Cstring})
         # TODO: this only unpacks the first of a list of strings
-        ex.args[2].args[1] = Expr(:call, :unsafe_load, ex.args[2].args[1])
-        ex.args[2].args[1] = Expr(:call, :unsafe_string, ex.args[2].args[1])
-    elseif rettype in check_nullpointer
+        ex.args[2].args[1] = :(unsafe_string(unsafe_load($ccall_call)))
+    elseif rettype in opaquepointers
         # wrap output type in Ptr{} since memory is managed by GDAL
-        ex.args[2].args[1].args[2] = Expr(:curly, :Ptr, ex.args[2].args[1].args[2])
+        ccall_call.args[3] = :(Ptr{$rettype})
         # wrap ccall in checknull()
-        ex.args[2].args[1] = Expr(:call, :checknull, ex.args[2].args[1])
+        ex.args[2].args[1] = :(checknull($ccall_call))
     end
-    (docstr, ex)
+    ex
 end
 
-
 "rewrite typealias Ptr{Void} to immutable"
-function commonrewriter(io::IOStream, ex::Expr)
-    if ex.head == :typealias
-        if ex.args[2] == :(Ptr{Void})
-            # write them to a separate file, list is recorded in check_nullpointer
+function commonrewriter!(io::IOStream, ex::Expr, opaquepointers::Set{Symbol})
+    if ex.head == :const
+        lhs, rhs = ex.args[1].args
+        if rhs == :(Ptr{Void})
+            # these go in a list to be dealt with below
+            # they are manually defined in types.jl
+            push!(opaquepointers, lhs)
             return
-        elseif startswith(string(ex.args[1]), "ANONYMOUS_")
-            # filter out the ANONYMOUS_* typealiases (they are not used)
+        elseif rhs == :Void
+            # These all seem to be enums that, as of Clang.jl v0.3.0,
+            # get set to Void, which conflicts with the enum values which are
+            # Integer (UInt32), because the enum types are in the method signature.
+            # See for example GDALAccess, which has GA_ReadOnly and GA_Update.
+            # See also Clang.jl/#162
+            ex.args[1].args[2] = UInt32
+        elseif startswith(string(lhs), "ANONYMOUS_")
+            # filter out the ANONYMOUS_* (they are not used)
             return
         end
     end
 
-    # these need surrounding whitespace
-    if length(ex.args) == 3 && isa(ex.args[3], Expr) && ex.args[3].head == :block
-        provide_space = true
-    else
-        provide_space = false
+    if ex.head === :type
+        # filter out line number comments inside types
+        filter!(!isline, ex.args[3].args)
     end
+    # types need surrounding whitespace
+    provide_space = ex.head === :type
     provide_space && print(io, "\n")
     println(io, "$ex")
     provide_space && print(io, "\n")
 end
 
 
-# edit the common_file
+# rewrite the common_file
 common_file = "common.jl"
 expr = parsefile(joinpath(srcdir, "C", common_file))
+# record which opaque pointers to transform to julia types
+opaquepointers = Set{Symbol}()
 open(joinpath(srcdir, common_file), "w") do io
     for el in expr.args[1].args
-        # second part keeps out LineNumberNode
-        # which would print as a comment
-        if isa(el, Expr) && (el.head != :line)
-                commonrewriter(io, el)
+        # second part keeps out line number comments
+        if isa(el, Expr) && !isline(el)
+            commonrewriter!(io, el, opaquepointers)
         end
     end
+end
+
+if opaquepointers != typenames
+    warn("Missing in types.jl:")
+    warn(setdiff(opaquepointers, typenames))
+    warn("Not needed in types.jl:")
+    warn(setdiff(typenames, opaquepointers))
+    error("types.jl out of sync with the opaquepointers found")
 end
 
 for headerfile in headerfiles
@@ -280,12 +243,22 @@ for headerfile in headerfiles
     headerfile = headerfile == "gdal.jl" ? "gdal_h.jl" : headerfile
     open(joinpath(srcdir, headerfile), "w") do io
         for el in expr.args[1].args
-            if isa(el, Expr)
-                if el.head == :function
-                    docstr, el = rewriter(el)
-                    println(io, "\n\n\"\"\"\n", docstr, "\"\"\"")
-                    println(io, "$el")
+            assert(el isa Expr)
+            if el.head == :macrocall
+                # el = @doc docstr func
+                docstr = el.args[2]
+                func = el.args[3]
+                func = rewriter(func)
+                print(io, "\n\n")
+                if !isempty(docstr)
+                    println(io, "\"\"\"\n", docstr, "\"\"\"")
                 end
+                println(io, func)
+            elseif isline(el)
+                # leave out line number comments
+            else
+                dump(el)
+                error("expression not handled")
             end
         end
     end

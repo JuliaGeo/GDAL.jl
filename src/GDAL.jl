@@ -22,9 +22,12 @@ module C
 
     include("C/misc.jl")
     include("C/common.jl")
+    include("C/cpl_conv.jl")
     include("C/cpl_error.jl")
     include("C/cpl_minixml.jl")
     include("C/cpl_progress.jl")
+    include("C/cpl_virtualmem.jl")
+    include("C/cpl_vsi.jl")
     include("C/gdal.jl")
     include("C/gdal_alg.jl")
     include("C/gdal_vrt.jl")
@@ -109,7 +112,7 @@ function __init__()
         GDAL_DATA = datadir
     end
     # set the GDAL_DATA variable
-    ccall((:CPLSetConfigOption, libgdal), Void, (Cstring, Cstring), "GDAL_DATA", GDAL_DATA)
+    C.CPLSetConfigOption("GDAL_DATA", GDAL_DATA)
 end
 
 end

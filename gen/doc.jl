@@ -57,5 +57,5 @@ xmlfile = joinpath(workdir, "doxygen.xml")
 
 xmlstring = readstring(xmlfile)
 et = xp_parse(xmlstring)
-functionnode(et, fname) = et["/doxygen/compounddef/sectiondef/memberdef[name='$fname']"][1]
+functionnode(et, fname) = et["/doxygen/compounddef/sectiondef/memberdef[name='$fname']"]
 text(node::LibExpat.ETree, el::AbstractString) = strip(LibExpat.find(node, "$el#string"))

@@ -1,37 +1,54 @@
 using Clang
 using LibExpat
 
-workdir = dirname(@__FILE__)
-srcdir = joinpath(workdir, "../src")
+const workdir = @__DIR__
+const srcdir = joinpath(workdir, "../src")
 include(joinpath(workdir, "doc.jl"))
 
-gdalpath = "/home/martijn/bin/gdal/include"
-includedirs = [gdalpath]
+const gdalpath = "/usr/local/include"
+const includedirs = [gdalpath]
 
-headerfiles = ["cpl_error.h",
-               "cpl_minixml.h",
-               "cpl_port.h",
-               "cpl_progress.h",
-               "gdal.h",
-               "gdal_alg.h",
-               "gdalwarper.h",
-               "gdal_vrt.h",
-               "gdal_utils.h",
-               "ogr_api.h",
-               "ogr_core.h",
-               "ogr_srs_api.h"]
+const headerfiles = [
+    "cpl_conv.h",
+    "cpl_error.h",
+    "cpl_minixml.h",
+    "cpl_port.h",
+    "cpl_progress.h",
+    "cpl_virtualmem.h",
+    "cpl_vsi.h",
+    "gdal.h",
+    "gdal_alg.h",
+    "gdalwarper.h",
+    "gdal_vrt.h",
+    "gdal_utils.h",
+    "ogr_api.h",
+    "ogr_core.h",
+    "ogr_srs_api.h"
+]
 
-headerpaths = [joinpath(gdalpath, h) for h in headerfiles]
+const headerpaths = [joinpath(gdalpath, h) for h in headerfiles]
 
-skip_expr = [:(const CPL_LSBPTR16 = x),
-             :(const CPL_LSBPTR32 = x),
-             :(const CPL_LSBPTR64 = x),
-             :(const CPL_WARN_DEPRECATED_IF_GDAL_COMPILATION = x),
-             :(const CPL_STATIC_ASSERT_IF_AVAILABLE = x),
-             :(const CPLAssert = expr),
-             :(const EMULATED_BOOL = bool)]
+# skip these; right hand side is undefined
+# usually because of Skipping MacroDefinition
+const skip_expr = [
+    :(const CPL_LSBPTR16 = x),
+    :(const CPL_LSBPTR32 = x),
+    :(const CPL_LSBPTR64 = x),
+    :(const CPL_WARN_DEPRECATED_IF_GDAL_COMPILATION = x),
+    :(const CPL_STATIC_ASSERT_IF_AVAILABLE = x),
+    :(const CPLAssert = expr),
+    :(const EMULATED_BOOL = bool),
+    :(const GINT64_MIN = GINTBIG_MIN),
+    :(const GINT64_MAX = GINTBIG_MAX),
+    :(const GUINT64_MAX = GUINTBIG_MAX),
+    :(const VSI_L_OFFSET_MAX = GUINTBIG_MAX),
+    # function aliases give bootstrapping problems
+    # since common.jl is loaded before the functions
+    :(const CPLReadDir = VSIReadDir),
+    :(const CPLFree = VSIFree)
+]
 
-skip_func = [:CPLErrorV] # problem with va_list ihnorton/Clang.jl#17
+const skip_func = [:CPLErrorV] # problem with va_list ihnorton/Clang.jl#17
 
 "indicates if the pair should be wrapped"
 function header_wrapped(headerfile, cursorname)
@@ -55,8 +72,19 @@ function minimal_rewriter(ex::Expr)
             return ""
         end
         # add docstring
-        fnode = functionnode(et, string(funcname))
-        docstr = build_docstring(fnode)
+        fnode_vec = functionnode(et, string(funcname))
+        docstr = if isempty(fnode_vec)
+            # this happens for instance when Doxygen is suppressed such as
+            # for this function OGR_G_Intersect from ogr_api.h
+            # /*! @cond Doxygen_Suppress */
+            # /* backward compatibility (non-standard methods) */
+            # int    CPL_DLL OGR_G_Intersect( OGRGeometryH, OGRGeometryH ) CPL_WARN_DEPRECATED("Non standard method. Use OGR_G_Intersects() instead");
+            ""
+        else
+            fnode = fnode_vec[1]
+            build_docstring(fnode)
+        end
+
         # turn it into a tuple, special cased in visr/Clang.jl
         # done because a block Expr gets a begin/end block when printing
         ex = (docstr, ex)
