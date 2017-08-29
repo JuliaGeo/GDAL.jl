@@ -1,5 +1,4 @@
-julia 0.5
-BinDeps
-Compat 0.18
-@unix Conda
-@windows WinRPM
+julia 0.6
+BinDeps 0.4.7
+@unix Conda 0.5.1
+@windows WinRPM 0.2.3
