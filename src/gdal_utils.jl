@@ -13,8 +13,8 @@ Allocates a GDALInfoOptions struct.
 ### Returns
 pointer to the allocated GDALInfoOptions struct. Must be freed with GDALInfoOptionsFree().
 """
-function infooptionsnew(papszArgv,psOptionsForBinary)
-    ccall((:GDALInfoOptionsNew,libgdal),Ptr{GDALInfoOptions},(StringList,Ptr{GDALInfoOptionsForBinary}),papszArgv,psOptionsForBinary)
+function infooptionsnew(papszArgv, psOptionsForBinary)
+    ccall((:GDALInfoOptionsNew, libgdal), Ptr{GDALInfoOptions}, (StringList, Ptr{GDALInfoOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -27,7 +27,7 @@ Frees the GDALInfoOptions struct.
 * **psOptions**: the options struct for GDALInfo().
 """
 function infooptionsfree(psOptions)
-    ccall((:GDALInfoOptionsFree,libgdal),Void,(Ptr{GDALInfoOptions},),psOptions)
+    ccall((:GDALInfoOptionsFree, libgdal), Void, (Ptr{GDALInfoOptions},), psOptions)
 end
 
 
@@ -44,8 +44,8 @@ Lists various information about a GDAL supported raster dataset.
 ### Returns
 string corresponding to the information about the raster dataset (must be freed with CPLFree()), or NULL in case of error.
 """
-function Base.info{T <: GDALDatasetH}(hDataset::Ptr{T},psOptions)
-    unsafe_string(ccall((:GDALInfo,libgdal),Cstring,(Ptr{GDALDatasetH},Ptr{GDALInfoOptions}),hDataset,psOptions))
+function Base.info(hDataset::Ref{<:GDALDatasetH}, psOptions)
+    unsafe_string(ccall((:GDALInfo, libgdal), Cstring, (Ptr{Void}, Ptr{GDALInfoOptions}), hDataset, psOptions))
 end
 
 
@@ -62,8 +62,8 @@ Allocates a GDALTranslateOptions struct.
 ### Returns
 pointer to the allocated GDALTranslateOptions struct. Must be freed with GDALTranslateOptionsFree().
 """
-function translateoptionsnew(papszArgv,psOptionsForBinary)
-    ccall((:GDALTranslateOptionsNew,libgdal),Ptr{GDALTranslateOptions},(StringList,Ptr{GDALTranslateOptionsForBinary}),papszArgv,psOptionsForBinary)
+function translateoptionsnew(papszArgv, psOptionsForBinary)
+    ccall((:GDALTranslateOptionsNew, libgdal), Ptr{GDALTranslateOptions}, (StringList, Ptr{GDALTranslateOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -76,7 +76,7 @@ Frees the GDALTranslateOptions struct.
 * **psOptions**: the options struct for GDALTranslate().
 """
 function translateoptionsfree(psOptions)
-    ccall((:GDALTranslateOptionsFree,libgdal),Void,(Ptr{GDALTranslateOptions},),psOptions)
+    ccall((:GDALTranslateOptionsFree, libgdal), Void, (Ptr{GDALTranslateOptions},), psOptions)
 end
 
 
@@ -92,8 +92,8 @@ Set a progress function.
 * **pfnProgress**: the progress callback.
 * **pProgressData**: the user data for the progress callback.
 """
-function translateoptionssetprogress(psOptions,pfnProgress::Any,pProgressData)
-    ccall((:GDALTranslateOptionsSetProgress,libgdal),Void,(Ptr{GDALTranslateOptions},Ptr{GDALProgressFunc},Ptr{Void}),psOptions,pfnProgress,pProgressData)
+function translateoptionssetprogress(psOptions, pfnProgress::Any, pProgressData)
+    ccall((:GDALTranslateOptionsSetProgress, libgdal), Void, (Ptr{GDALTranslateOptions}, Ptr{Void}, Ptr{Void}), psOptions, pfnProgress, pProgressData)
 end
 
 
@@ -114,8 +114,8 @@ Converts raster data between different formats.
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
 """
-function translate{T <: GDALDatasetH}(pszDestFilename,hSrcDataset::Ptr{T},psOptions,pbUsageError)
-    checknull(ccall((:GDALTranslate,libgdal),Ptr{GDALDatasetH},(Cstring,Ptr{GDALDatasetH},Ptr{GDALTranslateOptions},Ptr{Cint}),pszDestFilename,hSrcDataset,psOptions,pbUsageError))
+function translate(pszDestFilename, hSrcDataset::Ref{<:GDALDatasetH}, psOptions, pbUsageError)
+    checknull(ccall((:GDALTranslate, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Void}, Ptr{GDALTranslateOptions}, Ptr{Cint}), pszDestFilename, hSrcDataset, psOptions, pbUsageError))
 end
 
 
@@ -132,8 +132,8 @@ Allocates a GDALWarpAppOptions struct.
 ### Returns
 pointer to the allocated GDALWarpAppOptions struct. Must be freed with GDALWarpAppOptionsFree().
 """
-function warpappoptionsnew(papszArgv,psOptionsForBinary)
-    ccall((:GDALWarpAppOptionsNew,libgdal),Ptr{GDALWarpAppOptions},(StringList,Ptr{GDALWarpAppOptionsForBinary}),papszArgv,psOptionsForBinary)
+function warpappoptionsnew(papszArgv, psOptionsForBinary)
+    ccall((:GDALWarpAppOptionsNew, libgdal), Ptr{GDALWarpAppOptions}, (StringList, Ptr{GDALWarpAppOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -146,7 +146,7 @@ Frees the GDALWarpAppOptions struct.
 * **psOptions**: the options struct for GDALWarp().
 """
 function warpappoptionsfree(psOptions)
-    ccall((:GDALWarpAppOptionsFree,libgdal),Void,(Ptr{GDALWarpAppOptions},),psOptions)
+    ccall((:GDALWarpAppOptionsFree, libgdal), Void, (Ptr{GDALWarpAppOptions},), psOptions)
 end
 
 
@@ -162,8 +162,8 @@ Set a progress function.
 * **pfnProgress**: the progress callback.
 * **pProgressData**: the user data for the progress callback.
 """
-function warpappoptionssetprogress(psOptions,pfnProgress::Any,pProgressData)
-    ccall((:GDALWarpAppOptionsSetProgress,libgdal),Void,(Ptr{GDALWarpAppOptions},Ptr{GDALProgressFunc},Ptr{Void}),psOptions,pfnProgress,pProgressData)
+function warpappoptionssetprogress(psOptions, pfnProgress::Any, pProgressData)
+    ccall((:GDALWarpAppOptionsSetProgress, libgdal), Void, (Ptr{GDALWarpAppOptions}, Ptr{Void}, Ptr{Void}), psOptions, pfnProgress, pProgressData)
 end
 
 
@@ -179,8 +179,8 @@ Set a warp option.
 * **pszKey**: key.
 * **pszValue**: value.
 """
-function warpappoptionssetwarpoption(psOptions,pszKey,pszValue)
-    ccall((:GDALWarpAppOptionsSetWarpOption,libgdal),Void,(Ptr{GDALWarpAppOptions},Cstring,Cstring),psOptions,pszKey,pszValue)
+function warpappoptionssetwarpoption(psOptions, pszKey, pszValue)
+    ccall((:GDALWarpAppOptionsSetWarpOption, libgdal), Void, (Ptr{GDALWarpAppOptions}, Cstring, Cstring), psOptions, pszKey, pszValue)
 end
 
 
@@ -203,10 +203,10 @@ Image reprojection and warping function.
 * **pbUsageError**: the pointer to int variable to determine any usage error has occurred.
 
 ### Returns
-the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
+the output dataset (new dataset that must be closed using GDALClose(), or hDstDS if not NULL) or NULL in case of error.
 """
-function warp{T <: GDALDatasetH}(pszDest,hDstDS::Ptr{T},nSrcCount::Integer,pahSrcDS,psOptions,pbUsageError)
-    checknull(ccall((:GDALWarp,libgdal),Ptr{GDALDatasetH},(Cstring,Ptr{GDALDatasetH},Cint,Ptr{GDALDatasetH},Ptr{GDALWarpAppOptions},Ptr{Cint}),pszDest,hDstDS,nSrcCount,pahSrcDS,psOptions,pbUsageError))
+function warp(pszDest, hDstDS::Ref{<:GDALDatasetH}, nSrcCount::Integer, pahSrcDS, psOptions, pbUsageError)
+    checknull(ccall((:GDALWarp, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Void}, Cint, Ptr{GDALDatasetH}, Ptr{GDALWarpAppOptions}, Ptr{Cint}), pszDest, hDstDS, nSrcCount, pahSrcDS, psOptions, pbUsageError))
 end
 
 
@@ -223,8 +223,8 @@ allocates a GDALVectorTranslateOptions struct.
 ### Returns
 pointer to the allocated GDALVectorTranslateOptions struct. Must be freed with GDALVectorTranslateOptionsFree().
 """
-function vectortranslateoptionsnew(papszArgv,psOptionsForBinary)
-    ccall((:GDALVectorTranslateOptionsNew,libgdal),Ptr{GDALVectorTranslateOptions},(StringList,Ptr{GDALVectorTranslateOptionsForBinary}),papszArgv,psOptionsForBinary)
+function vectortranslateoptionsnew(papszArgv, psOptionsForBinary)
+    ccall((:GDALVectorTranslateOptionsNew, libgdal), Ptr{GDALVectorTranslateOptions}, (StringList, Ptr{GDALVectorTranslateOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -237,7 +237,7 @@ Frees the GDALVectorTranslateOptions struct.
 * **psOptions**: the options struct for GDALVectorTranslate().
 """
 function vectortranslateoptionsfree(psOptions)
-    ccall((:GDALVectorTranslateOptionsFree,libgdal),Void,(Ptr{GDALVectorTranslateOptions},),psOptions)
+    ccall((:GDALVectorTranslateOptionsFree, libgdal), Void, (Ptr{GDALVectorTranslateOptions},), psOptions)
 end
 
 
@@ -253,8 +253,8 @@ Set a progress function.
 * **pfnProgress**: the progress callback.
 * **pProgressData**: the user data for the progress callback.
 """
-function vectortranslateoptionssetprogress(psOptions,pfnProgress::Any,pProgressData)
-    ccall((:GDALVectorTranslateOptionsSetProgress,libgdal),Void,(Ptr{GDALVectorTranslateOptions},Ptr{GDALProgressFunc},Ptr{Void}),psOptions,pfnProgress,pProgressData)
+function vectortranslateoptionssetprogress(psOptions, pfnProgress::Any, pProgressData)
+    ccall((:GDALVectorTranslateOptionsSetProgress, libgdal), Void, (Ptr{GDALVectorTranslateOptions}, Ptr{Void}, Ptr{Void}), psOptions, pfnProgress, pProgressData)
 end
 
 
@@ -279,8 +279,8 @@ Converts vector data between file formats.
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
 """
-function vectortranslate{T <: GDALDatasetH}(pszDest,hDstDS::Ptr{T},nSrcCount::Integer,pahSrcDS,psOptions,pbUsageError)
-    checknull(ccall((:GDALVectorTranslate,libgdal),Ptr{GDALDatasetH},(Cstring,Ptr{GDALDatasetH},Cint,Ptr{GDALDatasetH},Ptr{GDALVectorTranslateOptions},Ptr{Cint}),pszDest,hDstDS,nSrcCount,pahSrcDS,psOptions,pbUsageError))
+function vectortranslate(pszDest, hDstDS::Ref{<:GDALDatasetH}, nSrcCount::Integer, pahSrcDS, psOptions, pbUsageError)
+    checknull(ccall((:GDALVectorTranslate, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Void}, Cint, Ptr{GDALDatasetH}, Ptr{GDALVectorTranslateOptions}, Ptr{Cint}), pszDest, hDstDS, nSrcCount, pahSrcDS, psOptions, pbUsageError))
 end
 
 
@@ -291,14 +291,14 @@ end
 Allocates a GDALDEMProcessingOptions struct.
 
 ### Parameters
-* **papszArgv**: NULL terminated list of options (potentially including filename and open options too), or NULL. The accepted options are the ones of the gdal_translate utility.
+* **papszArgv**: NULL terminated list of options (potentially including filename and open options too), or NULL. The accepted options are the ones of the gdaldem utility.
 * **psOptionsForBinary**: (output) may be NULL (and should generally be NULL), otherwise (gdal_translate_bin.cpp use case) must be allocated with GDALDEMProcessingOptionsForBinaryNew() prior to this function. Will be filled with potentially present filename, open options,...
 
 ### Returns
 pointer to the allocated GDALDEMProcessingOptions struct. Must be freed with GDALDEMProcessingOptionsFree().
 """
-function demprocessingoptionsnew(papszArgv,psOptionsForBinary)
-    ccall((:GDALDEMProcessingOptionsNew,libgdal),Ptr{GDALDEMProcessingOptions},(StringList,Ptr{GDALDEMProcessingOptionsForBinary}),papszArgv,psOptionsForBinary)
+function demprocessingoptionsnew(papszArgv, psOptionsForBinary)
+    ccall((:GDALDEMProcessingOptionsNew, libgdal), Ptr{GDALDEMProcessingOptions}, (StringList, Ptr{GDALDEMProcessingOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -311,7 +311,7 @@ Frees the GDALDEMProcessingOptions struct.
 * **psOptions**: the options struct for GDALDEMProcessing().
 """
 function demprocessingoptionsfree(psOptions)
-    ccall((:GDALDEMProcessingOptionsFree,libgdal),Void,(Ptr{GDALDEMProcessingOptions},),psOptions)
+    ccall((:GDALDEMProcessingOptionsFree, libgdal), Void, (Ptr{GDALDEMProcessingOptions},), psOptions)
 end
 
 
@@ -327,8 +327,8 @@ Set a progress function.
 * **pfnProgress**: the progress callback.
 * **pProgressData**: the user data for the progress callback.
 """
-function demprocessingoptionssetprogress(psOptions,pfnProgress::Any,pProgressData)
-    ccall((:GDALDEMProcessingOptionsSetProgress,libgdal),Void,(Ptr{GDALDEMProcessingOptions},Ptr{GDALProgressFunc},Ptr{Void}),psOptions,pfnProgress,pProgressData)
+function demprocessingoptionssetprogress(psOptions, pfnProgress::Any, pProgressData)
+    ccall((:GDALDEMProcessingOptionsSetProgress, libgdal), Void, (Ptr{GDALDEMProcessingOptions}, Ptr{Void}, Ptr{Void}), psOptions, pfnProgress, pProgressData)
 end
 
 
@@ -353,8 +353,8 @@ Apply a DEM processing.
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
 """
-function demprocessing{T <: GDALDatasetH}(pszDestFilename,hSrcDataset::Ptr{T},pszProcessing,pszColorFilename,psOptions,pbUsageError)
-    checknull(ccall((:GDALDEMProcessing,libgdal),Ptr{GDALDatasetH},(Cstring,Ptr{GDALDatasetH},Cstring,Cstring,Ptr{GDALDEMProcessingOptions},Ptr{Cint}),pszDestFilename,hSrcDataset,pszProcessing,pszColorFilename,psOptions,pbUsageError))
+function demprocessing(pszDestFilename, hSrcDataset::Ref{<:GDALDatasetH}, pszProcessing, pszColorFilename, psOptions, pbUsageError)
+    checknull(ccall((:GDALDEMProcessing, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Void}, Cstring, Cstring, Ptr{GDALDEMProcessingOptions}, Ptr{Cint}), pszDestFilename, hSrcDataset, pszProcessing, pszColorFilename, psOptions, pbUsageError))
 end
 
 
@@ -371,8 +371,8 @@ Allocates a GDALNearblackOptions struct.
 ### Returns
 pointer to the allocated GDALNearblackOptions struct. Must be freed with GDALNearblackOptionsFree().
 """
-function nearblackoptionsnew(papszArgv,psOptionsForBinary)
-    ccall((:GDALNearblackOptionsNew,libgdal),Ptr{GDALNearblackOptions},(StringList,Ptr{GDALNearblackOptionsForBinary}),papszArgv,psOptionsForBinary)
+function nearblackoptionsnew(papszArgv, psOptionsForBinary)
+    ccall((:GDALNearblackOptionsNew, libgdal), Ptr{GDALNearblackOptions}, (StringList, Ptr{GDALNearblackOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -385,7 +385,7 @@ Frees the GDALNearblackOptions struct.
 * **psOptions**: the options struct for GDALNearblack().
 """
 function nearblackoptionsfree(psOptions)
-    ccall((:GDALNearblackOptionsFree,libgdal),Void,(Ptr{GDALNearblackOptions},),psOptions)
+    ccall((:GDALNearblackOptionsFree, libgdal), Void, (Ptr{GDALNearblackOptions},), psOptions)
 end
 
 
@@ -401,8 +401,8 @@ Set a progress function.
 * **pfnProgress**: the progress callback.
 * **pProgressData**: the user data for the progress callback.
 """
-function nearblackoptionssetprogress(psOptions,pfnProgress::Any,pProgressData)
-    ccall((:GDALNearblackOptionsSetProgress,libgdal),Void,(Ptr{GDALNearblackOptions},Ptr{GDALProgressFunc},Ptr{Void}),psOptions,pfnProgress,pProgressData)
+function nearblackoptionssetprogress(psOptions, pfnProgress::Any, pProgressData)
+    ccall((:GDALNearblackOptionsSetProgress, libgdal), Void, (Ptr{GDALNearblackOptions}, Ptr{Void}, Ptr{Void}), psOptions, pfnProgress, pProgressData)
 end
 
 
@@ -425,8 +425,8 @@ Convert nearly black/white borders to exact value.
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
 """
-function nearblack{T <: GDALDatasetH}(pszDest,hDstDS::Ptr{T},hSrcDS::Ptr{T},psOptions,pbUsageError)
-    checknull(ccall((:GDALNearblack,libgdal),Ptr{GDALDatasetH},(Cstring,Ptr{GDALDatasetH},Ptr{GDALDatasetH},Ptr{GDALNearblackOptions},Ptr{Cint}),pszDest,hDstDS,hSrcDS,psOptions,pbUsageError))
+function nearblack(pszDest, hDstDS::Ref{<:GDALDatasetH}, hSrcDS::Ref{<:GDALDatasetH}, psOptions, pbUsageError)
+    checknull(ccall((:GDALNearblack, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Void}, Ptr{Void}, Ptr{GDALNearblackOptions}, Ptr{Cint}), pszDest, hDstDS, hSrcDS, psOptions, pbUsageError))
 end
 
 
@@ -443,8 +443,8 @@ Allocates a GDALGridOptions struct.
 ### Returns
 pointer to the allocated GDALGridOptions struct. Must be freed with GDALGridOptionsFree().
 """
-function gridoptionsnew(papszArgv,psOptionsForBinary)
-    ccall((:GDALGridOptionsNew,libgdal),Ptr{GDALGridOptions},(StringList,Ptr{GDALGridOptionsForBinary}),papszArgv,psOptionsForBinary)
+function gridoptionsnew(papszArgv, psOptionsForBinary)
+    ccall((:GDALGridOptionsNew, libgdal), Ptr{GDALGridOptions}, (StringList, Ptr{GDALGridOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -457,7 +457,7 @@ Frees the GDALGridOptions struct.
 * **psOptions**: the options struct for GDALGrid().
 """
 function gridoptionsfree(psOptions)
-    ccall((:GDALGridOptionsFree,libgdal),Void,(Ptr{GDALGridOptions},),psOptions)
+    ccall((:GDALGridOptionsFree, libgdal), Void, (Ptr{GDALGridOptions},), psOptions)
 end
 
 
@@ -473,8 +473,8 @@ Set a progress function.
 * **pfnProgress**: the progress callback.
 * **pProgressData**: the user data for the progress callback.
 """
-function gridoptionssetprogress(psOptions,pfnProgress::Any,pProgressData)
-    ccall((:GDALGridOptionsSetProgress,libgdal),Void,(Ptr{GDALGridOptions},Ptr{GDALProgressFunc},Ptr{Void}),psOptions,pfnProgress,pProgressData)
+function gridoptionssetprogress(psOptions, pfnProgress::Any, pProgressData)
+    ccall((:GDALGridOptionsSetProgress, libgdal), Void, (Ptr{GDALGridOptions}, Ptr{Void}, Ptr{Void}), psOptions, pfnProgress, pProgressData)
 end
 
 
@@ -495,8 +495,8 @@ Create raster from the scattered data.
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
 """
-function grid{T <: GDALDatasetH}(pszDest,hSrcDS::Ptr{T},psOptions,pbUsageError)
-    checknull(ccall((:GDALGrid,libgdal),Ptr{GDALDatasetH},(Cstring,Ptr{GDALDatasetH},Ptr{GDALGridOptions},Ptr{Cint}),pszDest,hSrcDS,psOptions,pbUsageError))
+function grid(pszDest, hSrcDS::Ref{<:GDALDatasetH}, psOptions, pbUsageError)
+    checknull(ccall((:GDALGrid, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Void}, Ptr{GDALGridOptions}, Ptr{Cint}), pszDest, hSrcDS, psOptions, pbUsageError))
 end
 
 
@@ -513,8 +513,8 @@ Allocates a GDALRasterizeOptions struct.
 ### Returns
 pointer to the allocated GDALRasterizeOptions struct. Must be freed with GDALRasterizeOptionsFree().
 """
-function rasterizeoptionsnew(papszArgv,psOptionsForBinary)
-    ccall((:GDALRasterizeOptionsNew,libgdal),Ptr{GDALRasterizeOptions},(StringList,Ptr{GDALRasterizeOptionsForBinary}),papszArgv,psOptionsForBinary)
+function rasterizeoptionsnew(papszArgv, psOptionsForBinary)
+    ccall((:GDALRasterizeOptionsNew, libgdal), Ptr{GDALRasterizeOptions}, (StringList, Ptr{GDALRasterizeOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -527,7 +527,7 @@ Frees the GDALRasterizeOptions struct.
 * **psOptions**: the options struct for GDALRasterize().
 """
 function rasterizeoptionsfree(psOptions)
-    ccall((:GDALRasterizeOptionsFree,libgdal),Void,(Ptr{GDALRasterizeOptions},),psOptions)
+    ccall((:GDALRasterizeOptionsFree, libgdal), Void, (Ptr{GDALRasterizeOptions},), psOptions)
 end
 
 
@@ -543,8 +543,8 @@ Set a progress function.
 * **pfnProgress**: the progress callback.
 * **pProgressData**: the user data for the progress callback.
 """
-function rasterizeoptionssetprogress(psOptions,pfnProgress::Any,pProgressData)
-    ccall((:GDALRasterizeOptionsSetProgress,libgdal),Void,(Ptr{GDALRasterizeOptions},Ptr{GDALProgressFunc},Ptr{Void}),psOptions,pfnProgress,pProgressData)
+function rasterizeoptionssetprogress(psOptions, pfnProgress::Any, pProgressData)
+    ccall((:GDALRasterizeOptionsSetProgress, libgdal), Void, (Ptr{GDALRasterizeOptions}, Ptr{Void}, Ptr{Void}), psOptions, pfnProgress, pProgressData)
 end
 
 
@@ -567,8 +567,8 @@ Burns vector geometries into a raster.
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
 """
-function rasterize{T <: GDALDatasetH}(pszDest,hDstDS::Ptr{T},hSrcDS::Ptr{T},psOptions,pbUsageError)
-    checknull(ccall((:GDALRasterize,libgdal),Ptr{GDALDatasetH},(Cstring,Ptr{GDALDatasetH},Ptr{GDALDatasetH},Ptr{GDALRasterizeOptions},Ptr{Cint}),pszDest,hDstDS,hSrcDS,psOptions,pbUsageError))
+function rasterize(pszDest, hDstDS::Ref{<:GDALDatasetH}, hSrcDS::Ref{<:GDALDatasetH}, psOptions, pbUsageError)
+    checknull(ccall((:GDALRasterize, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Void}, Ptr{Void}, Ptr{GDALRasterizeOptions}, Ptr{Cint}), pszDest, hDstDS, hSrcDS, psOptions, pbUsageError))
 end
 
 
@@ -585,8 +585,8 @@ Allocates a GDALBuildVRTOptions struct.
 ### Returns
 pointer to the allocated GDALBuildVRTOptions struct. Must be freed with GDALBuildVRTOptionsFree().
 """
-function buildvrtoptionsnew(papszArgv,psOptionsForBinary)
-    ccall((:GDALBuildVRTOptionsNew,libgdal),Ptr{GDALBuildVRTOptions},(StringList,Ptr{GDALBuildVRTOptionsForBinary}),papszArgv,psOptionsForBinary)
+function buildvrtoptionsnew(papszArgv, psOptionsForBinary)
+    ccall((:GDALBuildVRTOptionsNew, libgdal), Ptr{GDALBuildVRTOptions}, (StringList, Ptr{GDALBuildVRTOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -599,7 +599,7 @@ Frees the GDALBuildVRTOptions struct.
 * **psOptions**: the options struct for GDALBuildVRT().
 """
 function buildvrtoptionsfree(psOptions)
-    ccall((:GDALBuildVRTOptionsFree,libgdal),Void,(Ptr{GDALBuildVRTOptions},),psOptions)
+    ccall((:GDALBuildVRTOptionsFree, libgdal), Void, (Ptr{GDALBuildVRTOptions},), psOptions)
 end
 
 
@@ -615,8 +615,8 @@ Set a progress function.
 * **pfnProgress**: the progress callback.
 * **pProgressData**: the user data for the progress callback.
 """
-function buildvrtoptionssetprogress(psOptions,pfnProgress::Any,pProgressData)
-    ccall((:GDALBuildVRTOptionsSetProgress,libgdal),Void,(Ptr{GDALBuildVRTOptions},Ptr{GDALProgressFunc},Ptr{Void}),psOptions,pfnProgress,pProgressData)
+function buildvrtoptionssetprogress(psOptions, pfnProgress::Any, pProgressData)
+    ccall((:GDALBuildVRTOptionsSetProgress, libgdal), Void, (Ptr{GDALBuildVRTOptions}, Ptr{Void}, Ptr{Void}), psOptions, pfnProgress, pProgressData)
 end
 
 
@@ -641,6 +641,6 @@ Build a VRT from a list of datasets.
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
 """
-function buildvrt(pszDest,nSrcCount::Integer,pahSrcDS,papszSrcDSNames,psOptions,pbUsageError)
-    checknull(ccall((:GDALBuildVRT,libgdal),Ptr{GDALDatasetH},(Cstring,Cint,Ptr{GDALDatasetH},StringList,Ptr{GDALBuildVRTOptions},Ptr{Cint}),pszDest,nSrcCount,pahSrcDS,papszSrcDSNames,psOptions,pbUsageError))
+function buildvrt(pszDest, nSrcCount::Integer, pahSrcDS, papszSrcDSNames, psOptions, pbUsageError)
+    checknull(ccall((:GDALBuildVRT, libgdal), Ptr{GDALDatasetH}, (Cstring, Cint, Ptr{GDALDatasetH}, StringList, Ptr{GDALBuildVRTOptions}, Ptr{Cint}), pszDest, nSrcCount, pahSrcDS, papszSrcDSNames, psOptions, pbUsageError))
 end
