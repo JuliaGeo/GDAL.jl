@@ -2,8 +2,6 @@ __precompile__()
 
 module GDAL
 
-using Compat
-
 # this can go when all ccalls are done in the C submodule
 const depfile = joinpath(dirname(@__FILE__), "..", "deps", "deps.jl")
 if isfile(depfile)
