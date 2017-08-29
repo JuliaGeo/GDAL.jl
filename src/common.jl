@@ -15,18 +15,13 @@ const CPLE_AWSObjectNotFound = 13
 const CPLE_AWSAccessDenied = 14
 const CPLE_AWSInvalidCredentials = 15
 const CPLE_AWSSignatureDoesNotMatch = 16
-const CPLErr = UInt32
 const CE_None = UInt32(0)
 const CE_Debug = UInt32(1)
 const CE_Warning = UInt32(2)
 const CE_Failure = UInt32(3)
 const CE_Fatal = UInt32(4)
 const VALIDATE_POINTER_ERR = CE_Failure
-const CE_None = UInt32(0)
-const CE_Debug = UInt32(1)
-const CE_Warning = UInt32(2)
-const CE_Failure = UInt32(3)
-const CE_Fatal = UInt32(4)
+const CPLErr = UInt32
 const CPLErrorNum = Cint
 const CXT_Element = UInt32(0)
 const CXT_Text = UInt32(1)
@@ -34,19 +29,15 @@ const CXT_Attribute = UInt32(2)
 const CXT_Comment = UInt32(3)
 const CXT_Literal = UInt32(4)
 const CPLXMLNodeType = UInt32
-const CXT_Element = UInt32(0)
-const CXT_Text = UInt32(1)
-const CXT_Attribute = UInt32(2)
-const CXT_Comment = UInt32(3)
-const CXT_Literal = UInt32(4)
 
-type CPLXMLNode # none, line 70:
-    eType::CPLXMLNodeType # none, line 71:
-    pszValue::Cstring # none, line 72:
-    psNext::Ptr{CPLXMLNode} # none, line 73:
-    psChild::Ptr{CPLXMLNode}
+mutable struct CPLXMLNode
+    eType::CPLXMLNodeType
+    pszValue::Cstring
+    psNext::Ptr{Void}
+    psChild::Ptr{Void}
 end
 
+const CPL_HAS_GINT64 = 1
 const CPL_FRMT_GB_WITHOUT_PREFIX = "ll"
 const CPL_IS_LSB = 1
 const FALSE = 0
@@ -59,7 +50,33 @@ const GByte = Cuchar
 const GBool = Cint
 const GIntBig = Clonglong
 const GUIntBig = Culonglong
+const GInt64 = GIntBig
+const GUInt64 = GUIntBig
 const GPtrDiff_t = GIntBig
+
+mutable struct CPLVirtualMem
+end
+
+const VIRTUALMEM_READONLY = UInt32(0)
+const VIRTUALMEM_READONLY_ENFORCED = UInt32(1)
+const VIRTUALMEM_READWRITE = UInt32(2)
+const CPLVirtualMemAccessMode = UInt32
+const VSI_STAT_EXISTS_FLAG = 0x01
+const VSI_STAT_NATURE_FLAG = 0x02
+const VSI_STAT_SIZE_FLAG = 0x04
+const VSI_STAT_SET_ERROR_FLAG = 0x08
+const VSIStatBuf = UInt32
+const vsi_l_offset = GUIntBig
+const VSILFILE = FILE
+const VSI_RANGE_STATUS_UNKNOWN = UInt32(0)
+const VSI_RANGE_STATUS_DATA = UInt32(1)
+const VSI_RANGE_STATUS_HOLE = UInt32(2)
+const VSIRangeStatus = UInt32
+
+mutable struct stat64
+end
+
+const VSIStatBufL = UInt32
 const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
 const GDALMD_AREA_OR_POINT = "AREA_OR_POINT"
 const GDALMD_AOP_AREA = "Area"
@@ -105,6 +122,9 @@ const GMF_ALL_VALID = 0x01
 const GMF_PER_DATASET = 0x02
 const GMF_ALPHA = 0x04
 const GMF_NODATA = 0x08
+const GDAL_DATA_COVERAGE_STATUS_UNIMPLEMENTED = 0x01
+const GDAL_DATA_COVERAGE_STATUS_DATA = 0x02
+const GDAL_DATA_COVERAGE_STATUS_EMPTY = 0x04
 const GDT_Unknown = UInt32(0)
 const GDT_Byte = UInt32(1)
 const GDT_UInt16 = UInt32(2)
@@ -119,40 +139,18 @@ const GDT_CFloat32 = UInt32(10)
 const GDT_CFloat64 = UInt32(11)
 const GDT_TypeCount = UInt32(12)
 const GDALDataType = UInt32
-const GDT_Unknown = UInt32(0)
-const GDT_Byte = UInt32(1)
-const GDT_UInt16 = UInt32(2)
-const GDT_Int16 = UInt32(3)
-const GDT_UInt32 = UInt32(4)
-const GDT_Int32 = UInt32(5)
-const GDT_Float32 = UInt32(6)
-const GDT_Float64 = UInt32(7)
-const GDT_CInt16 = UInt32(8)
-const GDT_CInt32 = UInt32(9)
-const GDT_CFloat32 = UInt32(10)
-const GDT_CFloat64 = UInt32(11)
-const GDT_TypeCount = UInt32(12)
 const GARIO_PENDING = UInt32(0)
 const GARIO_UPDATE = UInt32(1)
 const GARIO_ERROR = UInt32(2)
 const GARIO_COMPLETE = UInt32(3)
 const GARIO_TypeCount = UInt32(4)
 const GDALAsyncStatusType = UInt32
-const GARIO_PENDING = UInt32(0)
-const GARIO_UPDATE = UInt32(1)
-const GARIO_ERROR = UInt32(2)
-const GARIO_COMPLETE = UInt32(3)
-const GARIO_TypeCount = UInt32(4)
 const GA_ReadOnly = UInt32(0)
 const GA_Update = UInt32(1)
 const GDALAccess = UInt32
-const GA_ReadOnly = UInt32(0)
-const GA_Update = UInt32(1)
 const GF_Read = UInt32(0)
 const GF_Write = UInt32(1)
 const GDALRWFlag = UInt32
-const GF_Read = UInt32(0)
-const GF_Write = UInt32(1)
 const GRIORA_NearestNeighbour = UInt32(0)
 const GRIORA_Bilinear = UInt32(1)
 const GRIORA_Cubic = UInt32(2)
@@ -162,27 +160,7 @@ const GRIORA_Average = UInt32(5)
 const GRIORA_Mode = UInt32(6)
 const GRIORA_Gauss = UInt32(7)
 const GDALRIOResampleAlg = UInt32
-const GRIORA_NearestNeighbour = UInt32(0)
-const GRIORA_Bilinear = UInt32(1)
-const GRIORA_Cubic = UInt32(2)
-const GRIORA_CubicSpline = UInt32(3)
-const GRIORA_Lanczos = UInt32(4)
-const GRIORA_Average = UInt32(5)
-const GRIORA_Mode = UInt32(6)
-const GRIORA_Gauss = UInt32(7)
-
-type GDALRasterIOExtraArg # none, line 317:
-    nVersion::Cint # none, line 318:
-    eResampleAlg::GDALRIOResampleAlg # none, line 319:
-    pfnProgress::GDALProgressFunc # none, line 320:
-    pProgressData::Ptr{Void} # none, line 321:
-    bFloatingPointWindowValidity::Cint # none, line 322:
-    dfXOff::Cdouble # none, line 323:
-    dfYOff::Cdouble # none, line 324:
-    dfXSize::Cdouble # none, line 325:
-    dfYSize::Cdouble
-end
-
+const GDALRasterIOExtraArg = UInt32
 const GCI_Undefined = UInt32(0)
 const GCI_GrayIndex = UInt32(1)
 const GCI_PaletteIndex = UInt32(2)
@@ -202,82 +180,19 @@ const GCI_YCbCr_CbBand = UInt32(15)
 const GCI_YCbCr_CrBand = UInt32(16)
 const GCI_Max = UInt32(16)
 const GDALColorInterp = UInt32
-const GCI_Undefined = UInt32(0)
-const GCI_GrayIndex = UInt32(1)
-const GCI_PaletteIndex = UInt32(2)
-const GCI_RedBand = UInt32(3)
-const GCI_GreenBand = UInt32(4)
-const GCI_BlueBand = UInt32(5)
-const GCI_AlphaBand = UInt32(6)
-const GCI_HueBand = UInt32(7)
-const GCI_SaturationBand = UInt32(8)
-const GCI_LightnessBand = UInt32(9)
-const GCI_CyanBand = UInt32(10)
-const GCI_MagentaBand = UInt32(11)
-const GCI_YellowBand = UInt32(12)
-const GCI_BlackBand = UInt32(13)
-const GCI_YCbCr_YBand = UInt32(14)
-const GCI_YCbCr_CbBand = UInt32(15)
-const GCI_YCbCr_CrBand = UInt32(16)
-const GCI_Max = UInt32(16)
 const GPI_Gray = UInt32(0)
 const GPI_RGB = UInt32(1)
 const GPI_CMYK = UInt32(2)
 const GPI_HLS = UInt32(3)
 const GDALPaletteInterp = UInt32
-const GPI_Gray = UInt32(0)
-const GPI_RGB = UInt32(1)
-const GPI_CMYK = UInt32(2)
-const GPI_HLS = UInt32(3)
 const GSpacing = GIntBig
-
-type GDAL_GCP # none, line 398:
-    pszId::Cstring # none, line 399:
-    pszInfo::Cstring # none, line 400:
-    dfGCPPixel::Cdouble # none, line 401:
-    dfGCPLine::Cdouble # none, line 402:
-    dfGCPX::Cdouble # none, line 403:
-    dfGCPY::Cdouble # none, line 404:
-    dfGCPZ::Cdouble
-end
-
-
-type GDALRPCInfo # none, line 410:
-    dfLINE_OFF::Cdouble # none, line 411:
-    dfSAMP_OFF::Cdouble # none, line 412:
-    dfLAT_OFF::Cdouble # none, line 413:
-    dfLONG_OFF::Cdouble # none, line 414:
-    dfHEIGHT_OFF::Cdouble # none, line 415:
-    dfLINE_SCALE::Cdouble # none, line 416:
-    dfSAMP_SCALE::Cdouble # none, line 417:
-    dfLAT_SCALE::Cdouble # none, line 418:
-    dfLONG_SCALE::Cdouble # none, line 419:
-    dfHEIGHT_SCALE::Cdouble # none, line 420:
-    adfLINE_NUM_COEFF::NTuple{20,Cdouble} # none, line 421:
-    adfLINE_DEN_COEFF::NTuple{20,Cdouble} # none, line 422:
-    adfSAMP_NUM_COEFF::NTuple{20,Cdouble} # none, line 423:
-    adfSAMP_DEN_COEFF::NTuple{20,Cdouble} # none, line 424:
-    dfMIN_LONG::Cdouble # none, line 425:
-    dfMIN_LAT::Cdouble # none, line 426:
-    dfMAX_LONG::Cdouble # none, line 427:
-    dfMAX_LAT::Cdouble
-end
-
-
-type GDALColorEntry # none, line 431:
-    c1::Int16 # none, line 432:
-    c2::Int16 # none, line 433:
-    c3::Int16 # none, line 434:
-    c4::Int16
-end
-
+const GDAL_GCP = UInt32
+const GDALRPCInfo = UInt32
+const GDALColorEntry = UInt32
 const GFT_Integer = UInt32(0)
 const GFT_Real = UInt32(1)
 const GFT_String = UInt32(2)
 const GDALRATFieldType = UInt32
-const GFT_Integer = UInt32(0)
-const GFT_Real = UInt32(1)
-const GFT_String = UInt32(2)
 const GFU_Generic = UInt32(0)
 const GFU_PixelCount = UInt32(1)
 const GFU_Name = UInt32(2)
@@ -298,52 +213,13 @@ const GFU_BlueMax = UInt32(16)
 const GFU_AlphaMax = UInt32(17)
 const GFU_MaxCount = UInt32(18)
 const GDALRATFieldUsage = UInt32
-const GFU_Generic = UInt32(0)
-const GFU_PixelCount = UInt32(1)
-const GFU_Name = UInt32(2)
-const GFU_Min = UInt32(3)
-const GFU_Max = UInt32(4)
-const GFU_MinMax = UInt32(5)
-const GFU_Red = UInt32(6)
-const GFU_Green = UInt32(7)
-const GFU_Blue = UInt32(8)
-const GFU_Alpha = UInt32(9)
-const GFU_RedMin = UInt32(10)
-const GFU_GreenMin = UInt32(11)
-const GFU_BlueMin = UInt32(12)
-const GFU_AlphaMin = UInt32(13)
-const GFU_RedMax = UInt32(14)
-const GFU_GreenMax = UInt32(15)
-const GFU_BlueMax = UInt32(16)
-const GFU_AlphaMax = UInt32(17)
-const GFU_MaxCount = UInt32(18)
 const GTO_TIP = UInt32(0)
 const GTO_BIT = UInt32(1)
 const GTO_BSQ = UInt32(2)
 const GDALTileOrganization = UInt32
-const GTO_TIP = UInt32(0)
-const GTO_BIT = UInt32(1)
-const GTO_BSQ = UInt32(2)
 const GDAL_GTI2_SIGNATURE = "GTI2"
-
-type GDALTransformerInfo # none, line 516:
-    abySignature::NTuple{4,GByte} # none, line 517:
-    pszClassName::Cstring # none, line 518:
-    pfnTransform::GDALTransformerFunc # none, line 519:
-    pfnCleanup::Ptr{Void} # none, line 520:
-    pfnSerialize::Ptr{Void} # none, line 521:
-    pfnCreateSimilar::Ptr{Void}
-end
-
-
-type OGRContourWriterInfo # none, line 528:
-    hLayer::Ptr{Void} # none, line 529:
-    adfGeoTransform::NTuple{6,Cdouble} # none, line 530:
-    nElevField::Cint # none, line 531:
-    nIDField::Cint # none, line 532:
-    nNextID::Cint
-end
-
+const GDALTransformerInfo = UInt32
+const OGRContourWriterInfo = UInt32
 const GGA_InverseDistanceToAPower = UInt32(1)
 const GGA_MovingAverage = UInt32(2)
 const GGA_NearestNeighbor = UInt32(3)
@@ -356,108 +232,27 @@ const GGA_MetricAverageDistancePts = UInt32(9)
 const GGA_Linear = UInt32(10)
 const GGA_InverseDistanceToAPowerNearestNeighbor = UInt32(11)
 const GDALGridAlgorithm = UInt32
-const GGA_InverseDistanceToAPower = UInt32(1)
-const GGA_MovingAverage = UInt32(2)
-const GGA_NearestNeighbor = UInt32(3)
-const GGA_MetricMinimum = UInt32(4)
-const GGA_MetricMaximum = UInt32(5)
-const GGA_MetricRange = UInt32(6)
-const GGA_MetricCount = UInt32(7)
-const GGA_MetricAverageDistance = UInt32(8)
-const GGA_MetricAverageDistancePts = UInt32(9)
-const GGA_Linear = UInt32(10)
-const GGA_InverseDistanceToAPowerNearestNeighbor = UInt32(11)
+const GDALGridInverseDistanceToAPowerOptions = UInt32
+const GDALGridInverseDistanceToAPowerNearestNeighborOptions = UInt32
+const GDALGridMovingAverageOptions = UInt32
+const GDALGridNearestNeighborOptions = UInt32
+const GDALGridDataMetricsOptions = UInt32
+const GDALGridLinearOptions = UInt32
 
-type GDALGridInverseDistanceToAPowerOptions # none, line 566:
-    dfPower::Cdouble # none, line 567:
-    dfSmoothing::Cdouble # none, line 568:
-    dfAnisotropyRatio::Cdouble # none, line 569:
-    dfAnisotropyAngle::Cdouble # none, line 570:
-    dfRadius1::Cdouble # none, line 571:
-    dfRadius2::Cdouble # none, line 572:
-    dfAngle::Cdouble # none, line 573:
-    nMaxPoints::GUInt32 # none, line 574:
-    nMinPoints::GUInt32 # none, line 575:
-    dfNoDataValue::Cdouble
+mutable struct GDALGridContext
+end
+
+const GDALTriFacet = UInt32
+const GDALTriBarycentricCoefficients = UInt32
+const GDALTriangulation = UInt32
+
+mutable struct _CPLXMLNode
 end
 
 
-type GDALGridInverseDistanceToAPowerNearestNeighborOptions # none, line 579:
-    dfPower::Cdouble # none, line 580:
-    dfRadius::Cdouble # none, line 581:
-    nMaxPoints::GUInt32 # none, line 582:
-    nMinPoints::GUInt32 # none, line 583:
-    dfNoDataValue::Cdouble
+mutable struct OGRGeomFieldDefnHS
 end
 
-
-type GDALGridMovingAverageOptions # none, line 587:
-    dfRadius1::Cdouble # none, line 588:
-    dfRadius2::Cdouble # none, line 589:
-    dfAngle::Cdouble # none, line 590:
-    nMinPoints::GUInt32 # none, line 591:
-    dfNoDataValue::Cdouble
-end
-
-
-type GDALGridNearestNeighborOptions # none, line 595:
-    dfRadius1::Cdouble # none, line 596:
-    dfRadius2::Cdouble # none, line 597:
-    dfAngle::Cdouble # none, line 598:
-    dfNoDataValue::Cdouble
-end
-
-
-type GDALGridDataMetricsOptions # none, line 602:
-    dfRadius1::Cdouble # none, line 603:
-    dfRadius2::Cdouble # none, line 604:
-    dfAngle::Cdouble # none, line 605:
-    nMinPoints::GUInt32 # none, line 606:
-    dfNoDataValue::Cdouble
-end
-
-
-type GDALGridLinearOptions # none, line 610:
-    dfRadius::Cdouble # none, line 611:
-    dfNoDataValue::Cdouble
-end
-
-
-type GDALGridContext # none, line 615:
-end
-
-
-type GDALTriFacet # none, line 618:
-    anVertexIdx::NTuple{3,Cint} # none, line 619:
-    anNeighborIdx::NTuple{3,Cint}
-end
-
-
-type GDALTriBarycentricCoefficients # none, line 623:
-    dfMul1X::Cdouble # none, line 624:
-    dfMul1Y::Cdouble # none, line 625:
-    dfMul2X::Cdouble # none, line 626:
-    dfMul2Y::Cdouble # none, line 627:
-    dfCstX::Cdouble # none, line 628:
-    dfCstY::Cdouble
-end
-
-
-type GDALTriangulation # none, line 632:
-    nFacets::Cint # none, line 633:
-    pasFacets::Ptr{GDALTriFacet} # none, line 634:
-    pasFacetCoefficients::Ptr{GDALTriBarycentricCoefficients}
-end
-
-
-type _CPLXMLNode # none, line 642:
-end
-
-
-type OGRGeomFieldDefnHS # none, line 650:
-end
-
-const OGRGeomFieldDefnH = Ptr{OGRGeomFieldDefnHS}
 const OGRERR_NONE = 0
 const OGRERR_NOT_ENOUGH_DATA = 1
 const OGRERR_NOT_ENOUGH_MEMORY = 2
@@ -483,6 +278,7 @@ const OGR_F_VAL_ALLOW_NULL_WHEN_DEFAULT = 0x00000008
 const OGR_F_VAL_ALLOW_DIFFERENT_GEOM_DIM = 0x00000010
 const OGRNullFID = -1
 const OGRUnsetMarker = -21121
+const OGRNullMarker = -21122
 const OLCRandomRead = "RandomRead"
 const OLCSequentialWrite = "SequentialWrite"
 const OLCRandomWrite = "RandomWrite"
@@ -508,27 +304,13 @@ const ODsCCurveGeometries = "CurveGeometries"
 const ODsCTransactions = "Transactions"
 const ODsCEmulatedTransactions = "EmulatedTransactions"
 const ODsCMeasuredGeometries = "MeasuredGeometries"
+const ODsCRandomLayerRead = "RandomLayerRead"
+const ODsCRandomLayerWrite = "RandomLayerWrite "
 const ODrCCreateDataSource = "CreateDataSource"
 const ODrCDeleteDataSource = "DeleteDataSource"
 const OLMD_FID64 = "OLMD_FID64"
-
-type OGREnvelope # none, line 733:
-    MinX::Cdouble # none, line 734:
-    MaxX::Cdouble # none, line 735:
-    MinY::Cdouble # none, line 736:
-    MaxY::Cdouble
-end
-
-
-type OGREnvelope3D # none, line 740:
-    MinX::Cdouble # none, line 741:
-    MaxX::Cdouble # none, line 742:
-    MinY::Cdouble # none, line 743:
-    MaxY::Cdouble # none, line 744:
-    MinZ::Cdouble # none, line 745:
-    MaxZ::Cdouble
-end
-
+const OGREnvelope = UInt32
+const OGREnvelope3D = UInt32
 const OGRErr = Cint
 const OGRBoolean = Cint
 const wkbUnknown = UInt32(0)
@@ -603,89 +385,13 @@ const wkbMultiLineString25D = UInt32(0x0000000080000005)
 const wkbMultiPolygon25D = UInt32(0x0000000080000006)
 const wkbGeometryCollection25D = UInt32(0x0000000080000007)
 const OGRwkbGeometryType = UInt32
-const wkbUnknown = UInt32(0)
-const wkbPoint = UInt32(1)
-const wkbLineString = UInt32(2)
-const wkbPolygon = UInt32(3)
-const wkbMultiPoint = UInt32(4)
-const wkbMultiLineString = UInt32(5)
-const wkbMultiPolygon = UInt32(6)
-const wkbGeometryCollection = UInt32(7)
-const wkbCircularString = UInt32(8)
-const wkbCompoundCurve = UInt32(9)
-const wkbCurvePolygon = UInt32(10)
-const wkbMultiCurve = UInt32(11)
-const wkbMultiSurface = UInt32(12)
-const wkbCurve = UInt32(13)
-const wkbSurface = UInt32(14)
-const wkbPolyhedralSurface = UInt32(15)
-const wkbTIN = UInt32(16)
-const wkbTriangle = UInt32(17)
-const wkbNone = UInt32(100)
-const wkbLinearRing = UInt32(101)
-const wkbCircularStringZ = UInt32(1008)
-const wkbCompoundCurveZ = UInt32(1009)
-const wkbCurvePolygonZ = UInt32(1010)
-const wkbMultiCurveZ = UInt32(1011)
-const wkbMultiSurfaceZ = UInt32(1012)
-const wkbCurveZ = UInt32(1013)
-const wkbSurfaceZ = UInt32(1014)
-const wkbPolyhedralSurfaceZ = UInt32(1015)
-const wkbTINZ = UInt32(1016)
-const wkbTriangleZ = UInt32(1017)
-const wkbPointM = UInt32(2001)
-const wkbLineStringM = UInt32(2002)
-const wkbPolygonM = UInt32(2003)
-const wkbMultiPointM = UInt32(2004)
-const wkbMultiLineStringM = UInt32(2005)
-const wkbMultiPolygonM = UInt32(2006)
-const wkbGeometryCollectionM = UInt32(2007)
-const wkbCircularStringM = UInt32(2008)
-const wkbCompoundCurveM = UInt32(2009)
-const wkbCurvePolygonM = UInt32(2010)
-const wkbMultiCurveM = UInt32(2011)
-const wkbMultiSurfaceM = UInt32(2012)
-const wkbCurveM = UInt32(2013)
-const wkbSurfaceM = UInt32(2014)
-const wkbPolyhedralSurfaceM = UInt32(2015)
-const wkbTINM = UInt32(2016)
-const wkbTriangleM = UInt32(2017)
-const wkbPointZM = UInt32(3001)
-const wkbLineStringZM = UInt32(3002)
-const wkbPolygonZM = UInt32(3003)
-const wkbMultiPointZM = UInt32(3004)
-const wkbMultiLineStringZM = UInt32(3005)
-const wkbMultiPolygonZM = UInt32(3006)
-const wkbGeometryCollectionZM = UInt32(3007)
-const wkbCircularStringZM = UInt32(3008)
-const wkbCompoundCurveZM = UInt32(3009)
-const wkbCurvePolygonZM = UInt32(3010)
-const wkbMultiCurveZM = UInt32(3011)
-const wkbMultiSurfaceZM = UInt32(3012)
-const wkbCurveZM = UInt32(3013)
-const wkbSurfaceZM = UInt32(3014)
-const wkbPolyhedralSurfaceZM = UInt32(3015)
-const wkbTINZM = UInt32(3016)
-const wkbTriangleZM = UInt32(3017)
-const wkbPoint25D = UInt32(0x0000000080000001)
-const wkbLineString25D = UInt32(0x0000000080000002)
-const wkbPolygon25D = UInt32(0x0000000080000003)
-const wkbMultiPoint25D = UInt32(0x0000000080000004)
-const wkbMultiLineString25D = UInt32(0x0000000080000005)
-const wkbMultiPolygon25D = UInt32(0x0000000080000006)
-const wkbGeometryCollection25D = UInt32(0x0000000080000007)
 const wkbVariantOldOgc = UInt32(0)
 const wkbVariantIso = UInt32(1)
 const wkbVariantPostGIS1 = UInt32(2)
 const OGRwkbVariant = UInt32
-const wkbVariantOldOgc = UInt32(0)
-const wkbVariantIso = UInt32(1)
-const wkbVariantPostGIS1 = UInt32(2)
 const wkbXDR = UInt32(0)
 const wkbNDR = UInt32(1)
 const OGRwkbByteOrder = UInt32
-const wkbXDR = UInt32(0)
-const wkbNDR = UInt32(1)
 const OFTInteger = UInt32(0)
 const OFTIntegerList = UInt32(1)
 const OFTReal = UInt32(2)
@@ -702,44 +408,17 @@ const OFTInteger64 = UInt32(12)
 const OFTInteger64List = UInt32(13)
 const OFTMaxType = UInt32(13)
 const OGRFieldType = UInt32
-const OFTInteger = UInt32(0)
-const OFTIntegerList = UInt32(1)
-const OFTReal = UInt32(2)
-const OFTRealList = UInt32(3)
-const OFTString = UInt32(4)
-const OFTStringList = UInt32(5)
-const OFTWideString = UInt32(6)
-const OFTWideStringList = UInt32(7)
-const OFTBinary = UInt32(8)
-const OFTDate = UInt32(9)
-const OFTTime = UInt32(10)
-const OFTDateTime = UInt32(11)
-const OFTInteger64 = UInt32(12)
-const OFTInteger64List = UInt32(13)
-const OFTMaxType = UInt32(13)
 const OFSTNone = UInt32(0)
 const OFSTBoolean = UInt32(1)
 const OFSTInt16 = UInt32(2)
 const OFSTFloat32 = UInt32(3)
 const OFSTMaxSubType = UInt32(3)
 const OGRFieldSubType = UInt32
-const OFSTNone = UInt32(0)
-const OFSTBoolean = UInt32(1)
-const OFSTInt16 = UInt32(2)
-const OFSTFloat32 = UInt32(3)
-const OFSTMaxSubType = UInt32(3)
 const OJUndefined = UInt32(0)
 const OJLeft = UInt32(1)
 const OJRight = UInt32(2)
 const OGRJustification = UInt32
-const OJUndefined = UInt32(0)
-const OJLeft = UInt32(1)
-const OJRight = UInt32(2)
-
-type OGRField # none, line 998:
-    _OGRField::GIntBig
-end
-
+const OGRField = UInt32
 const ogr_style_tool_class_id = UInt32
 const OGRSTCNone = UInt32(0)
 const OGRSTCPen = UInt32(1)
@@ -748,12 +427,6 @@ const OGRSTCSymbol = UInt32(3)
 const OGRSTCLabel = UInt32(4)
 const OGRSTCVector = UInt32(5)
 const OGRSTClassId = UInt32
-const OGRSTCNone = UInt32(0)
-const OGRSTCPen = UInt32(1)
-const OGRSTCBrush = UInt32(2)
-const OGRSTCSymbol = UInt32(3)
-const OGRSTCLabel = UInt32(4)
-const OGRSTCVector = UInt32(5)
 const ogr_style_tool_units_id = UInt32
 const OGRSTUGround = UInt32(0)
 const OGRSTUPixel = UInt32(1)
@@ -762,12 +435,6 @@ const OGRSTUMM = UInt32(3)
 const OGRSTUCM = UInt32(4)
 const OGRSTUInches = UInt32(5)
 const OGRSTUnitId = UInt32
-const OGRSTUGround = UInt32(0)
-const OGRSTUPixel = UInt32(1)
-const OGRSTUPoints = UInt32(2)
-const OGRSTUMM = UInt32(3)
-const OGRSTUCM = UInt32(4)
-const OGRSTUInches = UInt32(5)
 const ogr_style_tool_param_pen_id = UInt32
 const OGRSTPenColor = UInt32(0)
 const OGRSTPenWidth = UInt32(1)
@@ -779,15 +446,6 @@ const OGRSTPenJoin = UInt32(6)
 const OGRSTPenPriority = UInt32(7)
 const OGRSTPenLast = UInt32(8)
 const OGRSTPenParam = UInt32
-const OGRSTPenColor = UInt32(0)
-const OGRSTPenWidth = UInt32(1)
-const OGRSTPenPattern = UInt32(2)
-const OGRSTPenId = UInt32(3)
-const OGRSTPenPerOffset = UInt32(4)
-const OGRSTPenCap = UInt32(5)
-const OGRSTPenJoin = UInt32(6)
-const OGRSTPenPriority = UInt32(7)
-const OGRSTPenLast = UInt32(8)
 const ogr_style_tool_param_brush_id = UInt32
 const OGRSTBrushFColor = UInt32(0)
 const OGRSTBrushBColor = UInt32(1)
@@ -799,15 +457,6 @@ const OGRSTBrushDy = UInt32(6)
 const OGRSTBrushPriority = UInt32(7)
 const OGRSTBrushLast = UInt32(8)
 const OGRSTBrushParam = UInt32
-const OGRSTBrushFColor = UInt32(0)
-const OGRSTBrushBColor = UInt32(1)
-const OGRSTBrushId = UInt32(2)
-const OGRSTBrushAngle = UInt32(3)
-const OGRSTBrushSize = UInt32(4)
-const OGRSTBrushDx = UInt32(5)
-const OGRSTBrushDy = UInt32(6)
-const OGRSTBrushPriority = UInt32(7)
-const OGRSTBrushLast = UInt32(8)
 const ogr_style_tool_param_symbol_id = UInt32
 const OGRSTSymbolId = UInt32(0)
 const OGRSTSymbolAngle = UInt32(1)
@@ -823,19 +472,6 @@ const OGRSTSymbolFontName = UInt32(10)
 const OGRSTSymbolOColor = UInt32(11)
 const OGRSTSymbolLast = UInt32(12)
 const OGRSTSymbolParam = UInt32
-const OGRSTSymbolId = UInt32(0)
-const OGRSTSymbolAngle = UInt32(1)
-const OGRSTSymbolColor = UInt32(2)
-const OGRSTSymbolSize = UInt32(3)
-const OGRSTSymbolDx = UInt32(4)
-const OGRSTSymbolDy = UInt32(5)
-const OGRSTSymbolStep = UInt32(6)
-const OGRSTSymbolPerp = UInt32(7)
-const OGRSTSymbolOffset = UInt32(8)
-const OGRSTSymbolPriority = UInt32(9)
-const OGRSTSymbolFontName = UInt32(10)
-const OGRSTSymbolOColor = UInt32(11)
-const OGRSTSymbolLast = UInt32(12)
 const ogr_style_tool_param_label_id = UInt32
 const OGRSTLabelFontName = UInt32(0)
 const OGRSTLabelSize = UInt32(1)
@@ -860,28 +496,7 @@ const OGRSTLabelHColor = UInt32(19)
 const OGRSTLabelOColor = UInt32(20)
 const OGRSTLabelLast = UInt32(21)
 const OGRSTLabelParam = UInt32
-const OGRSTLabelFontName = UInt32(0)
-const OGRSTLabelSize = UInt32(1)
-const OGRSTLabelTextString = UInt32(2)
-const OGRSTLabelAngle = UInt32(3)
-const OGRSTLabelFColor = UInt32(4)
-const OGRSTLabelBColor = UInt32(5)
-const OGRSTLabelPlacement = UInt32(6)
-const OGRSTLabelAnchor = UInt32(7)
-const OGRSTLabelDx = UInt32(8)
-const OGRSTLabelDy = UInt32(9)
-const OGRSTLabelPerp = UInt32(10)
-const OGRSTLabelBold = UInt32(11)
-const OGRSTLabelItalic = UInt32(12)
-const OGRSTLabelUnderline = UInt32(13)
-const OGRSTLabelPriority = UInt32(14)
-const OGRSTLabelStrikeout = UInt32(15)
-const OGRSTLabelStretch = UInt32(16)
-const OGRSTLabelAdjHor = UInt32(17)
-const OGRSTLabelAdjVert = UInt32(18)
-const OGRSTLabelHColor = UInt32(19)
-const OGRSTLabelOColor = UInt32(20)
-const OGRSTLabelLast = UInt32(21)
+const CPLSharedFileInfo = UInt32
 const GRA_NearestNeighbour = UInt32(0)
 const GRA_Bilinear = UInt32(1)
 const GRA_Cubic = UInt32(2)
@@ -895,18 +510,6 @@ const GRA_Med = UInt32(10)
 const GRA_Q1 = UInt32(11)
 const GRA_Q3 = UInt32(12)
 const GDALResampleAlg = UInt32
-const GRA_NearestNeighbour = UInt32(0)
-const GRA_Bilinear = UInt32(1)
-const GRA_Cubic = UInt32(2)
-const GRA_CubicSpline = UInt32(3)
-const GRA_Lanczos = UInt32(4)
-const GRA_Average = UInt32(5)
-const GRA_Mode = UInt32(6)
-const GRA_Max = UInt32(8)
-const GRA_Min = UInt32(9)
-const GRA_Med = UInt32(10)
-const GRA_Q1 = UInt32(11)
-const GRA_Q3 = UInt32(12)
 const GWKAOM_Average = UInt32(1)
 const GWKAOM_Fmode = UInt32(2)
 const GWKAOM_Imode = UInt32(3)
@@ -914,122 +517,78 @@ const GWKAOM_Max = UInt32(4)
 const GWKAOM_Min = UInt32(5)
 const GWKAOM_Quant = UInt32(6)
 const GWKAverageOrModeAlg = UInt32
-const GWKAOM_Average = UInt32(1)
-const GWKAOM_Fmode = UInt32(2)
-const GWKAOM_Imode = UInt32(3)
-const GWKAOM_Max = UInt32(4)
-const GWKAOM_Min = UInt32(5)
-const GWKAOM_Quant = UInt32(6)
-
-type GDALWarpOptions # none, line 1234:
-    papszWarpOptions::Ptr{Cstring} # none, line 1235:
-    dfWarpMemoryLimit::Cdouble # none, line 1236:
-    eResampleAlg::GDALResampleAlg # none, line 1237:
-    eWorkingDataType::GDALDataType # none, line 1238:
-    hSrcDS::GDALDatasetH # none, line 1239:
-    hDstDS::GDALDatasetH # none, line 1240:
-    nBandCount::Cint # none, line 1241:
-    panSrcBands::Ptr{Cint} # none, line 1242:
-    panDstBands::Ptr{Cint} # none, line 1243:
-    nSrcAlphaBand::Cint # none, line 1244:
-    nDstAlphaBand::Cint # none, line 1245:
-    padfSrcNoDataReal::Ptr{Cdouble} # none, line 1246:
-    padfSrcNoDataImag::Ptr{Cdouble} # none, line 1247:
-    padfDstNoDataReal::Ptr{Cdouble} # none, line 1248:
-    padfDstNoDataImag::Ptr{Cdouble} # none, line 1249:
-    pfnProgress::GDALProgressFunc # none, line 1250:
-    pProgressArg::Ptr{Void} # none, line 1251:
-    pfnTransformer::GDALTransformerFunc # none, line 1252:
-    pTransformerArg::Ptr{Void} # none, line 1253:
-    papfnSrcPerBandValidityMaskFunc::Ptr{GDALMaskFunc} # none, line 1254:
-    papSrcPerBandValidityMaskFuncArg::Ptr{Ptr{Void}} # none, line 1255:
-    pfnSrcValidityMaskFunc::GDALMaskFunc # none, line 1256:
-    pSrcValidityMaskFuncArg::Ptr{Void} # none, line 1257:
-    pfnSrcDensityMaskFunc::GDALMaskFunc # none, line 1258:
-    pSrcDensityMaskFuncArg::Ptr{Void} # none, line 1259:
-    pfnDstDensityMaskFunc::GDALMaskFunc # none, line 1260:
-    pDstDensityMaskFuncArg::Ptr{Void} # none, line 1261:
-    pfnDstValidityMaskFunc::GDALMaskFunc # none, line 1262:
-    pDstValidityMaskFuncArg::Ptr{Void} # none, line 1263:
-    pfnPreWarpChunkProcessor::Ptr{Void} # none, line 1264:
-    pPreWarpProcessorArg::Ptr{Void} # none, line 1265:
-    pfnPostWarpChunkProcessor::Ptr{Void} # none, line 1266:
-    pPostWarpProcessorArg::Ptr{Void} # none, line 1267:
-    hCutline::Ptr{Void} # none, line 1268:
-    dfCutlineBlendDist::Cdouble
-end
-
+const GDALWarpOptions = UInt32
 const VRT_NODATA_UNSET = -1234.56
 
-type GDALInfoOptions # none, line 1296:
+mutable struct GDALInfoOptions
 end
 
 
-type GDALInfoOptionsForBinary # none, line 1299:
+mutable struct GDALInfoOptionsForBinary
 end
 
 
-type GDALTranslateOptions # none, line 1302:
+mutable struct GDALTranslateOptions
 end
 
 
-type GDALTranslateOptionsForBinary # none, line 1305:
+mutable struct GDALTranslateOptionsForBinary
 end
 
 
-type GDALWarpAppOptions # none, line 1308:
+mutable struct GDALWarpAppOptions
 end
 
 
-type GDALWarpAppOptionsForBinary # none, line 1311:
+mutable struct GDALWarpAppOptionsForBinary
 end
 
 
-type GDALVectorTranslateOptions # none, line 1314:
+mutable struct GDALVectorTranslateOptions
 end
 
 
-type GDALVectorTranslateOptionsForBinary # none, line 1317:
+mutable struct GDALVectorTranslateOptionsForBinary
 end
 
 
-type GDALDEMProcessingOptions # none, line 1320:
+mutable struct GDALDEMProcessingOptions
 end
 
 
-type GDALDEMProcessingOptionsForBinary # none, line 1323:
+mutable struct GDALDEMProcessingOptionsForBinary
 end
 
 
-type GDALNearblackOptions # none, line 1326:
+mutable struct GDALNearblackOptions
 end
 
 
-type GDALNearblackOptionsForBinary # none, line 1329:
+mutable struct GDALNearblackOptionsForBinary
 end
 
 
-type GDALGridOptions # none, line 1332:
+mutable struct GDALGridOptions
 end
 
 
-type GDALGridOptionsForBinary # none, line 1335:
+mutable struct GDALGridOptionsForBinary
 end
 
 
-type GDALRasterizeOptions # none, line 1338:
+mutable struct GDALRasterizeOptions
 end
 
 
-type GDALRasterizeOptionsForBinary # none, line 1341:
+mutable struct GDALRasterizeOptionsForBinary
 end
 
 
-type GDALBuildVRTOptions # none, line 1344:
+mutable struct GDALBuildVRTOptions
 end
 
 
-type GDALBuildVRTOptionsForBinary # none, line 1347:
+mutable struct GDALBuildVRTOptionsForBinary
 end
 
 const SRS_WKT_WGS84 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]"
@@ -1206,13 +765,6 @@ const OAO_West = UInt32(4)
 const OAO_Up = UInt32(5)
 const OAO_Down = UInt32(6)
 const OGRAxisOrientation = UInt32
-const OAO_Other = UInt32(0)
-const OAO_North = UInt32(1)
-const OAO_South = UInt32(2)
-const OAO_East = UInt32(3)
-const OAO_West = UInt32(4)
-const OAO_Up = UInt32(5)
-const OAO_Down = UInt32(6)
 const ODT_HD_Min = UInt32(1000)
 const ODT_HD_Other = UInt32(1000)
 const ODT_HD_Classic = UInt32(1001)
@@ -1230,19 +782,3 @@ const ODT_VD_Max = UInt32(2999)
 const ODT_LD_Min = UInt32(10000)
 const ODT_LD_Max = UInt32(32767)
 const OGRDatumType = UInt32
-const ODT_HD_Min = UInt32(1000)
-const ODT_HD_Other = UInt32(1000)
-const ODT_HD_Classic = UInt32(1001)
-const ODT_HD_Geocentric = UInt32(1002)
-const ODT_HD_Max = UInt32(1999)
-const ODT_VD_Min = UInt32(2000)
-const ODT_VD_Other = UInt32(2000)
-const ODT_VD_Orthometric = UInt32(2001)
-const ODT_VD_Ellipsoidal = UInt32(2002)
-const ODT_VD_AltitudeBarometric = UInt32(2003)
-const ODT_VD_Normal = UInt32(2004)
-const ODT_VD_GeoidModelDerived = UInt32(2005)
-const ODT_VD_Depth = UInt32(2006)
-const ODT_VD_Max = UInt32(2999)
-const ODT_LD_Min = UInt32(10000)
-const ODT_LD_Max = UInt32(32767)

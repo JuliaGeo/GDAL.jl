@@ -1,27 +1,19 @@
 
 
 """
-    GDALRegister_VRT(void) -> void
-"""
-function register_vrt()
-    ccall((:GDALRegister_VRT,libgdal),Void,())
-end
-
-
-"""
     VRTCreate(int,
               int) -> VRTDatasetH
 """
-function vrtcreate(arg1::Integer,arg2::Integer)
-    checknull(ccall((:VRTCreate,libgdal),Ptr{VRTDatasetH},(Cint,Cint),arg1,arg2))
+function vrtcreate(arg1::Integer, arg2::Integer)
+    checknull(ccall((:VRTCreate, libgdal), Ptr{VRTDatasetH}, (Cint, Cint), arg1, arg2))
 end
 
 
 """
     VRTFlushCache(VRTDatasetH) -> void
 """
-function vrtflushcache(arg1::Ptr{VRTDatasetH})
-    ccall((:VRTFlushCache,libgdal),Void,(Ptr{VRTDatasetH},),arg1)
+function vrtflushcache(arg1::Ref{VRTDatasetH})
+    ccall((:VRTFlushCache, libgdal), Void, (Ptr{Void},), arg1)
 end
 
 
@@ -29,8 +21,8 @@ end
     VRTSerializeToXML(VRTDatasetH,
                       const char *) -> CPLXMLNode *
 """
-function vrtserializetoxml(arg1::Ptr{VRTDatasetH},arg2)
-    ccall((:VRTSerializeToXML,libgdal),Ptr{CPLXMLNode},(Ptr{VRTDatasetH},Cstring),arg1,arg2)
+function vrtserializetoxml(arg1::Ref{VRTDatasetH}, arg2)
+    ccall((:VRTSerializeToXML, libgdal), Ptr{CPLXMLNode}, (Ptr{Void}, Cstring), arg1, arg2)
 end
 
 
@@ -39,8 +31,8 @@ end
                GDALDataType,
                char **) -> int
 """
-function vrtaddband(arg1::Ptr{VRTDatasetH},arg2::GDALDataType,arg3)
-    ccall((:VRTAddBand,libgdal),Cint,(Ptr{VRTDatasetH},GDALDataType,StringList),arg1,arg2,arg3)
+function vrtaddband(arg1::Ref{VRTDatasetH}, arg2::GDALDataType, arg3)
+    ccall((:VRTAddBand, libgdal), Cint, (Ptr{Void}, GDALDataType, StringList), arg1, arg2, arg3)
 end
 
 
@@ -48,8 +40,8 @@ end
     VRTAddSource(VRTSourcedRasterBandH,
                  VRTSourceH) -> CPLErr
 """
-function vrtaddsource(arg1::Ptr{VRTSourcedRasterBandH},arg2::Ptr{VRTSourceH})
-    ccall((:VRTAddSource,libgdal),CPLErr,(Ptr{VRTSourcedRasterBandH},Ptr{VRTSourceH}),arg1,arg2)
+function vrtaddsource(arg1::Ref{VRTSourcedRasterBandH}, arg2::Ref{VRTSourceH})
+    ccall((:VRTAddSource, libgdal), CPLErr, (Ptr{Void}, Ptr{Void}), arg1, arg2)
 end
 
 
@@ -67,8 +59,8 @@ end
                        const char *,
                        double) -> CPLErr
 """
-function vrtaddsimplesource{T <: GDALRasterBandH}(arg1::Ptr{VRTSourcedRasterBandH},arg2::Ptr{T},arg3::Integer,arg4::Integer,arg5::Integer,arg6::Integer,arg7::Integer,arg8::Integer,arg9::Integer,arg10::Integer,arg11,arg12::Real)
-    ccall((:VRTAddSimpleSource,libgdal),CPLErr,(Ptr{VRTSourcedRasterBandH},Ptr{GDALRasterBandH},Cint,Cint,Cint,Cint,Cint,Cint,Cint,Cint,Cstring,Cdouble),arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12)
+function vrtaddsimplesource(arg1::Ref{VRTSourcedRasterBandH}, arg2::Ref{GDALRasterBandH}, arg3::Integer, arg4::Integer, arg5::Integer, arg6::Integer, arg7::Integer, arg8::Integer, arg9::Integer, arg10::Integer, arg11, arg12::Real)
+    ccall((:VRTAddSimpleSource, libgdal), CPLErr, (Ptr{Void}, Ptr{Void}, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cstring, Cdouble), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12)
 end
 
 
@@ -87,8 +79,8 @@ end
                         double,
                         double) -> CPLErr
 """
-function vrtaddcomplexsource{T <: GDALRasterBandH}(arg1::Ptr{VRTSourcedRasterBandH},arg2::Ptr{T},arg3::Integer,arg4::Integer,arg5::Integer,arg6::Integer,arg7::Integer,arg8::Integer,arg9::Integer,arg10::Integer,arg11::Real,arg12::Real,arg13::Real)
-    ccall((:VRTAddComplexSource,libgdal),CPLErr,(Ptr{VRTSourcedRasterBandH},Ptr{GDALRasterBandH},Cint,Cint,Cint,Cint,Cint,Cint,Cint,Cint,Cdouble,Cdouble,Cdouble),arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13)
+function vrtaddcomplexsource(arg1::Ref{VRTSourcedRasterBandH}, arg2::Ref{GDALRasterBandH}, arg3::Integer, arg4::Integer, arg5::Integer, arg6::Integer, arg7::Integer, arg8::Integer, arg9::Integer, arg10::Integer, arg11::Real, arg12::Real, arg13::Real)
+    ccall((:VRTAddComplexSource, libgdal), CPLErr, (Ptr{Void}, Ptr{Void}, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cdouble, Cdouble, Cdouble), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13)
 end
 
 
@@ -98,6 +90,6 @@ end
                      void *,
                      double) -> CPLErr
 """
-function vrtaddfuncsource(arg1::Ptr{VRTSourcedRasterBandH},arg2::Ptr{VRTImageReadFunc},arg3,arg4::Real)
-    ccall((:VRTAddFuncSource,libgdal),CPLErr,(Ptr{VRTSourcedRasterBandH},Ptr{VRTImageReadFunc},Ptr{Void},Cdouble),arg1,arg2,arg3,arg4)
+function vrtaddfuncsource(arg1::Ref{VRTSourcedRasterBandH}, arg2::Ref{VRTImageReadFunc}, arg3, arg4::Real)
+    ccall((:VRTAddFuncSource, libgdal), CPLErr, (Ptr{Void}, Ptr{Void}, Ptr{Void}, Cdouble), arg1, arg2, arg3, arg4)
 end
