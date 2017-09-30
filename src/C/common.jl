@@ -20,35 +20,16 @@ const CPLE_AWSInvalidCredentials = 15
 const CPLE_AWSSignatureDoesNotMatch = 16
 
 # const CPLAssert = expr
-
-# begin enum ANONYMOUS_1
-const ANONYMOUS_1 = UInt32
-const CE_None = (UInt32)(0)
-const CE_Debug = (UInt32)(1)
-const CE_Warning = (UInt32)(2)
-const CE_Failure = (UInt32)(3)
-const CE_Fatal = (UInt32)(4)
-# end enum ANONYMOUS_1
-
-const VALIDATE_POINTER_ERR = CE_Failure
-
+# const VALIDATE_POINTER_ERR = CE_Failure
 # Skipping MacroDefinition: VALIDATE_POINTER0 ( ptr , func ) do { if ( NULL == ptr ) { CPLErr const ret = VALIDATE_POINTER_ERR ; CPLError ( ret , CPLE_ObjectNull , "Pointer \'%s\' is NULL in \'%s\'.\n" , # ptr , ( func ) ) ; return ; } } while ( 0 )
 # Skipping MacroDefinition: VALIDATE_POINTER1 ( ptr , func , rc ) do { if ( NULL == ptr ) { CPLErr const ret = VALIDATE_POINTER_ERR ; CPLError ( ret , CPLE_ObjectNull , "Pointer \'%s\' is NULL in \'%s\'.\n" , # ptr , ( func ) ) ; return ( rc ) ; } } while ( 0 )
 
-const CPLErr = Void
+@enum CPLErr CE_None = 0 CE_Debug = 1 CE_Warning = 2 CE_Failure = 3 CE_Fatal = 4
+
 const CPLErrorNum = Cint
 const CPLErrorHandler = Ptr{Void}
 
-# begin enum ANONYMOUS_2
-const ANONYMOUS_2 = UInt32
-const CXT_Element = (UInt32)(0)
-const CXT_Text = (UInt32)(1)
-const CXT_Attribute = (UInt32)(2)
-const CXT_Comment = (UInt32)(3)
-const CXT_Literal = (UInt32)(4)
-# end enum ANONYMOUS_2
-
-const CPLXMLNodeType = Void
+@enum CPLXMLNodeType CXT_Element = 0 CXT_Text = 1 CXT_Attribute = 2 CXT_Comment = 3 CXT_Literal = 4
 
 mutable struct CPLXMLNode
     eType::CPLXMLNodeType
@@ -157,14 +138,7 @@ const CPLVirtualMemCachePageCbk = Ptr{Void}
 const CPLVirtualMemUnCachePageCbk = Ptr{Void}
 const CPLVirtualMemFreeUserData = Ptr{Void}
 
-# begin enum ANONYMOUS_3
-const ANONYMOUS_3 = UInt32
-const VIRTUALMEM_READONLY = (UInt32)(0)
-const VIRTUALMEM_READONLY_ENFORCED = (UInt32)(1)
-const VIRTUALMEM_READWRITE = (UInt32)(2)
-# end enum ANONYMOUS_3
-
-const CPLVirtualMemAccessMode = Void
+@enum CPLVirtualMemAccessMode VIRTUALMEM_READONLY = 0 VIRTUALMEM_READONLY_ENFORCED = 1 VIRTUALMEM_READWRITE = 2
 
 # Skipping MacroDefinition: VSI_ISLNK ( x ) S_ISLNK ( x )
 # Skipping MacroDefinition: VSI_ISREG ( x ) S_ISREG ( x )
@@ -196,14 +170,7 @@ const VSIStatBuf = Void
 const vsi_l_offset = GUIntBig
 const VSILFILE = FILE
 
-# begin enum ANONYMOUS_4
-const ANONYMOUS_4 = UInt32
-const VSI_RANGE_STATUS_UNKNOWN = (UInt32)(0)
-const VSI_RANGE_STATUS_DATA = (UInt32)(1)
-const VSI_RANGE_STATUS_HOLE = (UInt32)(2)
-# end enum ANONYMOUS_4
-
-const VSIRangeStatus = Void
+@enum VSIRangeStatus VSI_RANGE_STATUS_UNKNOWN = 0 VSI_RANGE_STATUS_DATA = 1 VSI_RANGE_STATUS_HOLE = 2
 
 mutable struct stat64
 end
@@ -267,100 +234,17 @@ const GDAL_DATA_COVERAGE_STATUS_UNIMPLEMENTED = 0x01
 const GDAL_DATA_COVERAGE_STATUS_DATA = 0x02
 const GDAL_DATA_COVERAGE_STATUS_EMPTY = 0x04
 
-# begin enum ANONYMOUS_5
-const ANONYMOUS_5 = UInt32
-const GDT_Unknown = (UInt32)(0)
-const GDT_Byte = (UInt32)(1)
-const GDT_UInt16 = (UInt32)(2)
-const GDT_Int16 = (UInt32)(3)
-const GDT_UInt32 = (UInt32)(4)
-const GDT_Int32 = (UInt32)(5)
-const GDT_Float32 = (UInt32)(6)
-const GDT_Float64 = (UInt32)(7)
-const GDT_CInt16 = (UInt32)(8)
-const GDT_CInt32 = (UInt32)(9)
-const GDT_CFloat32 = (UInt32)(10)
-const GDT_CFloat64 = (UInt32)(11)
-const GDT_TypeCount = (UInt32)(12)
-# end enum ANONYMOUS_5
+@enum GDALDataType GDT_Unknown = 0 GDT_Byte = 1 GDT_UInt16 = 2 GDT_Int16 = 3 GDT_UInt32 = 4 GDT_Int32 = 5 GDT_Float32 = 6 GDT_Float64 = 7 GDT_CInt16 = 8 GDT_CInt32 = 9 GDT_CFloat32 = 10 GDT_CFloat64 = 11 GDT_TypeCount = 12
+@enum GDALAsyncStatusType GARIO_PENDING = 0 GARIO_UPDATE = 1 GARIO_ERROR = 2 GARIO_COMPLETE = 3 GARIO_TypeCount = 4
+@enum GDALAccess GA_ReadOnly = 0 GA_Update = 1
+@enum GDALRWFlag GF_Read = 0 GF_Write = 1
+@enum GDALRIOResampleAlg GRIORA_NearestNeighbour = 0 GRIORA_Bilinear = 1 GRIORA_Cubic = 2 GRIORA_CubicSpline = 3 GRIORA_Lanczos = 4 GRIORA_Average = 5 GRIORA_Mode = 6 GRIORA_Gauss = 7
 
-const GDALDataType = Void
-
-# begin enum ANONYMOUS_6
-const ANONYMOUS_6 = UInt32
-const GARIO_PENDING = (UInt32)(0)
-const GARIO_UPDATE = (UInt32)(1)
-const GARIO_ERROR = (UInt32)(2)
-const GARIO_COMPLETE = (UInt32)(3)
-const GARIO_TypeCount = (UInt32)(4)
-# end enum ANONYMOUS_6
-
-const GDALAsyncStatusType = Void
-
-# begin enum ANONYMOUS_7
-const ANONYMOUS_7 = UInt32
-const GA_ReadOnly = (UInt32)(0)
-const GA_Update = (UInt32)(1)
-# end enum ANONYMOUS_7
-
-const GDALAccess = Void
-
-# begin enum ANONYMOUS_8
-const ANONYMOUS_8 = UInt32
-const GF_Read = (UInt32)(0)
-const GF_Write = (UInt32)(1)
-# end enum ANONYMOUS_8
-
-const GDALRWFlag = Void
-
-# begin enum ANONYMOUS_9
-const ANONYMOUS_9 = UInt32
-const GRIORA_NearestNeighbour = (UInt32)(0)
-const GRIORA_Bilinear = (UInt32)(1)
-const GRIORA_Cubic = (UInt32)(2)
-const GRIORA_CubicSpline = (UInt32)(3)
-const GRIORA_Lanczos = (UInt32)(4)
-const GRIORA_Average = (UInt32)(5)
-const GRIORA_Mode = (UInt32)(6)
-const GRIORA_Gauss = (UInt32)(7)
-# end enum ANONYMOUS_9
-
-const GDALRIOResampleAlg = Void
 const GDALRasterIOExtraArg = Void
 
-# begin enum ANONYMOUS_10
-const ANONYMOUS_10 = UInt32
-const GCI_Undefined = (UInt32)(0)
-const GCI_GrayIndex = (UInt32)(1)
-const GCI_PaletteIndex = (UInt32)(2)
-const GCI_RedBand = (UInt32)(3)
-const GCI_GreenBand = (UInt32)(4)
-const GCI_BlueBand = (UInt32)(5)
-const GCI_AlphaBand = (UInt32)(6)
-const GCI_HueBand = (UInt32)(7)
-const GCI_SaturationBand = (UInt32)(8)
-const GCI_LightnessBand = (UInt32)(9)
-const GCI_CyanBand = (UInt32)(10)
-const GCI_MagentaBand = (UInt32)(11)
-const GCI_YellowBand = (UInt32)(12)
-const GCI_BlackBand = (UInt32)(13)
-const GCI_YCbCr_YBand = (UInt32)(14)
-const GCI_YCbCr_CbBand = (UInt32)(15)
-const GCI_YCbCr_CrBand = (UInt32)(16)
-const GCI_Max = (UInt32)(16)
-# end enum ANONYMOUS_10
+@enum GDALColorInterp GCI_Undefined = 0 GCI_GrayIndex = 1 GCI_PaletteIndex = 2 GCI_RedBand = 3 GCI_GreenBand = 4 GCI_BlueBand = 5 GCI_AlphaBand = 6 GCI_HueBand = 7 GCI_SaturationBand = 8 GCI_LightnessBand = 9 GCI_CyanBand = 10 GCI_MagentaBand = 11 GCI_YellowBand = 12 GCI_BlackBand = 13 GCI_YCbCr_YBand = 14 GCI_YCbCr_CbBand = 15 GCI_YCbCr_CrBand = 16 GCI_Max = 16
+@enum GDALPaletteInterp GPI_Gray = 0 GPI_RGB = 1 GPI_CMYK = 2 GPI_HLS = 3
 
-const GDALColorInterp = Void
-
-# begin enum ANONYMOUS_11
-const ANONYMOUS_11 = UInt32
-const GPI_Gray = (UInt32)(0)
-const GPI_RGB = (UInt32)(1)
-const GPI_CMYK = (UInt32)(2)
-const GPI_HLS = (UInt32)(3)
-# end enum ANONYMOUS_11
-
-const GDALPaletteInterp = Void
 const GDALMajorObjectH = Ptr{Void}
 const GDALDatasetH = Ptr{Void}
 const GDALRasterBandH = Ptr{Void}
@@ -374,48 +258,10 @@ const GDALDerivedPixelFunc = Ptr{Void}
 const GDALRPCInfo = Void
 const GDALColorEntry = Void
 
-# begin enum ANONYMOUS_12
-const ANONYMOUS_12 = UInt32
-const GFT_Integer = (UInt32)(0)
-const GFT_Real = (UInt32)(1)
-const GFT_String = (UInt32)(2)
-# end enum ANONYMOUS_12
+@enum GDALRATFieldType GFT_Integer = 0 GFT_Real = 1 GFT_String = 2
+@enum GDALRATFieldUsage GFU_Generic = 0 GFU_PixelCount = 1 GFU_Name = 2 GFU_Min = 3 GFU_Max = 4 GFU_MinMax = 5 GFU_Red = 6 GFU_Green = 7 GFU_Blue = 8 GFU_Alpha = 9 GFU_RedMin = 10 GFU_GreenMin = 11 GFU_BlueMin = 12 GFU_AlphaMin = 13 GFU_RedMax = 14 GFU_GreenMax = 15 GFU_BlueMax = 16 GFU_AlphaMax = 17 GFU_MaxCount = 18
+@enum GDALTileOrganization GTO_TIP = 0 GTO_BIT = 1 GTO_BSQ = 2
 
-const GDALRATFieldType = Void
-
-# begin enum ANONYMOUS_13
-const ANONYMOUS_13 = UInt32
-const GFU_Generic = (UInt32)(0)
-const GFU_PixelCount = (UInt32)(1)
-const GFU_Name = (UInt32)(2)
-const GFU_Min = (UInt32)(3)
-const GFU_Max = (UInt32)(4)
-const GFU_MinMax = (UInt32)(5)
-const GFU_Red = (UInt32)(6)
-const GFU_Green = (UInt32)(7)
-const GFU_Blue = (UInt32)(8)
-const GFU_Alpha = (UInt32)(9)
-const GFU_RedMin = (UInt32)(10)
-const GFU_GreenMin = (UInt32)(11)
-const GFU_BlueMin = (UInt32)(12)
-const GFU_AlphaMin = (UInt32)(13)
-const GFU_RedMax = (UInt32)(14)
-const GFU_GreenMax = (UInt32)(15)
-const GFU_BlueMax = (UInt32)(16)
-const GFU_AlphaMax = (UInt32)(17)
-const GFU_MaxCount = (UInt32)(18)
-# end enum ANONYMOUS_13
-
-const GDALRATFieldUsage = Void
-
-# begin enum ANONYMOUS_14
-const ANONYMOUS_14 = UInt32
-const GTO_TIP = (UInt32)(0)
-const GTO_BIT = (UInt32)(1)
-const GTO_BSQ = (UInt32)(2)
-# end enum ANONYMOUS_14
-
-const GDALTileOrganization = Void
 const GDAL_GTI2_SIGNATURE = "GTI2"
 const GDALTransformerFunc = Ptr{Void}
 const GDALTransformerInfo = Void
@@ -423,22 +269,8 @@ const GDALContourWriter = Ptr{Void}
 const GDALContourGeneratorH = Ptr{Void}
 const OGRContourWriterInfo = Void
 
-# begin enum ANONYMOUS_15
-const ANONYMOUS_15 = UInt32
-const GGA_InverseDistanceToAPower = (UInt32)(1)
-const GGA_MovingAverage = (UInt32)(2)
-const GGA_NearestNeighbor = (UInt32)(3)
-const GGA_MetricMinimum = (UInt32)(4)
-const GGA_MetricMaximum = (UInt32)(5)
-const GGA_MetricRange = (UInt32)(6)
-const GGA_MetricCount = (UInt32)(7)
-const GGA_MetricAverageDistance = (UInt32)(8)
-const GGA_MetricAverageDistancePts = (UInt32)(9)
-const GGA_Linear = (UInt32)(10)
-const GGA_InverseDistanceToAPowerNearestNeighbor = (UInt32)(11)
-# end enum ANONYMOUS_15
+@enum GDALGridAlgorithm GGA_InverseDistanceToAPower = 1 GGA_MovingAverage = 2 GGA_NearestNeighbor = 3 GGA_MetricMinimum = 4 GGA_MetricMaximum = 5 GGA_MetricRange = 6 GGA_MetricCount = 7 GGA_MetricAverageDistance = 8 GGA_MetricAverageDistancePts = 9 GGA_Linear = 10 GGA_InverseDistanceToAPowerNearestNeighbor = 11
 
-const GDALGridAlgorithm = Void
 const GDALGridInverseDistanceToAPowerOptions = Void
 const GDALGridInverseDistanceToAPowerNearestNeighborOptions = Void
 const GDALGridMovingAverageOptions = Void
@@ -554,276 +386,29 @@ const OGREnvelope3D = Void
 const OGRErr = Cint
 const OGRBoolean = Cint
 
-# begin enum ANONYMOUS_16
-const ANONYMOUS_16 = UInt32
-const wkbUnknown = (UInt32)(0)
-const wkbPoint = (UInt32)(1)
-const wkbLineString = (UInt32)(2)
-const wkbPolygon = (UInt32)(3)
-const wkbMultiPoint = (UInt32)(4)
-const wkbMultiLineString = (UInt32)(5)
-const wkbMultiPolygon = (UInt32)(6)
-const wkbGeometryCollection = (UInt32)(7)
-const wkbCircularString = (UInt32)(8)
-const wkbCompoundCurve = (UInt32)(9)
-const wkbCurvePolygon = (UInt32)(10)
-const wkbMultiCurve = (UInt32)(11)
-const wkbMultiSurface = (UInt32)(12)
-const wkbCurve = (UInt32)(13)
-const wkbSurface = (UInt32)(14)
-const wkbPolyhedralSurface = (UInt32)(15)
-const wkbTIN = (UInt32)(16)
-const wkbTriangle = (UInt32)(17)
-const wkbNone = (UInt32)(100)
-const wkbLinearRing = (UInt32)(101)
-const wkbCircularStringZ = (UInt32)(1008)
-const wkbCompoundCurveZ = (UInt32)(1009)
-const wkbCurvePolygonZ = (UInt32)(1010)
-const wkbMultiCurveZ = (UInt32)(1011)
-const wkbMultiSurfaceZ = (UInt32)(1012)
-const wkbCurveZ = (UInt32)(1013)
-const wkbSurfaceZ = (UInt32)(1014)
-const wkbPolyhedralSurfaceZ = (UInt32)(1015)
-const wkbTINZ = (UInt32)(1016)
-const wkbTriangleZ = (UInt32)(1017)
-const wkbPointM = (UInt32)(2001)
-const wkbLineStringM = (UInt32)(2002)
-const wkbPolygonM = (UInt32)(2003)
-const wkbMultiPointM = (UInt32)(2004)
-const wkbMultiLineStringM = (UInt32)(2005)
-const wkbMultiPolygonM = (UInt32)(2006)
-const wkbGeometryCollectionM = (UInt32)(2007)
-const wkbCircularStringM = (UInt32)(2008)
-const wkbCompoundCurveM = (UInt32)(2009)
-const wkbCurvePolygonM = (UInt32)(2010)
-const wkbMultiCurveM = (UInt32)(2011)
-const wkbMultiSurfaceM = (UInt32)(2012)
-const wkbCurveM = (UInt32)(2013)
-const wkbSurfaceM = (UInt32)(2014)
-const wkbPolyhedralSurfaceM = (UInt32)(2015)
-const wkbTINM = (UInt32)(2016)
-const wkbTriangleM = (UInt32)(2017)
-const wkbPointZM = (UInt32)(3001)
-const wkbLineStringZM = (UInt32)(3002)
-const wkbPolygonZM = (UInt32)(3003)
-const wkbMultiPointZM = (UInt32)(3004)
-const wkbMultiLineStringZM = (UInt32)(3005)
-const wkbMultiPolygonZM = (UInt32)(3006)
-const wkbGeometryCollectionZM = (UInt32)(3007)
-const wkbCircularStringZM = (UInt32)(3008)
-const wkbCompoundCurveZM = (UInt32)(3009)
-const wkbCurvePolygonZM = (UInt32)(3010)
-const wkbMultiCurveZM = (UInt32)(3011)
-const wkbMultiSurfaceZM = (UInt32)(3012)
-const wkbCurveZM = (UInt32)(3013)
-const wkbSurfaceZM = (UInt32)(3014)
-const wkbPolyhedralSurfaceZM = (UInt32)(3015)
-const wkbTINZM = (UInt32)(3016)
-const wkbTriangleZM = (UInt32)(3017)
-const wkbPoint25D = (UInt32)(0x0000000080000001)
-const wkbLineString25D = (UInt32)(0x0000000080000002)
-const wkbPolygon25D = (UInt32)(0x0000000080000003)
-const wkbMultiPoint25D = (UInt32)(0x0000000080000004)
-const wkbMultiLineString25D = (UInt32)(0x0000000080000005)
-const wkbMultiPolygon25D = (UInt32)(0x0000000080000006)
-const wkbGeometryCollection25D = (UInt32)(0x0000000080000007)
-# end enum ANONYMOUS_16
+@enum OGRwkbGeometryType wkbUnknown = 0 wkbPoint = 1 wkbLineString = 2 wkbPolygon = 3 wkbMultiPoint = 4 wkbMultiLineString = 5 wkbMultiPolygon = 6 wkbGeometryCollection = 7 wkbCircularString = 8 wkbCompoundCurve = 9 wkbCurvePolygon = 10 wkbMultiCurve = 11 wkbMultiSurface = 12 wkbCurve = 13 wkbSurface = 14 wkbPolyhedralSurface = 15 wkbTIN = 16 wkbTriangle = 17 wkbNone = 100 wkbLinearRing = 101 wkbCircularStringZ = 1008 wkbCompoundCurveZ = 1009 wkbCurvePolygonZ = 1010 wkbMultiCurveZ = 1011 wkbMultiSurfaceZ = 1012 wkbCurveZ = 1013 wkbSurfaceZ = 1014 wkbPolyhedralSurfaceZ = 1015 wkbTINZ = 1016 wkbTriangleZ = 1017 wkbPointM = 2001 wkbLineStringM = 2002 wkbPolygonM = 2003 wkbMultiPointM = 2004 wkbMultiLineStringM = 2005 wkbMultiPolygonM = 2006 wkbGeometryCollectionM = 2007 wkbCircularStringM = 2008 wkbCompoundCurveM = 2009 wkbCurvePolygonM = 2010 wkbMultiCurveM = 2011 wkbMultiSurfaceM = 2012 wkbCurveM = 2013 wkbSurfaceM = 2014 wkbPolyhedralSurfaceM = 2015 wkbTINM = 2016 wkbTriangleM = 2017 wkbPointZM = 3001 wkbLineStringZM = 3002 wkbPolygonZM = 3003 wkbMultiPointZM = 3004 wkbMultiLineStringZM = 3005 wkbMultiPolygonZM = 3006 wkbGeometryCollectionZM = 3007 wkbCircularStringZM = 3008 wkbCompoundCurveZM = 3009 wkbCurvePolygonZM = 3010 wkbMultiCurveZM = 3011 wkbMultiSurfaceZM = 3012 wkbCurveZM = 3013 wkbSurfaceZM = 3014 wkbPolyhedralSurfaceZM = 3015 wkbTINZM = 3016 wkbTriangleZM = 3017 wkbPoint25D = 2147483649 wkbLineString25D = 2147483650 wkbPolygon25D = 2147483651 wkbMultiPoint25D = 2147483652 wkbMultiLineString25D = 2147483653 wkbMultiPolygon25D = 2147483654 wkbGeometryCollection25D = 2147483655
+@enum OGRwkbVariant wkbVariantOldOgc = 0 wkbVariantIso = 1 wkbVariantPostGIS1 = 2
+@enum OGRwkbByteOrder wkbXDR = 0 wkbNDR = 1
+@enum OGRFieldType OFTInteger = 0 OFTIntegerList = 1 OFTReal = 2 OFTRealList = 3 OFTString = 4 OFTStringList = 5 OFTWideString = 6 OFTWideStringList = 7 OFTBinary = 8 OFTDate = 9 OFTTime = 10 OFTDateTime = 11 OFTInteger64 = 12 OFTInteger64List = 13 OFTMaxType = 13
+@enum OGRFieldSubType OFSTNone = 0 OFSTBoolean = 1 OFSTInt16 = 2 OFSTFloat32 = 3 OFSTMaxSubType = 3
+@enum OGRJustification OJUndefined = 0 OJLeft = 1 OJRight = 2
 
-const OGRwkbGeometryType = Void
-
-# begin enum ANONYMOUS_17
-const ANONYMOUS_17 = UInt32
-const wkbVariantOldOgc = (UInt32)(0)
-const wkbVariantIso = (UInt32)(1)
-const wkbVariantPostGIS1 = (UInt32)(2)
-# end enum ANONYMOUS_17
-
-const OGRwkbVariant = Void
-
-# begin enum ANONYMOUS_18
-const ANONYMOUS_18 = UInt32
-const wkbXDR = (UInt32)(0)
-const wkbNDR = (UInt32)(1)
-# end enum ANONYMOUS_18
-
-const OGRwkbByteOrder = Void
-
-# begin enum ANONYMOUS_19
-const ANONYMOUS_19 = UInt32
-const OFTInteger = (UInt32)(0)
-const OFTIntegerList = (UInt32)(1)
-const OFTReal = (UInt32)(2)
-const OFTRealList = (UInt32)(3)
-const OFTString = (UInt32)(4)
-const OFTStringList = (UInt32)(5)
-const OFTWideString = (UInt32)(6)
-const OFTWideStringList = (UInt32)(7)
-const OFTBinary = (UInt32)(8)
-const OFTDate = (UInt32)(9)
-const OFTTime = (UInt32)(10)
-const OFTDateTime = (UInt32)(11)
-const OFTInteger64 = (UInt32)(12)
-const OFTInteger64List = (UInt32)(13)
-const OFTMaxType = (UInt32)(13)
-# end enum ANONYMOUS_19
-
-const OGRFieldType = Void
-
-# begin enum ANONYMOUS_20
-const ANONYMOUS_20 = UInt32
-const OFSTNone = (UInt32)(0)
-const OFSTBoolean = (UInt32)(1)
-const OFSTInt16 = (UInt32)(2)
-const OFSTFloat32 = (UInt32)(3)
-const OFSTMaxSubType = (UInt32)(3)
-# end enum ANONYMOUS_20
-
-const OGRFieldSubType = Void
-
-# begin enum ANONYMOUS_21
-const ANONYMOUS_21 = UInt32
-const OJUndefined = (UInt32)(0)
-const OJLeft = (UInt32)(1)
-const OJRight = (UInt32)(2)
-# end enum ANONYMOUS_21
-
-const OGRJustification = Void
 const OGRField = Void
 
-# begin enum ogr_style_tool_class_id
-const ogr_style_tool_class_id = UInt32
-const OGRSTCNone = (UInt32)(0)
-const OGRSTCPen = (UInt32)(1)
-const OGRSTCBrush = (UInt32)(2)
-const OGRSTCSymbol = (UInt32)(3)
-const OGRSTCLabel = (UInt32)(4)
-const OGRSTCVector = (UInt32)(5)
-# end enum ogr_style_tool_class_id
-
-const OGRSTClassId = Void
-
-# begin enum ogr_style_tool_units_id
-const ogr_style_tool_units_id = UInt32
-const OGRSTUGround = (UInt32)(0)
-const OGRSTUPixel = (UInt32)(1)
-const OGRSTUPoints = (UInt32)(2)
-const OGRSTUMM = (UInt32)(3)
-const OGRSTUCM = (UInt32)(4)
-const OGRSTUInches = (UInt32)(5)
-# end enum ogr_style_tool_units_id
-
-const OGRSTUnitId = Void
-
-# begin enum ogr_style_tool_param_pen_id
-const ogr_style_tool_param_pen_id = UInt32
-const OGRSTPenColor = (UInt32)(0)
-const OGRSTPenWidth = (UInt32)(1)
-const OGRSTPenPattern = (UInt32)(2)
-const OGRSTPenId = (UInt32)(3)
-const OGRSTPenPerOffset = (UInt32)(4)
-const OGRSTPenCap = (UInt32)(5)
-const OGRSTPenJoin = (UInt32)(6)
-const OGRSTPenPriority = (UInt32)(7)
-const OGRSTPenLast = (UInt32)(8)
-# end enum ogr_style_tool_param_pen_id
-
-const OGRSTPenParam = Void
-
-# begin enum ogr_style_tool_param_brush_id
-const ogr_style_tool_param_brush_id = UInt32
-const OGRSTBrushFColor = (UInt32)(0)
-const OGRSTBrushBColor = (UInt32)(1)
-const OGRSTBrushId = (UInt32)(2)
-const OGRSTBrushAngle = (UInt32)(3)
-const OGRSTBrushSize = (UInt32)(4)
-const OGRSTBrushDx = (UInt32)(5)
-const OGRSTBrushDy = (UInt32)(6)
-const OGRSTBrushPriority = (UInt32)(7)
-const OGRSTBrushLast = (UInt32)(8)
-# end enum ogr_style_tool_param_brush_id
-
-const OGRSTBrushParam = Void
-
-# begin enum ogr_style_tool_param_symbol_id
-const ogr_style_tool_param_symbol_id = UInt32
-const OGRSTSymbolId = (UInt32)(0)
-const OGRSTSymbolAngle = (UInt32)(1)
-const OGRSTSymbolColor = (UInt32)(2)
-const OGRSTSymbolSize = (UInt32)(3)
-const OGRSTSymbolDx = (UInt32)(4)
-const OGRSTSymbolDy = (UInt32)(5)
-const OGRSTSymbolStep = (UInt32)(6)
-const OGRSTSymbolPerp = (UInt32)(7)
-const OGRSTSymbolOffset = (UInt32)(8)
-const OGRSTSymbolPriority = (UInt32)(9)
-const OGRSTSymbolFontName = (UInt32)(10)
-const OGRSTSymbolOColor = (UInt32)(11)
-const OGRSTSymbolLast = (UInt32)(12)
-# end enum ogr_style_tool_param_symbol_id
-
-const OGRSTSymbolParam = Void
-
-# begin enum ogr_style_tool_param_label_id
-const ogr_style_tool_param_label_id = UInt32
-const OGRSTLabelFontName = (UInt32)(0)
-const OGRSTLabelSize = (UInt32)(1)
-const OGRSTLabelTextString = (UInt32)(2)
-const OGRSTLabelAngle = (UInt32)(3)
-const OGRSTLabelFColor = (UInt32)(4)
-const OGRSTLabelBColor = (UInt32)(5)
-const OGRSTLabelPlacement = (UInt32)(6)
-const OGRSTLabelAnchor = (UInt32)(7)
-const OGRSTLabelDx = (UInt32)(8)
-const OGRSTLabelDy = (UInt32)(9)
-const OGRSTLabelPerp = (UInt32)(10)
-const OGRSTLabelBold = (UInt32)(11)
-const OGRSTLabelItalic = (UInt32)(12)
-const OGRSTLabelUnderline = (UInt32)(13)
-const OGRSTLabelPriority = (UInt32)(14)
-const OGRSTLabelStrikeout = (UInt32)(15)
-const OGRSTLabelStretch = (UInt32)(16)
-const OGRSTLabelAdjHor = (UInt32)(17)
-const OGRSTLabelAdjVert = (UInt32)(18)
-const OGRSTLabelHColor = (UInt32)(19)
-const OGRSTLabelOColor = (UInt32)(20)
-const OGRSTLabelLast = (UInt32)(21)
-# end enum ogr_style_tool_param_label_id
-
-const OGRSTLabelParam = Void
+@enum OGRSTClassId OGRSTCNone = 0 OGRSTCPen = 1 OGRSTCBrush = 2 OGRSTCSymbol = 3 OGRSTCLabel = 4 OGRSTCVector = 5
+@enum OGRSTUnitId OGRSTUGround = 0 OGRSTUPixel = 1 OGRSTUPoints = 2 OGRSTUMM = 3 OGRSTUCM = 4 OGRSTUInches = 5
+@enum OGRSTPenParam OGRSTPenColor = 0 OGRSTPenWidth = 1 OGRSTPenPattern = 2 OGRSTPenId = 3 OGRSTPenPerOffset = 4 OGRSTPenCap = 5 OGRSTPenJoin = 6 OGRSTPenPriority = 7 OGRSTPenLast = 8
+@enum OGRSTBrushParam OGRSTBrushFColor = 0 OGRSTBrushBColor = 1 OGRSTBrushId = 2 OGRSTBrushAngle = 3 OGRSTBrushSize = 4 OGRSTBrushDx = 5 OGRSTBrushDy = 6 OGRSTBrushPriority = 7 OGRSTBrushLast = 8
+@enum OGRSTSymbolParam OGRSTSymbolId = 0 OGRSTSymbolAngle = 1 OGRSTSymbolColor = 2 OGRSTSymbolSize = 3 OGRSTSymbolDx = 4 OGRSTSymbolDy = 5 OGRSTSymbolStep = 6 OGRSTSymbolPerp = 7 OGRSTSymbolOffset = 8 OGRSTSymbolPriority = 9 OGRSTSymbolFontName = 10 OGRSTSymbolOColor = 11 OGRSTSymbolLast = 12
+@enum OGRSTLabelParam OGRSTLabelFontName = 0 OGRSTLabelSize = 1 OGRSTLabelTextString = 2 OGRSTLabelAngle = 3 OGRSTLabelFColor = 4 OGRSTLabelBColor = 5 OGRSTLabelPlacement = 6 OGRSTLabelAnchor = 7 OGRSTLabelDx = 8 OGRSTLabelDy = 9 OGRSTLabelPerp = 10 OGRSTLabelBold = 11 OGRSTLabelItalic = 12 OGRSTLabelUnderline = 13 OGRSTLabelPriority = 14 OGRSTLabelStrikeout = 15 OGRSTLabelStretch = 16 OGRSTLabelAdjHor = 17 OGRSTLabelAdjVert = 18 OGRSTLabelHColor = 19 OGRSTLabelOColor = 20 OGRSTLabelLast = 21
 
 # const CPLFree = VSIFree
 const CPLFileFinder = Ptr{Void}
 const CPLSharedFileInfo = Void
 
-# begin enum ANONYMOUS_22
-const ANONYMOUS_22 = UInt32
-const GRA_NearestNeighbour = (UInt32)(0)
-const GRA_Bilinear = (UInt32)(1)
-const GRA_Cubic = (UInt32)(2)
-const GRA_CubicSpline = (UInt32)(3)
-const GRA_Lanczos = (UInt32)(4)
-const GRA_Average = (UInt32)(5)
-const GRA_Mode = (UInt32)(6)
-const GRA_Max = (UInt32)(8)
-const GRA_Min = (UInt32)(9)
-const GRA_Med = (UInt32)(10)
-const GRA_Q1 = (UInt32)(11)
-const GRA_Q3 = (UInt32)(12)
-# end enum ANONYMOUS_22
+@enum GDALResampleAlg GRA_NearestNeighbour = 0 GRA_Bilinear = 1 GRA_Cubic = 2 GRA_CubicSpline = 3 GRA_Lanczos = 4 GRA_Average = 5 GRA_Mode = 6 GRA_Max = 8 GRA_Min = 9 GRA_Med = 10 GRA_Q1 = 11 GRA_Q3 = 12
+@enum GWKAverageOrModeAlg GWKAOM_Average = 1 GWKAOM_Fmode = 2 GWKAOM_Imode = 3 GWKAOM_Max = 4 GWKAOM_Min = 5 GWKAOM_Quant = 6
 
-const GDALResampleAlg = Void
-
-# begin enum ANONYMOUS_23
-const ANONYMOUS_23 = UInt32
-const GWKAOM_Average = (UInt32)(1)
-const GWKAOM_Fmode = (UInt32)(2)
-const GWKAOM_Imode = (UInt32)(3)
-const GWKAOM_Max = (UInt32)(4)
-const GWKAOM_Min = (UInt32)(5)
-const GWKAOM_Quant = (UInt32)(6)
-# end enum ANONYMOUS_23
-
-const GWKAverageOrModeAlg = Void
 const GDALMaskFunc = Ptr{Void}
 const GDALWarpOptions = Void
 const GDALWarpOperationH = Ptr{Void}
@@ -1069,37 +654,5 @@ const SRS_DN_WGS84 = "WGS_1984"
 const SRS_WGS84_SEMIMAJOR = 6.378137e6
 const SRS_WGS84_INVFLATTENING = 298.257223563
 
-# begin enum ANONYMOUS_24
-const ANONYMOUS_24 = UInt32
-const OAO_Other = (UInt32)(0)
-const OAO_North = (UInt32)(1)
-const OAO_South = (UInt32)(2)
-const OAO_East = (UInt32)(3)
-const OAO_West = (UInt32)(4)
-const OAO_Up = (UInt32)(5)
-const OAO_Down = (UInt32)(6)
-# end enum ANONYMOUS_24
-
-const OGRAxisOrientation = Void
-
-# begin enum ANONYMOUS_25
-const ANONYMOUS_25 = UInt32
-const ODT_HD_Min = (UInt32)(1000)
-const ODT_HD_Other = (UInt32)(1000)
-const ODT_HD_Classic = (UInt32)(1001)
-const ODT_HD_Geocentric = (UInt32)(1002)
-const ODT_HD_Max = (UInt32)(1999)
-const ODT_VD_Min = (UInt32)(2000)
-const ODT_VD_Other = (UInt32)(2000)
-const ODT_VD_Orthometric = (UInt32)(2001)
-const ODT_VD_Ellipsoidal = (UInt32)(2002)
-const ODT_VD_AltitudeBarometric = (UInt32)(2003)
-const ODT_VD_Normal = (UInt32)(2004)
-const ODT_VD_GeoidModelDerived = (UInt32)(2005)
-const ODT_VD_Depth = (UInt32)(2006)
-const ODT_VD_Max = (UInt32)(2999)
-const ODT_LD_Min = (UInt32)(10000)
-const ODT_LD_Max = (UInt32)(32767)
-# end enum ANONYMOUS_25
-
-const OGRDatumType = Void
+@enum OGRAxisOrientation OAO_Other = 0 OAO_North = 1 OAO_South = 2 OAO_East = 3 OAO_West = 4 OAO_Up = 5 OAO_Down = 6
+@enum OGRDatumType ODT_HD_Min = 1000 ODT_HD_Other = 1000 ODT_HD_Classic = 1001 ODT_HD_Geocentric = 1002 ODT_HD_Max = 1999 ODT_VD_Min = 2000 ODT_VD_Other = 2000 ODT_VD_Orthometric = 2001 ODT_VD_Ellipsoidal = 2002 ODT_VD_AltitudeBarometric = 2003 ODT_VD_Normal = 2004 ODT_VD_GeoidModelDerived = 2005 ODT_VD_Depth = 2006 ODT_VD_Max = 2999 ODT_LD_Min = 10000 ODT_LD_Max = 32767
