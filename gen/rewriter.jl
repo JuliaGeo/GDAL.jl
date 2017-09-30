@@ -96,7 +96,7 @@ end
 # supertypes is derived from types.jl and used in rewriting
 # typenames is derived from types.jl and used later on
 # to check if types.jl is still complete
-typenames, supertypes = typeset("src/types.jl")
+typenames, supertypes = typeset(joinpath(srcdir, "types.jl"))
 
 "rename the function to more a julian convention"
 function newfuncname(name::Symbol)
@@ -191,15 +191,11 @@ function commonrewriter!(io::IOStream, ex::Expr, opaquepointers::Set{Symbol})
             push!(opaquepointers, lhs)
             return
         elseif rhs == :Void
-            # These all seem to be enums that, as of Clang.jl v0.3.0,
-            # get set to Void, which conflicts with the enum values which are
-            # Integer (UInt32), because the enum types are in the method signature.
-            # See for example GDALAccess, which has GA_ReadOnly and GA_Update.
-            # See also Clang.jl/#162
-            ex.args[1].args[2] = UInt32
+            println(ex)
+            error("const x = Void encountered, stopping")
         elseif startswith(string(lhs), "ANONYMOUS_")
-            # filter out the ANONYMOUS_* (they are not used)
-            return
+            println(ex)
+            error("ANONYMOUS_* variable name found, stopping")
         end
     end
 

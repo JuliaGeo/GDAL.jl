@@ -45,7 +45,9 @@ const skip_expr = [
     # function aliases give bootstrapping problems
     # since common.jl is loaded before the functions
     :(const CPLReadDir = VSIReadDir),
-    :(const CPLFree = VSIFree)
+    :(const CPLFree = VSIFree),
+    # common.jl internal bootstrapping problems
+    :(const VALIDATE_POINTER_ERR = CE_Failure)
 ]
 
 const skip_func = [:CPLErrorV] # problem with va_list ihnorton/Clang.jl#17
