@@ -46,7 +46,7 @@ function build_docstring(fnode)
         println(io, text(return_elems[1], "para"))
     end
 
-    takebuf_string(io)
+    String(take!(io))
 end
 
 # Change GENERATE_XML to YES in the Doxyfile from the GDAL SVN
