@@ -24,12 +24,12 @@ const CPLE_AWSSignatureDoesNotMatch = 16
 # Skipping MacroDefinition: VALIDATE_POINTER0 ( ptr , func ) do { if ( NULL == ptr ) { CPLErr const ret = VALIDATE_POINTER_ERR ; CPLError ( ret , CPLE_ObjectNull , "Pointer \'%s\' is NULL in \'%s\'.\n" , # ptr , ( func ) ) ; return ; } } while ( 0 )
 # Skipping MacroDefinition: VALIDATE_POINTER1 ( ptr , func , rc ) do { if ( NULL == ptr ) { CPLErr const ret = VALIDATE_POINTER_ERR ; CPLError ( ret , CPLE_ObjectNull , "Pointer \'%s\' is NULL in \'%s\'.\n" , # ptr , ( func ) ) ; return ( rc ) ; } } while ( 0 )
 
-@enum CPLErr CE_None = 0 CE_Debug = 1 CE_Warning = 2 CE_Failure = 3 CE_Fatal = 4
+@enum CPLErr::UInt32 CE_None = 0 CE_Debug = 1 CE_Warning = 2 CE_Failure = 3 CE_Fatal = 4
 
 const CPLErrorNum = Cint
 const CPLErrorHandler = Ptr{Void}
 
-@enum CPLXMLNodeType CXT_Element = 0 CXT_Text = 1 CXT_Attribute = 2 CXT_Comment = 3 CXT_Literal = 4
+@enum CPLXMLNodeType::UInt32 CXT_Element = 0 CXT_Text = 1 CXT_Attribute = 2 CXT_Comment = 3 CXT_Literal = 4
 
 mutable struct CPLXMLNode
     eType::CPLXMLNodeType
@@ -138,7 +138,7 @@ const CPLVirtualMemCachePageCbk = Ptr{Void}
 const CPLVirtualMemUnCachePageCbk = Ptr{Void}
 const CPLVirtualMemFreeUserData = Ptr{Void}
 
-@enum CPLVirtualMemAccessMode VIRTUALMEM_READONLY = 0 VIRTUALMEM_READONLY_ENFORCED = 1 VIRTUALMEM_READWRITE = 2
+@enum CPLVirtualMemAccessMode::UInt32 VIRTUALMEM_READONLY = 0 VIRTUALMEM_READONLY_ENFORCED = 1 VIRTUALMEM_READWRITE = 2
 
 # Skipping MacroDefinition: VSI_ISLNK ( x ) S_ISLNK ( x )
 # Skipping MacroDefinition: VSI_ISREG ( x ) S_ISREG ( x )
@@ -170,7 +170,7 @@ const VSIStatBuf = Void
 const vsi_l_offset = GUIntBig
 const VSILFILE = FILE
 
-@enum VSIRangeStatus VSI_RANGE_STATUS_UNKNOWN = 0 VSI_RANGE_STATUS_DATA = 1 VSI_RANGE_STATUS_HOLE = 2
+@enum VSIRangeStatus::UInt32 VSI_RANGE_STATUS_UNKNOWN = 0 VSI_RANGE_STATUS_DATA = 1 VSI_RANGE_STATUS_HOLE = 2
 
 mutable struct VSIStatBufL
 end
@@ -233,11 +233,11 @@ const GDAL_DATA_COVERAGE_STATUS_UNIMPLEMENTED = 0x01
 const GDAL_DATA_COVERAGE_STATUS_DATA = 0x02
 const GDAL_DATA_COVERAGE_STATUS_EMPTY = 0x04
 
-@enum GDALDataType GDT_Unknown = 0 GDT_Byte = 1 GDT_UInt16 = 2 GDT_Int16 = 3 GDT_UInt32 = 4 GDT_Int32 = 5 GDT_Float32 = 6 GDT_Float64 = 7 GDT_CInt16 = 8 GDT_CInt32 = 9 GDT_CFloat32 = 10 GDT_CFloat64 = 11 GDT_TypeCount = 12
-@enum GDALAsyncStatusType GARIO_PENDING = 0 GARIO_UPDATE = 1 GARIO_ERROR = 2 GARIO_COMPLETE = 3 GARIO_TypeCount = 4
-@enum GDALAccess GA_ReadOnly = 0 GA_Update = 1
-@enum GDALRWFlag GF_Read = 0 GF_Write = 1
-@enum GDALRIOResampleAlg GRIORA_NearestNeighbour = 0 GRIORA_Bilinear = 1 GRIORA_Cubic = 2 GRIORA_CubicSpline = 3 GRIORA_Lanczos = 4 GRIORA_Average = 5 GRIORA_Mode = 6 GRIORA_Gauss = 7
+@enum GDALDataType::UInt32 GDT_Unknown = 0 GDT_Byte = 1 GDT_UInt16 = 2 GDT_Int16 = 3 GDT_UInt32 = 4 GDT_Int32 = 5 GDT_Float32 = 6 GDT_Float64 = 7 GDT_CInt16 = 8 GDT_CInt32 = 9 GDT_CFloat32 = 10 GDT_CFloat64 = 11 GDT_TypeCount = 12
+@enum GDALAsyncStatusType::UInt32 GARIO_PENDING = 0 GARIO_UPDATE = 1 GARIO_ERROR = 2 GARIO_COMPLETE = 3 GARIO_TypeCount = 4
+@enum GDALAccess::UInt32 GA_ReadOnly = 0 GA_Update = 1
+@enum GDALRWFlag::UInt32 GF_Read = 0 GF_Write = 1
+@enum GDALRIOResampleAlg::UInt32 GRIORA_NearestNeighbour = 0 GRIORA_Bilinear = 1 GRIORA_Cubic = 2 GRIORA_CubicSpline = 3 GRIORA_Lanczos = 4 GRIORA_Average = 5 GRIORA_Mode = 6 GRIORA_Gauss = 7
 
 mutable struct GDALRasterIOExtraArg
     nVersion::Cint
@@ -251,8 +251,11 @@ mutable struct GDALRasterIOExtraArg
     dfYSize::Cdouble
 end
 
-@enum GDALColorInterp GCI_Undefined = 0 GCI_GrayIndex = 1 GCI_PaletteIndex = 2 GCI_RedBand = 3 GCI_GreenBand = 4 GCI_BlueBand = 5 GCI_AlphaBand = 6 GCI_HueBand = 7 GCI_SaturationBand = 8 GCI_LightnessBand = 9 GCI_CyanBand = 10 GCI_MagentaBand = 11 GCI_YellowBand = 12 GCI_BlackBand = 13 GCI_YCbCr_YBand = 14 GCI_YCbCr_CbBand = 15 GCI_YCbCr_CrBand = 16 GCI_Max = 16
-@enum GDALPaletteInterp GPI_Gray = 0 GPI_RGB = 1 GPI_CMYK = 2 GPI_HLS = 3
+@enum GDALColorInterp::UInt32 GCI_Undefined = 0 GCI_GrayIndex = 1 GCI_PaletteIndex = 2 GCI_RedBand = 3 GCI_GreenBand = 4 GCI_BlueBand = 5 GCI_AlphaBand = 6 GCI_HueBand = 7 GCI_SaturationBand = 8 GCI_LightnessBand = 9 GCI_CyanBand = 10 GCI_MagentaBand = 11 GCI_YellowBand = 12 GCI_BlackBand = 13 GCI_YCbCr_YBand = 14 GCI_YCbCr_CbBand = 15 GCI_YCbCr_CrBand = 16
+
+const GCI_Max = GCI_YCbCr_CrBand
+
+@enum GDALPaletteInterp::UInt32 GPI_Gray = 0 GPI_RGB = 1 GPI_CMYK = 2 GPI_HLS = 3
 
 const GDALMajorObjectH = Ptr{Void}
 const GDALDatasetH = Ptr{Void}
@@ -303,9 +306,9 @@ mutable struct GDALColorEntry
     c4::Int16
 end
 
-@enum GDALRATFieldType GFT_Integer = 0 GFT_Real = 1 GFT_String = 2
-@enum GDALRATFieldUsage GFU_Generic = 0 GFU_PixelCount = 1 GFU_Name = 2 GFU_Min = 3 GFU_Max = 4 GFU_MinMax = 5 GFU_Red = 6 GFU_Green = 7 GFU_Blue = 8 GFU_Alpha = 9 GFU_RedMin = 10 GFU_GreenMin = 11 GFU_BlueMin = 12 GFU_AlphaMin = 13 GFU_RedMax = 14 GFU_GreenMax = 15 GFU_BlueMax = 16 GFU_AlphaMax = 17 GFU_MaxCount = 18
-@enum GDALTileOrganization GTO_TIP = 0 GTO_BIT = 1 GTO_BSQ = 2
+@enum GDALRATFieldType::UInt32 GFT_Integer = 0 GFT_Real = 1 GFT_String = 2
+@enum GDALRATFieldUsage::UInt32 GFU_Generic = 0 GFU_PixelCount = 1 GFU_Name = 2 GFU_Min = 3 GFU_Max = 4 GFU_MinMax = 5 GFU_Red = 6 GFU_Green = 7 GFU_Blue = 8 GFU_Alpha = 9 GFU_RedMin = 10 GFU_GreenMin = 11 GFU_BlueMin = 12 GFU_AlphaMin = 13 GFU_RedMax = 14 GFU_GreenMax = 15 GFU_BlueMax = 16 GFU_AlphaMax = 17 GFU_MaxCount = 18
+@enum GDALTileOrganization::UInt32 GTO_TIP = 0 GTO_BIT = 1 GTO_BSQ = 2
 
 const GDAL_GTI2_SIGNATURE = "GTI2"
 const GDALTransformerFunc = Ptr{Void}
@@ -330,7 +333,7 @@ mutable struct OGRContourWriterInfo
     nNextID::Cint
 end
 
-@enum GDALGridAlgorithm GGA_InverseDistanceToAPower = 1 GGA_MovingAverage = 2 GGA_NearestNeighbor = 3 GGA_MetricMinimum = 4 GGA_MetricMaximum = 5 GGA_MetricRange = 6 GGA_MetricCount = 7 GGA_MetricAverageDistance = 8 GGA_MetricAverageDistancePts = 9 GGA_Linear = 10 GGA_InverseDistanceToAPowerNearestNeighbor = 11
+@enum GDALGridAlgorithm::UInt32 GGA_InverseDistanceToAPower = 1 GGA_MovingAverage = 2 GGA_NearestNeighbor = 3 GGA_MetricMinimum = 4 GGA_MetricMaximum = 5 GGA_MetricRange = 6 GGA_MetricCount = 7 GGA_MetricAverageDistance = 8 GGA_MetricAverageDistancePts = 9 GGA_Linear = 10 GGA_InverseDistanceToAPowerNearestNeighbor = 11
 
 mutable struct GDALGridInverseDistanceToAPowerOptions
     dfPower::Cdouble
@@ -520,21 +523,27 @@ end
 const OGRErr = Cint
 const OGRBoolean = Cint
 
-@enum OGRwkbGeometryType wkbUnknown = 0 wkbPoint = 1 wkbLineString = 2 wkbPolygon = 3 wkbMultiPoint = 4 wkbMultiLineString = 5 wkbMultiPolygon = 6 wkbGeometryCollection = 7 wkbCircularString = 8 wkbCompoundCurve = 9 wkbCurvePolygon = 10 wkbMultiCurve = 11 wkbMultiSurface = 12 wkbCurve = 13 wkbSurface = 14 wkbPolyhedralSurface = 15 wkbTIN = 16 wkbTriangle = 17 wkbNone = 100 wkbLinearRing = 101 wkbCircularStringZ = 1008 wkbCompoundCurveZ = 1009 wkbCurvePolygonZ = 1010 wkbMultiCurveZ = 1011 wkbMultiSurfaceZ = 1012 wkbCurveZ = 1013 wkbSurfaceZ = 1014 wkbPolyhedralSurfaceZ = 1015 wkbTINZ = 1016 wkbTriangleZ = 1017 wkbPointM = 2001 wkbLineStringM = 2002 wkbPolygonM = 2003 wkbMultiPointM = 2004 wkbMultiLineStringM = 2005 wkbMultiPolygonM = 2006 wkbGeometryCollectionM = 2007 wkbCircularStringM = 2008 wkbCompoundCurveM = 2009 wkbCurvePolygonM = 2010 wkbMultiCurveM = 2011 wkbMultiSurfaceM = 2012 wkbCurveM = 2013 wkbSurfaceM = 2014 wkbPolyhedralSurfaceM = 2015 wkbTINM = 2016 wkbTriangleM = 2017 wkbPointZM = 3001 wkbLineStringZM = 3002 wkbPolygonZM = 3003 wkbMultiPointZM = 3004 wkbMultiLineStringZM = 3005 wkbMultiPolygonZM = 3006 wkbGeometryCollectionZM = 3007 wkbCircularStringZM = 3008 wkbCompoundCurveZM = 3009 wkbCurvePolygonZM = 3010 wkbMultiCurveZM = 3011 wkbMultiSurfaceZM = 3012 wkbCurveZM = 3013 wkbSurfaceZM = 3014 wkbPolyhedralSurfaceZM = 3015 wkbTINZM = 3016 wkbTriangleZM = 3017 wkbPoint25D = 2147483649 wkbLineString25D = 2147483650 wkbPolygon25D = 2147483651 wkbMultiPoint25D = 2147483652 wkbMultiLineString25D = 2147483653 wkbMultiPolygon25D = 2147483654 wkbGeometryCollection25D = 2147483655
-@enum OGRwkbVariant wkbVariantOldOgc = 0 wkbVariantIso = 1 wkbVariantPostGIS1 = 2
-@enum OGRwkbByteOrder wkbXDR = 0 wkbNDR = 1
-@enum OGRFieldType OFTInteger = 0 OFTIntegerList = 1 OFTReal = 2 OFTRealList = 3 OFTString = 4 OFTStringList = 5 OFTWideString = 6 OFTWideStringList = 7 OFTBinary = 8 OFTDate = 9 OFTTime = 10 OFTDateTime = 11 OFTInteger64 = 12 OFTInteger64List = 13 OFTMaxType = 13
-@enum OGRFieldSubType OFSTNone = 0 OFSTBoolean = 1 OFSTInt16 = 2 OFSTFloat32 = 3 OFSTMaxSubType = 3
-@enum OGRJustification OJUndefined = 0 OJLeft = 1 OJRight = 2
+@enum OGRwkbGeometryType::UInt32 wkbUnknown = 0 wkbPoint = 1 wkbLineString = 2 wkbPolygon = 3 wkbMultiPoint = 4 wkbMultiLineString = 5 wkbMultiPolygon = 6 wkbGeometryCollection = 7 wkbCircularString = 8 wkbCompoundCurve = 9 wkbCurvePolygon = 10 wkbMultiCurve = 11 wkbMultiSurface = 12 wkbCurve = 13 wkbSurface = 14 wkbPolyhedralSurface = 15 wkbTIN = 16 wkbTriangle = 17 wkbNone = 100 wkbLinearRing = 101 wkbCircularStringZ = 1008 wkbCompoundCurveZ = 1009 wkbCurvePolygonZ = 1010 wkbMultiCurveZ = 1011 wkbMultiSurfaceZ = 1012 wkbCurveZ = 1013 wkbSurfaceZ = 1014 wkbPolyhedralSurfaceZ = 1015 wkbTINZ = 1016 wkbTriangleZ = 1017 wkbPointM = 2001 wkbLineStringM = 2002 wkbPolygonM = 2003 wkbMultiPointM = 2004 wkbMultiLineStringM = 2005 wkbMultiPolygonM = 2006 wkbGeometryCollectionM = 2007 wkbCircularStringM = 2008 wkbCompoundCurveM = 2009 wkbCurvePolygonM = 2010 wkbMultiCurveM = 2011 wkbMultiSurfaceM = 2012 wkbCurveM = 2013 wkbSurfaceM = 2014 wkbPolyhedralSurfaceM = 2015 wkbTINM = 2016 wkbTriangleM = 2017 wkbPointZM = 3001 wkbLineStringZM = 3002 wkbPolygonZM = 3003 wkbMultiPointZM = 3004 wkbMultiLineStringZM = 3005 wkbMultiPolygonZM = 3006 wkbGeometryCollectionZM = 3007 wkbCircularStringZM = 3008 wkbCompoundCurveZM = 3009 wkbCurvePolygonZM = 3010 wkbMultiCurveZM = 3011 wkbMultiSurfaceZM = 3012 wkbCurveZM = 3013 wkbSurfaceZM = 3014 wkbPolyhedralSurfaceZM = 3015 wkbTINZM = 3016 wkbTriangleZM = 3017 wkbPoint25D = 2147483649 wkbLineString25D = 2147483650 wkbPolygon25D = 2147483651 wkbMultiPoint25D = 2147483652 wkbMultiLineString25D = 2147483653 wkbMultiPolygon25D = 2147483654 wkbGeometryCollection25D = 2147483655
+@enum OGRwkbVariant::UInt32 wkbVariantOldOgc = 0 wkbVariantIso = 1 wkbVariantPostGIS1 = 2
+@enum OGRwkbByteOrder::UInt32 wkbXDR = 0 wkbNDR = 1
+@enum OGRFieldType::UInt32 OFTInteger = 0 OFTIntegerList = 1 OFTReal = 2 OFTRealList = 3 OFTString = 4 OFTStringList = 5 OFTWideString = 6 OFTWideStringList = 7 OFTBinary = 8 OFTDate = 9 OFTTime = 10 OFTDateTime = 11 OFTInteger64 = 12 OFTInteger64List = 13
+
+const OFTMaxType = OFTInteger64List
+
+@enum OGRFieldSubType::UInt32 OFSTNone = 0 OFSTBoolean = 1 OFSTInt16 = 2 OFSTFloat32 = 3
+
+const OFSTMaxSubType = OFSTFloat32
+
+@enum OGRJustification::UInt32 OJUndefined = 0 OJLeft = 1 OJRight = 2
 
 const OGRField = Void
 
-@enum OGRSTClassId OGRSTCNone = 0 OGRSTCPen = 1 OGRSTCBrush = 2 OGRSTCSymbol = 3 OGRSTCLabel = 4 OGRSTCVector = 5
-@enum OGRSTUnitId OGRSTUGround = 0 OGRSTUPixel = 1 OGRSTUPoints = 2 OGRSTUMM = 3 OGRSTUCM = 4 OGRSTUInches = 5
-@enum OGRSTPenParam OGRSTPenColor = 0 OGRSTPenWidth = 1 OGRSTPenPattern = 2 OGRSTPenId = 3 OGRSTPenPerOffset = 4 OGRSTPenCap = 5 OGRSTPenJoin = 6 OGRSTPenPriority = 7 OGRSTPenLast = 8
-@enum OGRSTBrushParam OGRSTBrushFColor = 0 OGRSTBrushBColor = 1 OGRSTBrushId = 2 OGRSTBrushAngle = 3 OGRSTBrushSize = 4 OGRSTBrushDx = 5 OGRSTBrushDy = 6 OGRSTBrushPriority = 7 OGRSTBrushLast = 8
-@enum OGRSTSymbolParam OGRSTSymbolId = 0 OGRSTSymbolAngle = 1 OGRSTSymbolColor = 2 OGRSTSymbolSize = 3 OGRSTSymbolDx = 4 OGRSTSymbolDy = 5 OGRSTSymbolStep = 6 OGRSTSymbolPerp = 7 OGRSTSymbolOffset = 8 OGRSTSymbolPriority = 9 OGRSTSymbolFontName = 10 OGRSTSymbolOColor = 11 OGRSTSymbolLast = 12
-@enum OGRSTLabelParam OGRSTLabelFontName = 0 OGRSTLabelSize = 1 OGRSTLabelTextString = 2 OGRSTLabelAngle = 3 OGRSTLabelFColor = 4 OGRSTLabelBColor = 5 OGRSTLabelPlacement = 6 OGRSTLabelAnchor = 7 OGRSTLabelDx = 8 OGRSTLabelDy = 9 OGRSTLabelPerp = 10 OGRSTLabelBold = 11 OGRSTLabelItalic = 12 OGRSTLabelUnderline = 13 OGRSTLabelPriority = 14 OGRSTLabelStrikeout = 15 OGRSTLabelStretch = 16 OGRSTLabelAdjHor = 17 OGRSTLabelAdjVert = 18 OGRSTLabelHColor = 19 OGRSTLabelOColor = 20 OGRSTLabelLast = 21
+@enum OGRSTClassId::UInt32 OGRSTCNone = 0 OGRSTCPen = 1 OGRSTCBrush = 2 OGRSTCSymbol = 3 OGRSTCLabel = 4 OGRSTCVector = 5
+@enum OGRSTUnitId::UInt32 OGRSTUGround = 0 OGRSTUPixel = 1 OGRSTUPoints = 2 OGRSTUMM = 3 OGRSTUCM = 4 OGRSTUInches = 5
+@enum OGRSTPenParam::UInt32 OGRSTPenColor = 0 OGRSTPenWidth = 1 OGRSTPenPattern = 2 OGRSTPenId = 3 OGRSTPenPerOffset = 4 OGRSTPenCap = 5 OGRSTPenJoin = 6 OGRSTPenPriority = 7 OGRSTPenLast = 8
+@enum OGRSTBrushParam::UInt32 OGRSTBrushFColor = 0 OGRSTBrushBColor = 1 OGRSTBrushId = 2 OGRSTBrushAngle = 3 OGRSTBrushSize = 4 OGRSTBrushDx = 5 OGRSTBrushDy = 6 OGRSTBrushPriority = 7 OGRSTBrushLast = 8
+@enum OGRSTSymbolParam::UInt32 OGRSTSymbolId = 0 OGRSTSymbolAngle = 1 OGRSTSymbolColor = 2 OGRSTSymbolSize = 3 OGRSTSymbolDx = 4 OGRSTSymbolDy = 5 OGRSTSymbolStep = 6 OGRSTSymbolPerp = 7 OGRSTSymbolOffset = 8 OGRSTSymbolPriority = 9 OGRSTSymbolFontName = 10 OGRSTSymbolOColor = 11 OGRSTSymbolLast = 12
+@enum OGRSTLabelParam::UInt32 OGRSTLabelFontName = 0 OGRSTLabelSize = 1 OGRSTLabelTextString = 2 OGRSTLabelAngle = 3 OGRSTLabelFColor = 4 OGRSTLabelBColor = 5 OGRSTLabelPlacement = 6 OGRSTLabelAnchor = 7 OGRSTLabelDx = 8 OGRSTLabelDy = 9 OGRSTLabelPerp = 10 OGRSTLabelBold = 11 OGRSTLabelItalic = 12 OGRSTLabelUnderline = 13 OGRSTLabelPriority = 14 OGRSTLabelStrikeout = 15 OGRSTLabelStretch = 16 OGRSTLabelAdjHor = 17 OGRSTLabelAdjVert = 18 OGRSTLabelHColor = 19 OGRSTLabelOColor = 20 OGRSTLabelLast = 21
 
 # const CPLFree = VSIFree
 const CPLFileFinder = Ptr{Void}
@@ -547,8 +556,8 @@ mutable struct CPLSharedFileInfo
     pszAccess::Cstring
 end
 
-@enum GDALResampleAlg GRA_NearestNeighbour = 0 GRA_Bilinear = 1 GRA_Cubic = 2 GRA_CubicSpline = 3 GRA_Lanczos = 4 GRA_Average = 5 GRA_Mode = 6 GRA_Max = 8 GRA_Min = 9 GRA_Med = 10 GRA_Q1 = 11 GRA_Q3 = 12
-@enum GWKAverageOrModeAlg GWKAOM_Average = 1 GWKAOM_Fmode = 2 GWKAOM_Imode = 3 GWKAOM_Max = 4 GWKAOM_Min = 5 GWKAOM_Quant = 6
+@enum GDALResampleAlg::UInt32 GRA_NearestNeighbour = 0 GRA_Bilinear = 1 GRA_Cubic = 2 GRA_CubicSpline = 3 GRA_Lanczos = 4 GRA_Average = 5 GRA_Mode = 6 GRA_Max = 8 GRA_Min = 9 GRA_Med = 10 GRA_Q1 = 11 GRA_Q3 = 12
+@enum GWKAverageOrModeAlg::UInt32 GWKAOM_Average = 1 GWKAOM_Fmode = 2 GWKAOM_Imode = 3 GWKAOM_Max = 4 GWKAOM_Min = 5 GWKAOM_Quant = 6
 
 const GDALMaskFunc = Ptr{Void}
 
@@ -833,5 +842,8 @@ const SRS_DN_WGS84 = "WGS_1984"
 const SRS_WGS84_SEMIMAJOR = 6.378137e6
 const SRS_WGS84_INVFLATTENING = 298.257223563
 
-@enum OGRAxisOrientation OAO_Other = 0 OAO_North = 1 OAO_South = 2 OAO_East = 3 OAO_West = 4 OAO_Up = 5 OAO_Down = 6
-@enum OGRDatumType ODT_HD_Min = 1000 ODT_HD_Other = 1000 ODT_HD_Classic = 1001 ODT_HD_Geocentric = 1002 ODT_HD_Max = 1999 ODT_VD_Min = 2000 ODT_VD_Other = 2000 ODT_VD_Orthometric = 2001 ODT_VD_Ellipsoidal = 2002 ODT_VD_AltitudeBarometric = 2003 ODT_VD_Normal = 2004 ODT_VD_GeoidModelDerived = 2005 ODT_VD_Depth = 2006 ODT_VD_Max = 2999 ODT_LD_Min = 10000 ODT_LD_Max = 32767
+@enum OGRAxisOrientation::UInt32 OAO_Other = 0 OAO_North = 1 OAO_South = 2 OAO_East = 3 OAO_West = 4 OAO_Up = 5 OAO_Down = 6
+@enum OGRDatumType::UInt32 ODT_HD_Min = 1000 ODT_HD_Classic = 1001 ODT_HD_Geocentric = 1002 ODT_HD_Max = 1999 ODT_VD_Min = 2000 ODT_VD_Orthometric = 2001 ODT_VD_Ellipsoidal = 2002 ODT_VD_AltitudeBarometric = 2003 ODT_VD_Normal = 2004 ODT_VD_GeoidModelDerived = 2005 ODT_VD_Depth = 2006 ODT_VD_Max = 2999 ODT_LD_Min = 10000 ODT_LD_Max = 32767
+
+const ODT_HD_Other = ODT_HD_Min
+const ODT_VD_Other = ODT_VD_Min
