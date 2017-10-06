@@ -172,10 +172,9 @@ const VSILFILE = FILE
 
 @enum VSIRangeStatus VSI_RANGE_STATUS_UNKNOWN = 0 VSI_RANGE_STATUS_DATA = 1 VSI_RANGE_STATUS_HOLE = 2
 
-mutable struct stat64
+mutable struct VSIStatBufL
 end
 
-const VSIStatBufL = Void
 const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
 
 # Skipping MacroDefinition: INIT_RASTERIO_EXTRA_ARG ( s ) do { ( s ) . nVersion = RASTERIO_EXTRA_ARG_CURRENT_VERSION ; ( s ) . eResampleAlg = GRIORA_NearestNeighbour ; ( s ) . pfnProgress = NULL ; ( s ) . pProgressData = NULL ; ( s ) . bFloatingPointWindowValidity = FALSE ; } while ( 0 )
@@ -240,7 +239,17 @@ const GDAL_DATA_COVERAGE_STATUS_EMPTY = 0x04
 @enum GDALRWFlag GF_Read = 0 GF_Write = 1
 @enum GDALRIOResampleAlg GRIORA_NearestNeighbour = 0 GRIORA_Bilinear = 1 GRIORA_Cubic = 2 GRIORA_CubicSpline = 3 GRIORA_Lanczos = 4 GRIORA_Average = 5 GRIORA_Mode = 6 GRIORA_Gauss = 7
 
-const GDALRasterIOExtraArg = Void
+mutable struct GDALRasterIOExtraArg
+    nVersion::Cint
+    eResampleAlg::GDALRIOResampleAlg
+    pfnProgress::GDALProgressFunc
+    pProgressData::Ptr{Void}
+    bFloatingPointWindowValidity::Cint
+    dfXOff::Cdouble
+    dfYOff::Cdouble
+    dfXSize::Cdouble
+    dfYSize::Cdouble
+end
 
 @enum GDALColorInterp GCI_Undefined = 0 GCI_GrayIndex = 1 GCI_PaletteIndex = 2 GCI_RedBand = 3 GCI_GreenBand = 4 GCI_BlueBand = 5 GCI_AlphaBand = 6 GCI_HueBand = 7 GCI_SaturationBand = 8 GCI_LightnessBand = 9 GCI_CyanBand = 10 GCI_MagentaBand = 11 GCI_YellowBand = 12 GCI_BlackBand = 13 GCI_YCbCr_YBand = 14 GCI_YCbCr_CbBand = 15 GCI_YCbCr_CrBand = 16 GCI_Max = 16
 @enum GDALPaletteInterp GPI_Gray = 0 GPI_RGB = 1 GPI_CMYK = 2 GPI_HLS = 3
@@ -253,10 +262,46 @@ const GDALColorTableH = Ptr{Void}
 const GDALRasterAttributeTableH = Ptr{Void}
 const GDALAsyncReaderH = Ptr{Void}
 const GSpacing = GIntBig
-const GDAL_GCP = Void
+
+mutable struct GDAL_GCP
+    pszId::Cstring
+    pszInfo::Cstring
+    dfGCPPixel::Cdouble
+    dfGCPLine::Cdouble
+    dfGCPX::Cdouble
+    dfGCPY::Cdouble
+    dfGCPZ::Cdouble
+end
+
 const GDALDerivedPixelFunc = Ptr{Void}
-const GDALRPCInfo = Void
-const GDALColorEntry = Void
+
+mutable struct GDALRPCInfo
+    dfLINE_OFF::Cdouble
+    dfSAMP_OFF::Cdouble
+    dfLAT_OFF::Cdouble
+    dfLONG_OFF::Cdouble
+    dfHEIGHT_OFF::Cdouble
+    dfLINE_SCALE::Cdouble
+    dfSAMP_SCALE::Cdouble
+    dfLAT_SCALE::Cdouble
+    dfLONG_SCALE::Cdouble
+    dfHEIGHT_SCALE::Cdouble
+    adfLINE_NUM_COEFF::NTuple{20, Cdouble}
+    adfLINE_DEN_COEFF::NTuple{20, Cdouble}
+    adfSAMP_NUM_COEFF::NTuple{20, Cdouble}
+    adfSAMP_DEN_COEFF::NTuple{20, Cdouble}
+    dfMIN_LONG::Cdouble
+    dfMIN_LAT::Cdouble
+    dfMAX_LONG::Cdouble
+    dfMAX_LAT::Cdouble
+end
+
+mutable struct GDALColorEntry
+    c1::Int16
+    c2::Int16
+    c3::Int16
+    c4::Int16
+end
 
 @enum GDALRATFieldType GFT_Integer = 0 GFT_Real = 1 GFT_String = 2
 @enum GDALRATFieldUsage GFU_Generic = 0 GFU_PixelCount = 1 GFU_Name = 2 GFU_Min = 3 GFU_Max = 4 GFU_MinMax = 5 GFU_Red = 6 GFU_Green = 7 GFU_Blue = 8 GFU_Alpha = 9 GFU_RedMin = 10 GFU_GreenMin = 11 GFU_BlueMin = 12 GFU_AlphaMin = 13 GFU_RedMax = 14 GFU_GreenMax = 15 GFU_BlueMax = 16 GFU_AlphaMax = 17 GFU_MaxCount = 18
@@ -264,26 +309,102 @@ const GDALColorEntry = Void
 
 const GDAL_GTI2_SIGNATURE = "GTI2"
 const GDALTransformerFunc = Ptr{Void}
-const GDALTransformerInfo = Void
+
+mutable struct GDALTransformerInfo
+    abySignature::NTuple{4, GByte}
+    pszClassName::Cstring
+    pfnTransform::GDALTransformerFunc
+    pfnCleanup::Ptr{Void}
+    pfnSerialize::Ptr{Void}
+    pfnCreateSimilar::Ptr{Void}
+end
+
 const GDALContourWriter = Ptr{Void}
 const GDALContourGeneratorH = Ptr{Void}
-const OGRContourWriterInfo = Void
+
+mutable struct OGRContourWriterInfo
+    hLayer::Ptr{Void}
+    adfGeoTransform::NTuple{6, Cdouble}
+    nElevField::Cint
+    nIDField::Cint
+    nNextID::Cint
+end
 
 @enum GDALGridAlgorithm GGA_InverseDistanceToAPower = 1 GGA_MovingAverage = 2 GGA_NearestNeighbor = 3 GGA_MetricMinimum = 4 GGA_MetricMaximum = 5 GGA_MetricRange = 6 GGA_MetricCount = 7 GGA_MetricAverageDistance = 8 GGA_MetricAverageDistancePts = 9 GGA_Linear = 10 GGA_InverseDistanceToAPowerNearestNeighbor = 11
 
-const GDALGridInverseDistanceToAPowerOptions = Void
-const GDALGridInverseDistanceToAPowerNearestNeighborOptions = Void
-const GDALGridMovingAverageOptions = Void
-const GDALGridNearestNeighborOptions = Void
-const GDALGridDataMetricsOptions = Void
-const GDALGridLinearOptions = Void
+mutable struct GDALGridInverseDistanceToAPowerOptions
+    dfPower::Cdouble
+    dfSmoothing::Cdouble
+    dfAnisotropyRatio::Cdouble
+    dfAnisotropyAngle::Cdouble
+    dfRadius1::Cdouble
+    dfRadius2::Cdouble
+    dfAngle::Cdouble
+    nMaxPoints::GUInt32
+    nMinPoints::GUInt32
+    dfNoDataValue::Cdouble
+end
+
+mutable struct GDALGridInverseDistanceToAPowerNearestNeighborOptions
+    dfPower::Cdouble
+    dfRadius::Cdouble
+    dfSmoothing::Cdouble
+    nMaxPoints::GUInt32
+    nMinPoints::GUInt32
+    dfNoDataValue::Cdouble
+end
+
+mutable struct GDALGridMovingAverageOptions
+    dfRadius1::Cdouble
+    dfRadius2::Cdouble
+    dfAngle::Cdouble
+    nMinPoints::GUInt32
+    dfNoDataValue::Cdouble
+end
+
+mutable struct GDALGridNearestNeighborOptions
+    dfRadius1::Cdouble
+    dfRadius2::Cdouble
+    dfAngle::Cdouble
+    dfNoDataValue::Cdouble
+end
+
+mutable struct GDALGridDataMetricsOptions
+    dfRadius1::Cdouble
+    dfRadius2::Cdouble
+    dfAngle::Cdouble
+    nMinPoints::GUInt32
+    dfNoDataValue::Cdouble
+end
+
+mutable struct GDALGridLinearOptions
+    dfRadius::Cdouble
+    dfNoDataValue::Cdouble
+end
 
 mutable struct GDALGridContext
 end
 
-const GDALTriFacet = Void
-const GDALTriBarycentricCoefficients = Void
-const GDALTriangulation = Void
+mutable struct GDALTriFacet
+    anVertexIdx::NTuple{3, Cint}
+    anNeighborIdx::NTuple{3, Cint}
+end
+
+mutable struct GDALTriBarycentricCoefficients
+    dfMul1X::Cdouble
+    dfMul1Y::Cdouble
+    dfMul2X::Cdouble
+    dfMul2Y::Cdouble
+    dfCstX::Cdouble
+    dfCstY::Cdouble
+end
+
+mutable struct GDALTriangulation
+    nFacets::Cint
+    pasFacets::Ptr{GDALTriFacet}
+    pasFacetCoefficients::Ptr{GDALTriBarycentricCoefficients}
+end
+
 const OGRGeometryH = Ptr{Void}
 const OGRSpatialReferenceH = Ptr{Void}
 const OGRCoordinateTransformationH = Ptr{Void}
@@ -296,10 +417,9 @@ const OGRFeatureDefnH = Ptr{Void}
 const OGRFeatureH = Ptr{Void}
 const OGRStyleTableH = Ptr{Void}
 
-mutable struct OGRGeomFieldDefnHS
+mutable struct OGRGeomFieldDefnH
 end
 
-const OGRGeomFieldDefnH = Ptr{Void}
 const OGRLayerH = Ptr{Void}
 const OGRDataSourceH = Ptr{Void}
 const OGRSFDriverH = Ptr{Void}
@@ -381,8 +501,22 @@ const OLMD_FID64 = "OLMD_FID64"
 
 # Skipping MacroDefinition: GDAL_CHECK_VERSION ( pszCallingComponentName ) GDALCheckVersion ( GDAL_VERSION_MAJOR , GDAL_VERSION_MINOR , pszCallingComponentName )
 
-const OGREnvelope = Void
-const OGREnvelope3D = Void
+mutable struct OGREnvelope
+    MinX::Cdouble
+    MaxX::Cdouble
+    MinY::Cdouble
+    MaxY::Cdouble
+end
+
+mutable struct OGREnvelope3D
+    MinX::Cdouble
+    MaxX::Cdouble
+    MinY::Cdouble
+    MaxY::Cdouble
+    MinZ::Cdouble
+    MaxZ::Cdouble
+end
+
 const OGRErr = Cint
 const OGRBoolean = Cint
 
@@ -404,13 +538,58 @@ const OGRField = Void
 
 # const CPLFree = VSIFree
 const CPLFileFinder = Ptr{Void}
-const CPLSharedFileInfo = Void
+
+mutable struct CPLSharedFileInfo
+    fp::Ptr{FILE}
+    nRefCount::Cint
+    bLarge::Cint
+    pszFilename::Cstring
+    pszAccess::Cstring
+end
 
 @enum GDALResampleAlg GRA_NearestNeighbour = 0 GRA_Bilinear = 1 GRA_Cubic = 2 GRA_CubicSpline = 3 GRA_Lanczos = 4 GRA_Average = 5 GRA_Mode = 6 GRA_Max = 8 GRA_Min = 9 GRA_Med = 10 GRA_Q1 = 11 GRA_Q3 = 12
 @enum GWKAverageOrModeAlg GWKAOM_Average = 1 GWKAOM_Fmode = 2 GWKAOM_Imode = 3 GWKAOM_Max = 4 GWKAOM_Min = 5 GWKAOM_Quant = 6
 
 const GDALMaskFunc = Ptr{Void}
-const GDALWarpOptions = Void
+
+mutable struct GDALWarpOptions
+    papszWarpOptions::Ptr{Cstring}
+    dfWarpMemoryLimit::Cdouble
+    eResampleAlg::GDALResampleAlg
+    eWorkingDataType::GDALDataType
+    hSrcDS::GDALDatasetH
+    hDstDS::GDALDatasetH
+    nBandCount::Cint
+    panSrcBands::Ptr{Cint}
+    panDstBands::Ptr{Cint}
+    nSrcAlphaBand::Cint
+    nDstAlphaBand::Cint
+    padfSrcNoDataReal::Ptr{Cdouble}
+    padfSrcNoDataImag::Ptr{Cdouble}
+    padfDstNoDataReal::Ptr{Cdouble}
+    padfDstNoDataImag::Ptr{Cdouble}
+    pfnProgress::GDALProgressFunc
+    pProgressArg::Ptr{Void}
+    pfnTransformer::GDALTransformerFunc
+    pTransformerArg::Ptr{Void}
+    papfnSrcPerBandValidityMaskFunc::Ptr{GDALMaskFunc}
+    papSrcPerBandValidityMaskFuncArg::Ptr{Ptr{Void}}
+    pfnSrcValidityMaskFunc::GDALMaskFunc
+    pSrcValidityMaskFuncArg::Ptr{Void}
+    pfnSrcDensityMaskFunc::GDALMaskFunc
+    pSrcDensityMaskFuncArg::Ptr{Void}
+    pfnDstDensityMaskFunc::GDALMaskFunc
+    pDstDensityMaskFuncArg::Ptr{Void}
+    pfnDstValidityMaskFunc::GDALMaskFunc
+    pDstValidityMaskFuncArg::Ptr{Void}
+    pfnPreWarpChunkProcessor::Ptr{Void}
+    pPreWarpProcessorArg::Ptr{Void}
+    pfnPostWarpChunkProcessor::Ptr{Void}
+    pPostWarpProcessorArg::Ptr{Void}
+    hCutline::Ptr{Void}
+    dfCutlineBlendDist::Cdouble
+end
+
 const GDALWarpOperationH = Ptr{Void}
 const FilterFuncType = Ptr{Void}
 const FilterFunc4ValuesType = Ptr{Void}

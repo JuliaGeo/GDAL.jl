@@ -103,9 +103,7 @@ context=wrap_c.init(headers=headerpaths,
                     clang_includes=includedirs,
                     header_wrapped=header_wrapped,
                     header_library=x->"libgdal",
-                    rewriter=minimal_rewriter,
-                    # wrap structs and make them immutable
-                    options=wrap_c.InternalOptions(true, true))
+                    rewriter=minimal_rewriter)
 
 run(context)
 
