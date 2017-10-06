@@ -22,6 +22,14 @@ info(GDAL.ogrgetdrivercount(), " OGR drivers found")
 srs = GDAL.newspatialreference(C_NULL)
 GDAL.importfromepsg(srs, 4326) # fails if GDAL_DATA is not set correctly
 
+xmlnode_pointer = GDAL.C.CPLParseXMLString("<a><b>hi</b></a>")
+@test unsafe_string(GDAL.C.CPLGetXMLValue(xmlnode_pointer, "b", "")) == "hi"
+# load into Julia struct, mutate, and put back as Ref into GDAL
+xmlnode = unsafe_load(xmlnode_pointer)
+xmlnode.pszValue = Base.unsafe_convert(Cstring, "c")  # rename "a" to "c"
+@test unsafe_string(GDAL.C.CPLSerializeXMLTree(Ref(xmlnode))) == "<c>\n  <b>hi</b>\n</c>\n"
+GDAL.C.CPLDestroyXMLNode(xmlnode_pointer)
+
 cd(dirname(@__FILE__)) do
     isdir("tmp") || mkpath("tmp") # ensure it exists
 
