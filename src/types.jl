@@ -28,7 +28,6 @@ abstract type OGRCoordinateTransformationH end
 abstract type OGRFeatureDefnH end
 abstract type OGRFeatureH end
 abstract type OGRFieldDefnH end
-abstract type OGRGeomFieldDefnH end
 abstract type OGRGeometryH end
 abstract type OGRSpatialReferenceH end
 abstract type OGRStyleMgrH end
