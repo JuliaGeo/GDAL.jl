@@ -2459,7 +2459,7 @@ Create a new field geometry definition.
 handle to the new field definition.
 """
 function gfld_create(arg1, arg2::OGRwkbGeometryType)
-    checknull(ccall((:OGR_GFld_Create, libgdal), Ptr{OGRGeomFieldDefnH}, (Cstring, OGRwkbGeometryType), arg1, arg2))
+    ccall((:OGR_GFld_Create, libgdal), OGRGeomFieldDefnH, (Cstring, OGRwkbGeometryType), arg1, arg2)
 end
 
 
@@ -2471,8 +2471,8 @@ Destroy a geometry field definition.
 ### Parameters
 * **hDefn**: handle to the geometry field definition to destroy.
 """
-function destroy(arg1::Ref{OGRGeomFieldDefnH})
-    ccall((:OGR_GFld_Destroy, libgdal), Void, (Ptr{Void},), arg1)
+function destroy(arg1::OGRGeomFieldDefnH)
+    ccall((:OGR_GFld_Destroy, libgdal), Void, (OGRGeomFieldDefnH,), arg1)
 end
 
 
@@ -2486,8 +2486,8 @@ Reset the name of this field.
 * **hDefn**: handle to the geometry field definition to apply the new name to.
 * **pszName**: the new name to apply.
 """
-function setname(arg1::Ref{OGRGeomFieldDefnH}, arg2)
-    ccall((:OGR_GFld_SetName, libgdal), Void, (Ptr{Void}, Cstring), arg1, arg2)
+function setname(arg1::OGRGeomFieldDefnH, arg2)
+    ccall((:OGR_GFld_SetName, libgdal), Void, (OGRGeomFieldDefnH, Cstring), arg1, arg2)
 end
 
 
@@ -2502,8 +2502,8 @@ Fetch name of this field.
 ### Returns
 the name of the geometry field definition.
 """
-function getnameref(arg1::Ref{OGRGeomFieldDefnH})
-    unsafe_string(ccall((:OGR_GFld_GetNameRef, libgdal), Cstring, (Ptr{Void},), arg1))
+function getnameref(arg1::OGRGeomFieldDefnH)
+    unsafe_string(ccall((:OGR_GFld_GetNameRef, libgdal), Cstring, (OGRGeomFieldDefnH,), arg1))
 end
 
 
@@ -2518,8 +2518,8 @@ Fetch geometry type of this field.
 ### Returns
 field geometry type.
 """
-function gettype(arg1::Ref{OGRGeomFieldDefnH})
-    ccall((:OGR_GFld_GetType, libgdal), OGRwkbGeometryType, (Ptr{Void},), arg1)
+function gettype(arg1::OGRGeomFieldDefnH)
+    ccall((:OGR_GFld_GetType, libgdal), OGRwkbGeometryType, (OGRGeomFieldDefnH,), arg1)
 end
 
 
@@ -2533,8 +2533,8 @@ Set the geometry type of this field.
 * **hDefn**: handle to the geometry field definition to set type to.
 * **eType**: the new field geometry type.
 """
-function settype(arg1::Ref{OGRGeomFieldDefnH}, arg2::OGRwkbGeometryType)
-    ccall((:OGR_GFld_SetType, libgdal), Void, (Ptr{Void}, OGRwkbGeometryType), arg1, arg2)
+function settype(arg1::OGRGeomFieldDefnH, arg2::OGRwkbGeometryType)
+    ccall((:OGR_GFld_SetType, libgdal), Void, (OGRGeomFieldDefnH, OGRwkbGeometryType), arg1, arg2)
 end
 
 
@@ -2549,8 +2549,8 @@ Fetch spatial reference system of this field.
 ### Returns
 field spatial reference system.
 """
-function getspatialref(arg1::Ref{OGRGeomFieldDefnH})
-    checknull(ccall((:OGR_GFld_GetSpatialRef, libgdal), Ptr{OGRSpatialReferenceH}, (Ptr{Void},), arg1))
+function getspatialref(arg1::OGRGeomFieldDefnH)
+    checknull(ccall((:OGR_GFld_GetSpatialRef, libgdal), Ptr{OGRSpatialReferenceH}, (OGRGeomFieldDefnH,), arg1))
 end
 
 
@@ -2564,8 +2564,8 @@ Set the spatial reference of this field.
 * **hDefn**: handle to the geometry field definition
 * **hSRS**: the new SRS to apply.
 """
-function setspatialref(arg1::Ref{OGRGeomFieldDefnH}, hSRS::Ref{OGRSpatialReferenceH})
-    ccall((:OGR_GFld_SetSpatialRef, libgdal), Void, (Ptr{Void}, Ptr{Void}), arg1, hSRS)
+function setspatialref(arg1::OGRGeomFieldDefnH, hSRS::Ref{OGRSpatialReferenceH})
+    ccall((:OGR_GFld_SetSpatialRef, libgdal), Void, (OGRGeomFieldDefnH, Ptr{Void}), arg1, hSRS)
 end
 
 
@@ -2580,8 +2580,8 @@ Return whether this geometry field can receive null values.
 ### Returns
 TRUE if the field is authorized to be null.
 """
-function isnullable(hDefn::Ref{OGRGeomFieldDefnH})
-    ccall((:OGR_GFld_IsNullable, libgdal), Cint, (Ptr{Void},), hDefn)
+function isnullable(hDefn::OGRGeomFieldDefnH)
+    ccall((:OGR_GFld_IsNullable, libgdal), Cint, (OGRGeomFieldDefnH,), hDefn)
 end
 
 
@@ -2595,8 +2595,8 @@ Set whether this geometry field can receive null values.
 * **hDefn**: handle to the field definition
 * **bNullableIn**: FALSE if the field must have a not-null constraint.
 """
-function setnullable(hDefn::Ref{OGRGeomFieldDefnH}, arg1::Integer)
-    ccall((:OGR_GFld_SetNullable, libgdal), Void, (Ptr{Void}, Cint), hDefn, arg1)
+function setnullable(hDefn::OGRGeomFieldDefnH, arg1::Integer)
+    ccall((:OGR_GFld_SetNullable, libgdal), Void, (OGRGeomFieldDefnH, Cint), hDefn, arg1)
 end
 
 
@@ -2611,8 +2611,8 @@ Return whether this field should be omitted when fetching features.
 ### Returns
 ignore state
 """
-function isignored(hDefn::Ref{OGRGeomFieldDefnH})
-    ccall((:OGR_GFld_IsIgnored, libgdal), Cint, (Ptr{Void},), hDefn)
+function isignored(hDefn::OGRGeomFieldDefnH)
+    ccall((:OGR_GFld_IsIgnored, libgdal), Cint, (OGRGeomFieldDefnH,), hDefn)
 end
 
 
@@ -2626,8 +2626,8 @@ Set whether this field should be omitted when fetching features.
 * **hDefn**: handle to the geometry field definition
 * **ignore**: ignore state
 """
-function setignored(hDefn::Ref{OGRGeomFieldDefnH}, arg1::Integer)
-    ccall((:OGR_GFld_SetIgnored, libgdal), Void, (Ptr{Void}, Cint), hDefn, arg1)
+function setignored(hDefn::OGRGeomFieldDefnH, arg1::Integer)
+    ccall((:OGR_GFld_SetIgnored, libgdal), Void, (OGRGeomFieldDefnH, Cint), hDefn, arg1)
 end
 
 
@@ -2963,7 +2963,7 @@ Fetch geometry field definition of the passed feature definition.
 an handle to an internal field definition object or NULL if invalid index. This object should not be modified or freed by the application.
 """
 function getgeomfielddefn(hFDefn::Ref{OGRFeatureDefnH}, i::Integer)
-    checknull(ccall((:OGR_FD_GetGeomFieldDefn, libgdal), Ptr{OGRGeomFieldDefnH}, (Ptr{Void}, Cint), hFDefn, i))
+    ccall((:OGR_FD_GetGeomFieldDefn, libgdal), OGRGeomFieldDefnH, (Ptr{Void}, Cint), hFDefn, i)
 end
 
 
@@ -2995,8 +2995,8 @@ Add a new field definition to the passed feature definition.
 * **hDefn**: handle to the feature definition to add the geometry field definition to.
 * **hNewGeomField**: handle to the new field definition.
 """
-function addgeomfielddefn(hFDefn::Ref{OGRFeatureDefnH}, hGFldDefn::Ref{OGRGeomFieldDefnH})
-    ccall((:OGR_FD_AddGeomFieldDefn, libgdal), Void, (Ptr{Void}, Ptr{Void}), hFDefn, hGFldDefn)
+function addgeomfielddefn(hFDefn::Ref{OGRFeatureDefnH}, hGFldDefn::OGRGeomFieldDefnH)
+    ccall((:OGR_FD_AddGeomFieldDefn, libgdal), Void, (Ptr{Void}, OGRGeomFieldDefnH), hFDefn, hGFldDefn)
 end
 
 
@@ -3886,7 +3886,7 @@ Fetch definition for this geometry field.
 an handle to the field definition (from the OGRFeatureDefn). This is an internal reference, and should not be deleted or modified.
 """
 function getgeomfielddefnref(hFeat::Ref{OGRFeatureH}, iField::Integer)
-    checknull(ccall((:OGR_F_GetGeomFieldDefnRef, libgdal), Ptr{OGRGeomFieldDefnH}, (Ptr{Void}, Cint), hFeat, iField))
+    ccall((:OGR_F_GetGeomFieldDefnRef, libgdal), OGRGeomFieldDefnH, (Ptr{Void}, Cint), hFeat, iField)
 end
 
 
@@ -4655,8 +4655,8 @@ Create a new geometry field on a layer.
 ### Returns
 OGRERR_NONE on success.
 """
-function creategeomfield(hLayer::Ref{OGRLayerH}, hFieldDefn::Ref{OGRGeomFieldDefnH}, bForce::Integer)
-    ccall((:OGR_L_CreateGeomField, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}, Cint), hLayer, hFieldDefn, bForce)
+function creategeomfield(hLayer::Ref{OGRLayerH}, hFieldDefn::OGRGeomFieldDefnH, bForce::Integer)
+    ccall((:OGR_L_CreateGeomField, libgdal), OGRErr, (Ptr{Void}, OGRGeomFieldDefnH, Cint), hLayer, hFieldDefn, bForce)
 end
 
 

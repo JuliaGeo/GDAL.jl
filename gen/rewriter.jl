@@ -181,7 +181,6 @@ function rewriter(ex::Expr)
     ex
 end
 
-"rewrite typealias Ptr{Void} to immutable"
 function commonrewriter!(io::IOStream, ex::Expr, opaquepointers::Set{Symbol})
     if ex.head == :const
         lhs, rhs = ex.args[1].args
@@ -190,9 +189,6 @@ function commonrewriter!(io::IOStream, ex::Expr, opaquepointers::Set{Symbol})
             # they are manually defined in types.jl
             push!(opaquepointers, lhs)
             return
-        elseif rhs == :Void
-            println(ex)
-            error("const x = Void encountered, stopping")
         elseif startswith(string(lhs), "ANONYMOUS_")
             println(ex)
             error("ANONYMOUS_* variable name found, stopping")
