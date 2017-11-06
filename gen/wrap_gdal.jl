@@ -108,7 +108,7 @@ function minimal_rewriter(ex::Expr)
         #     typename = ex.args[2]::Symbol
         #     ex = :(const $typename = Ptr{Void})
         # end
-        @capture(ex, type T_ fields__ end)
+        @capture(ex, mutable struct T_ fields__ end)
         if isempty(fields)
             ex = :(const $T = Ptr{Void})
         end
