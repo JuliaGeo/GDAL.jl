@@ -30,6 +30,17 @@ xmlnode.pszValue = Base.unsafe_convert(Cstring, "c")  # rename "a" to "c"
 @test unsafe_string(GDAL.C.CPLSerializeXMLTree(Ref(xmlnode))) == "<c>\n  <b>hi</b>\n</c>\n"
 GDAL.C.CPLDestroyXMLNode(xmlnode_pointer)
 
+# ref https://github.com/visr/GDAL.jl/pull/41#discussion_r143345433
+gfld = GDAL.gfld_create("name-a", GDAL.wkbPoint)
+@test gfld isa Ptr{GDAL.OGRGeomFieldDefnH}
+@test GDAL.getnameref(gfld) == "name-a"
+@test GDAL.gettype(gfld) == GDAL.wkbPoint
+# same as above but for the lower level C API
+gfld = GDAL.C.OGR_GFld_Create("name-b", GDAL.C.wkbPolygon)
+@test gfld isa Ptr{Void}
+@test unsafe_string(GDAL.C.OGR_GFld_GetNameRef(gfld)) == "name-b"
+@test GDAL.C.OGR_GFld_GetType(gfld) == GDAL.C.wkbPolygon
+
 cd(dirname(@__FILE__)) do
     isdir("tmp") || mkpath("tmp") # ensure it exists
 

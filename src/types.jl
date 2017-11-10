@@ -23,12 +23,14 @@ abstract type GDALProgressFunc end
 abstract type GDALRasterAttributeTableH end
 abstract type GDALTransformerFunc end
 abstract type GDALWarpOperationH end
+abstract type GDALGridContext end
 
 abstract type OGRCoordinateTransformationH end
 abstract type OGRFeatureDefnH end
 abstract type OGRFeatureH end
 abstract type OGRFieldDefnH end
 abstract type OGRGeometryH end
+abstract type OGRGeomFieldDefnH end
 abstract type OGRSpatialReferenceH end
 abstract type OGRStyleMgrH end
 abstract type OGRStyleTableH end
@@ -58,3 +60,26 @@ abstract type CPLFileFinder end
 abstract type CPLVirtualMemCachePageCbk end
 abstract type CPLVirtualMemFreeUserData end
 abstract type CPLVirtualMemUnCachePageCbk end
+abstract type VSIStatBufL end
+abstract type _CPLXMLNode end
+abstract type CPLVirtualMem end
+
+# GDAL utils options
+abstract type GDALBuildVRTOptions end
+abstract type GDALBuildVRTOptionsForBinary end
+abstract type GDALDEMProcessingOptions end
+abstract type GDALDEMProcessingOptionsForBinary end
+abstract type GDALGridOptions end
+abstract type GDALGridOptionsForBinary end
+abstract type GDALInfoOptions end
+abstract type GDALInfoOptionsForBinary end
+abstract type GDALNearblackOptions end
+abstract type GDALNearblackOptionsForBinary end
+abstract type GDALRasterizeOptions end
+abstract type GDALRasterizeOptionsForBinary end
+abstract type GDALTranslateOptions end
+abstract type GDALTranslateOptionsForBinary end
+abstract type GDALVectorTranslateOptions end
+abstract type GDALVectorTranslateOptionsForBinary end
+abstract type GDALWarpAppOptions end
+abstract type GDALWarpAppOptionsForBinary end

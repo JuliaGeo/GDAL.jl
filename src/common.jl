@@ -42,10 +42,6 @@ const GUIntBig = Culonglong
 const GInt64 = GIntBig
 const GUInt64 = GUIntBig
 const GPtrDiff_t = GIntBig
-
-mutable struct CPLVirtualMem
-end
-
 @enum CPLVirtualMemAccessMode::UInt32 VIRTUALMEM_READONLY = 0 VIRTUALMEM_READONLY_ENFORCED = 1 VIRTUALMEM_READWRITE = 2
 const VSI_STAT_EXISTS_FLAG = 0x01
 const VSI_STAT_NATURE_FLAG = 0x02
@@ -55,10 +51,6 @@ const VSIStatBuf = Void
 const vsi_l_offset = GUIntBig
 const VSILFILE = FILE
 @enum VSIRangeStatus::UInt32 VSI_RANGE_STATUS_UNKNOWN = 0 VSI_RANGE_STATUS_DATA = 1 VSI_RANGE_STATUS_HOLE = 2
-
-mutable struct VSIStatBufL
-end
-
 const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
 const GDALMD_AREA_OR_POINT = "AREA_OR_POINT"
 const GDALMD_AOP_AREA = "Area"
@@ -251,10 +243,6 @@ mutable struct GDALGridLinearOptions
 end
 
 
-mutable struct GDALGridContext
-end
-
-
 mutable struct GDALTriFacet
     anVertexIdx::NTuple{3, Cint}
     anNeighborIdx::NTuple{3, Cint}
@@ -275,14 +263,6 @@ mutable struct GDALTriangulation
     nFacets::Cint
     pasFacets::Ptr{GDALTriFacet}
     pasFacetCoefficients::Ptr{GDALTriBarycentricCoefficients}
-end
-
-
-mutable struct _CPLXMLNode
-end
-
-
-mutable struct OGRGeomFieldDefnH
 end
 
 const OGRERR_NONE = 0
@@ -427,78 +407,6 @@ mutable struct GDALWarpOptions
 end
 
 const VRT_NODATA_UNSET = -1234.56
-
-mutable struct GDALInfoOptions
-end
-
-
-mutable struct GDALInfoOptionsForBinary
-end
-
-
-mutable struct GDALTranslateOptions
-end
-
-
-mutable struct GDALTranslateOptionsForBinary
-end
-
-
-mutable struct GDALWarpAppOptions
-end
-
-
-mutable struct GDALWarpAppOptionsForBinary
-end
-
-
-mutable struct GDALVectorTranslateOptions
-end
-
-
-mutable struct GDALVectorTranslateOptionsForBinary
-end
-
-
-mutable struct GDALDEMProcessingOptions
-end
-
-
-mutable struct GDALDEMProcessingOptionsForBinary
-end
-
-
-mutable struct GDALNearblackOptions
-end
-
-
-mutable struct GDALNearblackOptionsForBinary
-end
-
-
-mutable struct GDALGridOptions
-end
-
-
-mutable struct GDALGridOptionsForBinary
-end
-
-
-mutable struct GDALRasterizeOptions
-end
-
-
-mutable struct GDALRasterizeOptionsForBinary
-end
-
-
-mutable struct GDALBuildVRTOptions
-end
-
-
-mutable struct GDALBuildVRTOptionsForBinary
-end
-
 const SRS_WKT_WGS84 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]"
 const SRS_PT_ALBERS_CONIC_EQUAL_AREA = "Albers_Conic_Equal_Area"
 const SRS_PT_AZIMUTHAL_EQUIDISTANT = "Azimuthal_Equidistant"

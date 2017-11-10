@@ -1,5 +1,6 @@
 using Clang
 using LibExpat
+using MacroTools
 
 const workdir = @__DIR__
 const srcdir = joinpath(workdir, "../src")
@@ -90,6 +91,27 @@ function minimal_rewriter(ex::Expr)
         # turn it into a tuple, special cased in visr/Clang.jl
         # done because a block Expr gets a begin/end block when printing
         ex = (docstr, ex)
+    elseif ex.head == :type
+        # detect singletons: "mutable struct A end"
+        # and rewrite them to "const A = Ptr{Void}"
+        # without this rewrite they are note usable:
+        # ERROR: ccall: the type of argument 1 doesn't correspond to a C type
+        # see https://github.com/visr/GDAL.jl/pull/41#discussion_r143345433
+        # these singletons are meant to be opaque types, but in C are not of
+        # type `typedef void *` but instead something like
+        # `typedef struct OGRGeomFieldDefnHS *` (for OGRGeomFieldDefnH)
+
+        # detect singletons by checking if any of the block args
+        # are of type Symbol, which is the type of fieldnames
+        # has_fields = any(el isa Symbol for el in ex.args[3].args)
+        # if !has_fields
+        #     typename = ex.args[2]::Symbol
+        #     ex = :(const $typename = Ptr{Void})
+        # end
+        @capture(ex, type T_ fields__ end)
+        if isempty(fields)
+            ex = :(const $T = Ptr{Void})
+        end
     end
     ex
 end
