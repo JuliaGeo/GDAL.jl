@@ -130,10 +130,7 @@ const GInt64 = GIntBig
 const GUInt64 = GUIntBig
 const GPtrDiff_t = GIntBig
 const GDALProgressFunc = Ptr{Void}
-
-mutable struct CPLVirtualMem
-end
-
+const CPLVirtualMem = Ptr{Void}
 const CPLVirtualMemCachePageCbk = Ptr{Void}
 const CPLVirtualMemUnCachePageCbk = Ptr{Void}
 const CPLVirtualMemFreeUserData = Ptr{Void}
@@ -172,9 +169,7 @@ const VSILFILE = FILE
 
 @enum VSIRangeStatus::UInt32 VSI_RANGE_STATUS_UNKNOWN = 0 VSI_RANGE_STATUS_DATA = 1 VSI_RANGE_STATUS_HOLE = 2
 
-mutable struct VSIStatBufL
-end
-
+const VSIStatBufL = Ptr{Void}
 const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
 
 # Skipping MacroDefinition: INIT_RASTERIO_EXTRA_ARG ( s ) do { ( s ) . nVersion = RASTERIO_EXTRA_ARG_CURRENT_VERSION ; ( s ) . eResampleAlg = GRIORA_NearestNeighbour ; ( s ) . pfnProgress = NULL ; ( s ) . pProgressData = NULL ; ( s ) . bFloatingPointWindowValidity = FALSE ; } while ( 0 )
@@ -385,8 +380,7 @@ mutable struct GDALGridLinearOptions
     dfNoDataValue::Cdouble
 end
 
-mutable struct GDALGridContext
-end
+const GDALGridContext = Ptr{Void}
 
 mutable struct GDALTriFacet
     anVertexIdx::NTuple{3, Cint}
@@ -411,18 +405,12 @@ end
 const OGRGeometryH = Ptr{Void}
 const OGRSpatialReferenceH = Ptr{Void}
 const OGRCoordinateTransformationH = Ptr{Void}
-
-mutable struct _CPLXMLNode
-end
-
+const _CPLXMLNode = Ptr{Void}
 const OGRFieldDefnH = Ptr{Void}
 const OGRFeatureDefnH = Ptr{Void}
 const OGRFeatureH = Ptr{Void}
 const OGRStyleTableH = Ptr{Void}
-
-mutable struct OGRGeomFieldDefnH
-end
-
+const OGRGeomFieldDefnH = Ptr{Void}
 const OGRLayerH = Ptr{Void}
 const OGRDataSourceH = Ptr{Void}
 const OGRSFDriverH = Ptr{Void}
@@ -620,61 +608,24 @@ const VRTWarpedDatasetH = Ptr{Void}
 const VRTWarpedRasterBandH = Ptr{Void}
 const VRTDatasetH = Ptr{Void}
 const VRTSourcedRasterBandH = Ptr{Void}
-
-mutable struct GDALInfoOptions
-end
-
-mutable struct GDALInfoOptionsForBinary
-end
-
-mutable struct GDALTranslateOptions
-end
-
-mutable struct GDALTranslateOptionsForBinary
-end
-
-mutable struct GDALWarpAppOptions
-end
-
-mutable struct GDALWarpAppOptionsForBinary
-end
-
-mutable struct GDALVectorTranslateOptions
-end
-
-mutable struct GDALVectorTranslateOptionsForBinary
-end
-
-mutable struct GDALDEMProcessingOptions
-end
-
-mutable struct GDALDEMProcessingOptionsForBinary
-end
-
-mutable struct GDALNearblackOptions
-end
-
-mutable struct GDALNearblackOptionsForBinary
-end
-
-mutable struct GDALGridOptions
-end
-
-mutable struct GDALGridOptionsForBinary
-end
-
-mutable struct GDALRasterizeOptions
-end
-
-mutable struct GDALRasterizeOptionsForBinary
-end
-
-mutable struct GDALBuildVRTOptions
-end
-
-mutable struct GDALBuildVRTOptionsForBinary
-end
-
+const GDALInfoOptions = Ptr{Void}
+const GDALInfoOptionsForBinary = Ptr{Void}
+const GDALTranslateOptions = Ptr{Void}
+const GDALTranslateOptionsForBinary = Ptr{Void}
+const GDALWarpAppOptions = Ptr{Void}
+const GDALWarpAppOptionsForBinary = Ptr{Void}
+const GDALVectorTranslateOptions = Ptr{Void}
+const GDALVectorTranslateOptionsForBinary = Ptr{Void}
+const GDALDEMProcessingOptions = Ptr{Void}
+const GDALDEMProcessingOptionsForBinary = Ptr{Void}
+const GDALNearblackOptions = Ptr{Void}
+const GDALNearblackOptionsForBinary = Ptr{Void}
+const GDALGridOptions = Ptr{Void}
+const GDALGridOptionsForBinary = Ptr{Void}
+const GDALRasterizeOptions = Ptr{Void}
+const GDALRasterizeOptionsForBinary = Ptr{Void}
+const GDALBuildVRTOptions = Ptr{Void}
+const GDALBuildVRTOptionsForBinary = Ptr{Void}
 const SRS_WKT_WGS84 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]"
 const SRS_PT_ALBERS_CONIC_EQUAL_AREA = "Albers_Conic_Equal_Area"
 const SRS_PT_AZIMUTHAL_EQUIDISTANT = "Azimuthal_Equidistant"
