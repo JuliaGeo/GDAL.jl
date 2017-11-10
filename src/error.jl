@@ -7,7 +7,7 @@ errortype = Dict{UInt32, AbstractString}(
     4 => "Fatal"
 )
 
-mutable struct GDALError <: Exception
+struct GDALError <: Exception
     class::AbstractString
     code::Int
     msg::AbstractString
