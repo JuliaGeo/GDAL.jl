@@ -3,7 +3,10 @@ using BinDeps
 @BinDeps.setup
 
 function version_check(name, handle)
-    fptr = Libdl.dlsym(handle, :GDALVersionInfo)
+    fptr = Libdl.dlsym_e(handle, :GDALVersionInfo)
+    if fptr == C_NULL  # lookup failure
+        return false
+    end
     versionptr = ccall(fptr,Cstring,(Cstring,),"RELEASE_NAME")
     versionstring = unsafe_string(versionptr)
     gdalversion = convert(VersionNumber, versionstring)
