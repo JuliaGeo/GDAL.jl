@@ -2,21 +2,15 @@ __precompile__()
 
 module GDAL
 
-# this can go when all ccalls are done in the C submodule
-const depfile = joinpath(dirname(@__FILE__), "..", "deps", "deps.jl")
-if isfile(depfile)
-    include(depfile)
-else
-    error("libgdal not properly installed. Please run Pkg.build(\"GDAL\")")
+# Load in `deps.jl`, complaining if it does not exist
+const depsjl_path = joinpath(@__DIR__, "..", "deps", "deps.jl")
+if !isfile(depsjl_path)
+    error("GDAL not installed properly, run Pkg.build(\"GDAL\"), restart Julia and try again")
 end
+include(depsjl_path)
 
 module C
-    const depfile = joinpath(dirname(@__FILE__), "..", "deps", "deps.jl")
-    if isfile(depfile)
-        include(depfile)
-    else
-        error("libgdal not properly installed. Please run Pkg.build(\"GDAL\")")
-    end
+    import GDAL: libgdal
 
     include("C/misc.jl")
     include("C/common.jl")
@@ -48,39 +42,10 @@ include("ogr_srs_api.jl")
 
 include("error.jl")
 
-"find a path for the GDAL_DATA environment variable based on gdal-config or some heuristics"
-function find_gdal_data(libgdal::String)
-    # libgdal is the absolute path to the shared library defined in deps.jl
-    gdaldir = dirname(libgdal)
-
-    # try gdal-config --datadir
-    @static if is_unix()
-        # assume gdal-config is in the same directory as libgdal
-        gdalconfig = joinpath(gdaldir, "gdal-config")
-        if isfile(gdalconfig)
-            datadir = chomp(readstring(`$gdalconfig --datadir`))
-            isfile(joinpath(datadir, "gcs.csv")) && return datadir
-        else
-            # if gdal-config is in path, use that as a second choice
-            try
-                datadir = chomp(readstring(`gdal-config --datadir`))
-                isfile(joinpath(datadir, "gcs.csv")) && return datadir
-            end
-        end
-    end
-
-    RPMbindir = Pkg.dir("WinRPM","deps","usr","$(Sys.ARCH)-w64-mingw32","sys-root","mingw","bin")
-    if gdaldir == RPMbindir
-        datadir = abspath(joinpath(gdaldir, "../share"))
-    else
-        # this is the relative path to GDAL_DATA for at least OSGeo4w and conda installations
-        datadir = abspath(joinpath(gdaldir, "../share/gdal"))
-    end
-    isfile(joinpath(datadir, "gcs.csv")) && return datadir
-    return "" # return an empty string if we failed to find it
-end
-
 function __init__()
+    # Always check your dependencies from `deps.jl`
+    check_deps()
+
     # register custom error handler
     funcptr = cfunction(gdaljl_errorhandler, Ptr{Void}, (UInt32, Cint, Ptr{UInt8}))
     C.CPLSetErrorHandler(funcptr)
@@ -88,28 +53,9 @@ function __init__()
     # get GDAL version number
     versionstring = unsafe_string(C.GDALVersionInfo("RELEASE_NAME"))
     global const GDALVERSION = convert(VersionNumber, versionstring)
-    if GDALVERSION < v"2.0.0"
-        warn("GDAL.jl is made for GDAL 2.0 and later")
-    end
 
-    # ensure GDAL_DATA environment variable is set
-    if haskey(ENV, "GDAL_DATA")
-        # gcs.csv can always be expected in the GDAL_DATA folder
-        if !isfile(joinpath(ENV["GDAL_DATA"], "gcs.csv"))
-            warn("""GDAL_DATA environment variable is not set correctly.
-            GDAL_DATA=$(ENV["GDAL_DATA"])""")
-        end
-        GDAL_DATA = ENV["GDAL_DATA"]
-    else
-        # try to find and set GDAL_DATA
-        datadir = find_gdal_data(libgdal)
-        if datadir == ""
-            warn("""GDAL_DATA environment variable cannot be found, please set it manually.
-            See https://trac.osgeo.org/gdal/wiki/FAQInstallationAndBuilding#WhatisGDAL_DATAenvironmentvariable""")
-        end
-        GDAL_DATA = datadir
-    end
     # set the GDAL_DATA variable
+    GDAL_DATA = abspath(@__DIR__, "..", "deps", "usr", "share", "gdal")
     C.CPLSetConfigOption("GDAL_DATA", GDAL_DATA)
 end
 
