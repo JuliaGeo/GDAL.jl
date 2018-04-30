@@ -14,7 +14,7 @@ This package is currently unregistered, so add it using `Pkg.clone`, then find o
 Pkg.clone("https://github.com/visr/GDAL.jl.git")
 Pkg.build("GDAL")
 ```
-`Pkg.build` searches for a GDAL 2.1+ shared library on the path. If not found, it will download and install it. To test if it is installed correctly, use:
+`Pkg.build` downloads GDAL binaries created by [GDALBuilder](https://github.com/visr/GDALBuilder). To test if it is installed correctly, use:
 ```julia
 Pkg.test("GDAL")
 ```

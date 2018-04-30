@@ -1,4 +1,2 @@
 julia 0.6
-BinDeps 0.4.7
-@unix Conda 0.5.1
-@windows WinRPM 0.2.3
+BinaryProvider 0.3.0

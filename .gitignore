@@ -1,4 +1,5 @@
 /deps/deps.jl
+deps/usr
 /gen/doxygen.xml
 *.jl.cov
 *.jl.*.cov
