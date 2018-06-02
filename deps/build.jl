@@ -49,6 +49,7 @@ import Proj4
 import LibGEOS
 Libdl.dlopen(CodecZlib.libz)
 Libdl.dlopen(Proj4.libproj)
+Libdl.dlopen(LibGEOS.libgeos_cpp)
 Libdl.dlopen(LibGEOS.libgeos)
 
 # Write out a deps.jl file that will contain mappings for our products
