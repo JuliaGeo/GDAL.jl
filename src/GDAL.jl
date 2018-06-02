@@ -9,6 +9,11 @@ if !isfile(depsjl_path)
 end
 include(depsjl_path)
 
+# import these for their dynamic libraries, which libgdal needs
+import CodecZlib
+import Proj4
+import LibGEOS
+
 module C
     import GDAL: libgdal
 
@@ -43,6 +48,11 @@ include("ogr_srs_api.jl")
 include("error.jl")
 
 function __init__()
+    Libdl.dlopen(CodecZlib.libz)
+    Libdl.dlopen(Proj4.libproj)
+    Libdl.dlopen(LibGEOS.libgeos)
+    Libdl.dlopen(libgdal)
+
     # Always check your dependencies from `deps.jl`
     check_deps()
 
