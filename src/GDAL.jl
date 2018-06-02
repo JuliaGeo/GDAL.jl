@@ -51,22 +51,25 @@ function __init__()
     Libdl.dlopen(CodecZlib.libz)
     Libdl.dlopen(Proj4.libproj)
     Libdl.dlopen(LibGEOS.libgeos)
-    Libdl.dlopen(libgdal)
+    h = Libdl.dlopen(libgdal)
+    finfo = Libdl.dlsym(h, :GDALVersionInfo)
+    fconf = Libdl.dlsym(h, :CPLSetConfigOption)
+    ferrh = Libdl.dlsym(h, :CPLSetErrorHandler)
 
     # Always check your dependencies from `deps.jl`
     check_deps()
 
     # register custom error handler
     funcptr = cfunction(gdaljl_errorhandler, Ptr{Void}, (UInt32, Cint, Ptr{UInt8}))
-    C.CPLSetErrorHandler(funcptr)
+    ccall(ferrh, Ptr{Void}, (Ptr{Void},), funcptr)
 
     # get GDAL version number
-    versionstring = unsafe_string(C.GDALVersionInfo("RELEASE_NAME"))
+    versionstring = unsafe_string(ccall(finfo, Cstring, (Cstring,), "RELEASE_NAME"))
     global const GDALVERSION = convert(VersionNumber, versionstring)
 
     # set the GDAL_DATA variable
     GDAL_DATA = abspath(@__DIR__, "..", "deps", "usr", "share", "gdal")
-    C.CPLSetConfigOption("GDAL_DATA", GDAL_DATA)
+    ccall(fconf, Void, (Cstring, Cstring), "GDAL_DATA", GDAL_DATA)
 end
 
 end
