@@ -1297,7 +1297,7 @@ Test if the geometry is empty.
 ### Returns
 TRUE if the geometry has no points, otherwise FALSE.
 """
-function isempty(arg1::Ref{OGRGeometryH})
+function Base.isempty(arg1::Ref{OGRGeometryH})
     ccall((:OGR_G_IsEmpty, libgdal), Cint, (Ptr{Void},), arg1)
 end
 

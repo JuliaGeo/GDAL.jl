@@ -37,6 +37,7 @@ const custom_rename = Dict{String, String}(
 
     # prevent overwriting Base functions
     "gdalinfo" => "Base.info",
+    "ogr_g_isempty" => "Base.isempty",
 
     # prevent automatic renaming
     "ogrgetdrivercount" => "ogrgetdrivercount",
