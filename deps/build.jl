@@ -53,4 +53,4 @@ Libdl.dlopen(LibGEOS.libgeos_cpp)
 Libdl.dlopen(LibGEOS.libgeos)
 
 # Write out a deps.jl file that will contain mappings for our products
-write_deps_file(joinpath(@__DIR__, "deps.jl"), products, verbose=true)
+write_deps_file(joinpath(@__DIR__, "deps.jl"), products)
