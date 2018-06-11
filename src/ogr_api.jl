@@ -1220,7 +1220,7 @@ Compute length of a geometry.
 ### Returns
 the length or 0.0 for unsupported geometry types.
 """
-function length(arg1::Ref{OGRGeometryH})
+function Base.length(arg1::Ref{OGRGeometryH})
     ccall((:OGR_G_Length, libgdal), Cdouble, (Ptr{Void},), arg1)
 end
 
