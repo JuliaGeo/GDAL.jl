@@ -163,8 +163,6 @@ function rewriter(ex::Expr)
         if intype in opaquepointers
             # in C the opaque pointers are all typedef void *, i.e. Ptr{Void}
             intypes[i] = :(Ptr{Void})
-        elseif intype == :(Ptr{Cstring})
-            intypes[i] = :StringList  # see misc.jl
         end
     end
     # modify ccall return type or wrap entire ccall based on return type

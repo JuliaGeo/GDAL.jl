@@ -155,7 +155,7 @@ end
 Import from WKT string.
 """
 function importfromwkt(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRImportFromWkt, libgdal), OGRErr, (Ptr{Void}, StringList), arg1, arg2)
+    ccall((:OSRImportFromWkt, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -177,7 +177,7 @@ end
 Import coordinate system from ESRI .prj format(s).
 """
 function importfromesri(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRImportFromESRI, libgdal), OGRErr, (Ptr{Void}, StringList), arg1, arg2)
+    ccall((:OSRImportFromESRI, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -267,7 +267,7 @@ Import coordinate system from OziExplorer projection definition.
 OGRERR_NONE on success or an error code in case of failure.
 """
 function importfromozi(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRImportFromOzi, libgdal), OGRErr, (Ptr{Void}, StringList), arg1, arg2)
+    ccall((:OSRImportFromOzi, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -313,7 +313,7 @@ end
 Convert this SRS into WKT format.
 """
 function exporttowkt(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRExportToWkt, libgdal), OGRErr, (Ptr{Void}, StringList), arg1, arg2)
+    ccall((:OSRExportToWkt, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -325,7 +325,7 @@ end
 Convert this SRS into a nicely formatted WKT string for display to a person.
 """
 function exporttoprettywkt(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3::Integer)
-    ccall((:OSRExportToPrettyWkt, libgdal), OGRErr, (Ptr{Void}, StringList, Cint), arg1, arg2, arg3)
+    ccall((:OSRExportToPrettyWkt, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}, Cint), arg1, arg2, arg3)
 end
 
 
@@ -336,7 +336,7 @@ end
 Export coordinate system in PROJ.4 format.
 """
 function exporttoproj4(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRExportToProj4, libgdal), OGRErr, (Ptr{Void}, StringList), arg1, arg2)
+    ccall((:OSRExportToProj4, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -349,7 +349,7 @@ end
 Export coordinate system in PCI projection definition.
 """
 function exporttopci(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3, arg4)
-    ccall((:OSRExportToPCI, libgdal), OGRErr, (Ptr{Void}, StringList, StringList, Ptr{Ptr{Cdouble}}), arg1, arg2, arg3, arg4)
+    ccall((:OSRExportToPCI, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}, Ptr{Cstring}, Ptr{Ptr{Cdouble}}), arg1, arg2, arg3, arg4)
 end
 
 
@@ -375,7 +375,7 @@ end
 Export coordinate system in XML format.
 """
 function exporttoxml(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3)
-    ccall((:OSRExportToXML, libgdal), OGRErr, (Ptr{Void}, StringList, Cstring), arg1, arg2, arg3)
+    ccall((:OSRExportToXML, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}, Cstring), arg1, arg2, arg3)
 end
 
 
@@ -401,7 +401,7 @@ end
 Export coordinate system in Mapinfo style CoordSys format.
 """
 function exporttomicoordsys(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRExportToMICoordSys, libgdal), OGRErr, (Ptr{Void}, StringList), arg1, arg2)
+    ccall((:OSRExportToMICoordSys, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -481,7 +481,7 @@ end
 Fetch angular geographic coordinate system units.
 """
 function getangularunits(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRGetAngularUnits, libgdal), Cdouble, (Ptr{Void}, StringList), arg1, arg2)
+    ccall((:OSRGetAngularUnits, libgdal), Cdouble, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -529,7 +529,7 @@ end
 Fetch linear projection units.
 """
 function getlinearunits(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRGetLinearUnits, libgdal), Cdouble, (Ptr{Void}, StringList), arg1, arg2)
+    ccall((:OSRGetLinearUnits, libgdal), Cdouble, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -541,7 +541,7 @@ end
 Fetch linear projection units.
 """
 function gettargetlinearunits(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3)
-    ccall((:OSRGetTargetLinearUnits, libgdal), Cdouble, (Ptr{Void}, Cstring, StringList), arg1, arg2, arg3)
+    ccall((:OSRGetTargetLinearUnits, libgdal), Cdouble, (Ptr{Void}, Cstring, Ptr{Cstring}), arg1, arg2, arg3)
 end
 
 
@@ -552,7 +552,7 @@ end
 Fetch prime meridian info.
 """
 function getprimemeridian(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRGetPrimeMeridian, libgdal), Cdouble, (Ptr{Void}, StringList), arg1, arg2)
+    ccall((:OSRGetPrimeMeridian, libgdal), Cdouble, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -1906,7 +1906,7 @@ Fetch the parameters for a given projection method.
 returns a NULL terminated list of internal parameter names that should be freed by the caller when no longer needed. Returns NULL if projection method is unknown.
 """
 function optgetparameterlist(pszProjectionMethod, ppszUserName)
-    unsafe_loadstringlist(ccall((:OPTGetParameterList, libgdal), Ptr{Cstring}, (Cstring, StringList), pszProjectionMethod, ppszUserName))
+    unsafe_loadstringlist(ccall((:OPTGetParameterList, libgdal), Ptr{Cstring}, (Cstring, Ptr{Cstring}), pszProjectionMethod, ppszUserName))
 end
 
 
@@ -1930,5 +1930,5 @@ Fetch information about a single parameter of a projection method.
 TRUE if parameter found, or FALSE otherwise.
 """
 function optgetparameterinfo(pszProjectionMethod, pszParameterName, ppszUserName, ppszType, pdfDefaultValue)
-    ccall((:OPTGetParameterInfo, libgdal), Cint, (Cstring, Cstring, StringList, StringList, Ptr{Cdouble}), pszProjectionMethod, pszParameterName, ppszUserName, ppszType, pdfDefaultValue)
+    ccall((:OPTGetParameterInfo, libgdal), Cint, (Cstring, Cstring, Ptr{Cstring}, Ptr{Cstring}, Ptr{Cdouble}), pszProjectionMethod, pszParameterName, ppszUserName, ppszType, pdfDefaultValue)
 end

@@ -251,7 +251,7 @@ end
 Create a new dataset with this driver.
 """
 function create(hDriver::Ref{<:GDALDriverH}, arg1, arg2::Integer, arg3::Integer, arg4::Integer, arg5::GDALDataType, arg6)
-    checknull(ccall((:GDALCreate, libgdal), Ptr{GDALDatasetH}, (Ptr{Void}, Cstring, Cint, Cint, Cint, GDALDataType, StringList), hDriver, arg1, arg2, arg3, arg4, arg5, arg6))
+    checknull(ccall((:GDALCreate, libgdal), Ptr{GDALDatasetH}, (Ptr{Void}, Cstring, Cint, Cint, Cint, GDALDataType, Ptr{Cstring}), hDriver, arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 
@@ -267,7 +267,7 @@ end
 Create a copy of a dataset.
 """
 function createcopy(arg1::Ref{<:GDALDriverH}, arg2, arg3::Ref{<:GDALDatasetH}, arg4::Integer, arg5, arg6::Any, arg7)
-    checknull(ccall((:GDALCreateCopy, libgdal), Ptr{GDALDatasetH}, (Ptr{Void}, Cstring, Ptr{Void}, Cint, StringList, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6, arg7))
+    checknull(ccall((:GDALCreateCopy, libgdal), Ptr{GDALDatasetH}, (Ptr{Void}, Cstring, Ptr{Void}, Cint, Ptr{Cstring}, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6, arg7))
 end
 
 
@@ -285,7 +285,7 @@ Identify the driver that can open a raster file.
 A GDALDriverH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDriver *.
 """
 function identifydriver(pszFilename, papszFileList)
-    checknull(ccall((:GDALIdentifyDriver, libgdal), Ptr{GDALDriverH}, (Cstring, StringList), pszFilename, papszFileList))
+    checknull(ccall((:GDALIdentifyDriver, libgdal), Ptr{GDALDriverH}, (Cstring, Ptr{Cstring}), pszFilename, papszFileList))
 end
 
 
@@ -307,7 +307,7 @@ Identify the driver that can open a raster file.
 A GDALDriverH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDriver *.
 """
 function identifydriverex(pszFilename, nIdentifyFlags::Integer, papszAllowedDrivers, papszFileList)
-    checknull(ccall((:GDALIdentifyDriverEx, libgdal), Ptr{GDALDriverH}, (Cstring, UInt32, StringList, StringList), pszFilename, nIdentifyFlags, papszAllowedDrivers, papszFileList))
+    checknull(ccall((:GDALIdentifyDriverEx, libgdal), Ptr{GDALDriverH}, (Cstring, UInt32, Ptr{Cstring}, Ptr{Cstring}), pszFilename, nIdentifyFlags, papszAllowedDrivers, papszFileList))
 end
 
 
@@ -375,7 +375,7 @@ Verbose error: GDAL_OF_VERBOSE_ERROR. If set, a failed attempt to open the file 
 A GDALDatasetH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDataset *.
 """
 function openex(pszFilename, nOpenFlags::Integer, papszAllowedDrivers, papszOpenOptions, papszSiblingFiles)
-    checknull(ccall((:GDALOpenEx, libgdal), Ptr{GDALDatasetH}, (Cstring, UInt32, StringList, StringList, StringList), pszFilename, nOpenFlags, papszAllowedDrivers, papszOpenOptions, papszSiblingFiles))
+    checknull(ccall((:GDALOpenEx, libgdal), Ptr{GDALDatasetH}, (Cstring, UInt32, Ptr{Cstring}, Ptr{Cstring}, Ptr{Cstring}), pszFilename, nOpenFlags, papszAllowedDrivers, papszOpenOptions, papszSiblingFiles))
 end
 
 
@@ -519,7 +519,7 @@ Validate the list of creation options that are handled by a driver.
 TRUE if the list of creation options is compatible with the Create() and CreateCopy() method of the driver, FALSE otherwise.
 """
 function validatecreationoptions(arg1::Ref{<:GDALDriverH}, papszCreationOptions)
-    ccall((:GDALValidateCreationOptions, libgdal), Cint, (Ptr{Void}, StringList), arg1, papszCreationOptions)
+    ccall((:GDALValidateCreationOptions, libgdal), Cint, (Ptr{Void}, Ptr{Cstring}), arg1, papszCreationOptions)
 end
 
 
@@ -739,7 +739,7 @@ end
 Set metadata.
 """
 function setmetadata(arg1::Ref{<:GDALMajorObjectH}, arg2, arg3)
-    ccall((:GDALSetMetadata, libgdal), CPLErr, (Ptr{Void}, StringList, Cstring), arg1, arg2, arg3)
+    ccall((:GDALSetMetadata, libgdal), CPLErr, (Ptr{Void}, Ptr{Cstring}, Cstring), arg1, arg2, arg3)
 end
 
 
@@ -871,7 +871,7 @@ end
 Add a band to a dataset.
 """
 function addband(hDS::Ref{<:GDALDatasetH}, eType::GDALDataType, papszOptions)
-    ccall((:GDALAddBand, libgdal), CPLErr, (Ptr{Void}, GDALDataType, StringList), hDS, eType, papszOptions)
+    ccall((:GDALAddBand, libgdal), CPLErr, (Ptr{Void}, GDALDataType, Ptr{Cstring}), hDS, eType, papszOptions)
 end
 
 
@@ -915,7 +915,7 @@ Sets up an asynchronous data request.
 handle representing the request.
 """
 function beginasyncreader(hDS::Ref{<:GDALDatasetH}, nXOff::Integer, nYOff::Integer, nXSize::Integer, nYSize::Integer, pBuf, nBufXSize::Integer, nBufYSize::Integer, eBufType::GDALDataType, nBandCount::Integer, panBandMap, nPixelSpace::Integer, nLineSpace::Integer, nBandSpace::Integer, papszOptions)
-    checknull(ccall((:GDALBeginAsyncReader, libgdal), Ptr{GDALAsyncReaderH}, (Ptr{Void}, Cint, Cint, Cint, Cint, Ptr{Void}, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, Cint, Cint, Cint, StringList), hDS, nXOff, nYOff, nXSize, nYSize, pBuf, nBufXSize, nBufYSize, eBufType, nBandCount, panBandMap, nPixelSpace, nLineSpace, nBandSpace, papszOptions))
+    checknull(ccall((:GDALBeginAsyncReader, libgdal), Ptr{GDALAsyncReaderH}, (Ptr{Void}, Cint, Cint, Cint, Cint, Ptr{Void}, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, Cint, Cint, Cint, Ptr{Cstring}), hDS, nXOff, nYOff, nXSize, nYSize, pBuf, nBufXSize, nBufYSize, eBufType, nBandCount, panBandMap, nPixelSpace, nLineSpace, nBandSpace, papszOptions))
 end
 
 
@@ -999,7 +999,7 @@ end
 Advise driver of upcoming read requests.
 """
 function datasetadviseread(hDS::Ref{<:GDALDatasetH}, nDSXOff::Integer, nDSYOff::Integer, nDSXSize::Integer, nDSYSize::Integer, nBXSize::Integer, nBYSize::Integer, eBDataType::GDALDataType, nBandCount::Integer, panBandCount, papszOptions)
-    ccall((:GDALDatasetAdviseRead, libgdal), CPLErr, (Ptr{Void}, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, StringList), hDS, nDSXOff, nDSYOff, nDSXSize, nDSYSize, nBXSize, nBYSize, eBDataType, nBandCount, panBandCount, papszOptions)
+    ccall((:GDALDatasetAdviseRead, libgdal), CPLErr, (Ptr{Void}, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, Ptr{Cstring}), hDS, nDSXOff, nDSYOff, nDSXSize, nDSYSize, nBXSize, nBYSize, eBDataType, nBandCount, panBandCount, papszOptions)
 end
 
 
@@ -1209,7 +1209,7 @@ Copy all dataset raster data.
 CE_None on success, or CE_Failure on failure.
 """
 function datasetcopywholeraster(hSrcDS::Ref{<:GDALDatasetH}, hDstDS::Ref{<:GDALDatasetH}, papszOptions, pfnProgress::Any, pProgressData)
-    ccall((:GDALDatasetCopyWholeRaster, libgdal), CPLErr, (Ptr{Void}, Ptr{Void}, StringList, Ptr{Void}, Ptr{Void}), hSrcDS, hDstDS, papszOptions, pfnProgress, pProgressData)
+    ccall((:GDALDatasetCopyWholeRaster, libgdal), CPLErr, (Ptr{Void}, Ptr{Void}, Ptr{Cstring}, Ptr{Void}, Ptr{Void}), hSrcDS, hDstDS, papszOptions, pfnProgress, pProgressData)
 end
 
 
@@ -1233,7 +1233,7 @@ Copy all raster band raster data.
 CE_None on success, or CE_Failure on failure.
 """
 function rasterbandcopywholeraster(hSrcBand::Ref{GDALRasterBandH}, hDstBand::Ref{GDALRasterBandH}, constpapszOptions, pfnProgress::Any, pProgressData)
-    ccall((:GDALRasterBandCopyWholeRaster, libgdal), CPLErr, (Ptr{Void}, Ptr{Void}, StringList, Ptr{Void}, Ptr{Void}), hSrcBand, hDstBand, constpapszOptions, pfnProgress, pProgressData)
+    ccall((:GDALRasterBandCopyWholeRaster, libgdal), CPLErr, (Ptr{Void}, Ptr{Void}, Ptr{Cstring}, Ptr{Void}, Ptr{Void}), hSrcBand, hDstBand, constpapszOptions, pfnProgress, pProgressData)
 end
 
 
@@ -1353,7 +1353,7 @@ This function attempts to create a new layer on the dataset with the indicated n
 NULL is returned on failure, or a new OGRLayer handle on success.
 """
 function datasetcreatelayer(arg1::Ref{<:GDALDatasetH}, arg2, arg3::Ref{OGRSpatialReferenceH}, arg4::OGRwkbGeometryType, arg5)
-    checknull(ccall((:GDALDatasetCreateLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Void}, Cstring, Ptr{Void}, OGRwkbGeometryType, StringList), arg1, arg2, arg3, arg4, arg5))
+    checknull(ccall((:GDALDatasetCreateLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Void}, Cstring, Ptr{Void}, OGRwkbGeometryType, Ptr{Cstring}), arg1, arg2, arg3, arg4, arg5))
 end
 
 
@@ -1375,7 +1375,7 @@ Duplicate an existing layer.
 an handle to the layer, or NULL if an error occurs.
 """
 function datasetcopylayer(arg1::Ref{<:GDALDatasetH}, arg2::Ref{OGRLayerH}, arg3, arg4)
-    checknull(ccall((:GDALDatasetCopyLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Void}, Ptr{Void}, Cstring, StringList), arg1, arg2, arg3, arg4))
+    checknull(ccall((:GDALDatasetCopyLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Void}, Ptr{Void}, Cstring, Ptr{Cstring}), arg1, arg2, arg3, arg4))
 end
 
 
@@ -1611,7 +1611,7 @@ end
 Advise driver of upcoming read requests.
 """
 function rasteradviseread(hRB::Ref{GDALRasterBandH}, nDSXOff::Integer, nDSYOff::Integer, nDSXSize::Integer, nDSYSize::Integer, nBXSize::Integer, nBYSize::Integer, eBDataType::GDALDataType, papszOptions)
-    ccall((:GDALRasterAdviseRead, libgdal), CPLErr, (Ptr{Void}, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, StringList), hRB, nDSXOff, nDSYOff, nDSXSize, nDSYSize, nBXSize, nBYSize, eBDataType, papszOptions)
+    ccall((:GDALRasterAdviseRead, libgdal), CPLErr, (Ptr{Void}, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Ptr{Cstring}), hRB, nDSXOff, nDSYOff, nDSXSize, nDSYSize, nBXSize, nBYSize, eBDataType, papszOptions)
 end
 
 
@@ -1856,7 +1856,7 @@ end
 Set the category names for this band.
 """
 function setrastercategorynames(arg1::Ref{GDALRasterBandH}, arg2)
-    ccall((:GDALSetRasterCategoryNames, libgdal), CPLErr, (Ptr{Void}, StringList), arg1, arg2)
+    ccall((:GDALSetRasterCategoryNames, libgdal), CPLErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -2561,7 +2561,7 @@ Helper function for translator implementer wanting support for MapInfo .tab file
 TRUE in case of success, FALSE otherwise.
 """
 function loadtabfile(arg1, arg2, arg3, arg4, arg5)
-    ccall((:GDALLoadTabFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, StringList, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5)
+    ccall((:GDALLoadTabFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5)
 end
 
 
@@ -2585,7 +2585,7 @@ Helper function for translator implementer wanting support for MapInfo .tab file
 TRUE in case of success, FALSE otherwise.
 """
 function readtabfile(arg1, arg2, arg3, arg4, arg5)
-    ccall((:GDALReadTabFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, StringList, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5)
+    ccall((:GDALReadTabFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5)
 end
 
 
@@ -2609,7 +2609,7 @@ Helper function for translator implementer wanting support for OZI .map.
 TRUE in case of success, FALSE otherwise.
 """
 function loadozimapfile(arg1, arg2, arg3, arg4, arg5)
-    ccall((:GDALLoadOziMapFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, StringList, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5)
+    ccall((:GDALLoadOziMapFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5)
 end
 
 
@@ -2633,7 +2633,7 @@ Helper function for translator implementer wanting support for OZI .map.
 TRUE in case of success, FALSE otherwise.
 """
 function readozimapfile(arg1, arg2, arg3, arg4, arg5)
-    ccall((:GDALReadOziMapFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, StringList, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5)
+    ccall((:GDALReadOziMapFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5)
 end
 
 
@@ -2683,7 +2683,7 @@ Extract RPC info from metadata, and apply to an RPCInfo structure.
 TRUE in case of success. FALSE in case of failure.
 """
 function extractrpcinfo(arg1, arg2)
-    ccall((:GDALExtractRPCInfo, libgdal), Cint, (StringList, Ptr{GDALRPCInfo}), arg1, arg2)
+    ccall((:GDALExtractRPCInfo, libgdal), Cint, (Ptr{Cstring}, Ptr{GDALRPCInfo}), arg1, arg2)
 end
 
 
@@ -3023,7 +3023,7 @@ end
 Read or Write a block of strings to/from the Attribute Table.
 """
 function ratvaluesioasstring(hRAT::Ref{GDALRasterAttributeTableH}, eRWFlag::GDALRWFlag, iField::Integer, iStartRow::Integer, iLength::Integer, papszStrList)
-    ccall((:GDALRATValuesIOAsString, libgdal), CPLErr, (Ptr{Void}, GDALRWFlag, Cint, Cint, Cint, StringList), hRAT, eRWFlag, iField, iStartRow, iLength, papszStrList)
+    ccall((:GDALRATValuesIOAsString, libgdal), CPLErr, (Ptr{Void}, GDALRWFlag, Cint, Cint, Cint, Ptr{Cstring}), hRAT, eRWFlag, iField, iStartRow, iLength, papszStrList)
 end
 
 
@@ -3280,7 +3280,7 @@ Create a CPLVirtualMem object from a GDAL dataset object.
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
 function datasetgetvirtualmem(hDS::Ref{<:GDALDatasetH}, eRWFlag::GDALRWFlag, nXOff::Integer, nYOff::Integer, nXSize::Integer, nYSize::Integer, nBufXSize::Integer, nBufYSize::Integer, eBufType::GDALDataType, nBandCount::Integer, panBandMap, nPixelSpace::Integer, nLineSpace::Integer, nBandSpace::Integer, nCacheSize::Csize_t, nPageSizeHint::Csize_t, bSingleThreadUsage::Integer, papszOptions)
-    ccall((:GDALDatasetGetVirtualMem, libgdal), Ptr{CPLVirtualMem}, (Ptr{Void}, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, Cint, GIntBig, GIntBig, Csize_t, Csize_t, Cint, StringList), hDS, eRWFlag, nXOff, nYOff, nXSize, nYSize, nBufXSize, nBufYSize, eBufType, nBandCount, panBandMap, nPixelSpace, nLineSpace, nBandSpace, nCacheSize, nPageSizeHint, bSingleThreadUsage, papszOptions)
+    ccall((:GDALDatasetGetVirtualMem, libgdal), Ptr{CPLVirtualMem}, (Ptr{Void}, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, Cint, GIntBig, GIntBig, Csize_t, Csize_t, Cint, Ptr{Cstring}), hDS, eRWFlag, nXOff, nYOff, nXSize, nYSize, nBufXSize, nBufYSize, eBufType, nBandCount, panBandMap, nPixelSpace, nLineSpace, nBandSpace, nCacheSize, nPageSizeHint, bSingleThreadUsage, papszOptions)
 end
 
 
@@ -3324,7 +3324,7 @@ Create a CPLVirtualMem object from a GDAL raster band object.
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
 function rasterbandgetvirtualmem(hBand::Ref{GDALRasterBandH}, eRWFlag::GDALRWFlag, nXOff::Integer, nYOff::Integer, nXSize::Integer, nYSize::Integer, nBufXSize::Integer, nBufYSize::Integer, eBufType::GDALDataType, nPixelSpace::Integer, nLineSpace::Integer, nCacheSize::Csize_t, nPageSizeHint::Csize_t, bSingleThreadUsage::Integer, papszOptions)
-    ccall((:GDALRasterBandGetVirtualMem, libgdal), Ptr{CPLVirtualMem}, (Ptr{Void}, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, GIntBig, Csize_t, Csize_t, Cint, StringList), hBand, eRWFlag, nXOff, nYOff, nXSize, nYSize, nBufXSize, nBufYSize, eBufType, nPixelSpace, nLineSpace, nCacheSize, nPageSizeHint, bSingleThreadUsage, papszOptions)
+    ccall((:GDALRasterBandGetVirtualMem, libgdal), Ptr{CPLVirtualMem}, (Ptr{Void}, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, GIntBig, Csize_t, Csize_t, Cint, Ptr{Cstring}), hBand, eRWFlag, nXOff, nYOff, nXSize, nYSize, nBufXSize, nBufYSize, eBufType, nPixelSpace, nLineSpace, nCacheSize, nPageSizeHint, bSingleThreadUsage, papszOptions)
 end
 
 
@@ -3338,7 +3338,7 @@ end
 Create a CPLVirtualMem object from a GDAL raster band object.
 """
 function getvirtualmemauto(hBand::Ref{GDALRasterBandH}, eRWFlag::GDALRWFlag, pnPixelSpace, pnLineSpace, papszOptions)
-    ccall((:GDALGetVirtualMemAuto, libgdal), Ptr{CPLVirtualMem}, (Ptr{Void}, GDALRWFlag, Ptr{Cint}, Ptr{GIntBig}, StringList), hBand, eRWFlag, pnPixelSpace, pnLineSpace, papszOptions)
+    ccall((:GDALGetVirtualMemAuto, libgdal), Ptr{CPLVirtualMem}, (Ptr{Void}, GDALRWFlag, Ptr{Cint}, Ptr{GIntBig}, Ptr{Cstring}), hBand, eRWFlag, pnPixelSpace, pnLineSpace, papszOptions)
 end
 
 
@@ -3382,7 +3382,7 @@ Create a CPLVirtualMem object from a GDAL dataset object, with tiling organizati
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
 function datasetgettiledvirtualmem(hDS::Ref{<:GDALDatasetH}, eRWFlag::GDALRWFlag, nXOff::Integer, nYOff::Integer, nXSize::Integer, nYSize::Integer, nTileXSize::Integer, nTileYSize::Integer, eBufType::GDALDataType, nBandCount::Integer, panBandMap, eTileOrganization::GDALTileOrganization, nCacheSize::Csize_t, bSingleThreadUsage::Integer, papszOptions)
-    ccall((:GDALDatasetGetTiledVirtualMem, libgdal), Ptr{CPLVirtualMem}, (Ptr{Void}, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, GDALTileOrganization, Csize_t, Cint, StringList), hDS, eRWFlag, nXOff, nYOff, nXSize, nYSize, nTileXSize, nTileYSize, eBufType, nBandCount, panBandMap, eTileOrganization, nCacheSize, bSingleThreadUsage, papszOptions)
+    ccall((:GDALDatasetGetTiledVirtualMem, libgdal), Ptr{CPLVirtualMem}, (Ptr{Void}, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, GDALTileOrganization, Csize_t, Cint, Ptr{Cstring}), hDS, eRWFlag, nXOff, nYOff, nXSize, nYSize, nTileXSize, nTileYSize, eBufType, nBandCount, panBandMap, eTileOrganization, nCacheSize, bSingleThreadUsage, papszOptions)
 end
 
 
@@ -3420,7 +3420,7 @@ Create a CPLVirtualMem object from a GDAL rasterband object, with tiling organiz
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
 function rasterbandgettiledvirtualmem(hBand::Ref{GDALRasterBandH}, eRWFlag::GDALRWFlag, nXOff::Integer, nYOff::Integer, nXSize::Integer, nYSize::Integer, nTileXSize::Integer, nTileYSize::Integer, eBufType::GDALDataType, nCacheSize::Csize_t, bSingleThreadUsage::Integer, papszOptions)
-    ccall((:GDALRasterBandGetTiledVirtualMem, libgdal), Ptr{CPLVirtualMem}, (Ptr{Void}, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Csize_t, Cint, StringList), hBand, eRWFlag, nXOff, nYOff, nXSize, nYSize, nTileXSize, nTileYSize, eBufType, nCacheSize, bSingleThreadUsage, papszOptions)
+    ccall((:GDALRasterBandGetTiledVirtualMem, libgdal), Ptr{CPLVirtualMem}, (Ptr{Void}, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Csize_t, Cint, Ptr{Cstring}), hBand, eRWFlag, nXOff, nYOff, nXSize, nYSize, nTileXSize, nTileYSize, eBufType, nCacheSize, bSingleThreadUsage, papszOptions)
 end
 
 
@@ -3460,5 +3460,5 @@ Dump the structure of a JPEG2000 file as a XML tree.
 XML tree (to be freed with CPLDestroyXMLNode()) or NULL in case of error
 """
 function getjpeg2000structure(pszFilename, papszOptions)
-    ccall((:GDALGetJPEG2000Structure, libgdal), Ptr{CPLXMLNode}, (Cstring, StringList), pszFilename, papszOptions)
+    ccall((:GDALGetJPEG2000Structure, libgdal), Ptr{CPLXMLNode}, (Cstring, Ptr{Cstring}), pszFilename, papszOptions)
 end
