@@ -3532,7 +3532,7 @@ Fetch field value as a list of strings.
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function getfieldasstringlist(arg1::Ref{OGRFeatureH}, arg2::Integer)
-    unsafe_string(unsafe_load(ccall((:OGR_F_GetFieldAsStringList, libgdal), Ptr{Cstring}, (Ptr{Void}, Cint), arg1, arg2)))
+    unsafe_loadstringlist(ccall((:OGR_F_GetFieldAsStringList, libgdal), Ptr{Cstring}, (Ptr{Void}, Cint), arg1, arg2))
 end
 
 

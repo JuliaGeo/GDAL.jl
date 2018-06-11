@@ -172,8 +172,7 @@ function rewriter(ex::Expr)
     if rettype == :(Cstring)
         ex.args[2].args[1] = :(unsafe_string($ccall_call))
     elseif rettype == :(Ptr{Cstring})
-        # TODO: this only unpacks the first of a list of strings
-        ex.args[2].args[1] = :(unsafe_string(unsafe_load($ccall_call)))
+        ex.args[2].args[1] = :(unsafe_loadstringlist($ccall_call))
     elseif rettype in opaquepointers
         # wrap output type in Ptr{} since memory is managed by GDAL
         ccall_call.args[3] = :(Ptr{$rettype})

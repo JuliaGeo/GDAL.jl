@@ -1888,7 +1888,7 @@ Fetch list of possible projection methods.
 Returns NULL terminated list of projection methods. This should be freed with CSLDestroy() when no longer needed.
 """
 function optgetprojectionmethods()
-    unsafe_string(unsafe_load(ccall((:OPTGetProjectionMethods, libgdal), Ptr{Cstring}, ())))
+    unsafe_loadstringlist(ccall((:OPTGetProjectionMethods, libgdal), Ptr{Cstring}, ()))
 end
 
 
@@ -1906,7 +1906,7 @@ Fetch the parameters for a given projection method.
 returns a NULL terminated list of internal parameter names that should be freed by the caller when no longer needed. Returns NULL if projection method is unknown.
 """
 function optgetparameterlist(pszProjectionMethod, ppszUserName)
-    unsafe_string(unsafe_load(ccall((:OPTGetParameterList, libgdal), Ptr{Cstring}, (Cstring, StringList), pszProjectionMethod, ppszUserName)))
+    unsafe_loadstringlist(ccall((:OPTGetParameterList, libgdal), Ptr{Cstring}, (Cstring, StringList), pszProjectionMethod, ppszUserName))
 end
 
 

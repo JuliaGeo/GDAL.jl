@@ -716,7 +716,7 @@ end
 Fetch list of metadata domains.
 """
 function getmetadatadomainlist(hObject::Ref{<:GDALMajorObjectH})
-    unsafe_string(unsafe_load(ccall((:GDALGetMetadataDomainList, libgdal), Ptr{Cstring}, (Ptr{Void},), hObject)))
+    unsafe_loadstringlist(ccall((:GDALGetMetadataDomainList, libgdal), Ptr{Cstring}, (Ptr{Void},), hObject))
 end
 
 
@@ -727,7 +727,7 @@ end
 Fetch metadata.
 """
 function getmetadata(arg1::Ref{<:GDALMajorObjectH}, arg2)
-    unsafe_string(unsafe_load(ccall((:GDALGetMetadata, libgdal), Ptr{Cstring}, (Ptr{Void}, Cstring), arg1, arg2)))
+    unsafe_loadstringlist(ccall((:GDALGetMetadata, libgdal), Ptr{Cstring}, (Ptr{Void}, Cstring), arg1, arg2))
 end
 
 
@@ -805,7 +805,7 @@ end
 Fetch files forming dataset.
 """
 function getfilelist(arg1::Ref{<:GDALDatasetH})
-    unsafe_string(unsafe_load(ccall((:GDALGetFileList, libgdal), Ptr{Cstring}, (Ptr{Void},), arg1)))
+    unsafe_loadstringlist(ccall((:GDALGetFileList, libgdal), Ptr{Cstring}, (Ptr{Void},), arg1))
 end
 
 
@@ -1845,7 +1845,7 @@ end
 Fetch the list of category names for this raster.
 """
 function getrastercategorynames(arg1::Ref{GDALRasterBandH})
-    unsafe_string(unsafe_load(ccall((:GDALGetRasterCategoryNames, libgdal), Ptr{Cstring}, (Ptr{Void},), arg1)))
+    unsafe_loadstringlist(ccall((:GDALGetRasterCategoryNames, libgdal), Ptr{Cstring}, (Ptr{Void},), arg1))
 end
 
 
