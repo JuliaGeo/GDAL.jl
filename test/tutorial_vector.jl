@@ -45,6 +45,12 @@ geometry = GDAL.getgeometryref(feature)
 @test GDAL.getx(geometry, 0) == 100.2785
 @test GDAL.gety(geometry, 0) == 0.0893
 
+# export to WKT
+wkt_ptr = Ref(Cstring(C_NULL))
+@test GDAL.exporttowkt(geometry, wkt_ptr) == GDAL.OGRERR_NONE
+@test unsafe_string(wkt_ptr[]) == "POINT (100.2785 0.0893)"
+GDAL.C.OGRFree(pointer(wkt_ptr[]))
+
 GDAL.destroy(feature)
 GDAL.close(dataset)
 
