@@ -1,41 +1,36 @@
 
-errortype = Dict{UInt32, AbstractString}(
-    0 => "None",
-    1 => "Debug",
-    2 => "Warning",
-    3 => "Failure",
-    4 => "Fatal"
-)
-
 struct GDALError <: Exception
-    class::AbstractString
-    code::Int
-    msg::AbstractString
+    class::CPLErr
+    code::Cint
+    msg::String
 end
 
-GDALError() = GDALError("", 0, "")
-GDALError(msg::AbstractString) = GDALError("", 0, msg)
+function GDALError()
+    class = getlasterrortype()
+    code = getlasterrorno()
+    msg = getlasterrormsg()
+    GDALError(class, code, msg)
+end
+
+const throw_class = (CE_Failure, CE_Fatal)
 
 function Base.showerror(io::IO, err::GDALError)
-    if err == GDALError()
-        print(io, "GDALError")
-    elseif err.class == "" && err.code == 0
-        print(io, "GDALError\n\t$(err.msg)")
-    else
-        print(io, "GDALError ($(err.class), code $(err.code)):\n\t$(err.msg)")
-    end
+    err = string("GDALError (", err.class, ", code ", err.code, "):\n\t", err.msg)
+    println(io, err)
 end
 
-function gdaljl_errorhandler(errtype::UInt32, errno::Cint, errmsg::Ptr{UInt8})
-    throw(GDALError(errortype[errtype], errno, unsafe_string(errmsg)))
-    # it currently never returns but cfunction needs a guaranteed return type
-    # return NULL to come back to the default behavior
+function gdaljl_errorhandler(class::CPLErr, errno::Cint, errmsg::Cstring)
+    # function signature needs to match the one in __init__, and the signature
+    # of the callback for a custom error handler in the GDAL docs
+    if class in throw_class
+        throw(GDALError(class, errno, unsafe_string(errmsg)))
+    end
     return C_NULL
 end
 
 function checknull(ptr)
-    if ptr == C_NULL
-        throw(GDALError("GDAL returned nothing"))
+    if ptr == C_NULL && getlasterrortype() in throw_class
+        throw(GDALError())
     end
     ptr
 end
