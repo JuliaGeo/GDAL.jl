@@ -4,11 +4,10 @@ ds_point = GDAL.openex("data/point.geojson", GDAL.GDAL_OF_VECTOR, C_NULL, C_NULL
 # GDALInfo
 # infooptionsnew checks if the options are valid
 @test_throws GDAL.GDALError GDAL.infooptionsnew(["-novalidoption"], C_NULL)
-options = GDAL.infooptionsnew(["-json"], C_NULL)
-infodict = JSON.parse(GDAL.info(ds_small, options))
+options = GDAL.infooptionsnew(["-checksum"], C_NULL)
+infostr = GDAL.info(ds_small, options)
+@test contains(infostr, "Checksum=50054")
 GDAL.infooptionsfree(options)
-@test infodict["size"] == [100, 100]
-
 
 # GDALTranslate
 # resample to a 5×5 ascii grid
