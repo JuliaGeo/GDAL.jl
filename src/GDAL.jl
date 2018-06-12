@@ -44,6 +44,7 @@ include("gdal_vrt.jl")
 include("gdal_utils.jl")
 include("ogr_api.jl")
 include("ogr_srs_api.jl")
+include("cpl_error.jl")
 
 include("error.jl")
 

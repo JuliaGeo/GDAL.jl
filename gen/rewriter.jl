@@ -12,7 +12,8 @@ const headerfiles = [
     "gdal_vrt.jl",
     "gdal_utils.jl",
     "ogr_api.jl",
-    "ogr_srs_api.jl"
+    "ogr_srs_api.jl",
+    "cpl_error.jl"
 ]
 
 # do not use automatic function renaming for these
@@ -62,7 +63,8 @@ const strip_prefixes = [
     (r"^ogr_stbl_", ""),
     (r"^ogr_", ""),
     (r"^ogr", ""),
-    (r"^osr", "")
+    (r"^osr", ""),
+    (r"^cpl", "")
 ]
 
 parsefile(file) = parse(join(["quote", readstring(file), "end"], ";"))
