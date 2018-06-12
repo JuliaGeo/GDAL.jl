@@ -1,6 +1,5 @@
 using GDAL
 using Base.Test
-using JSON
 
 info(unsafe_string(GDAL.C.GDALVersionInfo("--version")))
 
