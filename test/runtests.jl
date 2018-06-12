@@ -11,6 +11,10 @@ info(GDAL.ogrgetdrivercount(), " OGR drivers found")
 @test GDAL.getdrivercount() > 0
 @test GDAL.ogrgetdrivercount() > 0
 
+# test if the registered error handler also handles CE_Fatal
+@test_throws GDAL.GDALError GDAL.emergencyerror("we've got a problem")
+GDAL.errorreset()
+
 # throw errors on non existing files
 @test_throws GDAL.GDALError GDAL.open("NonExistent", GDAL.GA_ReadOnly)
 # if a driver is not found, the C API returns a null

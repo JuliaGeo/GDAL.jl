@@ -62,7 +62,7 @@ function __init__()
     check_deps()
 
     # register custom error handler
-    funcptr = cfunction(gdaljl_errorhandler, Ptr{Void}, (UInt32, Cint, Ptr{UInt8}))
+    funcptr = cfunction(gdaljl_errorhandler, Ptr{Void}, (CPLErr, Cint, Cstring))
     ccall(ferrh, Ptr{Void}, (Ptr{Void},), funcptr)
 
     # get GDAL version number

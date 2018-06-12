@@ -38,7 +38,9 @@ gotmin, gotmax = Ref(Cint(-1)), Ref(Cint(-1))
 @test gotmin[] == gotmax[] == 0
 
 @test GDAL.getoverviewcount(band) == 0
-@test_throws GDAL.GDALError GDAL.getrastercolortable(band)
+# note that if there is no raster color table, no error (C_None) is set by GDAL
+# so there is no GDALError thrown here
+@test GDAL.getrastercolortable(band) == C_NULL
 
 
 # Reading Raster Data
