@@ -38,7 +38,7 @@ Create a geometry object of the appropriate type from it's well known text repre
 OGRERR_NONE if all goes well, otherwise any of OGRERR_NOT_ENOUGH_DATA, OGRERR_UNSUPPORTED_GEOMETRY_TYPE, or OGRERR_CORRUPT_DATA may be returned.
 """
 function createfromwkt(arg1, arg2::Ref{OGRSpatialReferenceH}, arg3)
-    ccall((:OGR_G_CreateFromWkt, libgdal), OGRErr, (StringList, Ptr{Void}, Ptr{OGRGeometryH}), arg1, arg2, arg3)
+    ccall((:OGR_G_CreateFromWkt, libgdal), OGRErr, (Ptr{Cstring}, Ptr{Void}, Ptr{OGRGeometryH}), arg1, arg2, arg3)
 end
 
 
@@ -213,7 +213,7 @@ Convert to another geometry type.
 new geometry.
 """
 function forceto(hGeom::Ref{OGRGeometryH}, eTargetType::OGRwkbGeometryType, papszOptions)
-    checknull(ccall((:OGR_G_ForceTo, libgdal), Ptr{OGRGeometryH}, (Ptr{Void}, OGRwkbGeometryType, StringList), hGeom, eTargetType, papszOptions))
+    checknull(ccall((:OGR_G_ForceTo, libgdal), Ptr{OGRGeometryH}, (Ptr{Void}, OGRwkbGeometryType, Ptr{Cstring}), hGeom, eTargetType, papszOptions))
 end
 
 
@@ -478,7 +478,7 @@ Assign geometry from well known text data.
 OGRERR_NONE if all goes well, otherwise any of OGRERR_NOT_ENOUGH_DATA, OGRERR_UNSUPPORTED_GEOMETRY_TYPE, or OGRERR_CORRUPT_DATA may be returned.
 """
 function importfromwkt(arg1::Ref{OGRGeometryH}, arg2)
-    ccall((:OGR_G_ImportFromWkt, libgdal), OGRErr, (Ptr{Void}, StringList), arg1, arg2)
+    ccall((:OGR_G_ImportFromWkt, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -496,7 +496,7 @@ Convert a geometry into well known text format.
 Currently OGRERR_NONE is always returned.
 """
 function exporttowkt(arg1::Ref{OGRGeometryH}, arg2)
-    ccall((:OGR_G_ExportToWkt, libgdal), OGRErr, (Ptr{Void}, StringList), arg1, arg2)
+    ccall((:OGR_G_ExportToWkt, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -514,7 +514,7 @@ Convert a geometry into SFSQL 1.2 / ISO SQL/MM Part 3 well known text format.
 Currently OGRERR_NONE is always returned.
 """
 function exporttoisowkt(arg1::Ref{OGRGeometryH}, arg2)
-    ccall((:OGR_G_ExportToIsoWkt, libgdal), OGRErr, (Ptr{Void}, StringList), arg1, arg2)
+    ccall((:OGR_G_ExportToIsoWkt, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -639,7 +639,7 @@ Convert a geometry into GML format.
 A GML fragment or NULL in case of error.
 """
 function exporttogmlex(arg1::Ref{OGRGeometryH}, papszOptions)
-    unsafe_string(ccall((:OGR_G_ExportToGMLEx, libgdal), Cstring, (Ptr{Void}, StringList), arg1, papszOptions))
+    unsafe_string(ccall((:OGR_G_ExportToGMLEx, libgdal), Cstring, (Ptr{Void}, Ptr{Cstring}), arg1, papszOptions))
 end
 
 
@@ -721,7 +721,7 @@ Convert a geometry into GeoJSON format.
 A GeoJSON fragment or NULL in case of error.
 """
 function exporttojsonex(arg1::Ref{OGRGeometryH}, papszOptions)
-    unsafe_string(ccall((:OGR_G_ExportToJsonEx, libgdal), Cstring, (Ptr{Void}, StringList), arg1, papszOptions))
+    unsafe_string(ccall((:OGR_G_ExportToJsonEx, libgdal), Cstring, (Ptr{Void}, Ptr{Cstring}), arg1, papszOptions))
 end
 
 
@@ -1220,7 +1220,7 @@ Compute length of a geometry.
 ### Returns
 the length or 0.0 for unsupported geometry types.
 """
-function length(arg1::Ref{OGRGeometryH})
+function Base.length(arg1::Ref{OGRGeometryH})
     ccall((:OGR_G_Length, libgdal), Cdouble, (Ptr{Void},), arg1)
 end
 
@@ -1956,7 +1956,7 @@ Return, possibly approximate, linear version of this geometry.
 a new geometry.
 """
 function getlineargeometry(hGeom::Ref{OGRGeometryH}, dfMaxAngleStepSizeDegrees::Real, papszOptions)
-    checknull(ccall((:OGR_G_GetLinearGeometry, libgdal), Ptr{OGRGeometryH}, (Ptr{Void}, Cdouble, StringList), hGeom, dfMaxAngleStepSizeDegrees, papszOptions))
+    checknull(ccall((:OGR_G_GetLinearGeometry, libgdal), Ptr{OGRGeometryH}, (Ptr{Void}, Cdouble, Ptr{Cstring}), hGeom, dfMaxAngleStepSizeDegrees, papszOptions))
 end
 
 
@@ -1974,7 +1974,7 @@ Return curve version of this geometry.
 a new geometry.
 """
 function getcurvegeometry(hGeom::Ref{OGRGeometryH}, papszOptions)
-    checknull(ccall((:OGR_G_GetCurveGeometry, libgdal), Ptr{OGRGeometryH}, (Ptr{Void}, StringList), hGeom, papszOptions))
+    checknull(ccall((:OGR_G_GetCurveGeometry, libgdal), Ptr{OGRGeometryH}, (Ptr{Void}, Ptr{Cstring}), hGeom, papszOptions))
 end
 
 
@@ -3532,7 +3532,7 @@ Fetch field value as a list of strings.
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function getfieldasstringlist(arg1::Ref{OGRFeatureH}, arg2::Integer)
-    unsafe_string(unsafe_load(ccall((:OGR_F_GetFieldAsStringList, libgdal), Ptr{Cstring}, (Ptr{Void}, Cint), arg1, arg2)))
+    unsafe_loadstringlist(ccall((:OGR_F_GetFieldAsStringList, libgdal), Ptr{Cstring}, (Ptr{Void}, Cint), arg1, arg2))
 end
 
 
@@ -3758,7 +3758,7 @@ Set field to list of strings value.
 * **papszValues**: the values to assign.
 """
 function setfieldstringlist(arg1::Ref{OGRFeatureH}, arg2::Integer, arg3)
-    ccall((:OGR_F_SetFieldStringList, libgdal), Void, (Ptr{Void}, Cint, StringList), arg1, arg2, arg3)
+    ccall((:OGR_F_SetFieldStringList, libgdal), Void, (Ptr{Void}, Cint, Ptr{Cstring}), arg1, arg2, arg3)
 end
 
 
@@ -4210,7 +4210,7 @@ Fill unset fields with default values that might be defined.
 * **papszOptions**: unused currently. Must be set to NULL.
 """
 function fillunsetwithdefault(hFeat::Ref{OGRFeatureH}, bNotNullableOnly::Integer, papszOptions)
-    ccall((:OGR_F_FillUnsetWithDefault, libgdal), Void, (Ptr{Void}, Cint, StringList), hFeat, bNotNullableOnly, papszOptions)
+    ccall((:OGR_F_FillUnsetWithDefault, libgdal), Void, (Ptr{Void}, Cint, Ptr{Cstring}), hFeat, bNotNullableOnly, papszOptions)
 end
 
 
@@ -4911,7 +4911,7 @@ Set which fields can be omitted when retrieving features from the layer.
 OGRERR_NONE if all field names have been resolved (even if the driver does not support this method)
 """
 function setignoredfields(arg1::Ref{OGRLayerH}, arg2)
-    ccall((:OGR_L_SetIgnoredFields, libgdal), OGRErr, (Ptr{Void}, StringList), arg1, arg2)
+    ccall((:OGR_L_SetIgnoredFields, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -4937,7 +4937,7 @@ Intersection of two layers.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function intersection(arg1::Ref{OGRLayerH}, arg2::Ref{OGRLayerH}, arg3::Ref{OGRLayerH}, arg4, arg5::Any, arg6)
-    ccall((:OGR_L_Intersection, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}, Ptr{Void}, StringList, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6)
+    ccall((:OGR_L_Intersection, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}, Ptr{Void}, Ptr{Cstring}, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6)
 end
 
 
@@ -4963,7 +4963,7 @@ Union of two layers.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function union(arg1::Ref{OGRLayerH}, arg2::Ref{OGRLayerH}, arg3::Ref{OGRLayerH}, arg4, arg5::Any, arg6)
-    ccall((:OGR_L_Union, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}, Ptr{Void}, StringList, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6)
+    ccall((:OGR_L_Union, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}, Ptr{Void}, Ptr{Cstring}, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6)
 end
 
 
@@ -4989,7 +4989,7 @@ Symmetrical difference of two layers.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function symdifference(arg1::Ref{OGRLayerH}, arg2::Ref{OGRLayerH}, arg3::Ref{OGRLayerH}, arg4, arg5::Any, arg6)
-    ccall((:OGR_L_SymDifference, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}, Ptr{Void}, StringList, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6)
+    ccall((:OGR_L_SymDifference, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}, Ptr{Void}, Ptr{Cstring}, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6)
 end
 
 
@@ -5015,7 +5015,7 @@ Identify the features of this layer with the ones from the identity layer.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function identity(arg1::Ref{OGRLayerH}, arg2::Ref{OGRLayerH}, arg3::Ref{OGRLayerH}, arg4, arg5::Any, arg6)
-    ccall((:OGR_L_Identity, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}, Ptr{Void}, StringList, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6)
+    ccall((:OGR_L_Identity, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}, Ptr{Void}, Ptr{Cstring}, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6)
 end
 
 
@@ -5041,7 +5041,7 @@ Update this layer with features from the update layer.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function update(arg1::Ref{OGRLayerH}, arg2::Ref{OGRLayerH}, arg3::Ref{OGRLayerH}, arg4, arg5::Any, arg6)
-    ccall((:OGR_L_Update, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}, Ptr{Void}, StringList, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6)
+    ccall((:OGR_L_Update, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}, Ptr{Void}, Ptr{Cstring}, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6)
 end
 
 
@@ -5067,7 +5067,7 @@ Clip off areas that are not covered by the method layer.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function clip(arg1::Ref{OGRLayerH}, arg2::Ref{OGRLayerH}, arg3::Ref{OGRLayerH}, arg4, arg5::Any, arg6)
-    ccall((:OGR_L_Clip, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}, Ptr{Void}, StringList, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6)
+    ccall((:OGR_L_Clip, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}, Ptr{Void}, Ptr{Cstring}, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6)
 end
 
 
@@ -5093,7 +5093,7 @@ Remove areas that are covered by the method layer.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function erase(arg1::Ref{OGRLayerH}, arg2::Ref{OGRLayerH}, arg3::Ref{OGRLayerH}, arg4, arg5::Any, arg6)
-    ccall((:OGR_L_Erase, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}, Ptr{Void}, StringList, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6)
+    ccall((:OGR_L_Erase, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}, Ptr{Void}, Ptr{Cstring}, Ptr{Void}, Ptr{Void}), arg1, arg2, arg3, arg4, arg5, arg6)
 end
 
 
@@ -5232,7 +5232,7 @@ This function attempts to create a new layer on the data source with the indicat
 NULL is returned on failure, or a new OGRLayer handle on success.
 """
 function createlayer(arg1::Ref{OGRDataSourceH}, arg2, arg3::Ref{OGRSpatialReferenceH}, arg4::OGRwkbGeometryType, arg5)
-    checknull(ccall((:OGR_DS_CreateLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Void}, Cstring, Ptr{Void}, OGRwkbGeometryType, StringList), arg1, arg2, arg3, arg4, arg5))
+    checknull(ccall((:OGR_DS_CreateLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Void}, Cstring, Ptr{Void}, OGRwkbGeometryType, Ptr{Cstring}), arg1, arg2, arg3, arg4, arg5))
 end
 
 
@@ -5254,7 +5254,7 @@ Duplicate an existing layer.
 an handle to the layer, or NULL if an error occurs.
 """
 function copylayer(arg1::Ref{OGRDataSourceH}, arg2::Ref{OGRLayerH}, arg3, arg4)
-    checknull(ccall((:OGR_DS_CopyLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Void}, Ptr{Void}, Cstring, StringList), arg1, arg2, arg3, arg4))
+    checknull(ccall((:OGR_DS_CopyLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Void}, Ptr{Void}, Cstring, Ptr{Cstring}), arg1, arg2, arg3, arg4))
 end
 
 
@@ -5457,7 +5457,7 @@ This function attempts to create a new data source based on the passed driver.
 NULL is returned on failure, or a new OGRDataSource handle on success.
 """
 function createdatasource(arg1::Ref{OGRSFDriverH}, arg2, arg3)
-    checknull(ccall((:OGR_Dr_CreateDataSource, libgdal), Ptr{OGRDataSourceH}, (Ptr{Void}, Cstring, StringList), arg1, arg2, arg3))
+    checknull(ccall((:OGR_Dr_CreateDataSource, libgdal), Ptr{OGRDataSourceH}, (Ptr{Void}, Cstring, Ptr{Cstring}), arg1, arg2, arg3))
 end
 
 
@@ -5479,7 +5479,7 @@ This function creates a new datasource by copying all the layers from the source
 NULL is returned on failure, or a new OGRDataSource handle on success.
 """
 function copydatasource(arg1::Ref{OGRSFDriverH}, arg2::Ref{OGRDataSourceH}, arg3, arg4)
-    checknull(ccall((:OGR_Dr_CopyDataSource, libgdal), Ptr{OGRDataSourceH}, (Ptr{Void}, Ptr{Void}, Cstring, StringList), arg1, arg2, arg3, arg4))
+    checknull(ccall((:OGR_Dr_CopyDataSource, libgdal), Ptr{OGRDataSourceH}, (Ptr{Void}, Ptr{Void}, Cstring, Ptr{Cstring}), arg1, arg2, arg3, arg4))
 end
 
 

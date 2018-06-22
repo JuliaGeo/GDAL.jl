@@ -38,6 +38,7 @@ const custom_rename = Dict{String, String}(
     # prevent overwriting Base functions
     "gdalinfo" => "Base.info",
     "ogr_g_isempty" => "Base.isempty",
+    "ogr_g_length" => "Base.length",
 
     # prevent automatic renaming
     "ogrgetdrivercount" => "ogrgetdrivercount",
@@ -162,8 +163,6 @@ function rewriter(ex::Expr)
         if intype in opaquepointers
             # in C the opaque pointers are all typedef void *, i.e. Ptr{Void}
             intypes[i] = :(Ptr{Void})
-        elseif intype == :(Ptr{Cstring})
-            intypes[i] = :StringList  # see misc.jl
         end
     end
     # modify ccall return type or wrap entire ccall based on return type
@@ -171,8 +170,7 @@ function rewriter(ex::Expr)
     if rettype == :(Cstring)
         ex.args[2].args[1] = :(unsafe_string($ccall_call))
     elseif rettype == :(Ptr{Cstring})
-        # TODO: this only unpacks the first of a list of strings
-        ex.args[2].args[1] = :(unsafe_string(unsafe_load($ccall_call)))
+        ex.args[2].args[1] = :(unsafe_loadstringlist($ccall_call))
     elseif rettype in opaquepointers
         # wrap output type in Ptr{} since memory is managed by GDAL
         ccall_call.args[3] = :(Ptr{$rettype})

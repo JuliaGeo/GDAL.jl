@@ -45,12 +45,18 @@ geometry = GDAL.getgeometryref(feature)
 @test GDAL.getx(geometry, 0) == 100.2785
 @test GDAL.gety(geometry, 0) == 0.0893
 
+# export to WKT
+wkt_ptr = Ref(Cstring(C_NULL))
+@test GDAL.exporttowkt(geometry, wkt_ptr) == GDAL.OGRERR_NONE
+@test unsafe_string(wkt_ptr[]) == "POINT (100.2785 0.0893)"
+GDAL.C.OGRFree(pointer(wkt_ptr[]))
+
 GDAL.destroy(feature)
 GDAL.close(dataset)
 
 
 # Writing to OGR
-pointshapefile = "tmp/point_out"
+pointshapefile = joinpath("tmp", "point_out")
 driver = GDAL.getdriverbyname("ESRI Shapefile")
 dataset = GDAL.create(driver, "$pointshapefile.shp", 0, 0, 0, GDAL.GDT_Unknown, C_NULL)
 nosrs = convert(Ptr{GDAL.OGRSpatialReferenceH}, C_NULL)
@@ -68,8 +74,12 @@ point = GDAL.creategeometry(GDAL.wkbPoint)
 GDAL.setpoint_2d(point, 0, 100.123, 0.123)
 @test GDAL.setgeometry(feature, point) == GDAL.OGRERR_NONE
 GDAL.destroygeometry(point)
+
+# test getfilelist with unsafe_loadstringlist
+shp_exts = Set([".shp", ".shx", ".dbf"])
+fileset = map(x -> pointshapefile * x, shp_exts)
+@test Set(GDAL.getfilelist(dataset)) == fileset
+
 GDAL.close(dataset)
 
-rm("$pointshapefile.dbf")
-rm("$pointshapefile.shp")
-rm("$pointshapefile.shx")
+map(rm, fileset)

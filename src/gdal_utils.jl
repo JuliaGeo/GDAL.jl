@@ -14,7 +14,7 @@ Allocates a GDALInfoOptions struct.
 pointer to the allocated GDALInfoOptions struct. Must be freed with GDALInfoOptionsFree().
 """
 function infooptionsnew(papszArgv, psOptionsForBinary)
-    ccall((:GDALInfoOptionsNew, libgdal), Ptr{GDALInfoOptions}, (StringList, Ptr{GDALInfoOptionsForBinary}), papszArgv, psOptionsForBinary)
+    ccall((:GDALInfoOptionsNew, libgdal), Ptr{GDALInfoOptions}, (Ptr{Cstring}, Ptr{GDALInfoOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -63,7 +63,7 @@ Allocates a GDALTranslateOptions struct.
 pointer to the allocated GDALTranslateOptions struct. Must be freed with GDALTranslateOptionsFree().
 """
 function translateoptionsnew(papszArgv, psOptionsForBinary)
-    ccall((:GDALTranslateOptionsNew, libgdal), Ptr{GDALTranslateOptions}, (StringList, Ptr{GDALTranslateOptionsForBinary}), papszArgv, psOptionsForBinary)
+    ccall((:GDALTranslateOptionsNew, libgdal), Ptr{GDALTranslateOptions}, (Ptr{Cstring}, Ptr{GDALTranslateOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -133,7 +133,7 @@ Allocates a GDALWarpAppOptions struct.
 pointer to the allocated GDALWarpAppOptions struct. Must be freed with GDALWarpAppOptionsFree().
 """
 function warpappoptionsnew(papszArgv, psOptionsForBinary)
-    ccall((:GDALWarpAppOptionsNew, libgdal), Ptr{GDALWarpAppOptions}, (StringList, Ptr{GDALWarpAppOptionsForBinary}), papszArgv, psOptionsForBinary)
+    ccall((:GDALWarpAppOptionsNew, libgdal), Ptr{GDALWarpAppOptions}, (Ptr{Cstring}, Ptr{GDALWarpAppOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -224,7 +224,7 @@ allocates a GDALVectorTranslateOptions struct.
 pointer to the allocated GDALVectorTranslateOptions struct. Must be freed with GDALVectorTranslateOptionsFree().
 """
 function vectortranslateoptionsnew(papszArgv, psOptionsForBinary)
-    ccall((:GDALVectorTranslateOptionsNew, libgdal), Ptr{GDALVectorTranslateOptions}, (StringList, Ptr{GDALVectorTranslateOptionsForBinary}), papszArgv, psOptionsForBinary)
+    ccall((:GDALVectorTranslateOptionsNew, libgdal), Ptr{GDALVectorTranslateOptions}, (Ptr{Cstring}, Ptr{GDALVectorTranslateOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -298,7 +298,7 @@ Allocates a GDALDEMProcessingOptions struct.
 pointer to the allocated GDALDEMProcessingOptions struct. Must be freed with GDALDEMProcessingOptionsFree().
 """
 function demprocessingoptionsnew(papszArgv, psOptionsForBinary)
-    ccall((:GDALDEMProcessingOptionsNew, libgdal), Ptr{GDALDEMProcessingOptions}, (StringList, Ptr{GDALDEMProcessingOptionsForBinary}), papszArgv, psOptionsForBinary)
+    ccall((:GDALDEMProcessingOptionsNew, libgdal), Ptr{GDALDEMProcessingOptions}, (Ptr{Cstring}, Ptr{GDALDEMProcessingOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -372,7 +372,7 @@ Allocates a GDALNearblackOptions struct.
 pointer to the allocated GDALNearblackOptions struct. Must be freed with GDALNearblackOptionsFree().
 """
 function nearblackoptionsnew(papszArgv, psOptionsForBinary)
-    ccall((:GDALNearblackOptionsNew, libgdal), Ptr{GDALNearblackOptions}, (StringList, Ptr{GDALNearblackOptionsForBinary}), papszArgv, psOptionsForBinary)
+    ccall((:GDALNearblackOptionsNew, libgdal), Ptr{GDALNearblackOptions}, (Ptr{Cstring}, Ptr{GDALNearblackOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -444,7 +444,7 @@ Allocates a GDALGridOptions struct.
 pointer to the allocated GDALGridOptions struct. Must be freed with GDALGridOptionsFree().
 """
 function gridoptionsnew(papszArgv, psOptionsForBinary)
-    ccall((:GDALGridOptionsNew, libgdal), Ptr{GDALGridOptions}, (StringList, Ptr{GDALGridOptionsForBinary}), papszArgv, psOptionsForBinary)
+    ccall((:GDALGridOptionsNew, libgdal), Ptr{GDALGridOptions}, (Ptr{Cstring}, Ptr{GDALGridOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -514,7 +514,7 @@ Allocates a GDALRasterizeOptions struct.
 pointer to the allocated GDALRasterizeOptions struct. Must be freed with GDALRasterizeOptionsFree().
 """
 function rasterizeoptionsnew(papszArgv, psOptionsForBinary)
-    ccall((:GDALRasterizeOptionsNew, libgdal), Ptr{GDALRasterizeOptions}, (StringList, Ptr{GDALRasterizeOptionsForBinary}), papszArgv, psOptionsForBinary)
+    ccall((:GDALRasterizeOptionsNew, libgdal), Ptr{GDALRasterizeOptions}, (Ptr{Cstring}, Ptr{GDALRasterizeOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -586,7 +586,7 @@ Allocates a GDALBuildVRTOptions struct.
 pointer to the allocated GDALBuildVRTOptions struct. Must be freed with GDALBuildVRTOptionsFree().
 """
 function buildvrtoptionsnew(papszArgv, psOptionsForBinary)
-    ccall((:GDALBuildVRTOptionsNew, libgdal), Ptr{GDALBuildVRTOptions}, (StringList, Ptr{GDALBuildVRTOptionsForBinary}), papszArgv, psOptionsForBinary)
+    ccall((:GDALBuildVRTOptionsNew, libgdal), Ptr{GDALBuildVRTOptions}, (Ptr{Cstring}, Ptr{GDALBuildVRTOptionsForBinary}), papszArgv, psOptionsForBinary)
 end
 
 
@@ -642,5 +642,5 @@ Build a VRT from a list of datasets.
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
 """
 function buildvrt(pszDest, nSrcCount::Integer, pahSrcDS, papszSrcDSNames, psOptions, pbUsageError)
-    checknull(ccall((:GDALBuildVRT, libgdal), Ptr{GDALDatasetH}, (Cstring, Cint, Ptr{GDALDatasetH}, StringList, Ptr{GDALBuildVRTOptions}, Ptr{Cint}), pszDest, nSrcCount, pahSrcDS, papszSrcDSNames, psOptions, pbUsageError))
+    checknull(ccall((:GDALBuildVRT, libgdal), Ptr{GDALDatasetH}, (Cstring, Cint, Ptr{GDALDatasetH}, Ptr{Cstring}, Ptr{GDALBuildVRTOptions}, Ptr{Cint}), pszDest, nSrcCount, pahSrcDS, papszSrcDSNames, psOptions, pbUsageError))
 end
