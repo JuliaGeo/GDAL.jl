@@ -12,7 +12,7 @@ This package is registered, so add it using `Pkg.add`. This will also download G
 ```julia
 Pkg.add("GDAL")
 ```
-`Pkg.build`  To test if it is installed correctly, use:
+To test if it is installed correctly, use:
 ```julia
 Pkg.test("GDAL")
 ```
