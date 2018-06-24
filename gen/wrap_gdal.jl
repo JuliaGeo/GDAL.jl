@@ -94,9 +94,9 @@ function minimal_rewriter(ex::Expr)
     elseif ex.head == :type
         # detect singletons: "mutable struct A end"
         # and rewrite them to "const A = Ptr{Void}"
-        # without this rewrite they are note usable:
+        # without this rewrite they are not usable:
         # ERROR: ccall: the type of argument 1 doesn't correspond to a C type
-        # see https://github.com/visr/GDAL.jl/pull/41#discussion_r143345433
+        # see https://github.com/JuliaGeo/GDAL.jl/pull/41#discussion_r143345433
         # these singletons are meant to be opaque types, but in C are not of
         # type `typedef void *` but instead something like
         # `typedef struct OGRGeomFieldDefnHS *` (for OGRGeomFieldDefnH)

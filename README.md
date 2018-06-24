@@ -1,6 +1,6 @@
 # GDAL.jl
 [![Build Status](https://travis-ci.org/JuliaGeo/GDAL.jl.svg?branch=master)](https://travis-ci.org/JuliaGeo/GDAL.jl)
-[![Build status](https://ci.appveyor.com/api/projects/status/github/visr/GDAL.jl?svg=true&branch=master)](https://ci.appveyor.com/project/visr/gdal-jl/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/JuliaGeo/GDAL.jl?svg=true&branch=master)](https://ci.appveyor.com/project/JuliaGeo/gdal-jl/branch/master)
 
 Julia wrapper for [GDAL - Geospatial Data Abstraction Library](http://gdal.org/).
 This package is a binding to the C API of GDAL/OGR. It provides only a C style usage, where resources must be closed manually, and datasets are pointers.
@@ -8,12 +8,11 @@ This package is a binding to the C API of GDAL/OGR. It provides only a C style u
 Other packages can build on top of this to provide a more Julian user experience. See for example [ArchGDAL.jl](https://github.com/yeesian/ArchGDAL.jl).
 
 ## Installation
-This package is currently unregistered, so add it using `Pkg.clone`, then find or get the GDAL dependencies using `Pkg.build`.
+This package is registered, so add it using `Pkg.add`. This will also download GDAL binaries created by [GDALBuilder](https://github.com/JuliaGeo/GDALBuilder).
 ```julia
-Pkg.clone("https://github.com/visr/GDAL.jl.git")
-Pkg.build("GDAL")
+Pkg.add("GDAL")
 ```
-`Pkg.build` downloads GDAL binaries created by [GDALBuilder](https://github.com/visr/GDALBuilder). To test if it is installed correctly, use:
+`Pkg.build`  To test if it is installed correctly, use:
 ```julia
 Pkg.test("GDAL")
 ```

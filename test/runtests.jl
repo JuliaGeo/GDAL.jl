@@ -33,7 +33,7 @@ xmlnode.pszValue = Base.unsafe_convert(Cstring, "c")  # rename "a" to "c"
 @test unsafe_string(GDAL.C.CPLSerializeXMLTree(Ref(xmlnode))) == "<c>\n  <b>hi</b>\n</c>\n"
 GDAL.C.CPLDestroyXMLNode(xmlnode_pointer)
 
-# ref https://github.com/visr/GDAL.jl/pull/41#discussion_r143345433
+# ref https://github.com/JuliaGeo/GDAL.jl/pull/41#discussion_r143345433
 gfld = GDAL.gfld_create("name-a", GDAL.wkbPoint)
 @test gfld isa Ptr{GDAL.OGRGeomFieldDefnH}
 @test GDAL.getnameref(gfld) == "name-a"
