@@ -70,7 +70,7 @@ function __init__()
     global const GDALVERSION = convert(VersionNumber, versionstring)
 
     # set the GDAL_DATA variable
-    GDAL_DATA = abspath(@__DIR__, "..", "deps", "usr", "share", "gdal")
+    global const GDAL_DATA = abspath(@__DIR__, "..", "deps", "usr", "share", "gdal")
     ccall(fconf, Void, (Cstring, Cstring), "GDAL_DATA", GDAL_DATA)
 end
 
