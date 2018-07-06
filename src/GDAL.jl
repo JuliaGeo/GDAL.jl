@@ -71,6 +71,7 @@ function __init__()
 
     # set the GDAL_DATA variable
     global const GDAL_DATA = abspath(@__DIR__, "..", "deps", "usr", "share", "gdal")
+    ENV["GDAL_DATA"] = GDAL_DATA
     ccall(fconf, Void, (Cstring, Cstring), "GDAL_DATA", GDAL_DATA)
 end
 
