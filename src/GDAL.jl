@@ -9,11 +9,6 @@ if !isfile(depsjl_path)
 end
 include(depsjl_path)
 
-# import these for their dynamic libraries, which libgdal needs
-import CodecZlib
-import Proj4
-import LibGEOS
-
 module C
     import GDAL: libgdal
 
@@ -49,10 +44,6 @@ include("cpl_error.jl")
 include("error.jl")
 
 function __init__()
-    Libdl.dlopen(CodecZlib.libz)
-    Libdl.dlopen(Proj4.libproj)
-    Libdl.dlopen(LibGEOS.libgeos_cpp)
-    Libdl.dlopen(LibGEOS.libgeos)
     h = Libdl.dlopen(libgdal)
     finfo = Libdl.dlsym(h, :GDALVersionInfo)
     fconf = Libdl.dlsym(h, :CPLSetConfigOption)
