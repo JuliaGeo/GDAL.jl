@@ -3,9 +3,9 @@ using BinaryProvider # requires BinaryProvider 0.3.0 or later
 # Example taken from
 # https://github.com/JuliaIO/ImageMagick.jl/blob/sd/binaryprovider/deps/build.jl
 dependencies = [
-    "build_CodecZlib.v0.4.3.jl",
-    "build_LibGEOS.v0.3.1.jl",
-    "build_Proj4.v0.3.1.jl",
+    "build_Zlib.v1.2.11.jl",
+    "build_GEOS.v3.6.2.jl",
+    "build_PROJ.v4.9.3.jl",
 ]
 
 for elem in dependencies
