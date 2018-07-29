@@ -1,5 +1,9 @@
 # Tests based on the Raster API tutorial found at http://gdal.org/gdal_tutorial.html
 
+using GDAL
+
+# needed to actually load tifs
+GDAL.allregister()
 
 # Opening the File
 dataset = GDAL.open("data/utmsmall.tif", GDAL.GA_ReadOnly) # file from GDAL SVN
