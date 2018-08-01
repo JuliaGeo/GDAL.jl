@@ -67,7 +67,7 @@ const strip_prefixes = [
     (r"^cpl", "")
 ]
 
-parsefile(file) = parse(join(["quote", readstring(file), "end"], ";"))
+parsefile(file) = Meta.parse(join(["quote", read(file, String), "end"], ";"))
 
 "check if an expression is a line, which records line numbers"
 isline(ex::Expr) = ex.head === :line
@@ -164,7 +164,7 @@ function rewriter(ex::Expr)
     for (i, intype) in enumerate(intypes)
         if intype in opaquepointers
             # in C the opaque pointers are all typedef void *, i.e. Ptr{Void}
-            intypes[i] = :(Ptr{Void})
+            intypes[i] = :(Ptr{Cvoid})
         end
     end
     # modify ccall return type or wrap entire ccall based on return type
@@ -185,7 +185,7 @@ end
 function commonrewriter!(io::IOStream, ex::Expr, opaquepointers::Set{Symbol})
     if ex.head == :const
         lhs, rhs = ex.args[1].args
-        if rhs == :(Ptr{Void})
+        if rhs == :(Ptr{Cvoid})
             # these go in a list to be dealt with below
             # they are manually defined in types.jl
             push!(opaquepointers, lhs)
@@ -223,9 +223,9 @@ open(joinpath(srcdir, common_file), "w") do io
 end
 
 if opaquepointers != typenames
-    warn("Missing in types.jl:")
+    @warn("Missing in types.jl:")
     warn(setdiff(opaquepointers, typenames))
-    warn("Not needed in types.jl:")
+    @warn("Not needed in types.jl:")
     warn(setdiff(typenames, opaquepointers))
     error("types.jl out of sync with the opaquepointers found")
 end

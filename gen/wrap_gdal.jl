@@ -110,7 +110,7 @@ function minimal_rewriter(ex::Expr)
         # end
         @capture(ex, mutable struct T_ fields__ end)
         if isempty(fields)
-            ex = :(const $T = Ptr{Void})
+            ex = :(const $T = Ptr{Cvoid})
         end
     end
     ex

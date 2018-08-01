@@ -7,7 +7,7 @@
     CPLVerifyConfiguration() -> void
 """
 function CPLVerifyConfiguration()
-    ccall((:CPLVerifyConfiguration, libgdal), Void, ())
+    ccall((:CPLVerifyConfiguration, libgdal), Cvoid, ())
 end
 
 
@@ -51,7 +51,7 @@ Set a configuration option for GDAL/OGR use.
 * **pszValue**: the value of the option, or NULL to clear a setting.
 """
 function CPLSetConfigOption(arg1, arg2)
-    ccall((:CPLSetConfigOption, libgdal), Void, (Cstring, Cstring), arg1, arg2)
+    ccall((:CPLSetConfigOption, libgdal), Cvoid, (Cstring, Cstring), arg1, arg2)
 end
 
 
@@ -66,7 +66,7 @@ Set a configuration option for GDAL/OGR use.
 * **pszValue**: the value of the option, or NULL to clear a setting.
 """
 function CPLSetThreadLocalConfigOption(pszKey, pszValue)
-    ccall((:CPLSetThreadLocalConfigOption, libgdal), Void, (Cstring, Cstring), pszKey, pszValue)
+    ccall((:CPLSetThreadLocalConfigOption, libgdal), Cvoid, (Cstring, Cstring), pszKey, pszValue)
 end
 
 
@@ -74,7 +74,7 @@ end
     CPLFreeConfig() -> void
 """
 function CPLFreeConfig()
-    ccall((:CPLFreeConfig, libgdal), Void, ())
+    ccall((:CPLFreeConfig, libgdal), Cvoid, ())
 end
 
 
@@ -100,7 +100,7 @@ Replace the full list of configuration options with the passed list of KEY=VALUE
 * **papszConfigOptions**: the new list (or NULL).
 """
 function CPLSetConfigOptions(papszConfigOptions)
-    ccall((:CPLSetConfigOptions, libgdal), Void, (Ptr{Cstring},), papszConfigOptions)
+    ccall((:CPLSetConfigOptions, libgdal), Cvoid, (Ptr{Cstring},), papszConfigOptions)
 end
 
 
@@ -126,7 +126,7 @@ Replace the full list of thread local configuration options with the passed list
 * **papszConfigOptions**: the new list (or NULL).
 """
 function CPLSetThreadLocalConfigOptions(papszConfigOptions)
-    ccall((:CPLSetThreadLocalConfigOptions, libgdal), Void, (Ptr{Cstring},), papszConfigOptions)
+    ccall((:CPLSetThreadLocalConfigOptions, libgdal), Cvoid, (Ptr{Cstring},), papszConfigOptions)
 end
 
 
@@ -142,7 +142,7 @@ Safe version of malloc().
 pointer to newly allocated memory, only NULL if nSize is zero.
 """
 function CPLMalloc(arg1::Csize_t)
-    ccall((:CPLMalloc, libgdal), Ptr{Void}, (Csize_t,), arg1)
+    ccall((:CPLMalloc, libgdal), Ptr{Cvoid}, (Csize_t,), arg1)
 end
 
 
@@ -160,7 +160,7 @@ Safe version of calloc().
 pointer to newly allocated memory, only NULL if nSize * nCount is NULL.
 """
 function CPLCalloc(arg1::Csize_t, arg2::Csize_t)
-    ccall((:CPLCalloc, libgdal), Ptr{Void}, (Csize_t, Csize_t), arg1, arg2)
+    ccall((:CPLCalloc, libgdal), Ptr{Cvoid}, (Csize_t, Csize_t), arg1, arg2)
 end
 
 
@@ -178,7 +178,7 @@ Safe version of realloc().
 pointer to allocated memory, only NULL if nNewSize is zero.
 """
 function CPLRealloc(arg1, arg2::Csize_t)
-    ccall((:CPLRealloc, libgdal), Ptr{Void}, (Ptr{Void}, Csize_t), arg1, arg2)
+    ccall((:CPLRealloc, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t), arg1, arg2)
 end
 
 
@@ -556,7 +556,7 @@ Extract pointer from string.
 pointer value, converted from its ASCII form.
 """
 function CPLScanPointer(arg1, arg2::Cint)
-    ccall((:CPLScanPointer, libgdal), Ptr{Void}, (Cstring, Cint), arg1, arg2)
+    ccall((:CPLScanPointer, libgdal), Ptr{Cvoid}, (Cstring, Cint), arg1, arg2)
 end
 
 
@@ -682,7 +682,7 @@ Print specified time value accordingly to the format options and specified local
 Number of characters printed.
 """
 function CPLPrintTime(arg1, arg2::Cint, arg3, arg4, arg5)
-    ccall((:CPLPrintTime, libgdal), Cint, (Cstring, Cint, Cstring, Ptr{Void}, Cstring), arg1, arg2, arg3, arg4, arg5)
+    ccall((:CPLPrintTime, libgdal), Cint, (Cstring, Cint, Cstring, Ptr{Cvoid}, Cstring), arg1, arg2, arg3, arg4, arg5)
 end
 
 
@@ -702,7 +702,7 @@ Print pointer value into specified string buffer.
 Number of characters printed.
 """
 function CPLPrintPointer(arg1, arg2, arg3::Cint)
-    ccall((:CPLPrintPointer, libgdal), Cint, (Cstring, Ptr{Void}, Cint), arg1, arg2, arg3)
+    ccall((:CPLPrintPointer, libgdal), Cint, (Cstring, Ptr{Cvoid}, Cint), arg1, arg2, arg3)
 end
 
 
@@ -720,7 +720,7 @@ Fetch a function pointer from a shared library / DLL.
 A pointer to the function if found, or NULL if the function isn't found, or the shared library can't be loaded.
 """
 function CPLGetSymbol(arg1, arg2)
-    ccall((:CPLGetSymbol, libgdal), Ptr{Void}, (Cstring, Cstring), arg1, arg2)
+    ccall((:CPLGetSymbol, libgdal), Ptr{Cvoid}, (Cstring, Cstring), arg1, arg2)
 end
 
 
@@ -1061,7 +1061,7 @@ end
 CPLPushFileFinder.
 """
 function CPLPushFileFinder(pfnFinder::CPLFileFinder)
-    ccall((:CPLPushFileFinder, libgdal), Void, (CPLFileFinder,), pfnFinder)
+    ccall((:CPLPushFileFinder, libgdal), Cvoid, (CPLFileFinder,), pfnFinder)
 end
 
 
@@ -1081,7 +1081,7 @@ end
 CPLPushFinderLocation.
 """
 function CPLPushFinderLocation(arg1)
-    ccall((:CPLPushFinderLocation, libgdal), Void, (Cstring,), arg1)
+    ccall((:CPLPushFinderLocation, libgdal), Cvoid, (Cstring,), arg1)
 end
 
 
@@ -1091,7 +1091,7 @@ end
 CPLPopFinderLocation.
 """
 function CPLPopFinderLocation()
-    ccall((:CPLPopFinderLocation, libgdal), Void, ())
+    ccall((:CPLPopFinderLocation, libgdal), Cvoid, ())
 end
 
 
@@ -1101,7 +1101,7 @@ end
 CPLFinderClean.
 """
 function CPLFinderClean()
-    ccall((:CPLFinderClean, libgdal), Void, ())
+    ccall((:CPLFinderClean, libgdal), Cvoid, ())
 end
 
 
@@ -1145,7 +1145,7 @@ Close shared file.
 * **fp**: file handle from CPLOpenShared() to deaccess.
 """
 function CPLCloseShared(arg1)
-    ccall((:CPLCloseShared, libgdal), Void, (Ptr{FILE},), arg1)
+    ccall((:CPLCloseShared, libgdal), Cvoid, (Ptr{FILE},), arg1)
 end
 
 
@@ -1174,7 +1174,7 @@ Report open shared files.
 * **fp**: File handle to write to.
 """
 function CPLDumpSharedList(arg1)
-    ccall((:CPLDumpSharedList, libgdal), Void, (Ptr{FILE},), arg1)
+    ccall((:CPLDumpSharedList, libgdal), Cvoid, (Ptr{FILE},), arg1)
 end
 
 
@@ -1182,7 +1182,7 @@ end
     CPLCleanupSharedFileMutex() -> void
 """
 function CPLCleanupSharedFileMutex()
-    ccall((:CPLCleanupSharedFileMutex, libgdal), Void, ())
+    ccall((:CPLCleanupSharedFileMutex, libgdal), Cvoid, ())
 end
 
 
@@ -1248,7 +1248,7 @@ end
 Fetch the real and imaginary part of a serialized complex number.
 """
 function CPLStringToComplex(pszString, pdfReal, pdfImag)
-    ccall((:CPLStringToComplex, libgdal), Void, (Cstring, Ptr{Cdouble}, Ptr{Cdouble}), pszString, pdfReal, pdfImag)
+    ccall((:CPLStringToComplex, libgdal), Cvoid, (Cstring, Ptr{Cdouble}, Ptr{Cdouble}), pszString, pdfReal, pdfImag)
 end
 
 
@@ -1315,7 +1315,7 @@ end
                  char **) -> void *
 """
 function CPLCreateZip(pszZipFilename, papszOptions)
-    ccall((:CPLCreateZip, libgdal), Ptr{Void}, (Cstring, Ptr{Cstring}), pszZipFilename, papszOptions)
+    ccall((:CPLCreateZip, libgdal), Ptr{Cvoid}, (Cstring, Ptr{Cstring}), pszZipFilename, papszOptions)
 end
 
 
@@ -1325,7 +1325,7 @@ end
                        char **) -> CPLErr
 """
 function CPLCreateFileInZip(hZip, pszFilename, papszOptions)
-    ccall((:CPLCreateFileInZip, libgdal), CPLErr, (Ptr{Void}, Cstring, Ptr{Cstring}), hZip, pszFilename, papszOptions)
+    ccall((:CPLCreateFileInZip, libgdal), CPLErr, (Ptr{Cvoid}, Cstring, Ptr{Cstring}), hZip, pszFilename, papszOptions)
 end
 
 
@@ -1335,7 +1335,7 @@ end
                       int) -> CPLErr
 """
 function CPLWriteFileInZip(hZip, pBuffer, nBufferSize::Cint)
-    ccall((:CPLWriteFileInZip, libgdal), CPLErr, (Ptr{Void}, Ptr{Void}, Cint), hZip, pBuffer, nBufferSize)
+    ccall((:CPLWriteFileInZip, libgdal), CPLErr, (Ptr{Cvoid}, Ptr{Cvoid}, Cint), hZip, pBuffer, nBufferSize)
 end
 
 
@@ -1343,7 +1343,7 @@ end
     CPLCloseFileInZip(void *) -> CPLErr
 """
 function CPLCloseFileInZip(hZip)
-    ccall((:CPLCloseFileInZip, libgdal), CPLErr, (Ptr{Void},), hZip)
+    ccall((:CPLCloseFileInZip, libgdal), CPLErr, (Ptr{Cvoid},), hZip)
 end
 
 
@@ -1351,7 +1351,7 @@ end
     CPLCloseZip(void *) -> CPLErr
 """
 function CPLCloseZip(hZip)
-    ccall((:CPLCloseZip, libgdal), CPLErr, (Ptr{Void},), hZip)
+    ccall((:CPLCloseZip, libgdal), CPLErr, (Ptr{Cvoid},), hZip)
 end
 
 
@@ -1364,7 +1364,7 @@ end
                    size_t * pnOutBytes) -> void *
 """
 function CPLZLibDeflate(ptr, nBytes::Csize_t, nLevel::Cint, outptr, nOutAvailableBytes::Csize_t, pnOutBytes)
-    ccall((:CPLZLibDeflate, libgdal), Ptr{Void}, (Ptr{Void}, Csize_t, Cint, Ptr{Void}, Csize_t, Ptr{Csize_t}), ptr, nBytes, nLevel, outptr, nOutAvailableBytes, pnOutBytes)
+    ccall((:CPLZLibDeflate, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t, Cint, Ptr{Cvoid}, Csize_t, Ptr{Csize_t}), ptr, nBytes, nLevel, outptr, nOutAvailableBytes, pnOutBytes)
 end
 
 
@@ -1376,7 +1376,7 @@ end
                    size_t * pnOutBytes) -> void *
 """
 function CPLZLibInflate(ptr, nBytes::Csize_t, outptr, nOutAvailableBytes::Csize_t, pnOutBytes)
-    ccall((:CPLZLibInflate, libgdal), Ptr{Void}, (Ptr{Void}, Csize_t, Ptr{Void}, Csize_t, Ptr{Csize_t}), ptr, nBytes, outptr, nOutAvailableBytes, pnOutBytes)
+    ccall((:CPLZLibInflate, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t, Ptr{Cvoid}, Csize_t, Ptr{Csize_t}), ptr, nBytes, outptr, nOutAvailableBytes, pnOutBytes)
 end
 
 
@@ -1422,5 +1422,5 @@ end
     CPLCleanupSetlocaleMutex(void) -> void
 """
 function CPLCleanupSetlocaleMutex()
-    ccall((:CPLCleanupSetlocaleMutex, libgdal), Void, ())
+    ccall((:CPLCleanupSetlocaleMutex, libgdal), Cvoid, ())
 end

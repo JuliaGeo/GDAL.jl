@@ -55,7 +55,7 @@ OGRSpatialReference destructor.
 * **hSRS**: the object to delete
 """
 function OSRDestroySpatialReference(arg1::OGRSpatialReferenceH)
-    ccall((:OSRDestroySpatialReference, libgdal), Void, (OGRSpatialReferenceH,), arg1)
+    ccall((:OSRDestroySpatialReference, libgdal), Cvoid, (OGRSpatialReferenceH,), arg1)
 end
 
 
@@ -85,7 +85,7 @@ end
 Decrements the reference count by one, and destroy if zero.
 """
 function OSRRelease(arg1::OGRSpatialReferenceH)
-    ccall((:OSRRelease, libgdal), Void, (OGRSpatialReferenceH,), arg1)
+    ccall((:OSRRelease, libgdal), Cvoid, (OGRSpatialReferenceH,), arg1)
 end
 
 
@@ -1781,7 +1781,7 @@ end
 Cleanup cached SRS related memory.
 """
 function OSRCleanup()
-    ccall((:OSRCleanup, libgdal), Void, ())
+    ccall((:OSRCleanup, libgdal), Cvoid, ())
 end
 
 
@@ -1812,7 +1812,7 @@ OGRCoordinateTransformation destructor.
 * **hCT**: the object to delete
 """
 function OCTDestroyCoordinateTransformation(arg1::OGRCoordinateTransformationH)
-    ccall((:OCTDestroyCoordinateTransformation, libgdal), Void, (OGRCoordinateTransformationH,), arg1)
+    ccall((:OCTDestroyCoordinateTransformation, libgdal), Cvoid, (OGRCoordinateTransformationH,), arg1)
 end
 
 
@@ -1878,7 +1878,7 @@ end
     OCTCleanupProjMutex() -> void
 """
 function OCTCleanupProjMutex()
-    ccall((:OCTCleanupProjMutex, libgdal), Void, ())
+    ccall((:OCTCleanupProjMutex, libgdal), Cvoid, ())
 end
 
 

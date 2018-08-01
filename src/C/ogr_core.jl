@@ -7,7 +7,7 @@
     OGRMalloc(size_t size) -> void *
 """
 function OGRMalloc()
-    ccall((:OGRMalloc, libgdal), Ptr{Void}, ())
+    ccall((:OGRMalloc, libgdal), Ptr{Cvoid}, ())
 end
 
 
@@ -16,7 +16,7 @@ end
               size_t size) -> void *
 """
 function OGRCalloc()
-    ccall((:OGRCalloc, libgdal), Ptr{Void}, ())
+    ccall((:OGRCalloc, libgdal), Ptr{Cvoid}, ())
 end
 
 
@@ -25,7 +25,7 @@ end
                size_t size) -> void *
 """
 function OGRRealloc(arg1, size_t::Cint)
-    ccall((:OGRRealloc, libgdal), Ptr{Void}, (Ptr{Void}, Cint), arg1, size_t)
+    ccall((:OGRRealloc, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Cint), arg1, size_t)
 end
 
 
@@ -40,7 +40,7 @@ end
     OGRFree(void * pMemory) -> void
 """
 function OGRFree(arg1)
-    ccall((:OGRFree, libgdal), Void, (Ptr{Void},), arg1)
+    ccall((:OGRFree, libgdal), Cvoid, (Ptr{Cvoid},), arg1)
 end
 
 

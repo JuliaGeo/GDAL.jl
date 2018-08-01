@@ -28,7 +28,7 @@ Destroy a tree.
 * **psNode**: the tree to free.
 """
 function CPLDestroyXMLNode(arg1)
-    ccall((:CPLDestroyXMLNode, libgdal), Void, (Ptr{CPLXMLNode},), arg1)
+    ccall((:CPLDestroyXMLNode, libgdal), Cvoid, (Ptr{CPLXMLNode},), arg1)
 end
 
 
@@ -135,7 +135,7 @@ Add child node to parent.
 * **psChild**: the child to add to the parent. May not be NULL. Should not be a child of any other parent.
 """
 function CPLAddXMLChild(psParent, psChild)
-    ccall((:CPLAddXMLChild, libgdal), Void, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psParent, psChild)
+    ccall((:CPLAddXMLChild, libgdal), Cvoid, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psParent, psChild)
 end
 
 
@@ -168,7 +168,7 @@ Add new sibling.
 * **psNewSibling**: the node to add at the end of psOlderSiblings psNext chain.
 """
 function CPLAddXMLSibling(psOlderSibling, psNewSibling)
-    ccall((:CPLAddXMLSibling, libgdal), Void, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psOlderSibling, psNewSibling)
+    ccall((:CPLAddXMLSibling, libgdal), Cvoid, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psOlderSibling, psNewSibling)
 end
 
 
@@ -205,7 +205,7 @@ Create an attribute and text value.
 * **pszValue**: the text to attach to the attribute. Must not be NULL.
 """
 function CPLAddXMLAttributeAndValue(psParent, pszName, pszValue)
-    ccall((:CPLAddXMLAttributeAndValue, libgdal), Void, (Ptr{CPLXMLNode}, Cstring, Cstring), psParent, pszName, pszValue)
+    ccall((:CPLAddXMLAttributeAndValue, libgdal), Cvoid, (Ptr{CPLXMLNode}, Cstring, Cstring), psParent, pszName, pszValue)
 end
 
 
@@ -258,7 +258,7 @@ Strip indicated namespaces.
 * **bRecurse**: TRUE to recurse over whole document, or FALSE to only operate on the passed node.
 """
 function CPLStripXMLNamespace(psRoot, pszNameSpace, bRecurse::Cint)
-    ccall((:CPLStripXMLNamespace, libgdal), Void, (Ptr{CPLXMLNode}, Cstring, Cint), psRoot, pszNameSpace, bRecurse)
+    ccall((:CPLStripXMLNamespace, libgdal), Cvoid, (Ptr{CPLXMLNode}, Cstring, Cint), psRoot, pszNameSpace, bRecurse)
 end
 
 
@@ -271,7 +271,7 @@ Make string into safe XML token.
 * **pszTarget**: the string to be adjusted. It is altered in place.
 """
 function CPLCleanXMLElementName(arg1)
-    ccall((:CPLCleanXMLElementName, libgdal), Void, (Cstring,), arg1)
+    ccall((:CPLCleanXMLElementName, libgdal), Cvoid, (Cstring,), arg1)
 end
 
 
