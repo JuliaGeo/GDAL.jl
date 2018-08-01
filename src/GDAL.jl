@@ -43,6 +43,9 @@ include("cpl_error.jl")
 
 include("error.jl")
 
+const GDALVERSION = Ref{VersionNumber}()
+const GDAL_DATA = Ref{String}()
+
 function __init__()
     h = Libdl.dlopen(libgdal)
     finfo = Libdl.dlsym(h, :GDALVersionInfo)
@@ -58,12 +61,12 @@ function __init__()
 
     # get GDAL version number
     versionstring = unsafe_string(ccall(finfo, Cstring, (Cstring,), "RELEASE_NAME"))
-    global const GDALVERSION = convert(VersionNumber, versionstring)
+    GDALVERSION[] = convert(VersionNumber, versionstring)
 
     # set the GDAL_DATA variable
-    global const GDAL_DATA = abspath(@__DIR__, "..", "deps", "usr", "share", "gdal")
-    ENV["GDAL_DATA"] = GDAL_DATA
-    ccall(fconf, Void, (Cstring, Cstring), "GDAL_DATA", GDAL_DATA)
+    GDAL_DATA[] = abspath(@__DIR__, "..", "deps", "usr", "share", "gdal")
+    ENV["GDAL_DATA"] = GDAL_DATA[]
+    ccall(fconf, Void, (Cstring, Cstring), "GDAL_DATA", GDAL_DATA[])
 end
 
 """

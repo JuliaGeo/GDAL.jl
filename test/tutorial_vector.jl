@@ -16,7 +16,7 @@ dataset = GDAL.openex("data/point.geojson", GDAL.GDAL_OF_VECTOR, C_NULL, C_NULL,
 @test GDAL.datasetgetlayercount(dataset) == 1
 layer = GDAL.datasetgetlayer(dataset, 0)
 # GDAL 2.2 GeoJSON driver change
-layername = GDAL.GDALVERSION >= v"2.2.0" ? "point" : "OGRGeoJSON"
+layername = GDAL.GDALVERSION[] >= v"2.2.0" ? "point" : "OGRGeoJSON"
 layerbyname = GDAL.datasetgetlayerbyname(dataset, layername)
 @test layer == layerbyname
 @test GDAL.getname(layer) == layername
