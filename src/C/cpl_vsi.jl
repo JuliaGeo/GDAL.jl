@@ -42,7 +42,7 @@ end
     VSIRewind(FILE * fp) -> void
 """
 function VSIRewind(arg1)
-    ccall((:VSIRewind, libgdal), Void, (Ptr{FILE},), arg1)
+    ccall((:VSIRewind, libgdal), Cvoid, (Ptr{FILE},), arg1)
 end
 
 
@@ -50,7 +50,7 @@ end
     VSIFFlush(FILE * fp) -> void
 """
 function VSIFFlush(arg1)
-    ccall((:VSIFFlush, libgdal), Void, (Ptr{FILE},), arg1)
+    ccall((:VSIFFlush, libgdal), Cvoid, (Ptr{FILE},), arg1)
 end
 
 
@@ -237,7 +237,7 @@ Rewind the file pointer to the beginning of the file.
 * **fp**: file handle opened with VSIFOpenL().
 """
 function VSIRewindL(arg1)
-    ccall((:VSIRewindL, libgdal), Void, (Ptr{VSILFILE},), arg1)
+    ccall((:VSIRewindL, libgdal), Cvoid, (Ptr{VSILFILE},), arg1)
 end
 
 
@@ -283,7 +283,7 @@ Read several ranges of bytes from file.
 0 in case of success, -1 otherwise.
 """
 function VSIFReadMultiRangeL(nRanges::Cint, ppData, panOffsets, panSizes, arg1)
-    ccall((:VSIFReadMultiRangeL, libgdal), Cint, (Cint, Ptr{Ptr{Void}}, Ptr{vsi_l_offset}, Ptr{Cint}, Ptr{VSILFILE}), nRanges, ppData, panOffsets, panSizes, arg1)
+    ccall((:VSIFReadMultiRangeL, libgdal), Cint, (Cint, Ptr{Ptr{Cvoid}}, Ptr{vsi_l_offset}, Ptr{Cint}, Ptr{VSILFILE}), nRanges, ppData, panOffsets, panSizes, arg1)
 end
 
 
@@ -503,7 +503,7 @@ Returns the "native" file descriptor for the virtual handle.
 the native file descriptor, or NULL.
 """
 function VSIFGetNativeFileDescriptorL(arg1)
-    ccall((:VSIFGetNativeFileDescriptorL, libgdal), Ptr{Void}, (Ptr{VSILFILE},), arg1)
+    ccall((:VSIFGetNativeFileDescriptorL, libgdal), Ptr{Cvoid}, (Ptr{VSILFILE},), arg1)
 end
 
 
@@ -514,7 +514,7 @@ end
 Analog of calloc().
 """
 function VSICalloc()
-    ccall((:VSICalloc, libgdal), Ptr{Void}, ())
+    ccall((:VSICalloc, libgdal), Ptr{Cvoid}, ())
 end
 
 
@@ -524,7 +524,7 @@ end
 Analog of malloc().
 """
 function VSIMalloc()
-    ccall((:VSIMalloc, libgdal), Ptr{Void}, ())
+    ccall((:VSIMalloc, libgdal), Ptr{Cvoid}, ())
 end
 
 
@@ -534,7 +534,7 @@ end
 Analog of free() for data allocated with VSIMalloc(), VSICalloc(), VSIRealloc()
 """
 function VSIFree(arg1)
-    ccall((:VSIFree, libgdal), Void, (Ptr{Void},), arg1)
+    ccall((:VSIFree, libgdal), Cvoid, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -545,7 +545,7 @@ end
 Analog of realloc().
 """
 function VSIRealloc(arg1, size_t::Cint)
-    ccall((:VSIRealloc, libgdal), Ptr{Void}, (Ptr{Void}, Cint), arg1, size_t)
+    ccall((:VSIRealloc, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Cint), arg1, size_t)
 end
 
 
@@ -573,7 +573,7 @@ Allocates a buffer with an alignment constraint.
 a buffer aligned on nAlignment and of size nSize, or NULL
 """
 function VSIMallocAligned(nAlignment::Cint, nSize::Cint)
-    ccall((:VSIMallocAligned, libgdal), Ptr{Void}, (Cint, Cint), nAlignment, nSize)
+    ccall((:VSIMallocAligned, libgdal), Ptr{Cvoid}, (Cint, Cint), nAlignment, nSize)
 end
 
 
@@ -589,7 +589,7 @@ Allocates a buffer with an alignment constraint such that it can be used by the 
 an aligned buffer of size nSize, or NULL
 """
 function VSIMallocAlignedAuto(nSize::Cint)
-    ccall((:VSIMallocAlignedAuto, libgdal), Ptr{Void}, (Cint,), nSize)
+    ccall((:VSIMallocAlignedAuto, libgdal), Ptr{Cvoid}, (Cint,), nSize)
 end
 
 
@@ -602,7 +602,7 @@ Free a buffer allocated with VSIMallocAligned().
 * **ptr**: Buffer to free.
 """
 function VSIFreeAligned(ptr)
-    ccall((:VSIFreeAligned, libgdal), Void, (Ptr{Void},), ptr)
+    ccall((:VSIFreeAligned, libgdal), Cvoid, (Ptr{Cvoid},), ptr)
 end
 
 
@@ -614,7 +614,7 @@ end
 See VSIMallocAlignedAuto()
 """
 function VSIMallocAlignedAutoVerbose(nSize::Cint, pszFile, nLine::Cint)
-    ccall((:VSIMallocAlignedAutoVerbose, libgdal), Ptr{Void}, (Cint, Cstring, Cint), nSize, pszFile, nLine)
+    ccall((:VSIMallocAlignedAutoVerbose, libgdal), Ptr{Cvoid}, (Cint, Cstring, Cint), nSize, pszFile, nLine)
 end
 
 
@@ -625,7 +625,7 @@ end
 VSIMalloc2 allocates (nSize1 * nSize2) bytes.
 """
 function VSIMalloc2(nSize1::Cint, nSize2::Cint)
-    ccall((:VSIMalloc2, libgdal), Ptr{Void}, (Cint, Cint), nSize1, nSize2)
+    ccall((:VSIMalloc2, libgdal), Ptr{Cvoid}, (Cint, Cint), nSize1, nSize2)
 end
 
 
@@ -637,7 +637,7 @@ end
 VSIMalloc3 allocates (nSize1 * nSize2 * nSize3) bytes.
 """
 function VSIMalloc3(nSize1::Cint, nSize2::Cint, nSize3::Cint)
-    ccall((:VSIMalloc3, libgdal), Ptr{Void}, (Cint, Cint, Cint), nSize1, nSize2, nSize3)
+    ccall((:VSIMalloc3, libgdal), Ptr{Cvoid}, (Cint, Cint, Cint), nSize1, nSize2, nSize3)
 end
 
 
@@ -649,7 +649,7 @@ end
 VSIMallocVerbose.
 """
 function VSIMallocVerbose(nSize::Cint, pszFile, nLine::Cint)
-    ccall((:VSIMallocVerbose, libgdal), Ptr{Void}, (Cint, Cstring, Cint), nSize, pszFile, nLine)
+    ccall((:VSIMallocVerbose, libgdal), Ptr{Cvoid}, (Cint, Cstring, Cint), nSize, pszFile, nLine)
 end
 
 
@@ -662,7 +662,7 @@ end
 VSIMalloc2Verbose.
 """
 function VSIMalloc2Verbose(nSize1::Cint, nSize2::Cint, pszFile, nLine::Cint)
-    ccall((:VSIMalloc2Verbose, libgdal), Ptr{Void}, (Cint, Cint, Cstring, Cint), nSize1, nSize2, pszFile, nLine)
+    ccall((:VSIMalloc2Verbose, libgdal), Ptr{Cvoid}, (Cint, Cint, Cstring, Cint), nSize1, nSize2, pszFile, nLine)
 end
 
 
@@ -676,7 +676,7 @@ end
 VSIMalloc3Verbose.
 """
 function VSIMalloc3Verbose(nSize1::Cint, nSize2::Cint, nSize3::Cint, pszFile, nLine::Cint)
-    ccall((:VSIMalloc3Verbose, libgdal), Ptr{Void}, (Cint, Cint, Cint, Cstring, Cint), nSize1, nSize2, nSize3, pszFile, nLine)
+    ccall((:VSIMalloc3Verbose, libgdal), Ptr{Cvoid}, (Cint, Cint, Cint, Cstring, Cint), nSize1, nSize2, nSize3, pszFile, nLine)
 end
 
 
@@ -689,7 +689,7 @@ end
 VSICallocVerbose.
 """
 function VSICallocVerbose(nCount::Cint, nSize::Cint, pszFile, nLine::Cint)
-    ccall((:VSICallocVerbose, libgdal), Ptr{Void}, (Cint, Cint, Cstring, Cint), nCount, nSize, pszFile, nLine)
+    ccall((:VSICallocVerbose, libgdal), Ptr{Cvoid}, (Cint, Cint, Cstring, Cint), nCount, nSize, pszFile, nLine)
 end
 
 
@@ -702,7 +702,7 @@ end
 VSIReallocVerbose.
 """
 function VSIReallocVerbose(pOldPtr, nNewSize::Cint, pszFile, nLine::Cint)
-    ccall((:VSIReallocVerbose, libgdal), Ptr{Void}, (Ptr{Void}, Cint, Cstring, Cint), pOldPtr, nNewSize, pszFile, nLine)
+    ccall((:VSIReallocVerbose, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Cint, Cstring, Cint), pOldPtr, nNewSize, pszFile, nLine)
 end
 
 
@@ -894,14 +894,14 @@ end
 Install "memory" file system handler.
 """
 function VSIInstallMemFileHandler()
-    ccall((:VSIInstallMemFileHandler, libgdal), Void, ())
+    ccall((:VSIInstallMemFileHandler, libgdal), Cvoid, ())
 end
 
 
 """
 """
 function VSIInstallLargeFileHandler()
-    ccall((:VSIInstallLargeFileHandler, libgdal), Void, ())
+    ccall((:VSIInstallLargeFileHandler, libgdal), Cvoid, ())
 end
 
 
@@ -911,7 +911,7 @@ end
 Install /vsisubfile/ virtual file handler.
 """
 function VSIInstallSubFileHandler()
-    ccall((:VSIInstallSubFileHandler, libgdal), Void, ())
+    ccall((:VSIInstallSubFileHandler, libgdal), Cvoid, ())
 end
 
 
@@ -921,7 +921,7 @@ end
 Install /vsicurl/ HTTP/FTP file system handler (requires libcurl)
 """
 function VSIInstallCurlFileHandler()
-    ccall((:VSIInstallCurlFileHandler, libgdal), Void, ())
+    ccall((:VSIInstallCurlFileHandler, libgdal), Cvoid, ())
 end
 
 
@@ -931,7 +931,7 @@ end
 Clean local cache associated with /vsicurl/ (and related file systems)
 """
 function VSICurlClearCache()
-    ccall((:VSICurlClearCache, libgdal), Void, ())
+    ccall((:VSICurlClearCache, libgdal), Cvoid, ())
 end
 
 
@@ -939,7 +939,7 @@ end
     VSIInstallCurlStreamingFileHandler(void) -> void
 """
 function VSIInstallCurlStreamingFileHandler()
-    ccall((:VSIInstallCurlStreamingFileHandler, libgdal), Void, ())
+    ccall((:VSIInstallCurlStreamingFileHandler, libgdal), Cvoid, ())
 end
 
 
@@ -949,7 +949,7 @@ end
 Install /vsis3/ Amazon S3 file system handler (requires libcurl)
 """
 function VSIInstallS3FileHandler()
-    ccall((:VSIInstallS3FileHandler, libgdal), Void, ())
+    ccall((:VSIInstallS3FileHandler, libgdal), Cvoid, ())
 end
 
 
@@ -957,7 +957,7 @@ end
     VSIInstallS3StreamingFileHandler(void) -> void
 """
 function VSIInstallS3StreamingFileHandler()
-    ccall((:VSIInstallS3StreamingFileHandler, libgdal), Void, ())
+    ccall((:VSIInstallS3StreamingFileHandler, libgdal), Cvoid, ())
 end
 
 
@@ -967,7 +967,7 @@ end
 Install /vsigs/ Google Cloud Storage file system handler (requires libcurl)
 """
 function VSIInstallGSFileHandler()
-    ccall((:VSIInstallGSFileHandler, libgdal), Void, ())
+    ccall((:VSIInstallGSFileHandler, libgdal), Cvoid, ())
 end
 
 
@@ -975,7 +975,7 @@ end
     VSIInstallGSStreamingFileHandler(void) -> void
 """
 function VSIInstallGSStreamingFileHandler()
-    ccall((:VSIInstallGSStreamingFileHandler, libgdal), Void, ())
+    ccall((:VSIInstallGSStreamingFileHandler, libgdal), Cvoid, ())
 end
 
 
@@ -985,7 +985,7 @@ end
 Install GZip file system handler.
 """
 function VSIInstallGZipFileHandler()
-    ccall((:VSIInstallGZipFileHandler, libgdal), Void, ())
+    ccall((:VSIInstallGZipFileHandler, libgdal), Cvoid, ())
 end
 
 
@@ -995,7 +995,7 @@ end
 Install ZIP file system handler.
 """
 function VSIInstallZipFileHandler()
-    ccall((:VSIInstallZipFileHandler, libgdal), Void, ())
+    ccall((:VSIInstallZipFileHandler, libgdal), Cvoid, ())
 end
 
 
@@ -1005,7 +1005,7 @@ end
 Install /vsistdin/ file system handler.
 """
 function VSIInstallStdinHandler()
-    ccall((:VSIInstallStdinHandler, libgdal), Void, ())
+    ccall((:VSIInstallStdinHandler, libgdal), Cvoid, ())
 end
 
 
@@ -1015,7 +1015,7 @@ end
 Install /vsistdout/ file system handler.
 """
 function VSIInstallStdoutHandler()
-    ccall((:VSIInstallStdoutHandler, libgdal), Void, ())
+    ccall((:VSIInstallStdoutHandler, libgdal), Cvoid, ())
 end
 
 
@@ -1025,7 +1025,7 @@ end
 Install /vsisparse/ virtual file handler.
 """
 function VSIInstallSparseFileHandler()
-    ccall((:VSIInstallSparseFileHandler, libgdal), Void, ())
+    ccall((:VSIInstallSparseFileHandler, libgdal), Cvoid, ())
 end
 
 
@@ -1035,7 +1035,7 @@ end
 Install /vsitar/ file system handler.
 """
 function VSIInstallTarFileHandler()
-    ccall((:VSIInstallTarFileHandler, libgdal), Void, ())
+    ccall((:VSIInstallTarFileHandler, libgdal), Cvoid, ())
 end
 
 
@@ -1045,7 +1045,7 @@ end
 Install /vsicrypt/ encrypted file system handler (requires libcrypto++)
 """
 function VSIInstallCryptFileHandler()
-    ccall((:VSIInstallCryptFileHandler, libgdal), Void, ())
+    ccall((:VSIInstallCryptFileHandler, libgdal), Cvoid, ())
 end
 
 
@@ -1060,14 +1060,14 @@ Installs the encryption/decryption key.
 * **nKeySize**: length of the key in bytes. Might be 0 to clear previously set key.
 """
 function VSISetCryptKey(pabyKey, nKeySize::Cint)
-    ccall((:VSISetCryptKey, libgdal), Void, (Ptr{GByte}, Cint), pabyKey, nKeySize)
+    ccall((:VSISetCryptKey, libgdal), Cvoid, (Ptr{GByte}, Cint), pabyKey, nKeySize)
 end
 
 
 """
 """
 function VSICleanupFileManager()
-    ccall((:VSICleanupFileManager, libgdal), Void, ())
+    ccall((:VSICleanupFileManager, libgdal), Cvoid, ())
 end
 
 
@@ -1124,7 +1124,7 @@ Set an alternative write function and output file handle instead of fwrite() / s
 * **stream**: File handle on which to output. Passed to pFct.
 """
 function VSIStdoutSetRedirection(pFct::Cint, stream)
-    ccall((:VSIStdoutSetRedirection, libgdal), Void, (Cint, Ptr{FILE}), pFct, stream)
+    ccall((:VSIStdoutSetRedirection, libgdal), Cvoid, (Cint, Ptr{FILE}), pFct, stream)
 end
 
 
@@ -1149,7 +1149,7 @@ end
               struct tm * poBrokenTime) -> struct tm *
 """
 function VSIGMTime(pnTime, poBrokenTime)
-    ccall((:VSIGMTime, libgdal), Ptr{Void}, (Ptr{time_t}, Ptr{Void}), pnTime, poBrokenTime)
+    ccall((:VSIGMTime, libgdal), Ptr{Cvoid}, (Ptr{time_t}, Ptr{Cvoid}), pnTime, poBrokenTime)
 end
 
 
@@ -1158,5 +1158,5 @@ end
                  struct tm * poBrokenTime) -> struct tm *
 """
 function VSILocalTime(pnTime, poBrokenTime)
-    ccall((:VSILocalTime, libgdal), Ptr{Void}, (Ptr{time_t}, Ptr{Void}), pnTime, poBrokenTime)
+    ccall((:VSILocalTime, libgdal), Ptr{Cvoid}, (Ptr{time_t}, Ptr{Cvoid}), pnTime, poBrokenTime)
 end

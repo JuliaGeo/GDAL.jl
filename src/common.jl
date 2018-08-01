@@ -22,8 +22,8 @@ const CPLErrorNum = Cint
 mutable struct CPLXMLNode
     eType::CPLXMLNodeType
     pszValue::Cstring
-    psNext::Ptr{Void}
-    psChild::Ptr{Void}
+    psNext::Ptr{Cvoid}
+    psChild::Ptr{Cvoid}
 end
 
 const CPL_HAS_GINT64 = 1
@@ -47,7 +47,7 @@ const VSI_STAT_EXISTS_FLAG = 0x01
 const VSI_STAT_NATURE_FLAG = 0x02
 const VSI_STAT_SIZE_FLAG = 0x04
 const VSI_STAT_SET_ERROR_FLAG = 0x08
-const VSIStatBuf = Void
+const VSIStatBuf = Nothing
 const vsi_l_offset = GUIntBig
 const VSILFILE = FILE
 @enum VSIRangeStatus::UInt32 VSI_RANGE_STATUS_UNKNOWN = 0 VSI_RANGE_STATUS_DATA = 1 VSI_RANGE_STATUS_HOLE = 2
@@ -109,7 +109,7 @@ mutable struct GDALRasterIOExtraArg
     nVersion::Cint
     eResampleAlg::GDALRIOResampleAlg
     pfnProgress::GDALProgressFunc
-    pProgressData::Ptr{Void}
+    pProgressData::Ptr{Cvoid}
     bFloatingPointWindowValidity::Cint
     dfXOff::Cdouble
     dfYOff::Cdouble
@@ -171,14 +171,14 @@ mutable struct GDALTransformerInfo
     abySignature::NTuple{4, GByte}
     pszClassName::Cstring
     pfnTransform::GDALTransformerFunc
-    pfnCleanup::Ptr{Void}
-    pfnSerialize::Ptr{Void}
-    pfnCreateSimilar::Ptr{Void}
+    pfnCleanup::Ptr{Cvoid}
+    pfnSerialize::Ptr{Cvoid}
+    pfnCreateSimilar::Ptr{Cvoid}
 end
 
 
 mutable struct OGRContourWriterInfo
-    hLayer::Ptr{Void}
+    hLayer::Ptr{Cvoid}
     adfGeoTransform::NTuple{6, Cdouble}
     nElevField::Cint
     nIDField::Cint
@@ -349,7 +349,7 @@ const OFTMaxType = OFTInteger64List
 @enum OGRFieldSubType::UInt32 OFSTNone = 0 OFSTBoolean = 1 OFSTInt16 = 2 OFSTFloat32 = 3
 const OFSTMaxSubType = OFSTFloat32
 @enum OGRJustification::UInt32 OJUndefined = 0 OJLeft = 1 OJRight = 2
-const OGRField = Void
+const OGRField = Nothing
 @enum OGRSTClassId::UInt32 OGRSTCNone = 0 OGRSTCPen = 1 OGRSTCBrush = 2 OGRSTCSymbol = 3 OGRSTCLabel = 4 OGRSTCVector = 5
 @enum OGRSTUnitId::UInt32 OGRSTUGround = 0 OGRSTUPixel = 1 OGRSTUPoints = 2 OGRSTUMM = 3 OGRSTUCM = 4 OGRSTUInches = 5
 @enum OGRSTPenParam::UInt32 OGRSTPenColor = 0 OGRSTPenWidth = 1 OGRSTPenPattern = 2 OGRSTPenId = 3 OGRSTPenPerOffset = 4 OGRSTPenCap = 5 OGRSTPenJoin = 6 OGRSTPenPriority = 7 OGRSTPenLast = 8
@@ -385,24 +385,24 @@ mutable struct GDALWarpOptions
     padfDstNoDataReal::Ptr{Cdouble}
     padfDstNoDataImag::Ptr{Cdouble}
     pfnProgress::GDALProgressFunc
-    pProgressArg::Ptr{Void}
+    pProgressArg::Ptr{Cvoid}
     pfnTransformer::GDALTransformerFunc
-    pTransformerArg::Ptr{Void}
+    pTransformerArg::Ptr{Cvoid}
     papfnSrcPerBandValidityMaskFunc::Ptr{GDALMaskFunc}
-    papSrcPerBandValidityMaskFuncArg::Ptr{Ptr{Void}}
+    papSrcPerBandValidityMaskFuncArg::Ptr{Ptr{Cvoid}}
     pfnSrcValidityMaskFunc::GDALMaskFunc
-    pSrcValidityMaskFuncArg::Ptr{Void}
+    pSrcValidityMaskFuncArg::Ptr{Cvoid}
     pfnSrcDensityMaskFunc::GDALMaskFunc
-    pSrcDensityMaskFuncArg::Ptr{Void}
+    pSrcDensityMaskFuncArg::Ptr{Cvoid}
     pfnDstDensityMaskFunc::GDALMaskFunc
-    pDstDensityMaskFuncArg::Ptr{Void}
+    pDstDensityMaskFuncArg::Ptr{Cvoid}
     pfnDstValidityMaskFunc::GDALMaskFunc
-    pDstValidityMaskFuncArg::Ptr{Void}
-    pfnPreWarpChunkProcessor::Ptr{Void}
-    pPreWarpProcessorArg::Ptr{Void}
-    pfnPostWarpChunkProcessor::Ptr{Void}
-    pPostWarpProcessorArg::Ptr{Void}
-    hCutline::Ptr{Void}
+    pDstValidityMaskFuncArg::Ptr{Cvoid}
+    pfnPreWarpChunkProcessor::Ptr{Cvoid}
+    pPreWarpProcessorArg::Ptr{Cvoid}
+    pfnPostWarpChunkProcessor::Ptr{Cvoid}
+    pPostWarpProcessorArg::Ptr{Cvoid}
+    hCutline::Ptr{Cvoid}
     dfCutlineBlendDist::Cdouble
 end
 

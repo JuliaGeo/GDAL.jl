@@ -56,8 +56,8 @@ function __init__()
     check_deps()
 
     # register custom error handler
-    funcptr = cfunction(gdaljl_errorhandler, Ptr{Void}, (CPLErr, Cint, Cstring))
-    ccall(ferrh, Ptr{Void}, (Ptr{Void},), funcptr)
+    funcptr = cfunction(gdaljl_errorhandler, Ptr{Cvoid}, (CPLErr, Cint, Cstring))
+    ccall(ferrh, Ptr{Cvoid}, (Ptr{Cvoid},), funcptr)
 
     # get GDAL version number
     versionstring = unsafe_string(ccall(finfo, Cstring, (Cstring,), "RELEASE_NAME"))
@@ -66,7 +66,7 @@ function __init__()
     # set the GDAL_DATA variable
     GDAL_DATA[] = abspath(@__DIR__, "..", "deps", "usr", "share", "gdal")
     ENV["GDAL_DATA"] = GDAL_DATA[]
-    ccall(fconf, Void, (Cstring, Cstring), "GDAL_DATA", GDAL_DATA[])
+    ccall(fconf, Cvoid, (Cstring, Cstring), "GDAL_DATA", GDAL_DATA[])
 end
 
 """

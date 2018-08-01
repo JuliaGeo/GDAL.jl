@@ -27,15 +27,15 @@ const CPLE_AWSSignatureDoesNotMatch = 16
 @enum CPLErr::UInt32 CE_None = 0 CE_Debug = 1 CE_Warning = 2 CE_Failure = 3 CE_Fatal = 4
 
 const CPLErrorNum = Cint
-const CPLErrorHandler = Ptr{Void}
+const CPLErrorHandler = Ptr{Cvoid}
 
 @enum CPLXMLNodeType::UInt32 CXT_Element = 0 CXT_Text = 1 CXT_Attribute = 2 CXT_Comment = 3 CXT_Literal = 4
 
 mutable struct CPLXMLNode
     eType::CPLXMLNodeType
     pszValue::Cstring
-    psNext::Ptr{Void}
-    psChild::Ptr{Void}
+    psNext::Ptr{Cvoid}
+    psChild::Ptr{Cvoid}
 end
 
 # Skipping MacroDefinition: GINTBIG_MIN ( ( GIntBig ) ( 0x80000000 ) << 32 )
@@ -129,11 +129,11 @@ const GUIntBig = Culonglong
 const GInt64 = GIntBig
 const GUInt64 = GUIntBig
 const GPtrDiff_t = GIntBig
-const GDALProgressFunc = Ptr{Void}
-const CPLVirtualMem = Ptr{Void}
-const CPLVirtualMemCachePageCbk = Ptr{Void}
-const CPLVirtualMemUnCachePageCbk = Ptr{Void}
-const CPLVirtualMemFreeUserData = Ptr{Void}
+const GDALProgressFunc = Ptr{Cvoid}
+const CPLVirtualMem = Ptr{Cvoid}
+const CPLVirtualMemCachePageCbk = Ptr{Cvoid}
+const CPLVirtualMemUnCachePageCbk = Ptr{Cvoid}
+const CPLVirtualMemFreeUserData = Ptr{Cvoid}
 
 @enum CPLVirtualMemAccessMode::UInt32 VIRTUALMEM_READONLY = 0 VIRTUALMEM_READONLY_ENFORCED = 1 VIRTUALMEM_READWRITE = 2
 
@@ -163,13 +163,13 @@ const VSI_STAT_SET_ERROR_FLAG = 0x08
 # Skipping MacroDefinition: VSIDebug2 ( f , a1 , a2 ) { }
 # Skipping MacroDefinition: VSIDebug1 ( f , a1 ) { }
 
-const VSIStatBuf = Void
+const VSIStatBuf = Nothing
 const vsi_l_offset = GUIntBig
 const VSILFILE = FILE
 
 @enum VSIRangeStatus::UInt32 VSI_RANGE_STATUS_UNKNOWN = 0 VSI_RANGE_STATUS_DATA = 1 VSI_RANGE_STATUS_HOLE = 2
 
-const VSIStatBufL = Ptr{Void}
+const VSIStatBufL = Ptr{Cvoid}
 const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
 
 # Skipping MacroDefinition: INIT_RASTERIO_EXTRA_ARG ( s ) do { ( s ) . nVersion = RASTERIO_EXTRA_ARG_CURRENT_VERSION ; ( s ) . eResampleAlg = GRIORA_NearestNeighbour ; ( s ) . pfnProgress = NULL ; ( s ) . pProgressData = NULL ; ( s ) . bFloatingPointWindowValidity = FALSE ; } while ( 0 )
@@ -238,7 +238,7 @@ mutable struct GDALRasterIOExtraArg
     nVersion::Cint
     eResampleAlg::GDALRIOResampleAlg
     pfnProgress::GDALProgressFunc
-    pProgressData::Ptr{Void}
+    pProgressData::Ptr{Cvoid}
     bFloatingPointWindowValidity::Cint
     dfXOff::Cdouble
     dfYOff::Cdouble
@@ -252,13 +252,13 @@ const GCI_Max = GCI_YCbCr_CrBand
 
 @enum GDALPaletteInterp::UInt32 GPI_Gray = 0 GPI_RGB = 1 GPI_CMYK = 2 GPI_HLS = 3
 
-const GDALMajorObjectH = Ptr{Void}
-const GDALDatasetH = Ptr{Void}
-const GDALRasterBandH = Ptr{Void}
-const GDALDriverH = Ptr{Void}
-const GDALColorTableH = Ptr{Void}
-const GDALRasterAttributeTableH = Ptr{Void}
-const GDALAsyncReaderH = Ptr{Void}
+const GDALMajorObjectH = Ptr{Cvoid}
+const GDALDatasetH = Ptr{Cvoid}
+const GDALRasterBandH = Ptr{Cvoid}
+const GDALDriverH = Ptr{Cvoid}
+const GDALColorTableH = Ptr{Cvoid}
+const GDALRasterAttributeTableH = Ptr{Cvoid}
+const GDALAsyncReaderH = Ptr{Cvoid}
 const GSpacing = GIntBig
 
 mutable struct GDAL_GCP
@@ -271,7 +271,7 @@ mutable struct GDAL_GCP
     dfGCPZ::Cdouble
 end
 
-const GDALDerivedPixelFunc = Ptr{Void}
+const GDALDerivedPixelFunc = Ptr{Cvoid}
 
 mutable struct GDALRPCInfo
     dfLINE_OFF::Cdouble
@@ -306,22 +306,22 @@ end
 @enum GDALTileOrganization::UInt32 GTO_TIP = 0 GTO_BIT = 1 GTO_BSQ = 2
 
 const GDAL_GTI2_SIGNATURE = "GTI2"
-const GDALTransformerFunc = Ptr{Void}
+const GDALTransformerFunc = Ptr{Cvoid}
 
 mutable struct GDALTransformerInfo
     abySignature::NTuple{4, GByte}
     pszClassName::Cstring
     pfnTransform::GDALTransformerFunc
-    pfnCleanup::Ptr{Void}
-    pfnSerialize::Ptr{Void}
-    pfnCreateSimilar::Ptr{Void}
+    pfnCleanup::Ptr{Cvoid}
+    pfnSerialize::Ptr{Cvoid}
+    pfnCreateSimilar::Ptr{Cvoid}
 end
 
-const GDALContourWriter = Ptr{Void}
-const GDALContourGeneratorH = Ptr{Void}
+const GDALContourWriter = Ptr{Cvoid}
+const GDALContourGeneratorH = Ptr{Cvoid}
 
 mutable struct OGRContourWriterInfo
-    hLayer::Ptr{Void}
+    hLayer::Ptr{Cvoid}
     adfGeoTransform::NTuple{6, Cdouble}
     nElevField::Cint
     nIDField::Cint
@@ -380,7 +380,7 @@ mutable struct GDALGridLinearOptions
     dfNoDataValue::Cdouble
 end
 
-const GDALGridContext = Ptr{Void}
+const GDALGridContext = Ptr{Cvoid}
 
 mutable struct GDALTriFacet
     anVertexIdx::NTuple{3, Cint}
@@ -402,20 +402,20 @@ mutable struct GDALTriangulation
     pasFacetCoefficients::Ptr{GDALTriBarycentricCoefficients}
 end
 
-const OGRGeometryH = Ptr{Void}
-const OGRSpatialReferenceH = Ptr{Void}
-const OGRCoordinateTransformationH = Ptr{Void}
-const _CPLXMLNode = Ptr{Void}
-const OGRFieldDefnH = Ptr{Void}
-const OGRFeatureDefnH = Ptr{Void}
-const OGRFeatureH = Ptr{Void}
-const OGRStyleTableH = Ptr{Void}
-const OGRGeomFieldDefnH = Ptr{Void}
-const OGRLayerH = Ptr{Void}
-const OGRDataSourceH = Ptr{Void}
-const OGRSFDriverH = Ptr{Void}
-const OGRStyleMgrH = Ptr{Void}
-const OGRStyleToolH = Ptr{Void}
+const OGRGeometryH = Ptr{Cvoid}
+const OGRSpatialReferenceH = Ptr{Cvoid}
+const OGRCoordinateTransformationH = Ptr{Cvoid}
+const _CPLXMLNode = Ptr{Cvoid}
+const OGRFieldDefnH = Ptr{Cvoid}
+const OGRFeatureDefnH = Ptr{Cvoid}
+const OGRFeatureH = Ptr{Cvoid}
+const OGRStyleTableH = Ptr{Cvoid}
+const OGRGeomFieldDefnH = Ptr{Cvoid}
+const OGRLayerH = Ptr{Cvoid}
+const OGRDataSourceH = Ptr{Cvoid}
+const OGRSFDriverH = Ptr{Cvoid}
+const OGRStyleMgrH = Ptr{Cvoid}
+const OGRStyleToolH = Ptr{Cvoid}
 const OGRERR_NONE = 0
 const OGRERR_NOT_ENOUGH_DATA = 1
 const OGRERR_NOT_ENOUGH_MEMORY = 2
@@ -524,7 +524,7 @@ const OFSTMaxSubType = OFSTFloat32
 
 @enum OGRJustification::UInt32 OJUndefined = 0 OJLeft = 1 OJRight = 2
 
-const OGRField = Void
+const OGRField = Nothing
 
 @enum OGRSTClassId::UInt32 OGRSTCNone = 0 OGRSTCPen = 1 OGRSTCBrush = 2 OGRSTCSymbol = 3 OGRSTCLabel = 4 OGRSTCVector = 5
 @enum OGRSTUnitId::UInt32 OGRSTUGround = 0 OGRSTUPixel = 1 OGRSTUPoints = 2 OGRSTUMM = 3 OGRSTUCM = 4 OGRSTUInches = 5
@@ -534,7 +534,7 @@ const OGRField = Void
 @enum OGRSTLabelParam::UInt32 OGRSTLabelFontName = 0 OGRSTLabelSize = 1 OGRSTLabelTextString = 2 OGRSTLabelAngle = 3 OGRSTLabelFColor = 4 OGRSTLabelBColor = 5 OGRSTLabelPlacement = 6 OGRSTLabelAnchor = 7 OGRSTLabelDx = 8 OGRSTLabelDy = 9 OGRSTLabelPerp = 10 OGRSTLabelBold = 11 OGRSTLabelItalic = 12 OGRSTLabelUnderline = 13 OGRSTLabelPriority = 14 OGRSTLabelStrikeout = 15 OGRSTLabelStretch = 16 OGRSTLabelAdjHor = 17 OGRSTLabelAdjVert = 18 OGRSTLabelHColor = 19 OGRSTLabelOColor = 20 OGRSTLabelLast = 21
 
 # const CPLFree = VSIFree
-const CPLFileFinder = Ptr{Void}
+const CPLFileFinder = Ptr{Cvoid}
 
 mutable struct CPLSharedFileInfo
     fp::Ptr{FILE}
@@ -547,7 +547,7 @@ end
 @enum GDALResampleAlg::UInt32 GRA_NearestNeighbour = 0 GRA_Bilinear = 1 GRA_Cubic = 2 GRA_CubicSpline = 3 GRA_Lanczos = 4 GRA_Average = 5 GRA_Mode = 6 GRA_Max = 8 GRA_Min = 9 GRA_Med = 10 GRA_Q1 = 11 GRA_Q3 = 12
 @enum GWKAverageOrModeAlg::UInt32 GWKAOM_Average = 1 GWKAOM_Fmode = 2 GWKAOM_Imode = 3 GWKAOM_Max = 4 GWKAOM_Min = 5 GWKAOM_Quant = 6
 
-const GDALMaskFunc = Ptr{Void}
+const GDALMaskFunc = Ptr{Cvoid}
 
 mutable struct GDALWarpOptions
     papszWarpOptions::Ptr{Cstring}
@@ -566,66 +566,66 @@ mutable struct GDALWarpOptions
     padfDstNoDataReal::Ptr{Cdouble}
     padfDstNoDataImag::Ptr{Cdouble}
     pfnProgress::GDALProgressFunc
-    pProgressArg::Ptr{Void}
+    pProgressArg::Ptr{Cvoid}
     pfnTransformer::GDALTransformerFunc
-    pTransformerArg::Ptr{Void}
+    pTransformerArg::Ptr{Cvoid}
     papfnSrcPerBandValidityMaskFunc::Ptr{GDALMaskFunc}
-    papSrcPerBandValidityMaskFuncArg::Ptr{Ptr{Void}}
+    papSrcPerBandValidityMaskFuncArg::Ptr{Ptr{Cvoid}}
     pfnSrcValidityMaskFunc::GDALMaskFunc
-    pSrcValidityMaskFuncArg::Ptr{Void}
+    pSrcValidityMaskFuncArg::Ptr{Cvoid}
     pfnSrcDensityMaskFunc::GDALMaskFunc
-    pSrcDensityMaskFuncArg::Ptr{Void}
+    pSrcDensityMaskFuncArg::Ptr{Cvoid}
     pfnDstDensityMaskFunc::GDALMaskFunc
-    pDstDensityMaskFuncArg::Ptr{Void}
+    pDstDensityMaskFuncArg::Ptr{Cvoid}
     pfnDstValidityMaskFunc::GDALMaskFunc
-    pDstValidityMaskFuncArg::Ptr{Void}
-    pfnPreWarpChunkProcessor::Ptr{Void}
-    pPreWarpProcessorArg::Ptr{Void}
-    pfnPostWarpChunkProcessor::Ptr{Void}
-    pPostWarpProcessorArg::Ptr{Void}
-    hCutline::Ptr{Void}
+    pDstValidityMaskFuncArg::Ptr{Cvoid}
+    pfnPreWarpChunkProcessor::Ptr{Cvoid}
+    pPreWarpProcessorArg::Ptr{Cvoid}
+    pfnPostWarpChunkProcessor::Ptr{Cvoid}
+    pPostWarpProcessorArg::Ptr{Cvoid}
+    hCutline::Ptr{Cvoid}
     dfCutlineBlendDist::Cdouble
 end
 
-const GDALWarpOperationH = Ptr{Void}
-const FilterFuncType = Ptr{Void}
-const FilterFunc4ValuesType = Ptr{Void}
+const GDALWarpOperationH = Ptr{Cvoid}
+const FilterFuncType = Ptr{Cvoid}
+const FilterFunc4ValuesType = Ptr{Cvoid}
 const VRT_NODATA_UNSET = -1234.56
-const VRTImageReadFunc = Ptr{Void}
-const VRTAveragedSourceH = Ptr{Void}
-const VRTAverageFilteredSourceH = Ptr{Void}
-const VRTComplexSourceH = Ptr{Void}
-const VRTDerivedRasterBandH = Ptr{Void}
-const VRTDriverH = Ptr{Void}
-const VRTFilteredSourceH = Ptr{Void}
-const VRTFuncSourceH = Ptr{Void}
-const VRTKernelFilteredSourceH = Ptr{Void}
-const VRTRasterBandH = Ptr{Void}
-const VRTRawRasterBandH = Ptr{Void}
-const VRTSimpleSourceH = Ptr{Void}
-const VRTSourceH = Ptr{Void}
-const VRTWarpedDatasetH = Ptr{Void}
-const VRTWarpedRasterBandH = Ptr{Void}
-const VRTDatasetH = Ptr{Void}
-const VRTSourcedRasterBandH = Ptr{Void}
-const GDALInfoOptions = Ptr{Void}
-const GDALInfoOptionsForBinary = Ptr{Void}
-const GDALTranslateOptions = Ptr{Void}
-const GDALTranslateOptionsForBinary = Ptr{Void}
-const GDALWarpAppOptions = Ptr{Void}
-const GDALWarpAppOptionsForBinary = Ptr{Void}
-const GDALVectorTranslateOptions = Ptr{Void}
-const GDALVectorTranslateOptionsForBinary = Ptr{Void}
-const GDALDEMProcessingOptions = Ptr{Void}
-const GDALDEMProcessingOptionsForBinary = Ptr{Void}
-const GDALNearblackOptions = Ptr{Void}
-const GDALNearblackOptionsForBinary = Ptr{Void}
-const GDALGridOptions = Ptr{Void}
-const GDALGridOptionsForBinary = Ptr{Void}
-const GDALRasterizeOptions = Ptr{Void}
-const GDALRasterizeOptionsForBinary = Ptr{Void}
-const GDALBuildVRTOptions = Ptr{Void}
-const GDALBuildVRTOptionsForBinary = Ptr{Void}
+const VRTImageReadFunc = Ptr{Cvoid}
+const VRTAveragedSourceH = Ptr{Cvoid}
+const VRTAverageFilteredSourceH = Ptr{Cvoid}
+const VRTComplexSourceH = Ptr{Cvoid}
+const VRTDerivedRasterBandH = Ptr{Cvoid}
+const VRTDriverH = Ptr{Cvoid}
+const VRTFilteredSourceH = Ptr{Cvoid}
+const VRTFuncSourceH = Ptr{Cvoid}
+const VRTKernelFilteredSourceH = Ptr{Cvoid}
+const VRTRasterBandH = Ptr{Cvoid}
+const VRTRawRasterBandH = Ptr{Cvoid}
+const VRTSimpleSourceH = Ptr{Cvoid}
+const VRTSourceH = Ptr{Cvoid}
+const VRTWarpedDatasetH = Ptr{Cvoid}
+const VRTWarpedRasterBandH = Ptr{Cvoid}
+const VRTDatasetH = Ptr{Cvoid}
+const VRTSourcedRasterBandH = Ptr{Cvoid}
+const GDALInfoOptions = Ptr{Cvoid}
+const GDALInfoOptionsForBinary = Ptr{Cvoid}
+const GDALTranslateOptions = Ptr{Cvoid}
+const GDALTranslateOptionsForBinary = Ptr{Cvoid}
+const GDALWarpAppOptions = Ptr{Cvoid}
+const GDALWarpAppOptionsForBinary = Ptr{Cvoid}
+const GDALVectorTranslateOptions = Ptr{Cvoid}
+const GDALVectorTranslateOptionsForBinary = Ptr{Cvoid}
+const GDALDEMProcessingOptions = Ptr{Cvoid}
+const GDALDEMProcessingOptionsForBinary = Ptr{Cvoid}
+const GDALNearblackOptions = Ptr{Cvoid}
+const GDALNearblackOptionsForBinary = Ptr{Cvoid}
+const GDALGridOptions = Ptr{Cvoid}
+const GDALGridOptionsForBinary = Ptr{Cvoid}
+const GDALRasterizeOptions = Ptr{Cvoid}
+const GDALRasterizeOptionsForBinary = Ptr{Cvoid}
+const GDALBuildVRTOptions = Ptr{Cvoid}
+const GDALBuildVRTOptionsForBinary = Ptr{Cvoid}
 const SRS_WKT_WGS84 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]"
 const SRS_PT_ALBERS_CONIC_EQUAL_AREA = "Albers_Conic_Equal_Area"
 const SRS_PT_AZIMUTHAL_EQUIDISTANT = "Azimuthal_Equidistant"

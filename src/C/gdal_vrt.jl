@@ -16,7 +16,7 @@ end
     VRTFlushCache(VRTDatasetH) -> void
 """
 function VRTFlushCache(arg1::VRTDatasetH)
-    ccall((:VRTFlushCache, libgdal), Void, (VRTDatasetH,), arg1)
+    ccall((:VRTFlushCache, libgdal), Cvoid, (VRTDatasetH,), arg1)
 end
 
 
@@ -94,5 +94,5 @@ end
                      double) -> CPLErr
 """
 function VRTAddFuncSource(arg1::VRTSourcedRasterBandH, arg2::VRTImageReadFunc, arg3, arg4::Cdouble)
-    ccall((:VRTAddFuncSource, libgdal), CPLErr, (VRTSourcedRasterBandH, VRTImageReadFunc, Ptr{Void}, Cdouble), arg1, arg2, arg3, arg4)
+    ccall((:VRTAddFuncSource, libgdal), CPLErr, (VRTSourcedRasterBandH, VRTImageReadFunc, Ptr{Cvoid}, Cdouble), arg1, arg2, arg3, arg4)
 end

@@ -29,7 +29,7 @@ end
 Make a duplicate of the GEOGCS node of this OGRSpatialReference object.
 """
 function clonegeogcs(arg1::Ref{OGRSpatialReferenceH})
-    checknull(ccall((:OSRCloneGeogCS, libgdal), Ptr{OGRSpatialReferenceH}, (Ptr{Void},), arg1))
+    checknull(ccall((:OSRCloneGeogCS, libgdal), Ptr{OGRSpatialReferenceH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -39,7 +39,7 @@ end
 Make a duplicate of this OGRSpatialReference.
 """
 function clone(arg1::Ref{OGRSpatialReferenceH})
-    checknull(ccall((:OSRClone, libgdal), Ptr{OGRSpatialReferenceH}, (Ptr{Void},), arg1))
+    checknull(ccall((:OSRClone, libgdal), Ptr{OGRSpatialReferenceH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -52,7 +52,7 @@ OGRSpatialReference destructor.
 * **hSRS**: the object to delete
 """
 function destroyspatialreference(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRDestroySpatialReference, libgdal), Void, (Ptr{Void},), arg1)
+    ccall((:OSRDestroySpatialReference, libgdal), Cvoid, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -62,7 +62,7 @@ end
 Increments the reference count by one.
 """
 function reference(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRReference, libgdal), Cint, (Ptr{Void},), arg1)
+    ccall((:OSRReference, libgdal), Cint, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -72,7 +72,7 @@ end
 Decrements the reference count by one.
 """
 function dereference(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRDereference, libgdal), Cint, (Ptr{Void},), arg1)
+    ccall((:OSRDereference, libgdal), Cint, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -82,7 +82,7 @@ end
 Decrements the reference count by one, and destroy if zero.
 """
 function release(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRRelease, libgdal), Void, (Ptr{Void},), arg1)
+    ccall((:OSRRelease, libgdal), Cvoid, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -92,7 +92,7 @@ end
 Validate SRS tokens.
 """
 function validate(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRValidate, libgdal), OGRErr, (Ptr{Void},), arg1)
+    ccall((:OSRValidate, libgdal), OGRErr, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -102,7 +102,7 @@ end
 Correct parameter ordering to match CT Specification.
 """
 function fixupordering(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRFixupOrdering, libgdal), OGRErr, (Ptr{Void},), arg1)
+    ccall((:OSRFixupOrdering, libgdal), OGRErr, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -112,7 +112,7 @@ end
 Fixup as needed.
 """
 function fixup(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRFixup, libgdal), OGRErr, (Ptr{Void},), arg1)
+    ccall((:OSRFixup, libgdal), OGRErr, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -122,7 +122,7 @@ end
 Strip OGC CT Parameters.
 """
 function stripctparms(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRStripCTParms, libgdal), OGRErr, (Ptr{Void},), arg1)
+    ccall((:OSRStripCTParms, libgdal), OGRErr, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -133,7 +133,7 @@ end
 Initialize SRS based on EPSG GCS or PCS code.
 """
 function importfromepsg(arg1::Ref{OGRSpatialReferenceH}, arg2::Integer)
-    ccall((:OSRImportFromEPSG, libgdal), OGRErr, (Ptr{Void}, Cint), arg1, arg2)
+    ccall((:OSRImportFromEPSG, libgdal), OGRErr, (Ptr{Cvoid}, Cint), arg1, arg2)
 end
 
 
@@ -144,7 +144,7 @@ end
 Initialize SRS based on EPSG GCS or PCS code.
 """
 function importfromepsga(arg1::Ref{OGRSpatialReferenceH}, arg2::Integer)
-    ccall((:OSRImportFromEPSGA, libgdal), OGRErr, (Ptr{Void}, Cint), arg1, arg2)
+    ccall((:OSRImportFromEPSGA, libgdal), OGRErr, (Ptr{Cvoid}, Cint), arg1, arg2)
 end
 
 
@@ -155,7 +155,7 @@ end
 Import from WKT string.
 """
 function importfromwkt(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRImportFromWkt, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
+    ccall((:OSRImportFromWkt, libgdal), OGRErr, (Ptr{Cvoid}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -166,7 +166,7 @@ end
 Import PROJ.4 coordinate string.
 """
 function importfromproj4(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRImportFromProj4, libgdal), OGRErr, (Ptr{Void}, Cstring), arg1, arg2)
+    ccall((:OSRImportFromProj4, libgdal), OGRErr, (Ptr{Cvoid}, Cstring), arg1, arg2)
 end
 
 
@@ -177,7 +177,7 @@ end
 Import coordinate system from ESRI .prj format(s).
 """
 function importfromesri(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRImportFromESRI, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
+    ccall((:OSRImportFromESRI, libgdal), OGRErr, (Ptr{Cvoid}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -190,7 +190,7 @@ end
 Import coordinate system from PCI projection definition.
 """
 function importfrompci(hSRS::Ref{OGRSpatialReferenceH}, arg1, arg2, arg3)
-    ccall((:OSRImportFromPCI, libgdal), OGRErr, (Ptr{Void}, Cstring, Cstring, Ptr{Cdouble}), hSRS, arg1, arg2, arg3)
+    ccall((:OSRImportFromPCI, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cstring, Ptr{Cdouble}), hSRS, arg1, arg2, arg3)
 end
 
 
@@ -204,7 +204,7 @@ end
 Import coordinate system from USGS projection definition.
 """
 function importfromusgs(arg1::Ref{OGRSpatialReferenceH}, arg2::Clong, arg3::Clong, arg4, arg5::Clong)
-    ccall((:OSRImportFromUSGS, libgdal), OGRErr, (Ptr{Void}, Clong, Clong, Ptr{Cdouble}, Clong), arg1, arg2, arg3, arg4, arg5)
+    ccall((:OSRImportFromUSGS, libgdal), OGRErr, (Ptr{Cvoid}, Clong, Clong, Ptr{Cdouble}, Clong), arg1, arg2, arg3, arg4, arg5)
 end
 
 
@@ -215,7 +215,7 @@ end
 Import coordinate system from XML format (GML only currently).
 """
 function importfromxml(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRImportFromXML, libgdal), OGRErr, (Ptr{Void}, Cstring), arg1, arg2)
+    ccall((:OSRImportFromXML, libgdal), OGRErr, (Ptr{Cvoid}, Cstring), arg1, arg2)
 end
 
 
@@ -235,7 +235,7 @@ Read SRS from WKT dictionary.
 OGRERR_NONE on success, or OGRERR_SRS_UNSUPPORTED if the code isn't found, and OGRERR_SRS_FAILURE if something more dramatic goes wrong.
 """
 function importfromdict(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3)
-    ccall((:OSRImportFromDict, libgdal), OGRErr, (Ptr{Void}, Cstring, Cstring), arg1, arg2, arg3)
+    ccall((:OSRImportFromDict, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cstring), arg1, arg2, arg3)
 end
 
 
@@ -249,7 +249,7 @@ end
 Import coordinate system from "Panorama" GIS projection definition.
 """
 function importfrompanorama(arg1::Ref{OGRSpatialReferenceH}, arg2::Clong, arg3::Clong, arg4::Clong, arg5)
-    ccall((:OSRImportFromPanorama, libgdal), OGRErr, (Ptr{Void}, Clong, Clong, Clong, Ptr{Cdouble}), arg1, arg2, arg3, arg4, arg5)
+    ccall((:OSRImportFromPanorama, libgdal), OGRErr, (Ptr{Cvoid}, Clong, Clong, Clong, Ptr{Cdouble}), arg1, arg2, arg3, arg4, arg5)
 end
 
 
@@ -267,7 +267,7 @@ Import coordinate system from OziExplorer projection definition.
 OGRERR_NONE on success or an error code in case of failure.
 """
 function importfromozi(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRImportFromOzi, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
+    ccall((:OSRImportFromOzi, libgdal), OGRErr, (Ptr{Cvoid}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -278,7 +278,7 @@ end
 Import Mapinfo style CoordSys definition.
 """
 function importfrommicoordsys(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRImportFromMICoordSys, libgdal), OGRErr, (Ptr{Void}, Cstring), arg1, arg2)
+    ccall((:OSRImportFromMICoordSys, libgdal), OGRErr, (Ptr{Cvoid}, Cstring), arg1, arg2)
 end
 
 
@@ -291,7 +291,7 @@ end
 Create OGR WKT from ERMapper projection definitions.
 """
 function importfromerm(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3, arg4)
-    ccall((:OSRImportFromERM, libgdal), OGRErr, (Ptr{Void}, Cstring, Cstring, Cstring), arg1, arg2, arg3, arg4)
+    ccall((:OSRImportFromERM, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cstring, Cstring), arg1, arg2, arg3, arg4)
 end
 
 
@@ -302,7 +302,7 @@ end
 Set spatial reference from a URL.
 """
 function importfromurl(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRImportFromUrl, libgdal), OGRErr, (Ptr{Void}, Cstring), arg1, arg2)
+    ccall((:OSRImportFromUrl, libgdal), OGRErr, (Ptr{Cvoid}, Cstring), arg1, arg2)
 end
 
 
@@ -313,7 +313,7 @@ end
 Convert this SRS into WKT format.
 """
 function exporttowkt(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRExportToWkt, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
+    ccall((:OSRExportToWkt, libgdal), OGRErr, (Ptr{Cvoid}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -325,7 +325,7 @@ end
 Convert this SRS into a nicely formatted WKT string for display to a person.
 """
 function exporttoprettywkt(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3::Integer)
-    ccall((:OSRExportToPrettyWkt, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}, Cint), arg1, arg2, arg3)
+    ccall((:OSRExportToPrettyWkt, libgdal), OGRErr, (Ptr{Cvoid}, Ptr{Cstring}, Cint), arg1, arg2, arg3)
 end
 
 
@@ -336,7 +336,7 @@ end
 Export coordinate system in PROJ.4 format.
 """
 function exporttoproj4(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRExportToProj4, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
+    ccall((:OSRExportToProj4, libgdal), OGRErr, (Ptr{Cvoid}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -349,7 +349,7 @@ end
 Export coordinate system in PCI projection definition.
 """
 function exporttopci(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3, arg4)
-    ccall((:OSRExportToPCI, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}, Ptr{Cstring}, Ptr{Ptr{Cdouble}}), arg1, arg2, arg3, arg4)
+    ccall((:OSRExportToPCI, libgdal), OGRErr, (Ptr{Cvoid}, Ptr{Cstring}, Ptr{Cstring}, Ptr{Ptr{Cdouble}}), arg1, arg2, arg3, arg4)
 end
 
 
@@ -363,7 +363,7 @@ end
 Export coordinate system in USGS GCTP projection definition.
 """
 function exporttousgs(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3, arg4, arg5)
-    ccall((:OSRExportToUSGS, libgdal), OGRErr, (Ptr{Void}, Ptr{Clong}, Ptr{Clong}, Ptr{Ptr{Cdouble}}, Ptr{Clong}), arg1, arg2, arg3, arg4, arg5)
+    ccall((:OSRExportToUSGS, libgdal), OGRErr, (Ptr{Cvoid}, Ptr{Clong}, Ptr{Clong}, Ptr{Ptr{Cdouble}}, Ptr{Clong}), arg1, arg2, arg3, arg4, arg5)
 end
 
 
@@ -375,7 +375,7 @@ end
 Export coordinate system in XML format.
 """
 function exporttoxml(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3)
-    ccall((:OSRExportToXML, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}, Cstring), arg1, arg2, arg3)
+    ccall((:OSRExportToXML, libgdal), OGRErr, (Ptr{Cvoid}, Ptr{Cstring}, Cstring), arg1, arg2, arg3)
 end
 
 
@@ -390,7 +390,7 @@ end
 Export coordinate system in "Panorama" GIS projection definition.
 """
 function exporttopanorama(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3, arg4, arg5, arg6)
-    ccall((:OSRExportToPanorama, libgdal), OGRErr, (Ptr{Void}, Ptr{Clong}, Ptr{Clong}, Ptr{Clong}, Ptr{Clong}, Ptr{Cdouble}), arg1, arg2, arg3, arg4, arg5, arg6)
+    ccall((:OSRExportToPanorama, libgdal), OGRErr, (Ptr{Cvoid}, Ptr{Clong}, Ptr{Clong}, Ptr{Clong}, Ptr{Clong}, Ptr{Cdouble}), arg1, arg2, arg3, arg4, arg5, arg6)
 end
 
 
@@ -401,7 +401,7 @@ end
 Export coordinate system in Mapinfo style CoordSys format.
 """
 function exporttomicoordsys(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRExportToMICoordSys, libgdal), OGRErr, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
+    ccall((:OSRExportToMICoordSys, libgdal), OGRErr, (Ptr{Cvoid}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -414,7 +414,7 @@ end
 Convert coordinate system to ERMapper format.
 """
 function exporttoerm(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3, arg4)
-    ccall((:OSRExportToERM, libgdal), OGRErr, (Ptr{Void}, Cstring, Cstring, Cstring), arg1, arg2, arg3, arg4)
+    ccall((:OSRExportToERM, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cstring, Cstring), arg1, arg2, arg3, arg4)
 end
 
 
@@ -424,7 +424,7 @@ end
 Convert in place to ESRI WKT format.
 """
 function morphtoesri(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRMorphToESRI, libgdal), OGRErr, (Ptr{Void},), arg1)
+    ccall((:OSRMorphToESRI, libgdal), OGRErr, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -434,7 +434,7 @@ end
 Convert in place from ESRI WKT format.
 """
 function morphfromesri(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRMorphFromESRI, libgdal), OGRErr, (Ptr{Void},), arg1)
+    ccall((:OSRMorphFromESRI, libgdal), OGRErr, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -446,7 +446,7 @@ end
 Set attribute value in spatial reference.
 """
 function setattrvalue(hSRS::Ref{OGRSpatialReferenceH}, pszNodePath, pszNewNodeValue)
-    ccall((:OSRSetAttrValue, libgdal), OGRErr, (Ptr{Void}, Cstring, Cstring), hSRS, pszNodePath, pszNewNodeValue)
+    ccall((:OSRSetAttrValue, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cstring), hSRS, pszNodePath, pszNewNodeValue)
 end
 
 
@@ -458,7 +458,7 @@ end
 Fetch indicated attribute of named node.
 """
 function getattrvalue(hSRS::Ref{OGRSpatialReferenceH}, pszName, iChild::Integer)
-    unsafe_string(ccall((:OSRGetAttrValue, libgdal), Cstring, (Ptr{Void}, Cstring, Cint), hSRS, pszName, iChild))
+    unsafe_string(ccall((:OSRGetAttrValue, libgdal), Cstring, (Ptr{Cvoid}, Cstring, Cint), hSRS, pszName, iChild))
 end
 
 
@@ -470,7 +470,7 @@ end
 Set the angular units for the geographic coordinate system.
 """
 function setangularunits(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3::Real)
-    ccall((:OSRSetAngularUnits, libgdal), OGRErr, (Ptr{Void}, Cstring, Cdouble), arg1, arg2, arg3)
+    ccall((:OSRSetAngularUnits, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cdouble), arg1, arg2, arg3)
 end
 
 
@@ -481,7 +481,7 @@ end
 Fetch angular geographic coordinate system units.
 """
 function getangularunits(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRGetAngularUnits, libgdal), Cdouble, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
+    ccall((:OSRGetAngularUnits, libgdal), Cdouble, (Ptr{Cvoid}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -493,7 +493,7 @@ end
 Set the linear units for the projection.
 """
 function setlinearunits(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3::Real)
-    ccall((:OSRSetLinearUnits, libgdal), OGRErr, (Ptr{Void}, Cstring, Cdouble), arg1, arg2, arg3)
+    ccall((:OSRSetLinearUnits, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cdouble), arg1, arg2, arg3)
 end
 
 
@@ -506,7 +506,7 @@ end
 Set the linear units for the target node.
 """
 function settargetlinearunits(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3, arg4::Real)
-    ccall((:OSRSetTargetLinearUnits, libgdal), OGRErr, (Ptr{Void}, Cstring, Cstring, Cdouble), arg1, arg2, arg3, arg4)
+    ccall((:OSRSetTargetLinearUnits, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cstring, Cdouble), arg1, arg2, arg3, arg4)
 end
 
 
@@ -518,7 +518,7 @@ end
 Set the linear units for the projection.
 """
 function setlinearunitsandupdateparameters(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3::Real)
-    ccall((:OSRSetLinearUnitsAndUpdateParameters, libgdal), OGRErr, (Ptr{Void}, Cstring, Cdouble), arg1, arg2, arg3)
+    ccall((:OSRSetLinearUnitsAndUpdateParameters, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cdouble), arg1, arg2, arg3)
 end
 
 
@@ -529,7 +529,7 @@ end
 Fetch linear projection units.
 """
 function getlinearunits(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRGetLinearUnits, libgdal), Cdouble, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
+    ccall((:OSRGetLinearUnits, libgdal), Cdouble, (Ptr{Cvoid}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -541,7 +541,7 @@ end
 Fetch linear projection units.
 """
 function gettargetlinearunits(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3)
-    ccall((:OSRGetTargetLinearUnits, libgdal), Cdouble, (Ptr{Void}, Cstring, Ptr{Cstring}), arg1, arg2, arg3)
+    ccall((:OSRGetTargetLinearUnits, libgdal), Cdouble, (Ptr{Cvoid}, Cstring, Ptr{Cstring}), arg1, arg2, arg3)
 end
 
 
@@ -552,7 +552,7 @@ end
 Fetch prime meridian info.
 """
 function getprimemeridian(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRGetPrimeMeridian, libgdal), Cdouble, (Ptr{Void}, Ptr{Cstring}), arg1, arg2)
+    ccall((:OSRGetPrimeMeridian, libgdal), Cdouble, (Ptr{Cvoid}, Ptr{Cstring}), arg1, arg2)
 end
 
 
@@ -562,7 +562,7 @@ end
 Check if geographic coordinate system.
 """
 function isgeographic(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRIsGeographic, libgdal), Cint, (Ptr{Void},), arg1)
+    ccall((:OSRIsGeographic, libgdal), Cint, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -572,7 +572,7 @@ end
 Check if local coordinate system.
 """
 function islocal(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRIsLocal, libgdal), Cint, (Ptr{Void},), arg1)
+    ccall((:OSRIsLocal, libgdal), Cint, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -582,7 +582,7 @@ end
 Check if projected coordinate system.
 """
 function isprojected(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRIsProjected, libgdal), Cint, (Ptr{Void},), arg1)
+    ccall((:OSRIsProjected, libgdal), Cint, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -592,7 +592,7 @@ end
 Check if the coordinate system is compound.
 """
 function iscompound(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRIsCompound, libgdal), Cint, (Ptr{Void},), arg1)
+    ccall((:OSRIsCompound, libgdal), Cint, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -602,7 +602,7 @@ end
 Check if geocentric coordinate system.
 """
 function isgeocentric(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRIsGeocentric, libgdal), Cint, (Ptr{Void},), arg1)
+    ccall((:OSRIsGeocentric, libgdal), Cint, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -612,7 +612,7 @@ end
 Check if vertical coordinate system.
 """
 function isvertical(arg1::Ref{OGRSpatialReferenceH})
-    ccall((:OSRIsVertical, libgdal), Cint, (Ptr{Void},), arg1)
+    ccall((:OSRIsVertical, libgdal), Cint, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -623,7 +623,7 @@ end
 Do the GeogCS'es match?
 """
 function issamegeogcs(arg1::Ref{OGRSpatialReferenceH}, arg2::Ref{OGRSpatialReferenceH})
-    ccall((:OSRIsSameGeogCS, libgdal), Cint, (Ptr{Void}, Ptr{Void}), arg1, arg2)
+    ccall((:OSRIsSameGeogCS, libgdal), Cint, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2)
 end
 
 
@@ -634,7 +634,7 @@ end
 Do the VertCS'es match?
 """
 function issamevertcs(arg1::Ref{OGRSpatialReferenceH}, arg2::Ref{OGRSpatialReferenceH})
-    ccall((:OSRIsSameVertCS, libgdal), Cint, (Ptr{Void}, Ptr{Void}), arg1, arg2)
+    ccall((:OSRIsSameVertCS, libgdal), Cint, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2)
 end
 
 
@@ -645,7 +645,7 @@ end
 Do these two spatial references describe the same system ?
 """
 function issame(arg1::Ref{OGRSpatialReferenceH}, arg2::Ref{OGRSpatialReferenceH})
-    ccall((:OSRIsSame, libgdal), Cint, (Ptr{Void}, Ptr{Void}), arg1, arg2)
+    ccall((:OSRIsSame, libgdal), Cint, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2)
 end
 
 
@@ -656,7 +656,7 @@ end
 Set the user visible LOCAL_CS name.
 """
 function setlocalcs(hSRS::Ref{OGRSpatialReferenceH}, pszName)
-    ccall((:OSRSetLocalCS, libgdal), OGRErr, (Ptr{Void}, Cstring), hSRS, pszName)
+    ccall((:OSRSetLocalCS, libgdal), OGRErr, (Ptr{Cvoid}, Cstring), hSRS, pszName)
 end
 
 
@@ -667,7 +667,7 @@ end
 Set the user visible PROJCS name.
 """
 function setprojcs(hSRS::Ref{OGRSpatialReferenceH}, pszName)
-    ccall((:OSRSetProjCS, libgdal), OGRErr, (Ptr{Void}, Cstring), hSRS, pszName)
+    ccall((:OSRSetProjCS, libgdal), OGRErr, (Ptr{Cvoid}, Cstring), hSRS, pszName)
 end
 
 
@@ -678,7 +678,7 @@ end
 Set the user visible PROJCS name.
 """
 function setgeoccs(hSRS::Ref{OGRSpatialReferenceH}, pszName)
-    ccall((:OSRSetGeocCS, libgdal), OGRErr, (Ptr{Void}, Cstring), hSRS, pszName)
+    ccall((:OSRSetGeocCS, libgdal), OGRErr, (Ptr{Cvoid}, Cstring), hSRS, pszName)
 end
 
 
@@ -689,7 +689,7 @@ end
 Set a GeogCS based on well known name.
 """
 function setwellknowngeogcs(hSRS::Ref{OGRSpatialReferenceH}, pszName)
-    ccall((:OSRSetWellKnownGeogCS, libgdal), OGRErr, (Ptr{Void}, Cstring), hSRS, pszName)
+    ccall((:OSRSetWellKnownGeogCS, libgdal), OGRErr, (Ptr{Cvoid}, Cstring), hSRS, pszName)
 end
 
 
@@ -700,7 +700,7 @@ end
 Set spatial reference from various text formats.
 """
 function setfromuserinput(hSRS::Ref{OGRSpatialReferenceH}, arg1)
-    ccall((:OSRSetFromUserInput, libgdal), OGRErr, (Ptr{Void}, Cstring), hSRS, arg1)
+    ccall((:OSRSetFromUserInput, libgdal), OGRErr, (Ptr{Cvoid}, Cstring), hSRS, arg1)
 end
 
 
@@ -711,7 +711,7 @@ end
 Copy GEOGCS from another OGRSpatialReference.
 """
 function copygeogcsfrom(hSRS::Ref{OGRSpatialReferenceH}, hSrcSRS::Ref{OGRSpatialReferenceH})
-    ccall((:OSRCopyGeogCSFrom, libgdal), OGRErr, (Ptr{Void}, Ptr{Void}), hSRS, hSrcSRS)
+    ccall((:OSRCopyGeogCSFrom, libgdal), OGRErr, (Ptr{Cvoid}, Ptr{Cvoid}), hSRS, hSrcSRS)
 end
 
 
@@ -728,7 +728,7 @@ end
 Set the Bursa-Wolf conversion to WGS84.
 """
 function settowgs84(hSRS::Ref{OGRSpatialReferenceH}, arg1::Real, arg2::Real, arg3::Real, arg4::Real, arg5::Real, arg6::Real, arg7::Real)
-    ccall((:OSRSetTOWGS84, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+    ccall((:OSRSetTOWGS84, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 end
 
 
@@ -740,7 +740,7 @@ end
 Fetch TOWGS84 parameters, if available.
 """
 function gettowgs84(hSRS::Ref{OGRSpatialReferenceH}, arg1, arg2::Integer)
-    ccall((:OSRGetTOWGS84, libgdal), OGRErr, (Ptr{Void}, Ptr{Cdouble}, Cint), hSRS, arg1, arg2)
+    ccall((:OSRGetTOWGS84, libgdal), OGRErr, (Ptr{Cvoid}, Ptr{Cdouble}, Cint), hSRS, arg1, arg2)
 end
 
 
@@ -753,7 +753,7 @@ end
 Setup a compound coordinate system.
 """
 function setcompoundcs(hSRS::Ref{OGRSpatialReferenceH}, pszName, hHorizSRS::Ref{OGRSpatialReferenceH}, hVertSRS::Ref{OGRSpatialReferenceH})
-    ccall((:OSRSetCompoundCS, libgdal), OGRErr, (Ptr{Void}, Cstring, Ptr{Void}, Ptr{Void}), hSRS, pszName, hHorizSRS, hVertSRS)
+    ccall((:OSRSetCompoundCS, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Ptr{Cvoid}, Ptr{Cvoid}), hSRS, pszName, hHorizSRS, hVertSRS)
 end
 
 
@@ -772,7 +772,7 @@ end
 Set geographic coordinate system.
 """
 function setgeogcs(hSRS::Ref{OGRSpatialReferenceH}, pszGeogName, pszDatumName, pszEllipsoidName, dfSemiMajor::Real, dfInvFlattening::Real, pszPMName, dfPMOffset::Real, pszUnits, dfConvertToRadians::Real)
-    ccall((:OSRSetGeogCS, libgdal), OGRErr, (Ptr{Void}, Cstring, Cstring, Cstring, Cdouble, Cdouble, Cstring, Cdouble, Cstring, Cdouble), hSRS, pszGeogName, pszDatumName, pszEllipsoidName, dfSemiMajor, dfInvFlattening, pszPMName, dfPMOffset, pszUnits, dfConvertToRadians)
+    ccall((:OSRSetGeogCS, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cstring, Cstring, Cdouble, Cdouble, Cstring, Cdouble, Cstring, Cdouble), hSRS, pszGeogName, pszDatumName, pszEllipsoidName, dfSemiMajor, dfInvFlattening, pszPMName, dfPMOffset, pszUnits, dfConvertToRadians)
 end
 
 
@@ -785,7 +785,7 @@ end
 Setup the vertical coordinate system.
 """
 function setvertcs(hSRS::Ref{OGRSpatialReferenceH}, pszVertCSName, pszVertDatumName, nVertDatumType::Integer)
-    ccall((:OSRSetVertCS, libgdal), OGRErr, (Ptr{Void}, Cstring, Cstring, Cint), hSRS, pszVertCSName, pszVertDatumName, nVertDatumType)
+    ccall((:OSRSetVertCS, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cstring, Cint), hSRS, pszVertCSName, pszVertDatumName, nVertDatumType)
 end
 
 
@@ -796,7 +796,7 @@ end
 Get spheroid semi major axis.
 """
 function getsemimajor(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRGetSemiMajor, libgdal), Cdouble, (Ptr{Void}, Ptr{OGRErr}), arg1, arg2)
+    ccall((:OSRGetSemiMajor, libgdal), Cdouble, (Ptr{Cvoid}, Ptr{OGRErr}), arg1, arg2)
 end
 
 
@@ -807,7 +807,7 @@ end
 Get spheroid semi minor axis.
 """
 function getsemiminor(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRGetSemiMinor, libgdal), Cdouble, (Ptr{Void}, Ptr{OGRErr}), arg1, arg2)
+    ccall((:OSRGetSemiMinor, libgdal), Cdouble, (Ptr{Cvoid}, Ptr{OGRErr}), arg1, arg2)
 end
 
 
@@ -818,7 +818,7 @@ end
 Get spheroid inverse flattening.
 """
 function getinvflattening(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRGetInvFlattening, libgdal), Cdouble, (Ptr{Void}, Ptr{OGRErr}), arg1, arg2)
+    ccall((:OSRGetInvFlattening, libgdal), Cdouble, (Ptr{Cvoid}, Ptr{OGRErr}), arg1, arg2)
 end
 
 
@@ -831,7 +831,7 @@ end
 Set the authority for a node.
 """
 function setauthority(hSRS::Ref{OGRSpatialReferenceH}, pszTargetKey, pszAuthority, nCode::Integer)
-    ccall((:OSRSetAuthority, libgdal), OGRErr, (Ptr{Void}, Cstring, Cstring, Cint), hSRS, pszTargetKey, pszAuthority, nCode)
+    ccall((:OSRSetAuthority, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cstring, Cint), hSRS, pszTargetKey, pszAuthority, nCode)
 end
 
 
@@ -842,7 +842,7 @@ end
 Get the authority code for a node.
 """
 function getauthoritycode(hSRS::Ref{OGRSpatialReferenceH}, pszTargetKey)
-    unsafe_string(ccall((:OSRGetAuthorityCode, libgdal), Cstring, (Ptr{Void}, Cstring), hSRS, pszTargetKey))
+    unsafe_string(ccall((:OSRGetAuthorityCode, libgdal), Cstring, (Ptr{Cvoid}, Cstring), hSRS, pszTargetKey))
 end
 
 
@@ -853,7 +853,7 @@ end
 Get the authority name for a node.
 """
 function getauthorityname(hSRS::Ref{OGRSpatialReferenceH}, pszTargetKey)
-    unsafe_string(ccall((:OSRGetAuthorityName, libgdal), Cstring, (Ptr{Void}, Cstring), hSRS, pszTargetKey))
+    unsafe_string(ccall((:OSRGetAuthorityName, libgdal), Cstring, (Ptr{Cvoid}, Cstring), hSRS, pszTargetKey))
 end
 
 
@@ -864,7 +864,7 @@ end
 Set a projection name.
 """
 function setprojection(arg1::Ref{OGRSpatialReferenceH}, arg2)
-    ccall((:OSRSetProjection, libgdal), OGRErr, (Ptr{Void}, Cstring), arg1, arg2)
+    ccall((:OSRSetProjection, libgdal), OGRErr, (Ptr{Cvoid}, Cstring), arg1, arg2)
 end
 
 
@@ -876,7 +876,7 @@ end
 Set a projection parameter value.
 """
 function setprojparm(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3::Real)
-    ccall((:OSRSetProjParm, libgdal), OGRErr, (Ptr{Void}, Cstring, Cdouble), arg1, arg2, arg3)
+    ccall((:OSRSetProjParm, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cdouble), arg1, arg2, arg3)
 end
 
 
@@ -889,7 +889,7 @@ end
 Fetch a projection parameter value.
 """
 function getprojparm(hSRS::Ref{OGRSpatialReferenceH}, pszParmName, dfDefault::Real, arg1)
-    ccall((:OSRGetProjParm, libgdal), Cdouble, (Ptr{Void}, Cstring, Cdouble, Ptr{OGRErr}), hSRS, pszParmName, dfDefault, arg1)
+    ccall((:OSRGetProjParm, libgdal), Cdouble, (Ptr{Cvoid}, Cstring, Cdouble, Ptr{OGRErr}), hSRS, pszParmName, dfDefault, arg1)
 end
 
 
@@ -901,7 +901,7 @@ end
 Set a projection parameter with a normalized value.
 """
 function setnormprojparm(arg1::Ref{OGRSpatialReferenceH}, arg2, arg3::Real)
-    ccall((:OSRSetNormProjParm, libgdal), OGRErr, (Ptr{Void}, Cstring, Cdouble), arg1, arg2, arg3)
+    ccall((:OSRSetNormProjParm, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cdouble), arg1, arg2, arg3)
 end
 
 
@@ -914,7 +914,7 @@ end
 This function is the same as OGRSpatialReference::
 """
 function getnormprojparm(hSRS::Ref{OGRSpatialReferenceH}, pszParmName, dfDefault::Real, arg1)
-    ccall((:OSRGetNormProjParm, libgdal), Cdouble, (Ptr{Void}, Cstring, Cdouble, Ptr{OGRErr}), hSRS, pszParmName, dfDefault, arg1)
+    ccall((:OSRGetNormProjParm, libgdal), Cdouble, (Ptr{Cvoid}, Cstring, Cdouble, Ptr{OGRErr}), hSRS, pszParmName, dfDefault, arg1)
 end
 
 
@@ -926,7 +926,7 @@ end
 Set UTM projection definition.
 """
 function setutm(hSRS::Ref{OGRSpatialReferenceH}, nZone::Integer, bNorth::Integer)
-    ccall((:OSRSetUTM, libgdal), OGRErr, (Ptr{Void}, Cint, Cint), hSRS, nZone, bNorth)
+    ccall((:OSRSetUTM, libgdal), OGRErr, (Ptr{Cvoid}, Cint, Cint), hSRS, nZone, bNorth)
 end
 
 
@@ -937,7 +937,7 @@ end
 Get utm zone information.
 """
 function getutmzone(hSRS::Ref{OGRSpatialReferenceH}, pbNorth)
-    ccall((:OSRGetUTMZone, libgdal), Cint, (Ptr{Void}, Ptr{Cint}), hSRS, pbNorth)
+    ccall((:OSRGetUTMZone, libgdal), Cint, (Ptr{Cvoid}, Ptr{Cint}), hSRS, pbNorth)
 end
 
 
@@ -949,7 +949,7 @@ end
 Set State Plane projection definition.
 """
 function setstateplane(hSRS::Ref{OGRSpatialReferenceH}, nZone::Integer, bNAD83::Integer)
-    ccall((:OSRSetStatePlane, libgdal), OGRErr, (Ptr{Void}, Cint, Cint), hSRS, nZone, bNAD83)
+    ccall((:OSRSetStatePlane, libgdal), OGRErr, (Ptr{Cvoid}, Cint, Cint), hSRS, nZone, bNAD83)
 end
 
 
@@ -963,7 +963,7 @@ end
 Set State Plane projection definition.
 """
 function setstateplanewithunits(hSRS::Ref{OGRSpatialReferenceH}, nZone::Integer, bNAD83::Integer, pszOverrideUnitName, dfOverrideUnit::Real)
-    ccall((:OSRSetStatePlaneWithUnits, libgdal), OGRErr, (Ptr{Void}, Cint, Cint, Cstring, Cdouble), hSRS, nZone, bNAD83, pszOverrideUnitName, dfOverrideUnit)
+    ccall((:OSRSetStatePlaneWithUnits, libgdal), OGRErr, (Ptr{Cvoid}, Cint, Cint, Cstring, Cdouble), hSRS, nZone, bNAD83, pszOverrideUnitName, dfOverrideUnit)
 end
 
 
@@ -973,7 +973,7 @@ end
 Set EPSG authority info if possible.
 """
 function autoidentifyepsg(hSRS::Ref{OGRSpatialReferenceH})
-    ccall((:OSRAutoIdentifyEPSG, libgdal), OGRErr, (Ptr{Void},), hSRS)
+    ccall((:OSRAutoIdentifyEPSG, libgdal), OGRErr, (Ptr{Cvoid},), hSRS)
 end
 
 
@@ -983,7 +983,7 @@ end
 This function returns TRUE if EPSG feels this geographic coordinate system should be treated as having lat/long coordinate ordering.
 """
 function epsgtreatsaslatlong(hSRS::Ref{OGRSpatialReferenceH})
-    ccall((:OSREPSGTreatsAsLatLong, libgdal), Cint, (Ptr{Void},), hSRS)
+    ccall((:OSREPSGTreatsAsLatLong, libgdal), Cint, (Ptr{Cvoid},), hSRS)
 end
 
 
@@ -993,7 +993,7 @@ end
 This function returns TRUE if EPSG feels this geographic coordinate system should be treated as having northing/easting coordinate ordering.
 """
 function epsgtreatsasnorthingeasting(hSRS::Ref{OGRSpatialReferenceH})
-    ccall((:OSREPSGTreatsAsNorthingEasting, libgdal), Cint, (Ptr{Void},), hSRS)
+    ccall((:OSREPSGTreatsAsNorthingEasting, libgdal), Cint, (Ptr{Cvoid},), hSRS)
 end
 
 
@@ -1006,7 +1006,7 @@ end
 Fetch the orientation of one axis.
 """
 function getaxis(hSRS::Ref{OGRSpatialReferenceH}, pszTargetKey, iAxis::Integer, peOrientation)
-    unsafe_string(ccall((:OSRGetAxis, libgdal), Cstring, (Ptr{Void}, Cstring, Cint, Ptr{OGRAxisOrientation}), hSRS, pszTargetKey, iAxis, peOrientation))
+    unsafe_string(ccall((:OSRGetAxis, libgdal), Cstring, (Ptr{Cvoid}, Cstring, Cint, Ptr{OGRAxisOrientation}), hSRS, pszTargetKey, iAxis, peOrientation))
 end
 
 
@@ -1021,7 +1021,7 @@ end
 Set the axes for a coordinate system.
 """
 function setaxes(hSRS::Ref{OGRSpatialReferenceH}, pszTargetKey, pszXAxisName, eXAxisOrientation::OGRAxisOrientation, pszYAxisName, eYAxisOrientation::OGRAxisOrientation)
-    ccall((:OSRSetAxes, libgdal), OGRErr, (Ptr{Void}, Cstring, Cstring, OGRAxisOrientation, Cstring, OGRAxisOrientation), hSRS, pszTargetKey, pszXAxisName, eXAxisOrientation, pszYAxisName, eYAxisOrientation)
+    ccall((:OSRSetAxes, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cstring, OGRAxisOrientation, Cstring, OGRAxisOrientation), hSRS, pszTargetKey, pszXAxisName, eXAxisOrientation, pszYAxisName, eYAxisOrientation)
 end
 
 
@@ -1037,7 +1037,7 @@ end
 Albers Conic Equal Area.
 """
 function setacea(hSRS::Ref{OGRSpatialReferenceH}, dfStdP1::Real, dfStdP2::Real, dfCenterLat::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetACEA, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetACEA, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1051,7 +1051,7 @@ end
 Azimuthal Equidistant.
 """
 function setae(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetAE, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetAE, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1065,7 +1065,7 @@ end
 Bonne.
 """
 function setbonne(hSRS::Ref{OGRSpatialReferenceH}, dfStandardParallel::Real, dfCentralMeridian::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetBonne, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStandardParallel, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetBonne, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStandardParallel, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1079,7 +1079,7 @@ end
 Cylindrical Equal Area.
 """
 function setcea(hSRS::Ref{OGRSpatialReferenceH}, dfStdP1::Real, dfCentralMeridian::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetCEA, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetCEA, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1093,7 +1093,7 @@ end
 Cassini-Soldner.
 """
 function setcs(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetCS, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetCS, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1109,7 +1109,7 @@ end
 Equidistant Conic.
 """
 function setec(hSRS::Ref{OGRSpatialReferenceH}, dfStdP1::Real, dfStdP2::Real, dfCenterLat::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetEC, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetEC, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1123,7 +1123,7 @@ end
 Eckert I-VI.
 """
 function seteckert(hSRS::Ref{OGRSpatialReferenceH}, nVariation::Integer, dfCentralMeridian::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetEckert, libgdal), OGRErr, (Ptr{Void}, Cint, Cdouble, Cdouble, Cdouble), hSRS, nVariation, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetEckert, libgdal), OGRErr, (Ptr{Cvoid}, Cint, Cdouble, Cdouble, Cdouble), hSRS, nVariation, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1136,7 +1136,7 @@ end
 Eckert IV.
 """
 function seteckertiv(hSRS::Ref{OGRSpatialReferenceH}, dfCentralMeridian::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetEckertIV, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble), hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetEckertIV, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble), hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1149,7 +1149,7 @@ end
 Eckert VI.
 """
 function seteckertvi(hSRS::Ref{OGRSpatialReferenceH}, dfCentralMeridian::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetEckertVI, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble), hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetEckertVI, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble), hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1163,7 +1163,7 @@ end
 Equirectangular.
 """
 function setequirectangular(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetEquirectangular, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetEquirectangular, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1178,7 +1178,7 @@ end
 Equirectangular generalized form.
 """
 function setequirectangular2(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfPseudoStdParallel1::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetEquirectangular2, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfPseudoStdParallel1, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetEquirectangular2, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfPseudoStdParallel1, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1191,7 +1191,7 @@ end
 Gall Stereograpic.
 """
 function setgs(hSRS::Ref{OGRSpatialReferenceH}, dfCentralMeridian::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetGS, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble), hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetGS, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble), hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1204,7 +1204,7 @@ end
 Goode Homolosine.
 """
 function setgh(hSRS::Ref{OGRSpatialReferenceH}, dfCentralMeridian::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetGH, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble), hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetGH, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble), hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1214,7 +1214,7 @@ end
 Interrupted Goode Homolosine.
 """
 function setigh(hSRS::Ref{OGRSpatialReferenceH})
-    ccall((:OSRSetIGH, libgdal), OGRErr, (Ptr{Void},), hSRS)
+    ccall((:OSRSetIGH, libgdal), OGRErr, (Ptr{Cvoid},), hSRS)
 end
 
 
@@ -1228,7 +1228,7 @@ end
 GEOS - Geostationary Satellite View.
 """
 function setgeos(hSRS::Ref{OGRSpatialReferenceH}, dfCentralMeridian::Real, dfSatelliteHeight::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetGEOS, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCentralMeridian, dfSatelliteHeight, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetGEOS, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCentralMeridian, dfSatelliteHeight, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1243,7 +1243,7 @@ end
 Gauss Schreiber Transverse Mercator.
 """
 function setgaussschreibertmercator(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfScale::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetGaussSchreiberTMercator, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetGaussSchreiberTMercator, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1257,7 +1257,7 @@ end
 Gnomonic.
 """
 function setgnomonic(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetGnomonic, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetGnomonic, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1274,7 +1274,7 @@ end
 Oblique Mercator (aka HOM (variant B)
 """
 function setom(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfAzimuth::Real, dfRectToSkew::Real, dfScale::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetOM, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfAzimuth, dfRectToSkew, dfScale, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetOM, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfAzimuth, dfRectToSkew, dfScale, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1291,7 +1291,7 @@ end
 Set a Hotine Oblique Mercator projection using azimuth angle.
 """
 function sethom(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfAzimuth::Real, dfRectToSkew::Real, dfScale::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetHOM, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfAzimuth, dfRectToSkew, dfScale, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetHOM, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfAzimuth, dfRectToSkew, dfScale, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1308,7 +1308,7 @@ end
 Set an Oblique Mercator projection using azimuth angle.
 """
 function sethomac(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfAzimuth::Real, dfRectToSkew::Real, dfScale::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetHOMAC, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfAzimuth, dfRectToSkew, dfScale, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetHOMAC, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfAzimuth, dfRectToSkew, dfScale, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1326,7 +1326,7 @@ end
 Set a Hotine Oblique Mercator projection using two points on projection centerline.
 """
 function sethom2pno(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfLat1::Real, dfLong1::Real, dfLat2::Real, dfLong2::Real, dfScale::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetHOM2PNO, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfLat1, dfLong1, dfLat2, dfLong2, dfScale, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetHOM2PNO, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfLat1, dfLong1, dfLat2, dfLong2, dfScale, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1341,7 +1341,7 @@ end
 International Map of the World Polyconic.
 """
 function setiwmpolyconic(hSRS::Ref{OGRSpatialReferenceH}, dfLat1::Real, dfLat2::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetIWMPolyconic, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfLat1, dfLat2, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetIWMPolyconic, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfLat1, dfLat2, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1358,7 +1358,7 @@ end
 Krovak Oblique Conic Conformal.
 """
 function setkrovak(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfAzimuth::Real, dfPseudoStdParallelLat::Real, dfScale::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetKrovak, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfAzimuth, dfPseudoStdParallelLat, dfScale, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetKrovak, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfAzimuth, dfPseudoStdParallelLat, dfScale, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1372,7 +1372,7 @@ end
 Lambert Azimuthal Equal-Area.
 """
 function setlaea(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetLAEA, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetLAEA, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1388,7 +1388,7 @@ end
 Lambert Conformal Conic.
 """
 function setlcc(hSRS::Ref{OGRSpatialReferenceH}, dfStdP1::Real, dfStdP2::Real, dfCenterLat::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetLCC, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetLCC, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1403,7 +1403,7 @@ end
 Lambert Conformal Conic 1SP.
 """
 function setlcc1sp(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfScale::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetLCC1SP, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetLCC1SP, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1419,7 +1419,7 @@ end
 Lambert Conformal Conic (Belgium)
 """
 function setlccb(hSRS::Ref{OGRSpatialReferenceH}, dfStdP1::Real, dfStdP2::Real, dfCenterLat::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetLCCB, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetLCCB, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1433,7 +1433,7 @@ end
 Miller Cylindrical.
 """
 function setmc(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetMC, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetMC, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1448,7 +1448,7 @@ end
 Mercator.
 """
 function setmercator(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfScale::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetMercator, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetMercator, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1463,7 +1463,7 @@ end
 Mercator 2SP.
 """
 function setmercator2sp(hSRS::Ref{OGRSpatialReferenceH}, dfStdP1::Real, dfCenterLat::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetMercator2SP, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetMercator2SP, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1476,7 +1476,7 @@ end
 Mollweide.
 """
 function setmollweide(hSRS::Ref{OGRSpatialReferenceH}, dfCentralMeridian::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetMollweide, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble), hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetMollweide, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble), hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1490,7 +1490,7 @@ end
 New Zealand Map Grid.
 """
 function setnzmg(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetNZMG, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetNZMG, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1505,7 +1505,7 @@ end
 Oblique Stereographic.
 """
 function setos(hSRS::Ref{OGRSpatialReferenceH}, dfOriginLat::Real, dfCMeridian::Real, dfScale::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetOS, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfOriginLat, dfCMeridian, dfScale, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetOS, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfOriginLat, dfCMeridian, dfScale, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1519,7 +1519,7 @@ end
 Orthographic.
 """
 function setorthographic(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetOrthographic, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetOrthographic, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1533,7 +1533,7 @@ end
 Polyconic.
 """
 function setpolyconic(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetPolyconic, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetPolyconic, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1548,7 +1548,7 @@ end
 Polar Stereographic.
 """
 function setps(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfScale::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetPS, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetPS, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1561,7 +1561,7 @@ end
 Robinson.
 """
 function setrobinson(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetRobinson, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetRobinson, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1574,7 +1574,7 @@ end
 Sinusoidal.
 """
 function setsinusoidal(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetSinusoidal, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetSinusoidal, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1589,7 +1589,7 @@ end
 Stereographic.
 """
 function setstereographic(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfScale::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetStereographic, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetStereographic, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1603,7 +1603,7 @@ end
 Swiss Oblique Cylindrical.
 """
 function setsoc(hSRS::Ref{OGRSpatialReferenceH}, dfLatitudeOfOrigin::Real, dfCentralMeridian::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetSOC, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfLatitudeOfOrigin, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetSOC, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfLatitudeOfOrigin, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1618,7 +1618,7 @@ end
 Transverse Mercator.
 """
 function settm(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfScale::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetTM, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetTM, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1634,7 +1634,7 @@ end
 Transverse Mercator variant.
 """
 function settmvariant(hSRS::Ref{OGRSpatialReferenceH}, pszVariantName, dfCenterLat::Real, dfCenterLong::Real, dfScale::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetTMVariant, libgdal), OGRErr, (Ptr{Void}, Cstring, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, pszVariantName, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetTMVariant, libgdal), OGRErr, (Ptr{Cvoid}, Cstring, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, pszVariantName, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1648,7 +1648,7 @@ end
 Tunesia Mining Grid.
 """
 function settmg(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetTMG, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetTMG, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1663,7 +1663,7 @@ end
 Transverse Mercator (South Oriented)
 """
 function settmso(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real, dfScale::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetTMSO, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetTMSO, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1679,7 +1679,7 @@ end
 TPED (Two Point Equi Distant)
 """
 function settped(hSRS::Ref{OGRSpatialReferenceH}, dfLat1::Real, dfLong1::Real, dfLat2::Real, dfLong2::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetTPED, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfLat1, dfLong1, dfLat2, dfLong2, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetTPED, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfLat1, dfLong1, dfLat2, dfLong2, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1692,7 +1692,7 @@ end
 VanDerGrinten.
 """
 function setvdg(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLong::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetVDG, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetVDG, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1706,7 +1706,7 @@ end
 Wagner I  VII.
 """
 function setwagner(hSRS::Ref{OGRSpatialReferenceH}, nVariation::Integer, dfCenterLat::Real, dfFalseEasting::Real, dfFalseNorthing::Real)
-    ccall((:OSRSetWagner, libgdal), OGRErr, (Ptr{Void}, Cint, Cdouble, Cdouble, Cdouble), hSRS, nVariation, dfCenterLat, dfFalseEasting, dfFalseNorthing)
+    ccall((:OSRSetWagner, libgdal), OGRErr, (Ptr{Cvoid}, Cint, Cdouble, Cdouble, Cdouble), hSRS, nVariation, dfCenterLat, dfFalseEasting, dfFalseNorthing)
 end
 
 
@@ -1718,7 +1718,7 @@ end
 Quadrilateralized Spherical Cube.
 """
 function setqsc(hSRS::Ref{OGRSpatialReferenceH}, dfCenterLat::Real, dfCenterLong::Real)
-    ccall((:OSRSetQSC, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong)
+    ccall((:OSRSetQSC, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong)
 end
 
 
@@ -1732,7 +1732,7 @@ end
 Spherical, Cross-track, Height.
 """
 function setsch(hSRS::Ref{OGRSpatialReferenceH}, dfPegLat::Real, dfPegLong::Real, dfPegHeading::Real, dfPegHgt::Real)
-    ccall((:OSRSetSCH, libgdal), OGRErr, (Ptr{Void}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfPegLat, dfPegLong, dfPegHeading, dfPegHgt)
+    ccall((:OSRSetSCH, libgdal), OGRErr, (Ptr{Cvoid}, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfPegLat, dfPegLong, dfPegHeading, dfPegHgt)
 end
 
 
@@ -1778,7 +1778,7 @@ end
 Cleanup cached SRS related memory.
 """
 function cleanup()
-    ccall((:OSRCleanup, libgdal), Void, ())
+    ccall((:OSRCleanup, libgdal), Cvoid, ())
 end
 
 
@@ -1796,7 +1796,7 @@ Create transformation object.
 NULL on failure or a ready to use transformation object.
 """
 function octnewcoordinatetransformation(hSourceSRS::Ref{OGRSpatialReferenceH}, hTargetSRS::Ref{OGRSpatialReferenceH})
-    checknull(ccall((:OCTNewCoordinateTransformation, libgdal), Ptr{OGRCoordinateTransformationH}, (Ptr{Void}, Ptr{Void}), hSourceSRS, hTargetSRS))
+    checknull(ccall((:OCTNewCoordinateTransformation, libgdal), Ptr{OGRCoordinateTransformationH}, (Ptr{Cvoid}, Ptr{Cvoid}), hSourceSRS, hTargetSRS))
 end
 
 
@@ -1809,7 +1809,7 @@ OGRCoordinateTransformation destructor.
 * **hCT**: the object to delete
 """
 function octdestroycoordinatetransformation(arg1::Ref{OGRCoordinateTransformationH})
-    ccall((:OCTDestroyCoordinateTransformation, libgdal), Void, (Ptr{Void},), arg1)
+    ccall((:OCTDestroyCoordinateTransformation, libgdal), Cvoid, (Ptr{Cvoid},), arg1)
 end
 
 
@@ -1833,7 +1833,7 @@ Transform an array of points.
 TRUE or FALSE
 """
 function octtransform(hCT::Ref{OGRCoordinateTransformationH}, nCount::Integer, x, y, z)
-    ccall((:OCTTransform, libgdal), Cint, (Ptr{Void}, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}), hCT, nCount, x, y, z)
+    ccall((:OCTTransform, libgdal), Cint, (Ptr{Cvoid}, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}), hCT, nCount, x, y, z)
 end
 
 
@@ -1859,7 +1859,7 @@ Transform an array of points.
 TRUE or FALSE
 """
 function octtransformex(hCT::Ref{OGRCoordinateTransformationH}, nCount::Integer, x, y, z, pabSuccess)
-    ccall((:OCTTransformEx, libgdal), Cint, (Ptr{Void}, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}), hCT, nCount, x, y, z, pabSuccess)
+    ccall((:OCTTransformEx, libgdal), Cint, (Ptr{Cvoid}, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}), hCT, nCount, x, y, z, pabSuccess)
 end
 
 
@@ -1875,7 +1875,7 @@ end
     OCTCleanupProjMutex() -> void
 """
 function octcleanupprojmutex()
-    ccall((:OCTCleanupProjMutex, libgdal), Void, ())
+    ccall((:OCTCleanupProjMutex, libgdal), Cvoid, ())
 end
 
 

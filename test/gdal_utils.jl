@@ -25,7 +25,7 @@ options = GDAL.translateoptionsnew(optvec, C_NULL)
 ds_tiny_asc = GDAL.translate("data/utmtiny.asc", ds_small, options, C_NULL)
 GDAL.translateoptionsfree(options)
 GDAL.close(ds_tiny_asc)
-@test replace(readstring("data/utmtiny.asc"), "\r", "") == """
+@test replace(read("data/utmtiny.asc", String), "\r", "") == """
     ncols        5
     nrows        5
     xllcorner    440720.000000000000
@@ -77,7 +77,7 @@ options = GDAL.demprocessingoptionsnew(["-of","AAIGrid"], C_NULL)
 ds_dempr = GDAL.demprocessing("data/utmtiny-hillshade.asc", ds_tiny, "hillshade", C_NULL, options, C_NULL)
 GDAL.demprocessingoptionsfree(options)
 GDAL.close(ds_dempr)
-@test replace(readstring("data/utmtiny-hillshade.asc"), "\r", "") == """
+@test replace(read("data/utmtiny-hillshade.asc", String), "\r", "") == """
     ncols        5
     nrows        5
     xllcorner    440720.000000000000
@@ -139,7 +139,7 @@ options = GDAL.buildvrtoptionsnew([], C_NULL)
 ds_buildvrt = GDAL.buildvrt("data/utmtiny.vrt", 1, [ds_tiny], C_NULL, options, C_NULL)
 GDAL.buildvrtoptionsfree(options)
 GDAL.close(ds_buildvrt)
-@test contains(readstring("data/utmtiny.vrt"), "<SourceFilename relativeToVRT=\"1\">utmtiny.tif</SourceFilename>")
+@test contains(read("data/utmtiny.vrt", String), "<SourceFilename relativeToVRT=\"1\">utmtiny.tif</SourceFilename>")
 rm("data/utmtiny.vrt")
 
 
@@ -156,7 +156,7 @@ dstcsv = """
     100,0,0,a
     100.2785,0.0893,3,b
     """
-@test replace(readstring("data/point.csv"), "\r", "") == dstcsv
+@test replace(read("data/point.csv", String), "\r", "") == dstcsv
 rm("data/point.csv")
 
 

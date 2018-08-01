@@ -30,7 +30,7 @@ Frees the GDALInfoOptions struct.
 * **psOptions**: the options struct for GDALInfo().
 """
 function GDALInfoOptionsFree(psOptions)
-    ccall((:GDALInfoOptionsFree, libgdal), Void, (Ptr{GDALInfoOptions},), psOptions)
+    ccall((:GDALInfoOptionsFree, libgdal), Cvoid, (Ptr{GDALInfoOptions},), psOptions)
 end
 
 
@@ -79,7 +79,7 @@ Frees the GDALTranslateOptions struct.
 * **psOptions**: the options struct for GDALTranslate().
 """
 function GDALTranslateOptionsFree(psOptions)
-    ccall((:GDALTranslateOptionsFree, libgdal), Void, (Ptr{GDALTranslateOptions},), psOptions)
+    ccall((:GDALTranslateOptionsFree, libgdal), Cvoid, (Ptr{GDALTranslateOptions},), psOptions)
 end
 
 
@@ -96,7 +96,7 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function GDALTranslateOptionsSetProgress(psOptions, pfnProgress::GDALProgressFunc, pProgressData)
-    ccall((:GDALTranslateOptionsSetProgress, libgdal), Void, (Ptr{GDALTranslateOptions}, GDALProgressFunc, Ptr{Void}), psOptions, pfnProgress, pProgressData)
+    ccall((:GDALTranslateOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALTranslateOptions}, GDALProgressFunc, Ptr{Cvoid}), psOptions, pfnProgress, pProgressData)
 end
 
 
@@ -149,7 +149,7 @@ Frees the GDALWarpAppOptions struct.
 * **psOptions**: the options struct for GDALWarp().
 """
 function GDALWarpAppOptionsFree(psOptions)
-    ccall((:GDALWarpAppOptionsFree, libgdal), Void, (Ptr{GDALWarpAppOptions},), psOptions)
+    ccall((:GDALWarpAppOptionsFree, libgdal), Cvoid, (Ptr{GDALWarpAppOptions},), psOptions)
 end
 
 
@@ -166,7 +166,7 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function GDALWarpAppOptionsSetProgress(psOptions, pfnProgress::GDALProgressFunc, pProgressData)
-    ccall((:GDALWarpAppOptionsSetProgress, libgdal), Void, (Ptr{GDALWarpAppOptions}, GDALProgressFunc, Ptr{Void}), psOptions, pfnProgress, pProgressData)
+    ccall((:GDALWarpAppOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALWarpAppOptions}, GDALProgressFunc, Ptr{Cvoid}), psOptions, pfnProgress, pProgressData)
 end
 
 
@@ -183,7 +183,7 @@ Set a warp option.
 * **pszValue**: value.
 """
 function GDALWarpAppOptionsSetWarpOption(psOptions, pszKey, pszValue)
-    ccall((:GDALWarpAppOptionsSetWarpOption, libgdal), Void, (Ptr{GDALWarpAppOptions}, Cstring, Cstring), psOptions, pszKey, pszValue)
+    ccall((:GDALWarpAppOptionsSetWarpOption, libgdal), Cvoid, (Ptr{GDALWarpAppOptions}, Cstring, Cstring), psOptions, pszKey, pszValue)
 end
 
 
@@ -240,7 +240,7 @@ Frees the GDALVectorTranslateOptions struct.
 * **psOptions**: the options struct for GDALVectorTranslate().
 """
 function GDALVectorTranslateOptionsFree(psOptions)
-    ccall((:GDALVectorTranslateOptionsFree, libgdal), Void, (Ptr{GDALVectorTranslateOptions},), psOptions)
+    ccall((:GDALVectorTranslateOptionsFree, libgdal), Cvoid, (Ptr{GDALVectorTranslateOptions},), psOptions)
 end
 
 
@@ -257,7 +257,7 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function GDALVectorTranslateOptionsSetProgress(psOptions, pfnProgress::GDALProgressFunc, pProgressData)
-    ccall((:GDALVectorTranslateOptionsSetProgress, libgdal), Void, (Ptr{GDALVectorTranslateOptions}, GDALProgressFunc, Ptr{Void}), psOptions, pfnProgress, pProgressData)
+    ccall((:GDALVectorTranslateOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALVectorTranslateOptions}, GDALProgressFunc, Ptr{Cvoid}), psOptions, pfnProgress, pProgressData)
 end
 
 
@@ -314,7 +314,7 @@ Frees the GDALDEMProcessingOptions struct.
 * **psOptions**: the options struct for GDALDEMProcessing().
 """
 function GDALDEMProcessingOptionsFree(psOptions)
-    ccall((:GDALDEMProcessingOptionsFree, libgdal), Void, (Ptr{GDALDEMProcessingOptions},), psOptions)
+    ccall((:GDALDEMProcessingOptionsFree, libgdal), Cvoid, (Ptr{GDALDEMProcessingOptions},), psOptions)
 end
 
 
@@ -331,7 +331,7 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function GDALDEMProcessingOptionsSetProgress(psOptions, pfnProgress::GDALProgressFunc, pProgressData)
-    ccall((:GDALDEMProcessingOptionsSetProgress, libgdal), Void, (Ptr{GDALDEMProcessingOptions}, GDALProgressFunc, Ptr{Void}), psOptions, pfnProgress, pProgressData)
+    ccall((:GDALDEMProcessingOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALDEMProcessingOptions}, GDALProgressFunc, Ptr{Cvoid}), psOptions, pfnProgress, pProgressData)
 end
 
 
@@ -388,7 +388,7 @@ Frees the GDALNearblackOptions struct.
 * **psOptions**: the options struct for GDALNearblack().
 """
 function GDALNearblackOptionsFree(psOptions)
-    ccall((:GDALNearblackOptionsFree, libgdal), Void, (Ptr{GDALNearblackOptions},), psOptions)
+    ccall((:GDALNearblackOptionsFree, libgdal), Cvoid, (Ptr{GDALNearblackOptions},), psOptions)
 end
 
 
@@ -405,7 +405,7 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function GDALNearblackOptionsSetProgress(psOptions, pfnProgress::GDALProgressFunc, pProgressData)
-    ccall((:GDALNearblackOptionsSetProgress, libgdal), Void, (Ptr{GDALNearblackOptions}, GDALProgressFunc, Ptr{Void}), psOptions, pfnProgress, pProgressData)
+    ccall((:GDALNearblackOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALNearblackOptions}, GDALProgressFunc, Ptr{Cvoid}), psOptions, pfnProgress, pProgressData)
 end
 
 
@@ -460,7 +460,7 @@ Frees the GDALGridOptions struct.
 * **psOptions**: the options struct for GDALGrid().
 """
 function GDALGridOptionsFree(psOptions)
-    ccall((:GDALGridOptionsFree, libgdal), Void, (Ptr{GDALGridOptions},), psOptions)
+    ccall((:GDALGridOptionsFree, libgdal), Cvoid, (Ptr{GDALGridOptions},), psOptions)
 end
 
 
@@ -477,7 +477,7 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function GDALGridOptionsSetProgress(psOptions, pfnProgress::GDALProgressFunc, pProgressData)
-    ccall((:GDALGridOptionsSetProgress, libgdal), Void, (Ptr{GDALGridOptions}, GDALProgressFunc, Ptr{Void}), psOptions, pfnProgress, pProgressData)
+    ccall((:GDALGridOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALGridOptions}, GDALProgressFunc, Ptr{Cvoid}), psOptions, pfnProgress, pProgressData)
 end
 
 
@@ -530,7 +530,7 @@ Frees the GDALRasterizeOptions struct.
 * **psOptions**: the options struct for GDALRasterize().
 """
 function GDALRasterizeOptionsFree(psOptions)
-    ccall((:GDALRasterizeOptionsFree, libgdal), Void, (Ptr{GDALRasterizeOptions},), psOptions)
+    ccall((:GDALRasterizeOptionsFree, libgdal), Cvoid, (Ptr{GDALRasterizeOptions},), psOptions)
 end
 
 
@@ -547,7 +547,7 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function GDALRasterizeOptionsSetProgress(psOptions, pfnProgress::GDALProgressFunc, pProgressData)
-    ccall((:GDALRasterizeOptionsSetProgress, libgdal), Void, (Ptr{GDALRasterizeOptions}, GDALProgressFunc, Ptr{Void}), psOptions, pfnProgress, pProgressData)
+    ccall((:GDALRasterizeOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALRasterizeOptions}, GDALProgressFunc, Ptr{Cvoid}), psOptions, pfnProgress, pProgressData)
 end
 
 
@@ -602,7 +602,7 @@ Frees the GDALBuildVRTOptions struct.
 * **psOptions**: the options struct for GDALBuildVRT().
 """
 function GDALBuildVRTOptionsFree(psOptions)
-    ccall((:GDALBuildVRTOptionsFree, libgdal), Void, (Ptr{GDALBuildVRTOptions},), psOptions)
+    ccall((:GDALBuildVRTOptionsFree, libgdal), Cvoid, (Ptr{GDALBuildVRTOptions},), psOptions)
 end
 
 
@@ -619,7 +619,7 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function GDALBuildVRTOptionsSetProgress(psOptions, pfnProgress::GDALProgressFunc, pProgressData)
-    ccall((:GDALBuildVRTOptionsSetProgress, libgdal), Void, (Ptr{GDALBuildVRTOptions}, GDALProgressFunc, Ptr{Void}), psOptions, pfnProgress, pProgressData)
+    ccall((:GDALBuildVRTOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALBuildVRTOptions}, GDALProgressFunc, Ptr{Cvoid}), psOptions, pfnProgress, pProgressData)
 end
 
 

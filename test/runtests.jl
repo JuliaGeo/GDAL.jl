@@ -1,5 +1,5 @@
 using GDAL
-using Base.Test
+using Test
 
 info(unsafe_string(GDAL.C.GDALVersionInfo("--version")))
 
@@ -40,7 +40,7 @@ gfld = GDAL.gfld_create("name-a", GDAL.wkbPoint)
 @test GDAL.gettype(gfld) == GDAL.wkbPoint
 # same as above but for the lower level C API
 gfld = GDAL.C.OGR_GFld_Create("name-b", GDAL.C.wkbPolygon)
-@test gfld isa Ptr{Void}
+@test gfld isa Ptr{Cvoid}
 @test unsafe_string(GDAL.C.OGR_GFld_GetNameRef(gfld)) == "name-b"
 @test GDAL.C.OGR_GFld_GetType(gfld) == GDAL.C.wkbPolygon
 

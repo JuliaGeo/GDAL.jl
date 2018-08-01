@@ -13,7 +13,7 @@ Fatal error when things are bad.
 * **pszMessage**: the error message to report.
 """
 function CPLEmergencyError(arg1)
-    ccall((:CPLEmergencyError, libgdal), Void, (Cstring,), arg1)
+    ccall((:CPLEmergencyError, libgdal), Cvoid, (Cstring,), arg1)
 end
 
 
@@ -23,7 +23,7 @@ end
 Erase any traces of previous errors.
 """
 function CPLErrorReset()
-    ccall((:CPLErrorReset, libgdal), Void, ())
+    ccall((:CPLErrorReset, libgdal), Cvoid, ())
 end
 
 
@@ -75,7 +75,7 @@ Fetch the user data for the error context.
 the user data pointer for the error context
 """
 function CPLGetErrorHandlerUserData()
-    ccall((:CPLGetErrorHandlerUserData, libgdal), Ptr{Void}, ())
+    ccall((:CPLGetErrorHandlerUserData, libgdal), Ptr{Cvoid}, ())
 end
 
 
@@ -87,7 +87,7 @@ end
 Restore an error state, without emitting an error.
 """
 function CPLErrorSetState(eErrClass::CPLErr, err_no::CPLErrorNum, pszMsg)
-    ccall((:CPLErrorSetState, libgdal), Void, (CPLErr, CPLErrorNum, Cstring), eErrClass, err_no, pszMsg)
+    ccall((:CPLErrorSetState, libgdal), Cvoid, (CPLErr, CPLErrorNum, Cstring), eErrClass, err_no, pszMsg)
 end
 
 
@@ -95,7 +95,7 @@ end
     CPLCleanupErrorMutex() -> void
 """
 function CPLCleanupErrorMutex()
-    ccall((:CPLCleanupErrorMutex, libgdal), Void, ())
+    ccall((:CPLCleanupErrorMutex, libgdal), Cvoid, ())
 end
 
 
@@ -107,7 +107,7 @@ end
 Error handler that logs into the file defined by the CPL_LOG configuration option, or stderr otherwise.
 """
 function CPLLoggingErrorHandler(arg1::CPLErr, arg2::CPLErrorNum, arg3)
-    ccall((:CPLLoggingErrorHandler, libgdal), Void, (CPLErr, CPLErrorNum, Cstring), arg1, arg2, arg3)
+    ccall((:CPLLoggingErrorHandler, libgdal), Cvoid, (CPLErr, CPLErrorNum, Cstring), arg1, arg2, arg3)
 end
 
 
@@ -119,7 +119,7 @@ end
 Default error handler.
 """
 function CPLDefaultErrorHandler(arg1::CPLErr, arg2::CPLErrorNum, arg3)
-    ccall((:CPLDefaultErrorHandler, libgdal), Void, (CPLErr, CPLErrorNum, Cstring), arg1, arg2, arg3)
+    ccall((:CPLDefaultErrorHandler, libgdal), Cvoid, (CPLErr, CPLErrorNum, Cstring), arg1, arg2, arg3)
 end
 
 
@@ -131,7 +131,7 @@ end
 Error handler that does not do anything, except for debug messages.
 """
 function CPLQuietErrorHandler(arg1::CPLErr, arg2::CPLErrorNum, arg3)
-    ccall((:CPLQuietErrorHandler, libgdal), Void, (CPLErr, CPLErrorNum, Cstring), arg1, arg2, arg3)
+    ccall((:CPLQuietErrorHandler, libgdal), Cvoid, (CPLErr, CPLErrorNum, Cstring), arg1, arg2, arg3)
 end
 
 
@@ -141,7 +141,7 @@ end
 Whether failures should be turned into warnings.
 """
 function CPLTurnFailureIntoWarning(bOn::Cint)
-    ccall((:CPLTurnFailureIntoWarning, libgdal), Void, (Cint,), bOn)
+    ccall((:CPLTurnFailureIntoWarning, libgdal), Cvoid, (Cint,), bOn)
 end
 
 
@@ -175,7 +175,7 @@ Install custom error handle with user's data.
 returns the previously installed error handler.
 """
 function CPLSetErrorHandlerEx(arg1::CPLErrorHandler, arg2)
-    ccall((:CPLSetErrorHandlerEx, libgdal), CPLErrorHandler, (CPLErrorHandler, Ptr{Void}), arg1, arg2)
+    ccall((:CPLSetErrorHandlerEx, libgdal), CPLErrorHandler, (CPLErrorHandler, Ptr{Cvoid}), arg1, arg2)
 end
 
 
@@ -188,7 +188,7 @@ Push a new CPLError handler.
 * **pfnErrorHandlerNew**: new error handler function.
 """
 function CPLPushErrorHandler(arg1::CPLErrorHandler)
-    ccall((:CPLPushErrorHandler, libgdal), Void, (CPLErrorHandler,), arg1)
+    ccall((:CPLPushErrorHandler, libgdal), Cvoid, (CPLErrorHandler,), arg1)
 end
 
 
@@ -203,7 +203,7 @@ Push a new CPLError handler with user data on the error context.
 * **pUserData**: User data to put on the error context.
 """
 function CPLPushErrorHandlerEx(arg1::CPLErrorHandler, arg2)
-    ccall((:CPLPushErrorHandlerEx, libgdal), Void, (CPLErrorHandler, Ptr{Void}), arg1, arg2)
+    ccall((:CPLPushErrorHandlerEx, libgdal), Cvoid, (CPLErrorHandler, Ptr{Cvoid}), arg1, arg2)
 end
 
 
@@ -216,7 +216,7 @@ Set if the current error handler should intercept debug messages, or if they sho
 * **bCatchDebug**: FALSE if the current error handler should not intercept debug messages
 """
 function CPLSetCurrentErrorHandlerCatchDebug(bCatchDebug::Cint)
-    ccall((:CPLSetCurrentErrorHandlerCatchDebug, libgdal), Void, (Cint,), bCatchDebug)
+    ccall((:CPLSetCurrentErrorHandlerCatchDebug, libgdal), Cvoid, (Cint,), bCatchDebug)
 end
 
 
@@ -226,7 +226,7 @@ end
 Pop error handler off stack.
 """
 function CPLPopErrorHandler()
-    ccall((:CPLPopErrorHandler, libgdal), Void, ())
+    ccall((:CPLPopErrorHandler, libgdal), Cvoid, ())
 end
 
 
@@ -238,5 +238,5 @@ end
 Report failure of a logical assertion.
 """
 function _CPLAssert(arg1, arg2, arg3::Cint)
-    ccall((:_CPLAssert, libgdal), Void, (Cstring, Cstring, Cint), arg1, arg2, arg3)
+    ccall((:_CPLAssert, libgdal), Cvoid, (Cstring, Cstring, Cint), arg1, arg2, arg3)
 end
