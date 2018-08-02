@@ -76,9 +76,9 @@ GDAL.setpoint_2d(point, 0, 100.123, 0.123)
 GDAL.destroygeometry(point)
 
 # test getfilelist with unsafe_loadstringlist
-shp_exts = Set([".shp", ".shx", ".dbf"])
+shp_exts = [".shp", ".shx", ".dbf"]
 fileset = map(x -> pointshapefile * x, shp_exts)
-@test Set(GDAL.getfilelist(dataset)) == fileset
+@test GDAL.getfilelist(dataset) == fileset
 
 GDAL.close(dataset)
 

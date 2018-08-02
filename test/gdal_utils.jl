@@ -15,7 +15,7 @@ end
 
 options = GDAL.infooptionsnew(["-checksum"], C_NULL)
 infostr = GDAL.info(ds_small, options)
-@test contains(infostr, "Checksum=50054")
+@test occursin("Checksum=50054", infostr)
 GDAL.infooptionsfree(options)
 
 # GDALTranslate
@@ -25,7 +25,7 @@ options = GDAL.translateoptionsnew(optvec, C_NULL)
 ds_tiny_asc = GDAL.translate("data/utmtiny.asc", ds_small, options, C_NULL)
 GDAL.translateoptionsfree(options)
 GDAL.close(ds_tiny_asc)
-@test replace(read("data/utmtiny.asc", String), "\r", "") == """
+@test replace(read("data/utmtiny.asc", String), "\r" => "") == """
     ncols        5
     nrows        5
     xllcorner    440720.000000000000
@@ -51,7 +51,7 @@ tinydata = UInt8[
      83 101 140 128 122]
 
 band = GDAL.getrasterband(ds_tiny, 1)
-read_data = zeros(tinydata)
+read_data = zero(tinydata)
 GDAL.rasterio(band, GDAL.GF_Read, 0, 0, 5, 5,
               read_data, 5, 5, GDAL.GDT_Byte, 0, 0)
 @test read_data' == tinydata
@@ -77,7 +77,7 @@ options = GDAL.demprocessingoptionsnew(["-of","AAIGrid"], C_NULL)
 ds_dempr = GDAL.demprocessing("data/utmtiny-hillshade.asc", ds_tiny, "hillshade", C_NULL, options, C_NULL)
 GDAL.demprocessingoptionsfree(options)
 GDAL.close(ds_dempr)
-@test replace(read("data/utmtiny-hillshade.asc", String), "\r", "") == """
+@test replace(read("data/utmtiny-hillshade.asc", String), "\r" => "") == """
     ncols        5
     nrows        5
     xllcorner    440720.000000000000
@@ -101,12 +101,12 @@ ds_nearblack = GDAL.nearblack("data/utmtiny-nearblack.tif", Ptr{GDAL.GDALDataset
 GDAL.nearblackoptionsfree(options)
 # do rasterio to read result
 band = GDAL.getrasterband(ds_nearblack, 1)
-read_data = zeros(tinydata)
+read_data = zero(tinydata)
 GDAL.rasterio(band, GDAL.GF_Read, 0, 0, 5, 5,
               read_data, 5, 5, GDAL.GDT_Byte, 0, 0)
 nbdata = read_data'
 # by default the outer two pixels are zeroed
-nbexpected = zeros(tinydata)
+nbexpected = zero(tinydata)
 nbexpected[3,3] = tinydata[3,3]
 @test nbdata == nbexpected
 
@@ -118,7 +118,7 @@ rm("data/utmtiny-nearblack.tif")
 options = GDAL.gridoptionsnew(["-of","MEM","-outsize","3","10","-txe","100","100.3","-tye","0","0.1"], C_NULL)
 ds_grid = GDAL.grid("data/point-grid.mem", ds_point, options, C_NULL)
 GDAL.gridoptionsfree(options)
-geotransform = zeros(6)
+geotransform = fill(0.0, 6)
 GDAL.getgeotransform(ds_grid, geotransform)
 @test geotransform ≈ [100.0,0.1,0.0,0.0,0.0,0.01]
 GDAL.close(ds_grid)
@@ -128,7 +128,7 @@ GDAL.close(ds_grid)
 options = GDAL.rasterizeoptionsnew(["-of","MEM","-tr","0.05","0.05"], C_NULL)
 ds_rasterize = GDAL.rasterize("data/point-rasterize.mem", Ptr{GDAL.GDALDatasetH}(C_NULL), ds_point, options, C_NULL)
 GDAL.rasterizeoptionsfree(options)
-geotransform = zeros(6)
+geotransform = fill(0.0, 6)
 GDAL.getgeotransform(ds_rasterize, geotransform)
 @test geotransform ≈ [99.975,0.05,0.0,0.1143,0.0,-0.05]
 GDAL.close(ds_rasterize)
@@ -139,7 +139,7 @@ options = GDAL.buildvrtoptionsnew([], C_NULL)
 ds_buildvrt = GDAL.buildvrt("data/utmtiny.vrt", 1, [ds_tiny], C_NULL, options, C_NULL)
 GDAL.buildvrtoptionsfree(options)
 GDAL.close(ds_buildvrt)
-@test contains(read("data/utmtiny.vrt", String), "<SourceFilename relativeToVRT=\"1\">utmtiny.tif</SourceFilename>")
+@test occursin("<SourceFilename relativeToVRT=\"1\">utmtiny.tif</SourceFilename>", read("data/utmtiny.vrt", String))
 rm("data/utmtiny.vrt")
 
 
@@ -156,7 +156,7 @@ dstcsv = """
     100,0,0,a
     100.2785,0.0893,3,b
     """
-@test replace(read("data/point.csv", String), "\r", "") == dstcsv
+@test replace(read("data/point.csv", String), "\r" => "") == dstcsv
 rm("data/point.csv")
 
 

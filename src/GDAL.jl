@@ -2,6 +2,8 @@ __precompile__()
 
 module GDAL
 
+using Libdl
+
 # Load in `deps.jl`, complaining if it does not exist
 const depsjl_path = joinpath(@__DIR__, "..", "deps", "deps.jl")
 if !isfile(depsjl_path)
@@ -47,21 +49,21 @@ const GDALVERSION = Ref{VersionNumber}()
 const GDAL_DATA = Ref{String}()
 
 function __init__()
-    h = Libdl.dlopen(libgdal)
-    finfo = Libdl.dlsym(h, :GDALVersionInfo)
-    fconf = Libdl.dlsym(h, :CPLSetConfigOption)
-    ferrh = Libdl.dlsym(h, :CPLSetErrorHandler)
+    h = dlopen(libgdal)
+    finfo = dlsym(h, :GDALVersionInfo)
+    fconf = dlsym(h, :CPLSetConfigOption)
+    ferrh = dlsym(h, :CPLSetErrorHandler)
 
     # Always check your dependencies from `deps.jl`
     check_deps()
 
     # register custom error handler
-    funcptr = cfunction(gdaljl_errorhandler, Ptr{Cvoid}, (CPLErr, Cint, Cstring))
+    funcptr = @cfunction(gdaljl_errorhandler, Ptr{Cvoid}, (CPLErr, Cint, Cstring))
     ccall(ferrh, Ptr{Cvoid}, (Ptr{Cvoid},), funcptr)
 
     # get GDAL version number
     versionstring = unsafe_string(ccall(finfo, Cstring, (Cstring,), "RELEASE_NAME"))
-    GDALVERSION[] = convert(VersionNumber, versionstring)
+    GDALVERSION[] = VersionNumber(versionstring)
 
     # set the GDAL_DATA variable
     GDAL_DATA[] = abspath(@__DIR__, "..", "deps", "usr", "share", "gdal")
