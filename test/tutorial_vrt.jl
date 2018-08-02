@@ -13,7 +13,7 @@ GDAL.close(vrt_dataset)
 
 # checking the contents of the VRT XML
 vrt_xml = read("tmp/utmsmall.vrt", String)
-@test contains(vrt_xml, "<VRTDataset rasterXSize=\"100\" rasterYSize=\"100\">")
-@test contains(vrt_xml, "<MDI key=\"SourceAgency\">JuliaGeo</MDI>")
-@test contains(vrt_xml, "<SourceFilename relativeToVRT=\"0\">data/utmsmall.tif</SourceFilename>")
+@test occursin("<VRTDataset rasterXSize=\"100\" rasterYSize=\"100\">", vrt_xml)
+@test occursin("<MDI key=\"SourceAgency\">JuliaGeo</MDI>", vrt_xml)
+@test occursin("<SourceFilename relativeToVRT=\"0\">data/utmsmall.tif</SourceFilename>", vrt_xml)
 rm("tmp/utmsmall.vrt")

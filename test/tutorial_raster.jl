@@ -20,7 +20,7 @@ driver = GDAL.getdriverbyname("GTiff")
 nad27_prefix = "PROJCS[\"NAD27 / UTM zone 11N\",GEOGCS[\"NAD27\",DATUM[\"North_American_Datum_1927\","
 @test startswith(GDAL.getprojectionref(dataset), nad27_prefix)
 
-geotransform = zeros(6)
+geotransform = fill(0.0, 6)
 GDAL.getgeotransform(dataset, geotransform)
 @test geotransform == [440720.0,60.0,0.0,3.75132e6,0.0,-60.0]
 
@@ -50,7 +50,7 @@ gotmin, gotmax = Ref(Cint(-1)), Ref(Cint(-1))
 # Reading Raster Data
 xsize = GDAL.getrasterbandxsize(band)
 @test xsize == 100
-scanline = Array{Float32}(xsize)
+scanline = fill(0.0f0, xsize)
 GDAL.rasterio(band, GDAL.GF_Read, 0, 0, xsize, 1,
               scanline, xsize, 1, GDAL.GDT_Float32, 0, 0)
 @test scanline == Float32[107.0f0,123.0f0,132.0f0,115.0f0,132.0f0,132.0f0,140.0f0,132.0f0,132.0f0,132.0f0,107.0f0,132.0f0,107.0f0,132.0f0,132.0f0,107.0f0,123.0f0,115.0f0,156.0f0,148.0f0,107.0f0,132.0f0,107.0f0,115.0f0,99.0f0,123.0f0,99.0f0,74.0f0,115.0f0,82.0f0,115.0f0,115.0f0,107.0f0,123.0f0,123.0f0,99.0f0,123.0f0,123.0f0,115.0f0,115.0f0,107.0f0,90.0f0,99.0f0,107.0f0,107.0f0,99.0f0,123.0f0,107.0f0,140.0f0,123.0f0,123.0f0,115.0f0,99.0f0,132.0f0,123.0f0,115.0f0,115.0f0,123.0f0,132.0f0,115.0f0,123.0f0,132.0f0,214.0f0,156.0f0,165.0f0,148.0f0,115.0f0,148.0f0,156.0f0,148.0f0,140.0f0,165.0f0,156.0f0,197.0f0,156.0f0,197.0f0,140.0f0,173.0f0,156.0f0,165.0f0,148.0f0,156.0f0,206.0f0,214.0f0,181.0f0,206.0f0,173.0f0,222.0f0,206.0f0,255.0f0,214.0f0,173.0f0,214.0f0,255.0f0,214.0f0,247.0f0,255.0f0,230.0f0,206.0f0,197.0f0]

@@ -47,24 +47,24 @@ const custom_rename = Dict{String, String}(
 )
 
 const strip_prefixes = [
-    (r"^gdal_cg_", ""),
-    (r"^gdal_", ""),
-    (r"^gdal", ""),
-    (r"^ogr_g_", ""),
-    (r"^ogr_f_", ""),
-    (r"^ogr_fld_", ""),
-    (r"^ogr_gfld_", ""),
-    (r"^ogr_fd_", ""),
-    (r"^ogr_l_", ""),
-    (r"^ogr_ds_", ""),
-    (r"^ogr_dr_", ""),
-    (r"^ogr_sm_", ""),
-    (r"^ogr_st_", ""),
-    (r"^ogr_stbl_", ""),
-    (r"^ogr_", ""),
-    (r"^ogr", ""),
-    (r"^osr", ""),
-    (r"^cpl", "")
+    r"^gdal_cg_" => "",
+    r"^gdal_" => "",
+    r"^gdal" => "",
+    r"^ogr_g_" => "",
+    r"^ogr_f_" => "",
+    r"^ogr_fld_" => "",
+    r"^ogr_gfld_" => "",
+    r"^ogr_fd_" => "",
+    r"^ogr_l_" => "",
+    r"^ogr_ds_" => "",
+    r"^ogr_dr_" => "",
+    r"^ogr_sm_" => "",
+    r"^ogr_st_" => "",
+    r"^ogr_stbl_" => "",
+    r"^ogr_" => "",
+    r"^ogr" => "",
+    r"^osr" => "",
+    r"^cpl" => ""
 ]
 
 parsefile(file) = Meta.parse(join(["quote", read(file, String), "end"], ";"))
@@ -108,8 +108,8 @@ function newfuncname(name::Symbol)
     if name in keys(custom_rename)
         name = custom_rename[name]
     else
-        for (pat, r) in strip_prefixes
-            name = replace(name, pat, r)
+        for replacement in strip_prefixes
+            name = replace(name, replacement)
         end
     end
     Symbol(name)

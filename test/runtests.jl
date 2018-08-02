@@ -1,15 +1,20 @@
 using GDAL
 using Test
 
-info(unsafe_string(GDAL.C.GDALVersionInfo("--version")))
-
 # drivers
 # before being able to use any drivers, they must be registered first
 GDAL.allregister()
-info(GDAL.getdrivercount(), " GDAL drivers found")
-info(GDAL.ogrgetdrivercount(), " OGR drivers found")
-@test GDAL.getdrivercount() > 0
-@test GDAL.ogrgetdrivercount() > 0
+
+version = unsafe_string(GDAL.C.GDALVersionInfo("--version"))
+n_gdal_driver = GDAL.getdrivercount()
+n_ogr_driver = GDAL.ogrgetdrivercount()
+@info """$version
+$n_gdal_driver GDAL drivers found
+$n_ogr_driver OGR drivers found
+"""
+
+@test n_gdal_driver > 0
+@test n_ogr_driver > 0
 
 # test if the registered error handler also handles CE_Fatal
 @test_throws GDAL.GDALError GDAL.emergencyerror("we've got a problem")
