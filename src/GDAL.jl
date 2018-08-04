@@ -47,26 +47,21 @@ const GDALVERSION = Ref{VersionNumber}()
 const GDAL_DATA = Ref{String}()
 
 function __init__()
-    h = dlopen(libgdal)
-    finfo = dlsym(h, :GDALVersionInfo)
-    fconf = dlsym(h, :CPLSetConfigOption)
-    ferrh = dlsym(h, :CPLSetErrorHandler)
-
     # Always check your dependencies from `deps.jl`
     check_deps()
 
     # register custom error handler
     funcptr = @cfunction(gdaljl_errorhandler, Ptr{Cvoid}, (CPLErr, Cint, Cstring))
-    ccall(ferrh, Ptr{Cvoid}, (Ptr{Cvoid},), funcptr)
+    C.CPLSetErrorHandler(funcptr)
 
     # get GDAL version number
-    versionstring = unsafe_string(ccall(finfo, Cstring, (Cstring,), "RELEASE_NAME"))
+    versionstring = unsafe_string(C.GDALVersionInfo("RELEASE_NAME"))
     GDALVERSION[] = VersionNumber(versionstring)
 
-    # set the GDAL_DATA variable
+    # set GDAL_DATA, both as environment variable and directly in GDAL
     GDAL_DATA[] = abspath(@__DIR__, "..", "deps", "usr", "share", "gdal")
     ENV["GDAL_DATA"] = GDAL_DATA[]
-    ccall(fconf, Cvoid, (Cstring, Cstring), "GDAL_DATA", GDAL_DATA[])
+    C.CPLSetConfigOption("GDAL_DATA", GDAL_DATA[])
 end
 
 """
