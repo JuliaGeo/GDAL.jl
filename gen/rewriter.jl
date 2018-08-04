@@ -176,8 +176,8 @@ function rewriter(ex::Expr)
     elseif rettype in opaquepointers
         # wrap output type in Ptr{} since memory is managed by GDAL
         ccall_call.args[3] = :(Ptr{$rettype})
-        # wrap ccall in checknull()
-        ex.args[2].args[1] = :(checknull($ccall_call))
+        # wrap ccall in failsafe()
+        ex.args[2].args[1] = :(failsafe($ccall_call))
     end
     ex
 end

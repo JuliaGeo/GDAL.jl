@@ -153,7 +153,7 @@ Install custom error handler.
 returns the previously installed error handler.
 """
 function seterrorhandler(arg1::Ref{CPLErrorHandler})
-    checknull(ccall((:CPLSetErrorHandler, libgdal), Ptr{CPLErrorHandler}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:CPLSetErrorHandler, libgdal), Ptr{CPLErrorHandler}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -171,7 +171,7 @@ Install custom error handle with user's data.
 returns the previously installed error handler.
 """
 function seterrorhandlerex(arg1::Ref{CPLErrorHandler}, arg2)
-    checknull(ccall((:CPLSetErrorHandlerEx, libgdal), Ptr{CPLErrorHandler}, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2))
+    failsafe(ccall((:CPLSetErrorHandlerEx, libgdal), Ptr{CPLErrorHandler}, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2))
 end
 
 

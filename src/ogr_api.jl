@@ -81,7 +81,7 @@ Create an empty geometry of desired type.
 handle to the newly create geometry or NULL on failure. Should be freed with OGR_G_DestroyGeometry() after use.
 """
 function creategeometry(arg1::OGRwkbGeometryType)
-    checknull(ccall((:OGR_G_CreateGeometry, libgdal), Ptr{OGRGeometryH}, (OGRwkbGeometryType,), arg1))
+    failsafe(ccall((:OGR_G_CreateGeometry, libgdal), Ptr{OGRGeometryH}, (OGRwkbGeometryType,), arg1))
 end
 
 
@@ -113,7 +113,7 @@ Stroke arc to linestring.
 OGRLineString geometry representing an approximation of the arc.
 """
 function approximatearcangles(dfCenterX::Real, dfCenterY::Real, dfZ::Real, dfPrimaryRadius::Real, dfSecondaryAxis::Real, dfRotation::Real, dfStartAngle::Real, dfEndAngle::Real, dfMaxAngleStepSizeDegrees::Real)
-    checknull(ccall((:OGR_G_ApproximateArcAngles, libgdal), Ptr{OGRGeometryH}, (Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), dfCenterX, dfCenterY, dfZ, dfPrimaryRadius, dfSecondaryAxis, dfRotation, dfStartAngle, dfEndAngle, dfMaxAngleStepSizeDegrees))
+    failsafe(ccall((:OGR_G_ApproximateArcAngles, libgdal), Ptr{OGRGeometryH}, (Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), dfCenterX, dfCenterY, dfZ, dfPrimaryRadius, dfSecondaryAxis, dfRotation, dfStartAngle, dfEndAngle, dfMaxAngleStepSizeDegrees))
 end
 
 
@@ -129,7 +129,7 @@ Convert to polygon.
 the converted geometry (ownership to caller).
 """
 function forcetopolygon(arg1::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_ForceToPolygon, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_G_ForceToPolygon, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -145,7 +145,7 @@ Convert to line string.
 the converted geometry (ownership to caller).
 """
 function forcetolinestring(arg1::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_ForceToLineString, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_G_ForceToLineString, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -161,7 +161,7 @@ Convert to multipolygon.
 the converted geometry (ownership to caller).
 """
 function forcetomultipolygon(arg1::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_ForceToMultiPolygon, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_G_ForceToMultiPolygon, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -177,7 +177,7 @@ Convert to multipoint.
 the converted geometry (ownership to caller).
 """
 function forcetomultipoint(arg1::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_ForceToMultiPoint, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_G_ForceToMultiPoint, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -193,7 +193,7 @@ Convert to multilinestring.
 the converted geometry (ownership to caller).
 """
 function forcetomultilinestring(arg1::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_ForceToMultiLineString, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_G_ForceToMultiLineString, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -213,7 +213,7 @@ Convert to another geometry type.
 new geometry.
 """
 function forceto(hGeom::Ref{OGRGeometryH}, eTargetType::OGRwkbGeometryType, papszOptions)
-    checknull(ccall((:OGR_G_ForceTo, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, OGRwkbGeometryType, Ptr{Cstring}), hGeom, eTargetType, papszOptions))
+    failsafe(ccall((:OGR_G_ForceTo, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, OGRwkbGeometryType, Ptr{Cstring}), hGeom, eTargetType, papszOptions))
 end
 
 
@@ -354,7 +354,7 @@ Make a copy of this object.
 an handle on the copy of the geometry with the spatial reference system as the original.
 """
 function clone(arg1::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_Clone, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_G_Clone, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -605,7 +605,7 @@ Create geometry from GML.
 a geometry on success, or NULL on error.
 """
 function createfromgml(arg1)
-    checknull(ccall((:OGR_G_CreateFromGML, libgdal), Ptr{OGRGeometryH}, (Cstring,), arg1))
+    failsafe(ccall((:OGR_G_CreateFromGML, libgdal), Ptr{OGRGeometryH}, (Cstring,), arg1))
 end
 
 
@@ -649,7 +649,7 @@ end
 Create geometry from GML.
 """
 function createfromgmltree(arg1)
-    checknull(ccall((:OGR_G_CreateFromGMLTree, libgdal), Ptr{OGRGeometryH}, (Ptr{CPLXMLNode},), arg1))
+    failsafe(ccall((:OGR_G_CreateFromGMLTree, libgdal), Ptr{OGRGeometryH}, (Ptr{CPLXMLNode},), arg1))
 end
 
 
@@ -731,7 +731,7 @@ end
 Create a OGR geometry from a GeoJSON geometry object.
 """
 function creategeometryfromjson(arg1)
-    checknull(ccall((:OGR_G_CreateGeometryFromJson, libgdal), Ptr{OGRGeometryH}, (Cstring,), arg1))
+    failsafe(ccall((:OGR_G_CreateGeometryFromJson, libgdal), Ptr{OGRGeometryH}, (Cstring,), arg1))
 end
 
 
@@ -762,7 +762,7 @@ Returns spatial reference system for geometry.
 a reference to the spatial reference geometry.
 """
 function getspatialreference(arg1::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_GetSpatialReference, libgdal), Ptr{OGRSpatialReferenceH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_G_GetSpatialReference, libgdal), Ptr{OGRSpatialReferenceH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -816,7 +816,7 @@ Compute a simplified geometry.
 the simplified geometry or NULL if an error occurs.
 """
 function simplify(hThis::Ref{OGRGeometryH}, tolerance::Real)
-    checknull(ccall((:OGR_G_Simplify, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cdouble), hThis, tolerance))
+    failsafe(ccall((:OGR_G_Simplify, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cdouble), hThis, tolerance))
 end
 
 
@@ -834,7 +834,7 @@ Simplify the geometry while preserving topology.
 the simplified geometry or NULL if an error occurs.
 """
 function simplifypreservetopology(hThis::Ref{OGRGeometryH}, tolerance::Real)
-    checknull(ccall((:OGR_G_SimplifyPreserveTopology, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cdouble), hThis, tolerance))
+    failsafe(ccall((:OGR_G_SimplifyPreserveTopology, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cdouble), hThis, tolerance))
 end
 
 
@@ -854,7 +854,7 @@ Return a Delaunay triangulation of the vertices of the geometry.
 the geometry resulting from the Delaunay triangulation or NULL if an error occurs.
 """
 function delaunaytriangulation(hThis::Ref{OGRGeometryH}, dfTolerance::Real, bOnlyEdges::Integer)
-    checknull(ccall((:OGR_G_DelaunayTriangulation, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cdouble, Cint), hThis, dfTolerance, bOnlyEdges))
+    failsafe(ccall((:OGR_G_DelaunayTriangulation, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cdouble, Cint), hThis, dfTolerance, bOnlyEdges))
 end
 
 
@@ -1029,7 +1029,7 @@ Compute boundary.
 a handle to a newly allocated geometry now owned by the caller, or NULL on failure.
 """
 function boundary(arg1::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_Boundary, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_G_Boundary, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -1045,7 +1045,7 @@ Compute convex hull.
 a handle to a newly allocated geometry now owned by the caller, or NULL on failure.
 """
 function convexhull(arg1::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_ConvexHull, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_G_ConvexHull, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -1065,7 +1065,7 @@ Compute buffer of geometry.
 the newly created geometry, or NULL if an error occurs.
 """
 function buffer(arg1::Ref{OGRGeometryH}, arg2::Real, arg3::Integer)
-    checknull(ccall((:OGR_G_Buffer, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cdouble, Cint), arg1, arg2, arg3))
+    failsafe(ccall((:OGR_G_Buffer, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cdouble, Cint), arg1, arg2, arg3))
 end
 
 
@@ -1083,7 +1083,7 @@ Compute intersection.
 a new geometry representing the intersection or NULL if there is no intersection or an error occurs.
 """
 function intersection(arg1::Ref{OGRGeometryH}, arg2::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_Intersection, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2))
+    failsafe(ccall((:OGR_G_Intersection, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2))
 end
 
 
@@ -1101,7 +1101,7 @@ Compute union.
 a new geometry representing the union or NULL if an error occurs.
 """
 function union(arg1::Ref{OGRGeometryH}, arg2::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_Union, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2))
+    failsafe(ccall((:OGR_G_Union, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2))
 end
 
 
@@ -1117,7 +1117,7 @@ Compute union using cascading.
 a new geometry representing the union or NULL if an error occurs.
 """
 function unioncascaded(arg1::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_UnionCascaded, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_G_UnionCascaded, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -1133,7 +1133,7 @@ Returns a point guaranteed to lie on the surface.
 a point guaranteed to lie on the surface or NULL if an error occurred.
 """
 function pointonsurface(arg1::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_PointOnSurface, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_G_PointOnSurface, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -1151,7 +1151,7 @@ Compute difference.
 a new geometry representing the difference or NULL if the difference is empty or an error occurs.
 """
 function difference(arg1::Ref{OGRGeometryH}, arg2::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_Difference, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2))
+    failsafe(ccall((:OGR_G_Difference, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2))
 end
 
 
@@ -1169,7 +1169,7 @@ Compute symmetric difference.
 a new geometry representing the symmetric difference or NULL if the difference is empty or an error occurs.
 """
 function symdifference(arg1::Ref{OGRGeometryH}, arg2::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_SymDifference, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2))
+    failsafe(ccall((:OGR_G_SymDifference, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2))
 end
 
 
@@ -1269,7 +1269,7 @@ Fetch point at given distance along curve.
 a point or NULL.
 """
 function value(arg1::Ref{OGRGeometryH}, dfDistance::Real)
-    checknull(ccall((:OGR_G_Value, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cdouble), arg1, dfDistance))
+    failsafe(ccall((:OGR_G_Value, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cdouble), arg1, dfDistance))
 end
 
 
@@ -1362,7 +1362,7 @@ Polygonizes a set of sparse edges.
 a handle to a newly allocated geometry now owned by the caller, or NULL on failure.
 """
 function polygonize(arg1::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_Polygonize, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_G_Polygonize, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -1383,7 +1383,7 @@ end
 Compute symmetric difference (deprecated)
 """
 function symmetricdifference(arg1::Ref{OGRGeometryH}, arg2::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_SymmetricDifference, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2))
+    failsafe(ccall((:OGR_G_SymmetricDifference, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2))
 end
 
 
@@ -1403,7 +1403,7 @@ end
 Compute boundary (deprecated)
 """
 function getboundary(arg1::Ref{OGRGeometryH})
-    checknull(ccall((:OGR_G_GetBoundary, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_G_GetBoundary, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -1862,7 +1862,7 @@ Fetch geometry from a geometry container.
 handle to the requested geometry.
 """
 function getgeometryref(arg1::Ref{OGRGeometryH}, arg2::Integer)
-    checknull(ccall((:OGR_G_GetGeometryRef, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cint), arg1, arg2))
+    failsafe(ccall((:OGR_G_GetGeometryRef, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cint), arg1, arg2))
 end
 
 
@@ -1956,7 +1956,7 @@ Return, possibly approximate, linear version of this geometry.
 a new geometry.
 """
 function getlineargeometry(hGeom::Ref{OGRGeometryH}, dfMaxAngleStepSizeDegrees::Real, papszOptions)
-    checknull(ccall((:OGR_G_GetLinearGeometry, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cdouble, Ptr{Cstring}), hGeom, dfMaxAngleStepSizeDegrees, papszOptions))
+    failsafe(ccall((:OGR_G_GetLinearGeometry, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cdouble, Ptr{Cstring}), hGeom, dfMaxAngleStepSizeDegrees, papszOptions))
 end
 
 
@@ -1974,7 +1974,7 @@ Return curve version of this geometry.
 a new geometry.
 """
 function getcurvegeometry(hGeom::Ref{OGRGeometryH}, papszOptions)
-    checknull(ccall((:OGR_G_GetCurveGeometry, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Ptr{Cstring}), hGeom, papszOptions))
+    failsafe(ccall((:OGR_G_GetCurveGeometry, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Ptr{Cstring}), hGeom, papszOptions))
 end
 
 
@@ -1998,7 +1998,7 @@ Build a ring from a bunch of arcs.
 an handle to the new geometry, a polygon.
 """
 function buildpolygonfromedges(hLinesAsCollection::Ref{OGRGeometryH}, bBestEffort::Integer, bAutoClose::Integer, dfTolerance::Real, peErr)
-    checknull(ccall((:OGRBuildPolygonFromEdges, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cint, Cint, Cdouble, Ptr{OGRErr}), hLinesAsCollection, bBestEffort, bAutoClose, dfTolerance, peErr))
+    failsafe(ccall((:OGRBuildPolygonFromEdges, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cint, Cint, Cdouble, Ptr{OGRErr}), hLinesAsCollection, bBestEffort, bAutoClose, dfTolerance, peErr))
 end
 
 
@@ -2060,7 +2060,7 @@ Create a new field definition.
 handle to the new field definition.
 """
 function fld_create(arg1, arg2::OGRFieldType)
-    checknull(ccall((:OGR_Fld_Create, libgdal), Ptr{OGRFieldDefnH}, (Cstring, OGRFieldType), arg1, arg2))
+    failsafe(ccall((:OGR_Fld_Create, libgdal), Ptr{OGRFieldDefnH}, (Cstring, OGRFieldType), arg1, arg2))
 end
 
 
@@ -2459,7 +2459,7 @@ Create a new field geometry definition.
 handle to the new field definition.
 """
 function gfld_create(arg1, arg2::OGRwkbGeometryType)
-    checknull(ccall((:OGR_GFld_Create, libgdal), Ptr{OGRGeomFieldDefnH}, (Cstring, OGRwkbGeometryType), arg1, arg2))
+    failsafe(ccall((:OGR_GFld_Create, libgdal), Ptr{OGRGeomFieldDefnH}, (Cstring, OGRwkbGeometryType), arg1, arg2))
 end
 
 
@@ -2550,7 +2550,7 @@ Fetch spatial reference system of this field.
 field spatial reference system.
 """
 function getspatialref(arg1::Ref{OGRGeomFieldDefnH})
-    checknull(ccall((:OGR_GFld_GetSpatialRef, libgdal), Ptr{OGRSpatialReferenceH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_GFld_GetSpatialRef, libgdal), Ptr{OGRSpatialReferenceH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -2643,7 +2643,7 @@ Create a new feature definition object to hold the field definitions.
 handle to the newly created feature definition.
 """
 function fd_create(arg1)
-    checknull(ccall((:OGR_FD_Create, libgdal), Ptr{OGRFeatureDefnH}, (Cstring,), arg1))
+    failsafe(ccall((:OGR_FD_Create, libgdal), Ptr{OGRFeatureDefnH}, (Cstring,), arg1))
 end
 
 
@@ -2719,7 +2719,7 @@ Fetch field definition of the passed feature definition.
 an handle to an internal field definition object or NULL if invalid index. This object should not be modified or freed by the application.
 """
 function getfielddefn(arg1::Ref{OGRFeatureDefnH}, arg2::Integer)
-    checknull(ccall((:OGR_FD_GetFieldDefn, libgdal), Ptr{OGRFieldDefnH}, (Ptr{Cvoid}, Cint), arg1, arg2))
+    failsafe(ccall((:OGR_FD_GetFieldDefn, libgdal), Ptr{OGRFieldDefnH}, (Ptr{Cvoid}, Cint), arg1, arg2))
 end
 
 
@@ -2963,7 +2963,7 @@ Fetch geometry field definition of the passed feature definition.
 an handle to an internal field definition object or NULL if invalid index. This object should not be modified or freed by the application.
 """
 function getgeomfielddefn(hFDefn::Ref{OGRFeatureDefnH}, i::Integer)
-    checknull(ccall((:OGR_FD_GetGeomFieldDefn, libgdal), Ptr{OGRGeomFieldDefnH}, (Ptr{Cvoid}, Cint), hFDefn, i))
+    failsafe(ccall((:OGR_FD_GetGeomFieldDefn, libgdal), Ptr{OGRGeomFieldDefnH}, (Ptr{Cvoid}, Cint), hFDefn, i))
 end
 
 
@@ -3048,7 +3048,7 @@ Feature factory.
 an handle to the new feature object with null fields and no geometry, or, starting with GDAL 2.1, NULL in case out of memory situation.
 """
 function f_create(arg1::Ref{OGRFeatureDefnH})
-    checknull(ccall((:OGR_F_Create, libgdal), Ptr{OGRFeatureH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_F_Create, libgdal), Ptr{OGRFeatureH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -3077,7 +3077,7 @@ Fetch feature definition.
 an handle to the feature definition object on which feature depends.
 """
 function getdefnref(arg1::Ref{OGRFeatureH})
-    checknull(ccall((:OGR_F_GetDefnRef, libgdal), Ptr{OGRFeatureDefnH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_F_GetDefnRef, libgdal), Ptr{OGRFeatureDefnH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -3129,7 +3129,7 @@ Fetch an handle to feature geometry.
 an handle to internal feature geometry. This object should not be modified.
 """
 function getgeometryref(arg1::Ref{OGRFeatureH})
-    checknull(ccall((:OGR_F_GetGeometryRef, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_F_GetGeometryRef, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -3142,7 +3142,7 @@ Take away ownership of geometry.
 the pointer to the geometry.
 """
 function stealgeometry(arg1::Ref{OGRFeatureH})
-    checknull(ccall((:OGR_F_StealGeometry, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_F_StealGeometry, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -3158,7 +3158,7 @@ Duplicate feature.
 an handle to the new feature, exactly matching this feature.
 """
 function clone(arg1::Ref{OGRFeatureH})
-    checknull(ccall((:OGR_F_Clone, libgdal), Ptr{OGRFeatureH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_F_Clone, libgdal), Ptr{OGRFeatureH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -3210,7 +3210,7 @@ Fetch definition for this field.
 an handle to the field definition (from the OGRFeatureDefn). This is an internal reference, and should not be deleted or modified.
 """
 function getfielddefnref(arg1::Ref{OGRFeatureH}, arg2::Integer)
-    checknull(ccall((:OGR_F_GetFieldDefnRef, libgdal), Ptr{OGRFieldDefnH}, (Ptr{Cvoid}, Cint), arg1, arg2))
+    failsafe(ccall((:OGR_F_GetFieldDefnRef, libgdal), Ptr{OGRFieldDefnH}, (Ptr{Cvoid}, Cint), arg1, arg2))
 end
 
 
@@ -3886,7 +3886,7 @@ Fetch definition for this geometry field.
 an handle to the field definition (from the OGRFeatureDefn). This is an internal reference, and should not be deleted or modified.
 """
 function getgeomfielddefnref(hFeat::Ref{OGRFeatureH}, iField::Integer)
-    checknull(ccall((:OGR_F_GetGeomFieldDefnRef, libgdal), Ptr{OGRGeomFieldDefnH}, (Ptr{Cvoid}, Cint), hFeat, iField))
+    failsafe(ccall((:OGR_F_GetGeomFieldDefnRef, libgdal), Ptr{OGRGeomFieldDefnH}, (Ptr{Cvoid}, Cint), hFeat, iField))
 end
 
 
@@ -3922,7 +3922,7 @@ Fetch an handle to feature geometry.
 an handle to internal feature geometry. This object should not be modified.
 """
 function getgeomfieldref(hFeat::Ref{OGRFeatureH}, iField::Integer)
-    checknull(ccall((:OGR_F_GetGeomFieldRef, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cint), hFeat, iField))
+    failsafe(ccall((:OGR_F_GetGeomFieldRef, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid}, Cint), hFeat, iField))
 end
 
 
@@ -4109,7 +4109,7 @@ end
 Return style table.
 """
 function getstyletable(arg1::Ref{OGRFeatureH})
-    checknull(ccall((:OGR_F_GetStyleTable, libgdal), Ptr{OGRStyleTableH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_F_GetStyleTable, libgdal), Ptr{OGRStyleTableH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -4278,7 +4278,7 @@ This function returns the current spatial filter for this layer.
 an handle to the spatial filter geometry.
 """
 function getspatialfilter(arg1::Ref{OGRLayerH})
-    checknull(ccall((:OGR_L_GetSpatialFilter, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_L_GetSpatialFilter, libgdal), Ptr{OGRGeometryH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -4401,7 +4401,7 @@ Fetch the next available feature from this layer.
 an handle to a feature, or NULL if no more features are available.
 """
 function getnextfeature(arg1::Ref{OGRLayerH})
-    checknull(ccall((:OGR_L_GetNextFeature, libgdal), Ptr{OGRFeatureH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_L_GetNextFeature, libgdal), Ptr{OGRFeatureH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -4437,7 +4437,7 @@ Fetch a feature by its identifier.
 an handle to a feature now owned by the caller, or NULL on failure.
 """
 function getfeature(arg1::Ref{OGRLayerH}, arg2::Integer)
-    checknull(ccall((:OGR_L_GetFeature, libgdal), Ptr{OGRFeatureH}, (Ptr{Cvoid}, GIntBig), arg1, arg2))
+    failsafe(ccall((:OGR_L_GetFeature, libgdal), Ptr{OGRFeatureH}, (Ptr{Cvoid}, GIntBig), arg1, arg2))
 end
 
 
@@ -4507,7 +4507,7 @@ Fetch the schema information for this layer.
 an handle to the feature definition.
 """
 function getlayerdefn(arg1::Ref{OGRLayerH})
-    checknull(ccall((:OGR_L_GetLayerDefn, libgdal), Ptr{OGRFeatureDefnH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_L_GetLayerDefn, libgdal), Ptr{OGRFeatureDefnH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -4523,7 +4523,7 @@ Fetch the spatial reference system for this layer.
 spatial reference, or NULL if there isn't one.
 """
 function getspatialref(arg1::Ref{OGRLayerH})
-    checknull(ccall((:OGR_L_GetSpatialRef, libgdal), Ptr{OGRSpatialReferenceH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_L_GetSpatialRef, libgdal), Ptr{OGRSpatialReferenceH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -4872,7 +4872,7 @@ end
 Get style table.
 """
 function getstyletable(arg1::Ref{OGRLayerH})
-    checknull(ccall((:OGR_L_GetStyleTable, libgdal), Ptr{OGRStyleTableH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_L_GetStyleTable, libgdal), Ptr{OGRStyleTableH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -5156,7 +5156,7 @@ Fetch a layer by index.
 an handle to the layer, or NULL if iLayer is out of range or an error occurs.
 """
 function getlayer(arg1::Ref{OGRDataSourceH}, arg2::Integer)
-    checknull(ccall((:OGR_DS_GetLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cint), arg1, arg2))
+    failsafe(ccall((:OGR_DS_GetLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cint), arg1, arg2))
 end
 
 
@@ -5174,7 +5174,7 @@ Fetch a layer by name.
 an handle to the layer, or NULL if the layer is not found or an error occurs.
 """
 function getlayerbyname(arg1::Ref{OGRDataSourceH}, arg2)
-    checknull(ccall((:OGR_DS_GetLayerByName, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cstring), arg1, arg2))
+    failsafe(ccall((:OGR_DS_GetLayerByName, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cstring), arg1, arg2))
 end
 
 
@@ -5208,7 +5208,7 @@ Returns the driver that the dataset was opened with.
 NULL if driver info is not available, or pointer to a driver owned by the OGRSFDriverManager.
 """
 function getdriver(arg1::Ref{OGRDataSourceH})
-    checknull(ccall((:OGR_DS_GetDriver, libgdal), Ptr{OGRSFDriverH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_DS_GetDriver, libgdal), Ptr{OGRSFDriverH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -5232,7 +5232,7 @@ This function attempts to create a new layer on the data source with the indicat
 NULL is returned on failure, or a new OGRLayer handle on success.
 """
 function createlayer(arg1::Ref{OGRDataSourceH}, arg2, arg3::Ref{OGRSpatialReferenceH}, arg4::OGRwkbGeometryType, arg5)
-    checknull(ccall((:OGR_DS_CreateLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cstring, Ptr{Cvoid}, OGRwkbGeometryType, Ptr{Cstring}), arg1, arg2, arg3, arg4, arg5))
+    failsafe(ccall((:OGR_DS_CreateLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cstring, Ptr{Cvoid}, OGRwkbGeometryType, Ptr{Cstring}), arg1, arg2, arg3, arg4, arg5))
 end
 
 
@@ -5254,7 +5254,7 @@ Duplicate an existing layer.
 an handle to the layer, or NULL if an error occurs.
 """
 function copylayer(arg1::Ref{OGRDataSourceH}, arg2::Ref{OGRLayerH}, arg3, arg4)
-    checknull(ccall((:OGR_DS_CopyLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Ptr{Cvoid}, Cstring, Ptr{Cstring}), arg1, arg2, arg3, arg4))
+    failsafe(ccall((:OGR_DS_CopyLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Ptr{Cvoid}, Cstring, Ptr{Cstring}), arg1, arg2, arg3, arg4))
 end
 
 
@@ -5294,7 +5294,7 @@ Execute an SQL statement against the data store.
 an handle to a OGRLayer containing the results of the query. Deallocate with OGR_DS_ReleaseResultSet().
 """
 function executesql(arg1::Ref{OGRDataSourceH}, arg2, arg3::Ref{OGRGeometryH}, arg4)
-    checknull(ccall((:OGR_DS_ExecuteSQL, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cstring, Ptr{Cvoid}, Cstring), arg1, arg2, arg3, arg4))
+    failsafe(ccall((:OGR_DS_ExecuteSQL, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cstring, Ptr{Cvoid}, Cstring), arg1, arg2, arg3, arg4))
 end
 
 
@@ -5361,7 +5361,7 @@ end
 Get style table.
 """
 function getstyletable(arg1::Ref{OGRDataSourceH})
-    checknull(ccall((:OGR_DS_GetStyleTable, libgdal), Ptr{OGRStyleTableH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OGR_DS_GetStyleTable, libgdal), Ptr{OGRStyleTableH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -5419,7 +5419,7 @@ Attempt to open file with this driver.
 NULL on error or if the pass name is not supported by this driver, otherwise an handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
 """
 function open(arg1::Ref{OGRSFDriverH}, arg2, arg3::Integer)
-    checknull(ccall((:OGR_Dr_Open, libgdal), Ptr{OGRDataSourceH}, (Ptr{Cvoid}, Cstring, Cint), arg1, arg2, arg3))
+    failsafe(ccall((:OGR_Dr_Open, libgdal), Ptr{OGRDataSourceH}, (Ptr{Cvoid}, Cstring, Cint), arg1, arg2, arg3))
 end
 
 
@@ -5457,7 +5457,7 @@ This function attempts to create a new data source based on the passed driver.
 NULL is returned on failure, or a new OGRDataSource handle on success.
 """
 function createdatasource(arg1::Ref{OGRSFDriverH}, arg2, arg3)
-    checknull(ccall((:OGR_Dr_CreateDataSource, libgdal), Ptr{OGRDataSourceH}, (Ptr{Cvoid}, Cstring, Ptr{Cstring}), arg1, arg2, arg3))
+    failsafe(ccall((:OGR_Dr_CreateDataSource, libgdal), Ptr{OGRDataSourceH}, (Ptr{Cvoid}, Cstring, Ptr{Cstring}), arg1, arg2, arg3))
 end
 
 
@@ -5479,7 +5479,7 @@ This function creates a new datasource by copying all the layers from the source
 NULL is returned on failure, or a new OGRDataSource handle on success.
 """
 function copydatasource(arg1::Ref{OGRSFDriverH}, arg2::Ref{OGRDataSourceH}, arg3, arg4)
-    checknull(ccall((:OGR_Dr_CopyDataSource, libgdal), Ptr{OGRDataSourceH}, (Ptr{Cvoid}, Ptr{Cvoid}, Cstring, Ptr{Cstring}), arg1, arg2, arg3, arg4))
+    failsafe(ccall((:OGR_Dr_CopyDataSource, libgdal), Ptr{OGRDataSourceH}, (Ptr{Cvoid}, Ptr{Cvoid}, Cstring, Ptr{Cstring}), arg1, arg2, arg3, arg4))
 end
 
 
@@ -5517,7 +5517,7 @@ Open a file / data source with one of the registered drivers.
 NULL on error or if the pass name is not supported by this driver, otherwise an handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
 """
 function open(arg1, arg2::Integer, arg3::Ptr{OGRSFDriverH})
-    checknull(ccall((:OGROpen, libgdal), Ptr{OGRDataSourceH}, (Cstring, Cint, Ptr{OGRSFDriverH}), arg1, arg2, arg3))
+    failsafe(ccall((:OGROpen, libgdal), Ptr{OGRDataSourceH}, (Cstring, Cint, Ptr{OGRSFDriverH}), arg1, arg2, arg3))
 end
 
 
@@ -5537,7 +5537,7 @@ Open a file / data source with one of the registered drivers if not already open
 NULL on error or if the pass name is not supported by this driver, otherwise an handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
 """
 function openshared(arg1, arg2::Integer, arg3)
-    checknull(ccall((:OGROpenShared, libgdal), Ptr{OGRDataSourceH}, (Cstring, Cint, Ptr{OGRSFDriverH}), arg1, arg2, arg3))
+    failsafe(ccall((:OGROpenShared, libgdal), Ptr{OGRDataSourceH}, (Cstring, Cint, Ptr{OGRSFDriverH}), arg1, arg2, arg3))
 end
 
 
@@ -5592,7 +5592,7 @@ Fetch the indicated driver.
 handle to the driver, or NULL if iDriver is out of range.
 """
 function ogrgetdriver(arg1::Integer)
-    checknull(ccall((:OGRGetDriver, libgdal), Ptr{OGRSFDriverH}, (Cint,), arg1))
+    failsafe(ccall((:OGRGetDriver, libgdal), Ptr{OGRSFDriverH}, (Cint,), arg1))
 end
 
 
@@ -5608,7 +5608,7 @@ Fetch the indicated driver.
 the driver, or NULL if no driver with that name is found
 """
 function ogrgetdriverbyname(arg1)
-    checknull(ccall((:OGRGetDriverByName, libgdal), Ptr{OGRSFDriverH}, (Cstring,), arg1))
+    failsafe(ccall((:OGRGetDriverByName, libgdal), Ptr{OGRSFDriverH}, (Cstring,), arg1))
 end
 
 
@@ -5618,7 +5618,7 @@ end
 
 
 function getopends(iDS::Integer)
-    checknull(ccall((:OGRGetOpenDS, libgdal), Ptr{OGRDataSourceH}, (Cint,), iDS))
+    failsafe(ccall((:OGRGetOpenDS, libgdal), Ptr{OGRDataSourceH}, (Cint,), iDS))
 end
 
 
@@ -5654,7 +5654,7 @@ OGRStyleMgr factory.
 an handle to the new style manager object.
 """
 function sm_create(hStyleTable::Ref{OGRStyleTableH})
-    checknull(ccall((:OGR_SM_Create, libgdal), Ptr{OGRStyleMgrH}, (Ptr{Cvoid},), hStyleTable))
+    failsafe(ccall((:OGR_SM_Create, libgdal), Ptr{OGRStyleMgrH}, (Ptr{Cvoid},), hStyleTable))
 end
 
 
@@ -5741,7 +5741,7 @@ Fetch a part (style tool) from the current style.
 OGRStyleToolH of the requested part (style tools) or NULL on error.
 """
 function getpart(hSM::Ref{OGRStyleMgrH}, nPartId::Integer, pszStyleString)
-    checknull(ccall((:OGR_SM_GetPart, libgdal), Ptr{OGRStyleToolH}, (Ptr{Cvoid}, Cint, Cstring), hSM, nPartId, pszStyleString))
+    failsafe(ccall((:OGR_SM_GetPart, libgdal), Ptr{OGRStyleToolH}, (Ptr{Cvoid}, Cint, Cstring), hSM, nPartId, pszStyleString))
 end
 
 
@@ -5795,7 +5795,7 @@ OGRStyleTool factory.
 an handle to the new style tool object or NULL if the creation failed.
 """
 function st_create(eClassId::OGRSTClassId)
-    checknull(ccall((:OGR_ST_Create, libgdal), Ptr{OGRStyleToolH}, (OGRSTClassId,), eClassId))
+    failsafe(ccall((:OGR_ST_Create, libgdal), Ptr{OGRStyleToolH}, (OGRSTClassId,), eClassId))
 end
 
 
@@ -6023,7 +6023,7 @@ OGRStyleTable factory.
 an handle to the new style table object.
 """
 function stbl_create()
-    checknull(ccall((:OGR_STBL_Create, libgdal), Ptr{OGRStyleTableH}, ()))
+    failsafe(ccall((:OGR_STBL_Create, libgdal), Ptr{OGRStyleTableH}, ()))
 end
 
 

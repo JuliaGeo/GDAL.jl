@@ -19,7 +19,7 @@ end
 Constructor.
 """
 function newspatialreference(arg1)
-    checknull(ccall((:OSRNewSpatialReference, libgdal), Ptr{OGRSpatialReferenceH}, (Cstring,), arg1))
+    failsafe(ccall((:OSRNewSpatialReference, libgdal), Ptr{OGRSpatialReferenceH}, (Cstring,), arg1))
 end
 
 
@@ -29,7 +29,7 @@ end
 Make a duplicate of the GEOGCS node of this OGRSpatialReference object.
 """
 function clonegeogcs(arg1::Ref{OGRSpatialReferenceH})
-    checknull(ccall((:OSRCloneGeogCS, libgdal), Ptr{OGRSpatialReferenceH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OSRCloneGeogCS, libgdal), Ptr{OGRSpatialReferenceH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -39,7 +39,7 @@ end
 Make a duplicate of this OGRSpatialReference.
 """
 function clone(arg1::Ref{OGRSpatialReferenceH})
-    checknull(ccall((:OSRClone, libgdal), Ptr{OGRSpatialReferenceH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:OSRClone, libgdal), Ptr{OGRSpatialReferenceH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -1796,7 +1796,7 @@ Create transformation object.
 NULL on failure or a ready to use transformation object.
 """
 function octnewcoordinatetransformation(hSourceSRS::Ref{OGRSpatialReferenceH}, hTargetSRS::Ref{OGRSpatialReferenceH})
-    checknull(ccall((:OCTNewCoordinateTransformation, libgdal), Ptr{OGRCoordinateTransformationH}, (Ptr{Cvoid}, Ptr{Cvoid}), hSourceSRS, hTargetSRS))
+    failsafe(ccall((:OCTNewCoordinateTransformation, libgdal), Ptr{OGRCoordinateTransformationH}, (Ptr{Cvoid}, Ptr{Cvoid}), hSourceSRS, hTargetSRS))
 end
 
 

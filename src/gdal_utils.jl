@@ -115,7 +115,7 @@ Converts raster data between different formats.
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
 """
 function translate(pszDestFilename, hSrcDataset::Ref{<:GDALDatasetH}, psOptions, pbUsageError)
-    checknull(ccall((:GDALTranslate, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Ptr{GDALTranslateOptions}, Ptr{Cint}), pszDestFilename, hSrcDataset, psOptions, pbUsageError))
+    failsafe(ccall((:GDALTranslate, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Ptr{GDALTranslateOptions}, Ptr{Cint}), pszDestFilename, hSrcDataset, psOptions, pbUsageError))
 end
 
 
@@ -206,7 +206,7 @@ Image reprojection and warping function.
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS if not NULL) or NULL in case of error.
 """
 function warp(pszDest, hDstDS::Ref{<:GDALDatasetH}, nSrcCount::Integer, pahSrcDS, psOptions, pbUsageError)
-    checknull(ccall((:GDALWarp, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Cint, Ptr{GDALDatasetH}, Ptr{GDALWarpAppOptions}, Ptr{Cint}), pszDest, hDstDS, nSrcCount, pahSrcDS, psOptions, pbUsageError))
+    failsafe(ccall((:GDALWarp, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Cint, Ptr{GDALDatasetH}, Ptr{GDALWarpAppOptions}, Ptr{Cint}), pszDest, hDstDS, nSrcCount, pahSrcDS, psOptions, pbUsageError))
 end
 
 
@@ -280,7 +280,7 @@ Converts vector data between file formats.
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
 """
 function vectortranslate(pszDest, hDstDS::Ref{<:GDALDatasetH}, nSrcCount::Integer, pahSrcDS, psOptions, pbUsageError)
-    checknull(ccall((:GDALVectorTranslate, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Cint, Ptr{GDALDatasetH}, Ptr{GDALVectorTranslateOptions}, Ptr{Cint}), pszDest, hDstDS, nSrcCount, pahSrcDS, psOptions, pbUsageError))
+    failsafe(ccall((:GDALVectorTranslate, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Cint, Ptr{GDALDatasetH}, Ptr{GDALVectorTranslateOptions}, Ptr{Cint}), pszDest, hDstDS, nSrcCount, pahSrcDS, psOptions, pbUsageError))
 end
 
 
@@ -354,7 +354,7 @@ Apply a DEM processing.
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
 """
 function demprocessing(pszDestFilename, hSrcDataset::Ref{<:GDALDatasetH}, pszProcessing, pszColorFilename, psOptions, pbUsageError)
-    checknull(ccall((:GDALDEMProcessing, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Cstring, Cstring, Ptr{GDALDEMProcessingOptions}, Ptr{Cint}), pszDestFilename, hSrcDataset, pszProcessing, pszColorFilename, psOptions, pbUsageError))
+    failsafe(ccall((:GDALDEMProcessing, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Cstring, Cstring, Ptr{GDALDEMProcessingOptions}, Ptr{Cint}), pszDestFilename, hSrcDataset, pszProcessing, pszColorFilename, psOptions, pbUsageError))
 end
 
 
@@ -426,7 +426,7 @@ Convert nearly black/white borders to exact value.
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
 """
 function nearblack(pszDest, hDstDS::Ref{<:GDALDatasetH}, hSrcDS::Ref{<:GDALDatasetH}, psOptions, pbUsageError)
-    checknull(ccall((:GDALNearblack, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Ptr{Cvoid}, Ptr{GDALNearblackOptions}, Ptr{Cint}), pszDest, hDstDS, hSrcDS, psOptions, pbUsageError))
+    failsafe(ccall((:GDALNearblack, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Ptr{Cvoid}, Ptr{GDALNearblackOptions}, Ptr{Cint}), pszDest, hDstDS, hSrcDS, psOptions, pbUsageError))
 end
 
 
@@ -496,7 +496,7 @@ Create raster from the scattered data.
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
 """
 function grid(pszDest, hSrcDS::Ref{<:GDALDatasetH}, psOptions, pbUsageError)
-    checknull(ccall((:GDALGrid, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Ptr{GDALGridOptions}, Ptr{Cint}), pszDest, hSrcDS, psOptions, pbUsageError))
+    failsafe(ccall((:GDALGrid, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Ptr{GDALGridOptions}, Ptr{Cint}), pszDest, hSrcDS, psOptions, pbUsageError))
 end
 
 
@@ -568,7 +568,7 @@ Burns vector geometries into a raster.
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
 """
 function rasterize(pszDest, hDstDS::Ref{<:GDALDatasetH}, hSrcDS::Ref{<:GDALDatasetH}, psOptions, pbUsageError)
-    checknull(ccall((:GDALRasterize, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Ptr{Cvoid}, Ptr{GDALRasterizeOptions}, Ptr{Cint}), pszDest, hDstDS, hSrcDS, psOptions, pbUsageError))
+    failsafe(ccall((:GDALRasterize, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Ptr{Cvoid}, Ptr{GDALRasterizeOptions}, Ptr{Cint}), pszDest, hDstDS, hSrcDS, psOptions, pbUsageError))
 end
 
 
@@ -642,5 +642,5 @@ Build a VRT from a list of datasets.
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
 """
 function buildvrt(pszDest, nSrcCount::Integer, pahSrcDS, papszSrcDSNames, psOptions, pbUsageError)
-    checknull(ccall((:GDALBuildVRT, libgdal), Ptr{GDALDatasetH}, (Cstring, Cint, Ptr{GDALDatasetH}, Ptr{Cstring}, Ptr{GDALBuildVRTOptions}, Ptr{Cint}), pszDest, nSrcCount, pahSrcDS, papszSrcDSNames, psOptions, pbUsageError))
+    failsafe(ccall((:GDALBuildVRT, libgdal), Ptr{GDALDatasetH}, (Cstring, Cint, Ptr{GDALDatasetH}, Ptr{Cstring}, Ptr{GDALBuildVRTOptions}, Ptr{Cint}), pszDest, nSrcCount, pahSrcDS, papszSrcDSNames, psOptions, pbUsageError))
 end

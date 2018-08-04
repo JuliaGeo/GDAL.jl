@@ -251,7 +251,7 @@ end
 Create a new dataset with this driver.
 """
 function create(hDriver::Ref{<:GDALDriverH}, arg1, arg2::Integer, arg3::Integer, arg4::Integer, arg5::GDALDataType, arg6)
-    checknull(ccall((:GDALCreate, libgdal), Ptr{GDALDatasetH}, (Ptr{Cvoid}, Cstring, Cint, Cint, Cint, GDALDataType, Ptr{Cstring}), hDriver, arg1, arg2, arg3, arg4, arg5, arg6))
+    failsafe(ccall((:GDALCreate, libgdal), Ptr{GDALDatasetH}, (Ptr{Cvoid}, Cstring, Cint, Cint, Cint, GDALDataType, Ptr{Cstring}), hDriver, arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 
@@ -267,7 +267,7 @@ end
 Create a copy of a dataset.
 """
 function createcopy(arg1::Ref{<:GDALDriverH}, arg2, arg3::Ref{<:GDALDatasetH}, arg4::Integer, arg5, arg6::Any, arg7)
-    checknull(ccall((:GDALCreateCopy, libgdal), Ptr{GDALDatasetH}, (Ptr{Cvoid}, Cstring, Ptr{Cvoid}, Cint, Ptr{Cstring}, Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6, arg7))
+    failsafe(ccall((:GDALCreateCopy, libgdal), Ptr{GDALDatasetH}, (Ptr{Cvoid}, Cstring, Ptr{Cvoid}, Cint, Ptr{Cstring}, Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6, arg7))
 end
 
 
@@ -285,7 +285,7 @@ Identify the driver that can open a raster file.
 A GDALDriverH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDriver *.
 """
 function identifydriver(pszFilename, papszFileList)
-    checknull(ccall((:GDALIdentifyDriver, libgdal), Ptr{GDALDriverH}, (Cstring, Ptr{Cstring}), pszFilename, papszFileList))
+    failsafe(ccall((:GDALIdentifyDriver, libgdal), Ptr{GDALDriverH}, (Cstring, Ptr{Cstring}), pszFilename, papszFileList))
 end
 
 
@@ -307,7 +307,7 @@ Identify the driver that can open a raster file.
 A GDALDriverH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDriver *.
 """
 function identifydriverex(pszFilename, nIdentifyFlags::Integer, papszAllowedDrivers, papszFileList)
-    checknull(ccall((:GDALIdentifyDriverEx, libgdal), Ptr{GDALDriverH}, (Cstring, UInt32, Ptr{Cstring}, Ptr{Cstring}), pszFilename, nIdentifyFlags, papszAllowedDrivers, papszFileList))
+    failsafe(ccall((:GDALIdentifyDriverEx, libgdal), Ptr{GDALDriverH}, (Cstring, UInt32, Ptr{Cstring}, Ptr{Cstring}), pszFilename, nIdentifyFlags, papszAllowedDrivers, papszFileList))
 end
 
 
@@ -325,7 +325,7 @@ Open a raster file as a GDALDataset.
 A GDALDatasetH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDataset *.
 """
 function open(pszFilename, eAccess::GDALAccess)
-    checknull(ccall((:GDALOpen, libgdal), Ptr{GDALDatasetH}, (Cstring, GDALAccess), pszFilename, eAccess))
+    failsafe(ccall((:GDALOpen, libgdal), Ptr{GDALDatasetH}, (Cstring, GDALAccess), pszFilename, eAccess))
 end
 
 
@@ -343,7 +343,7 @@ Open a raster file as a GDALDataset.
 A GDALDatasetH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDataset *.
 """
 function openshared(arg1, arg2::GDALAccess)
-    checknull(ccall((:GDALOpenShared, libgdal), Ptr{GDALDatasetH}, (Cstring, GDALAccess), arg1, arg2))
+    failsafe(ccall((:GDALOpenShared, libgdal), Ptr{GDALDatasetH}, (Cstring, GDALAccess), arg1, arg2))
 end
 
 
@@ -375,7 +375,7 @@ Verbose error: GDAL_OF_VERBOSE_ERROR. If set, a failed attempt to open the file 
 A GDALDatasetH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDataset *.
 """
 function openex(pszFilename, nOpenFlags::Integer, papszAllowedDrivers, papszOpenOptions, papszSiblingFiles)
-    checknull(ccall((:GDALOpenEx, libgdal), Ptr{GDALDatasetH}, (Cstring, UInt32, Ptr{Cstring}, Ptr{Cstring}, Ptr{Cstring}), pszFilename, nOpenFlags, papszAllowedDrivers, papszOpenOptions, papszSiblingFiles))
+    failsafe(ccall((:GDALOpenEx, libgdal), Ptr{GDALDatasetH}, (Cstring, UInt32, Ptr{Cstring}, Ptr{Cstring}, Ptr{Cstring}), pszFilename, nOpenFlags, papszAllowedDrivers, papszOpenOptions, papszSiblingFiles))
 end
 
 
@@ -395,7 +395,7 @@ end
 Fetch a driver based on the short name.
 """
 function getdriverbyname(arg1)
-    checknull(ccall((:GDALGetDriverByName, libgdal), Ptr{GDALDriverH}, (Cstring,), arg1))
+    failsafe(ccall((:GDALGetDriverByName, libgdal), Ptr{GDALDriverH}, (Cstring,), arg1))
 end
 
 
@@ -415,7 +415,7 @@ end
 Fetch driver by index.
 """
 function getdriver(arg1::Integer)
-    checknull(ccall((:GDALGetDriver, libgdal), Ptr{GDALDriverH}, (Cint,), arg1))
+    failsafe(ccall((:GDALGetDriver, libgdal), Ptr{GDALDriverH}, (Cint,), arg1))
 end
 
 
@@ -795,7 +795,7 @@ end
 Fetch the driver to which this dataset relates.
 """
 function getdatasetdriver(arg1::Ref{<:GDALDatasetH})
-    checknull(ccall((:GDALGetDatasetDriver, libgdal), Ptr{GDALDriverH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:GDALGetDatasetDriver, libgdal), Ptr{GDALDriverH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -859,7 +859,7 @@ end
 Fetch a band object for a dataset.
 """
 function getrasterband(arg1::Ref{<:GDALDatasetH}, arg2::Integer)
-    checknull(ccall((:GDALGetRasterBand, libgdal), Ptr{GDALRasterBandH}, (Ptr{Cvoid}, Cint), arg1, arg2))
+    failsafe(ccall((:GDALGetRasterBand, libgdal), Ptr{GDALRasterBandH}, (Ptr{Cvoid}, Cint), arg1, arg2))
 end
 
 
@@ -915,7 +915,7 @@ Sets up an asynchronous data request.
 handle representing the request.
 """
 function beginasyncreader(hDS::Ref{<:GDALDatasetH}, nXOff::Integer, nYOff::Integer, nXSize::Integer, nYSize::Integer, pBuf, nBufXSize::Integer, nBufYSize::Integer, eBufType::GDALDataType, nBandCount::Integer, panBandMap, nPixelSpace::Integer, nLineSpace::Integer, nBandSpace::Integer, papszOptions)
-    checknull(ccall((:GDALBeginAsyncReader, libgdal), Ptr{GDALAsyncReaderH}, (Ptr{Cvoid}, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, Cint, Cint, Cint, Ptr{Cstring}), hDS, nXOff, nYOff, nXSize, nYSize, pBuf, nBufXSize, nBufYSize, eBufType, nBandCount, panBandMap, nPixelSpace, nLineSpace, nBandSpace, papszOptions))
+    failsafe(ccall((:GDALBeginAsyncReader, libgdal), Ptr{GDALAsyncReaderH}, (Ptr{Cvoid}, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, Cint, Cint, Cint, Ptr{Cstring}), hDS, nXOff, nYOff, nXSize, nYSize, pBuf, nBufXSize, nBufYSize, eBufType, nBandCount, panBandMap, nPixelSpace, nLineSpace, nBandSpace, papszOptions))
 end
 
 
@@ -1293,7 +1293,7 @@ Fetch a layer by index.
 the layer, or NULL if iLayer is out of range or an error occurs.
 """
 function datasetgetlayer(arg1::Ref{<:GDALDatasetH}, arg2::Integer)
-    checknull(ccall((:GDALDatasetGetLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cint), arg1, arg2))
+    failsafe(ccall((:GDALDatasetGetLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cint), arg1, arg2))
 end
 
 
@@ -1311,7 +1311,7 @@ Fetch a layer by name.
 the layer, or NULL if Layer is not found or an error occurs.
 """
 function datasetgetlayerbyname(arg1::Ref{<:GDALDatasetH}, arg2)
-    checknull(ccall((:GDALDatasetGetLayerByName, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cstring), arg1, arg2))
+    failsafe(ccall((:GDALDatasetGetLayerByName, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cstring), arg1, arg2))
 end
 
 
@@ -1353,7 +1353,7 @@ This function attempts to create a new layer on the dataset with the indicated n
 NULL is returned on failure, or a new OGRLayer handle on success.
 """
 function datasetcreatelayer(arg1::Ref{<:GDALDatasetH}, arg2, arg3::Ref{OGRSpatialReferenceH}, arg4::OGRwkbGeometryType, arg5)
-    checknull(ccall((:GDALDatasetCreateLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cstring, Ptr{Cvoid}, OGRwkbGeometryType, Ptr{Cstring}), arg1, arg2, arg3, arg4, arg5))
+    failsafe(ccall((:GDALDatasetCreateLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cstring, Ptr{Cvoid}, OGRwkbGeometryType, Ptr{Cstring}), arg1, arg2, arg3, arg4, arg5))
 end
 
 
@@ -1375,7 +1375,7 @@ Duplicate an existing layer.
 an handle to the layer, or NULL if an error occurs.
 """
 function datasetcopylayer(arg1::Ref{<:GDALDatasetH}, arg2::Ref{OGRLayerH}, arg3, arg4)
-    checknull(ccall((:GDALDatasetCopyLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Ptr{Cvoid}, Cstring, Ptr{Cstring}), arg1, arg2, arg3, arg4))
+    failsafe(ccall((:GDALDatasetCopyLayer, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Ptr{Cvoid}, Cstring, Ptr{Cstring}), arg1, arg2, arg3, arg4))
 end
 
 
@@ -1412,7 +1412,7 @@ Fetch the next available feature from this dataset.
 a feature, or NULL if no more features are available.
 """
 function datasetgetnextfeature(hDS::Ref{<:GDALDatasetH}, phBelongingLayer, pdfProgressPct, pfnProgress::Any, pProgressData)
-    checknull(ccall((:GDALDatasetGetNextFeature, libgdal), Ptr{OGRFeatureH}, (Ptr{Cvoid}, Ptr{OGRLayerH}, Ptr{Cdouble}, Ptr{Cvoid}, Ptr{Cvoid}), hDS, phBelongingLayer, pdfProgressPct, pfnProgress, pProgressData))
+    failsafe(ccall((:GDALDatasetGetNextFeature, libgdal), Ptr{OGRFeatureH}, (Ptr{Cvoid}, Ptr{OGRLayerH}, Ptr{Cdouble}, Ptr{Cvoid}, Ptr{Cvoid}), hDS, phBelongingLayer, pdfProgressPct, pfnProgress, pProgressData))
 end
 
 
@@ -1452,7 +1452,7 @@ Execute an SQL statement against the data store.
 an OGRLayer containing the results of the query. Deallocate with ReleaseResultSet().
 """
 function datasetexecutesql(arg1::Ref{<:GDALDatasetH}, arg2, arg3::Ref{OGRGeometryH}, arg4)
-    checknull(ccall((:GDALDatasetExecuteSQL, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cstring, Ptr{Cvoid}, Cstring), arg1, arg2, arg3, arg4))
+    failsafe(ccall((:GDALDatasetExecuteSQL, libgdal), Ptr{OGRLayerH}, (Ptr{Cvoid}, Cstring, Ptr{Cvoid}, Cstring), arg1, arg2, arg3, arg4))
 end
 
 
@@ -1483,7 +1483,7 @@ Returns dataset style table.
 handle to a style table which should not be modified or freed by the caller.
 """
 function datasetgetstyletable(arg1::Ref{<:GDALDatasetH})
-    checknull(ccall((:GDALDatasetGetStyleTable, libgdal), Ptr{OGRStyleTableH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:GDALDatasetGetStyleTable, libgdal), Ptr{OGRStyleTableH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -1730,7 +1730,7 @@ end
 Fetch the owning dataset handle.
 """
 function getbanddataset(arg1::Ref{GDALRasterBandH})
-    checknull(ccall((:GDALGetBandDataset, libgdal), Ptr{GDALDatasetH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:GDALGetBandDataset, libgdal), Ptr{GDALDatasetH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -1761,7 +1761,7 @@ end
 Fetch the color table associated with band.
 """
 function getrastercolortable(arg1::Ref{GDALRasterBandH})
-    checknull(ccall((:GDALGetRasterColorTable, libgdal), Ptr{GDALColorTableH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:GDALGetRasterColorTable, libgdal), Ptr{GDALColorTableH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -1803,7 +1803,7 @@ end
 Fetch overview raster band object.
 """
 function getoverview(arg1::Ref{GDALRasterBandH}, arg2::Integer)
-    checknull(ccall((:GDALGetOverview, libgdal), Ptr{GDALRasterBandH}, (Ptr{Cvoid}, Cint), arg1, arg2))
+    failsafe(ccall((:GDALGetOverview, libgdal), Ptr{GDALRasterBandH}, (Ptr{Cvoid}, Cint), arg1, arg2))
 end
 
 
@@ -2141,7 +2141,7 @@ end
 Fetch best sampling overview.
 """
 function getrastersampleoverview(arg1::Ref{GDALRasterBandH}, arg2::Integer)
-    checknull(ccall((:GDALGetRasterSampleOverview, libgdal), Ptr{GDALRasterBandH}, (Ptr{Cvoid}, Cint), arg1, arg2))
+    failsafe(ccall((:GDALGetRasterSampleOverview, libgdal), Ptr{GDALRasterBandH}, (Ptr{Cvoid}, Cint), arg1, arg2))
 end
 
 
@@ -2152,7 +2152,7 @@ end
 Fetch best sampling overview.
 """
 function getrastersampleoverviewex(arg1::Ref{GDALRasterBandH}, arg2::GUIntBig)
-    checknull(ccall((:GDALGetRasterSampleOverviewEx, libgdal), Ptr{GDALRasterBandH}, (Ptr{Cvoid}, GUIntBig), arg1, arg2))
+    failsafe(ccall((:GDALGetRasterSampleOverviewEx, libgdal), Ptr{GDALRasterBandH}, (Ptr{Cvoid}, GUIntBig), arg1, arg2))
 end
 
 
@@ -2224,7 +2224,7 @@ end
 Fetch default Raster Attribute Table.
 """
 function getdefaultrat(hBand::Ref{GDALRasterBandH})
-    checknull(ccall((:GDALGetDefaultRAT, libgdal), Ptr{GDALRasterAttributeTableH}, (Ptr{Cvoid},), hBand))
+    failsafe(ccall((:GDALGetDefaultRAT, libgdal), Ptr{GDALRasterAttributeTableH}, (Ptr{Cvoid},), hBand))
 end
 
 
@@ -2263,7 +2263,7 @@ end
 Return the mask band associated with the band.
 """
 function getmaskband(hBand::Ref{GDALRasterBandH})
-    checknull(ccall((:GDALGetMaskBand, libgdal), Ptr{GDALRasterBandH}, (Ptr{Cvoid},), hBand))
+    failsafe(ccall((:GDALGetMaskBand, libgdal), Ptr{GDALRasterBandH}, (Ptr{Cvoid},), hBand))
 end
 
 
@@ -2693,7 +2693,7 @@ end
 Construct a new color table.
 """
 function createcolortable(arg1::GDALPaletteInterp)
-    checknull(ccall((:GDALCreateColorTable, libgdal), Ptr{GDALColorTableH}, (GDALPaletteInterp,), arg1))
+    failsafe(ccall((:GDALCreateColorTable, libgdal), Ptr{GDALColorTableH}, (GDALPaletteInterp,), arg1))
 end
 
 
@@ -2713,7 +2713,7 @@ end
 Make a copy of a color table.
 """
 function clonecolortable(arg1::Ref{GDALColorTableH})
-    checknull(ccall((:GDALCloneColorTable, libgdal), Ptr{GDALColorTableH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:GDALCloneColorTable, libgdal), Ptr{GDALColorTableH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -2792,7 +2792,7 @@ end
 Construct empty table.
 """
 function createrasterattributetable()
-    checknull(ccall((:GDALCreateRasterAttributeTable, libgdal), Ptr{GDALRasterAttributeTableH}, ()))
+    failsafe(ccall((:GDALCreateRasterAttributeTable, libgdal), Ptr{GDALRasterAttributeTableH}, ()))
 end
 
 
@@ -3097,7 +3097,7 @@ end
 Translate to a color table.
 """
 function rattranslatetocolortable(arg1::Ref{GDALRasterAttributeTableH}, nEntryCount::Integer)
-    checknull(ccall((:GDALRATTranslateToColorTable, libgdal), Ptr{GDALColorTableH}, (Ptr{Cvoid}, Cint), arg1, nEntryCount))
+    failsafe(ccall((:GDALRATTranslateToColorTable, libgdal), Ptr{GDALColorTableH}, (Ptr{Cvoid}, Cint), arg1, nEntryCount))
 end
 
 
@@ -3118,7 +3118,7 @@ end
 Copy Raster Attribute Table.
 """
 function ratclone(arg1::Ref{GDALRasterAttributeTableH})
-    checknull(ccall((:GDALRATClone, libgdal), Ptr{GDALRasterAttributeTableH}, (Ptr{Cvoid},), arg1))
+    failsafe(ccall((:GDALRATClone, libgdal), Ptr{GDALRasterAttributeTableH}, (Ptr{Cvoid},), arg1))
 end
 
 
@@ -3442,7 +3442,7 @@ Create a virtual pansharpened dataset.
 NULL on failure, or a new virtual dataset handle on success to be closed with GDALClose().
 """
 function createpansharpenedvrt(pszXML, hPanchroBand::Ref{GDALRasterBandH}, nInputSpectralBands::Integer, pahInputSpectralBands)
-    checknull(ccall((:GDALCreatePansharpenedVRT, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Cint, Ptr{GDALRasterBandH}), pszXML, hPanchroBand, nInputSpectralBands, pahInputSpectralBands))
+    failsafe(ccall((:GDALCreatePansharpenedVRT, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cvoid}, Cint, Ptr{GDALRasterBandH}), pszXML, hPanchroBand, nInputSpectralBands, pahInputSpectralBands))
 end
 
 

@@ -868,7 +868,7 @@ end
 Create contour generator.
 """
 function cg_create(nWidth::Integer, nHeight::Integer, bNoDataSet::Integer, dfNoDataValue::Real, dfContourInterval::Real, dfContourBase::Real, pfnWriter::Ref{GDALContourWriter}, pCBData)
-    checknull(ccall((:GDAL_CG_Create, libgdal), Ptr{GDALContourGeneratorH}, (Cint, Cint, Cint, Cdouble, Cdouble, Cdouble, Ptr{Cvoid}, Ptr{Cvoid}), nWidth, nHeight, bNoDataSet, dfNoDataValue, dfContourInterval, dfContourBase, pfnWriter, pCBData))
+    failsafe(ccall((:GDAL_CG_Create, libgdal), Ptr{GDALContourGeneratorH}, (Cint, Cint, Cint, Cdouble, Cdouble, Cdouble, Ptr{Cvoid}, Ptr{Cvoid}), nWidth, nHeight, bNoDataSet, dfNoDataValue, dfContourInterval, dfContourBase, pfnWriter, pCBData))
 end
 
 
@@ -1383,7 +1383,7 @@ Load proj.4 geoidgrids as GDAL dataset.
 a dataset. If not NULL, it must be closed with GDALClose().
 """
 function openverticalshiftgrid(pszProj4Geoidgrids, pbError)
-    checknull(ccall((:GDALOpenVerticalShiftGrid, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cint}), pszProj4Geoidgrids, pbError))
+    failsafe(ccall((:GDALOpenVerticalShiftGrid, libgdal), Ptr{GDALDatasetH}, (Cstring, Ptr{Cint}), pszProj4Geoidgrids, pbError))
 end
 
 
@@ -1419,5 +1419,5 @@ SRC_SRS=srs_def. Override projection on hSrcDataset;
 a new dataset corresponding to hSrcDataset adjusted with hGridDataset, or NULL. If not NULL, it must be closed with GDALClose().
 """
 function applyverticalshiftgrid(hSrcDataset::Ref{<:GDALDatasetH}, hGridDataset::Ref{<:GDALDatasetH}, bInverse::Integer, dfSrcUnitToMeter::Real, dfDstUnitToMeter::Real, papszOptions)
-    checknull(ccall((:GDALApplyVerticalShiftGrid, libgdal), Ptr{GDALDatasetH}, (Ptr{Cvoid}, Ptr{Cvoid}, Cint, Cdouble, Cdouble, Ptr{Cstring}), hSrcDataset, hGridDataset, bInverse, dfSrcUnitToMeter, dfDstUnitToMeter, papszOptions))
+    failsafe(ccall((:GDALApplyVerticalShiftGrid, libgdal), Ptr{GDALDatasetH}, (Ptr{Cvoid}, Ptr{Cvoid}, Cint, Cdouble, Cdouble, Ptr{Cstring}), hSrcDataset, hGridDataset, bInverse, dfSrcUnitToMeter, dfDstUnitToMeter, papszOptions))
 end

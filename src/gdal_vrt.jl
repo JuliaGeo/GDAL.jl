@@ -5,7 +5,7 @@
               int) -> VRTDatasetH
 """
 function vrtcreate(arg1::Integer, arg2::Integer)
-    checknull(ccall((:VRTCreate, libgdal), Ptr{VRTDatasetH}, (Cint, Cint), arg1, arg2))
+    failsafe(ccall((:VRTCreate, libgdal), Ptr{VRTDatasetH}, (Cint, Cint), arg1, arg2))
 end
 
 
