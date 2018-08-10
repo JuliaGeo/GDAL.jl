@@ -37,7 +37,6 @@ const custom_rename = Dict{String, String}(
     "ogr_stbl_create" => "stbl_create",
 
     # prevent overwriting Base functions
-    "gdalinfo" => "Base.info",
     "ogr_g_isempty" => "Base.isempty",
     "ogr_g_length" => "Base.length",
 

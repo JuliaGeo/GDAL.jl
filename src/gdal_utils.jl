@@ -44,7 +44,7 @@ Lists various information about a GDAL supported raster dataset.
 ### Returns
 string corresponding to the information about the raster dataset (must be freed with CPLFree()), or NULL in case of error.
 """
-function Base.info(hDataset::Ref{<:GDALDatasetH}, psOptions)
+function info(hDataset::Ref{<:GDALDatasetH}, psOptions)
     unsafe_string(ccall((:GDALInfo, libgdal), Cstring, (Ptr{Cvoid}, Ptr{GDALInfoOptions}), hDataset, psOptions))
 end
 
