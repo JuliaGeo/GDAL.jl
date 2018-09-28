@@ -75,7 +75,7 @@ GDAL.setpoint_2d(point, 0, 100.123, 0.123)
 @test GDAL.setgeometry(feature, point) == GDAL.OGRERR_NONE
 GDAL.destroygeometry(point)
 GDAL.createfeature(layer, feature)
-@test GDAL.getfeaturecount(layer, 0) === 1
+@test GDAL.getfeaturecount(layer, 0) === Int64(1)
 
 # test getfilelist with unsafe_loadstringlist
 shp_exts = [".shp", ".shx", ".dbf"]
