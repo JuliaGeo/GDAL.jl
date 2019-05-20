@@ -50,8 +50,8 @@ gfld = GDAL.C.OGR_GFld_Create("name-b", GDAL.C.wkbPolygon)
 @test GDAL.C.OGR_GFld_GetType(gfld) == GDAL.C.wkbPolygon
 
 cd(dirname(@__FILE__)) do
-    isdir("tmp") || mkpath("tmp") # ensure it exists
-
+    rm("tmp", recursive=true, force=true)
+    mkpath("tmp") # ensure it exists
     include("tutorial_raster.jl")
     include("tutorial_vector.jl")
     include("tutorial_vrt.jl")

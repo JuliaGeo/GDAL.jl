@@ -45,6 +45,7 @@ include("error.jl")
 
 const GDALVERSION = Ref{VersionNumber}()
 const GDAL_DATA = Ref{String}()
+const PROJ_LIB = Ref{String}()
 
 function __init__()
     # Always check your dependencies from `deps.jl`
@@ -58,10 +59,13 @@ function __init__()
     versionstring = unsafe_string(C.GDALVersionInfo("RELEASE_NAME"))
     GDALVERSION[] = VersionNumber(versionstring)
 
-    # set GDAL_DATA, both as environment variable and directly in GDAL
+    # set GDAL_DATA location, this overrides setting the environment variable
     GDAL_DATA[] = abspath(@__DIR__, "..", "deps", "usr", "share", "gdal")
-    ENV["GDAL_DATA"] = GDAL_DATA[]
     C.CPLSetConfigOption("GDAL_DATA", GDAL_DATA[])
+
+    # set PROJ_LIB location, this overrides setting the environment variable
+    PROJ_LIB[] = abspath(@__DIR__, "..", "deps", "usr", "share", "proj")
+    ccall((:OSRSetPROJSearchPaths, libgdal), Cvoid, (Ptr{Cstring},), [PROJ_LIB[]])
 end
 
 """
