@@ -1,7 +1,9 @@
 environment:
   matrix:
-  - julia_version: 1.0
-  - julia_version: latest
+  - julia_version: 1.0.4  # oldest supported in Project.toml
+  - julia_version: 1.1
+  - julia_version: 1.2
+  - julia_version: nightly
 
 platform:
   - x86 # 32-bit
@@ -9,7 +11,8 @@ platform:
 
 matrix:
   allow_failures:
-  - julia_version: latest
+  - platform: x86
+  - julia_version: nightly
 
 branches:
   only:
