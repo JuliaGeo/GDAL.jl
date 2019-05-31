@@ -52,22 +52,15 @@ using Test
     @test GDAL.C.OGR_GFld_GetType(gfld) == GDAL.C.wkbPolygon
 
     cd(dirname(@__FILE__)) do
-        @info 1
         rm("tmp", recursive=true, force=true)
         mkpath("tmp") # ensure it exists
         include("tutorial_raster.jl")
-        @info 2
         include("tutorial_vector.jl")
-        @info 3
         include("tutorial_vrt.jl")
-        @info 4
         include("gdal_utils.jl")
-        @info 5
         include("drivers.jl")
-        @info 6
     end
 
     GDAL.destroydrivermanager()
-    @info 7
 
 end

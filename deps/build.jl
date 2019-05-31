@@ -7,7 +7,7 @@ dependencies = [
     "build_GEOS.v3.7.2.jl",
     "build_SQLite.v3.28.0.jl",
     "build_PROJ.v6.1.0.jl",
-    "build_LibCURL.v7.64.1.jl"
+    # "build_LibCURL.v7.64.1.jl"
 ]
 
 for elem in dependencies
@@ -100,7 +100,7 @@ function include_deps(name)
 end
 
 open("deps.jl", "w") do io
-    for dep in (:zlib, :geos, :sqlite, :proj, :curl, :gdal)
+    for dep in (:zlib, :geos, :sqlite, :proj, #=:curl,=# :gdal)
         println(io, include_deps(dep))
     end
     println(io, """
@@ -111,7 +111,7 @@ open("deps.jl", "w") do io
         geos.check_deps()
         sqlite.check_deps()
         proj.check_deps()
-        curl.check_deps()
+        # curl.check_deps()
         gdal.check_deps()
     end
     """)
