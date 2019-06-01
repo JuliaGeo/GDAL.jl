@@ -2,11 +2,14 @@
 
 using GDAL
 
+utmsmall = joinpath(@__DIR__, "data/utmsmall.tif")
+utmsmall_copy = joinpath(@__DIR__, "tmp/utmsmall.tif")
+
 # needed to actually load tifs
 GDAL.allregister()
 
 # Opening the File
-dataset = GDAL.open("data/utmsmall.tif", GDAL.GA_ReadOnly) # file from GDAL SVN
+dataset = GDAL.open(utmsmall, GDAL.GA_ReadOnly) # file from GDAL SVN
 
 
 # Getting Dataset Information
@@ -66,17 +69,16 @@ GDAL.close(dataset)
 
 
 # Using CreateCopy()
-ds_src = GDAL.open("data/utmsmall.tif", GDAL.GA_ReadOnly)
+ds_src = GDAL.open(utmsmall, GDAL.GA_ReadOnly)
 
 progressfunc = convert(Ptr{GDAL.GDALProgressFunc}, C_NULL)
 
-ds_dst = GDAL.createcopy(driver, "tmp/utmsmall.tif", ds_src, 0,
+ds_dst = GDAL.createcopy(driver, utmsmall_copy, ds_src, 0,
                          C_NULL, progressfunc, C_NULL)
 GDAL.close(ds_dst)
 GDAL.close(ds_src)
 
-rm("tmp/utmsmall.tif")
-
+rm(utmsmall_copy)
 # rest of the tutorial is skipped, perhaps we should wrap "cpl_string.h"
 # to be able to build papszOptions, or write it in julia
 # #include "cpl_string.h"
