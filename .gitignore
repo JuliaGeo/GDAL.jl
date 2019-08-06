@@ -2,7 +2,9 @@
 /deps/deps_*.jl
 /deps/build.log
 /deps/usr
+/gen/C
 /gen/doxygen.xml
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
+log.txt

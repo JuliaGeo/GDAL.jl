@@ -1,36 +1,39 @@
-"compose a markdown docstring based on a Doxygen XML element"
-function build_docstring(fnode)
+# this file is included by wrap_gdal.jl and rewriter.jl
+# and provides several shared functions for building docstrings
+
+"Build docstring for a function from a Doxygen XML node"
+function build_function(node::EzXML.Node)
     io = IOBuffer()
 
     # code block with function definition
-    print(io, "    ", text(fnode, "name"), "(")
+    print(io, "    ", text(node, "name"), "(")
     nspace = position(io)
-    params = LibExpat.find(fnode, "param")
+    params = findall(node, "param")
     if isempty(params)
         print(io, ")")
     end
     for param in params
         param !== first(params) && print(io, " "^nspace) # align
         islast = param === last(params)
-        print(io, text(param, "{type}"))
+        print(io, text(param, "type"))
         # declname not always present (with void)
         lastchar = islast ? ")" : ",\n"
-        if !isempty(LibExpat.find(param, "{declname}"))
-            print(io, " ", text(param, "{declname}"), lastchar)
+        if !isempty(findall("declname", param))
+            print(io, " ", text(param, "declname"), lastchar)
         else
             print(io, lastchar)
         end
     end
-    println(io, " -> ", text(fnode, "type"))
+    println(io, " -> ", text(node, "type"))
 
-    # brief description
-    if !isempty(LibExpat.find(fnode, "briefdescription")) &&
-        !isempty(strip(LibExpat.find(fnode, "briefdescription#string")))
-        println(io, "\n", text(fnode, "briefdescription"))
+    # brief description, always 1 present, sometimes only whitespace
+    desc = strip(nodecontent(findfirst("briefdescription", node)))
+    if !isempty(desc)
+        println(io, "\n", text(node, "briefdescription"))
     end
 
     # parameters
-    params = LibExpat.find(fnode, "detaileddescription/para/parameterlist/parameteritem")
+    params = findall("detaileddescription/para/parameterlist/parameteritem", node)
     if !isempty(params)
         println(io, "\n### Parameters")
         for param in params
@@ -40,7 +43,7 @@ function build_docstring(fnode)
     end
 
     # returns
-    return_elems = xpath(fnode, "detaileddescription/para/simplesect[@kind='return']")
+    return_elems = findall("detaileddescription/para/simplesect[@kind='return']", node)
     if !isempty(return_elems)
         println(io, "\n### Returns")
         println(io, text(return_elems[1], "para"))
@@ -49,11 +52,27 @@ function build_docstring(fnode)
     String(take!(io))
 end
 
-# Change GENERATE_XML to YES in the Doxyfile from the GDAL SVN
-# then run combine.xslt to create this XML file.
-xmlfile = joinpath(workdir, "doxygen.xml")
+"Build a one line docstring consisting of only the brief description from an XML node"
+function brief_description(node::EzXML.Node)
+    # brief description, always 1 present, sometimes only whitespace
+    strip(nodecontent(findfirst("briefdescription", node)))
+end
 
-xmlstring = read(xmlfile, String)
-et = xp_parse(xmlstring)
-functionnode(et, fname) = et["/doxygen/compounddef/sectiondef/memberdef[name='$fname']"]
-text(node::LibExpat.ETree, el::AbstractString) = strip(LibExpat.find(node, "$el#string"))
+"Compose a Markdown docstring based on a Doxygen XML element"
+function build_docstring(node::EzXML.Node)
+    kind = node["kind"]
+    if kind == "function"
+        build_function(node)
+    elseif kind in ("enum", "define", "typedef")
+        brief_description(node)
+    else
+        # "friend" and "variable" kinds remain
+        # but we leave them out, not needed
+        ""
+    end
+end
+
+function text(node::EzXML.Node, el::AbstractString)
+    s = findfirst(el, node)
+    s === nothing ? "" : strip(nodecontent(s))
+end
