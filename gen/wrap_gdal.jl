@@ -1,15 +1,36 @@
+#=
+Run this file to regenerate C submodule of GDAL.jl.
+
+This creates a 1:1 binding of most of GDAL, and directly adds documentation
+from GDAL's Doxygen XML file. This overwrites the files in src/C, so beware.
+The completely unaltered Clang.jl files are placed in gen/C.
+
+It expects a GDAL install in the deps folder, run `build GDAL` in Pkg mode
+if these are not in place.
+
+The wrapped GDAL version and provided GDAL version should be kept in sync.
+So when updating the GDALBuilder provided version, also rerun this wrapper.
+This way we ensure that the provided library has the same functions available
+as the wrapped one. Furthermore this makes sure constants in `gdal_common.jl`
+like `GDAL_VERSION`, which are just strings, are correct.
+=#
+
 using Clang
-using LibExpat
 using MacroTools
+using Base.Meta
+using Logging
+using EzXML
 
-const workdir = @__DIR__
-const srcdir = joinpath(workdir, "../src")
-include(joinpath(workdir, "doc.jl"))
+xmlpath = "doxygen.xml"
 
-const gdalpath = "/usr/local/include"
-const includedirs = [gdalpath]
+loghandle = open("log.txt", "w")
+logger = SimpleLogger(loghandle)
+global_logger(logger)
 
-const headerfiles = [
+include(joinpath(@__DIR__, "doc.jl"))
+
+includedir = normpath(joinpath(@__DIR__, "..", "deps", "usr", "include"))
+headerfiles = joinpath.(includedir, [
     "cpl_conv.h",
     "cpl_error.h",
     "cpl_minixml.h",
@@ -25,18 +46,11 @@ const headerfiles = [
     "ogr_api.h",
     "ogr_core.h",
     "ogr_srs_api.h"
-]
-
-const headerpaths = [joinpath(gdalpath, h) for h in headerfiles]
+])
 
 # skip these; right hand side is undefined
 # usually because of Skipping MacroDefinition
-const skip_expr = [
-    :(const CPL_LSBPTR16 = x),
-    :(const CPL_LSBPTR32 = x),
-    :(const CPL_LSBPTR64 = x),
-    :(const CPL_WARN_DEPRECATED_IF_GDAL_COMPILATION = x),
-    :(const CPL_STATIC_ASSERT_IF_AVAILABLE = x),
+const skip_exprs = [
     :(const CPLAssert = expr),
     :(const EMULATED_BOOL = bool),
     :(const GINT64_MIN = GINTBIG_MIN),
@@ -51,82 +65,101 @@ const skip_expr = [
     :(const VALIDATE_POINTER_ERR = CE_Failure)
 ]
 
-const skip_func = [:CPLErrorV] # problem with va_list ihnorton/Clang.jl#17
 
-"indicates if the pair should be wrapped"
-function header_wrapped(headerfile, cursorname)
-    # don't wrap included files
-    headerfile == cursorname
-end
+wc = init(; headers = headerfiles,
+            output_dir = joinpath(@__DIR__, "C"),
+            common_file = joinpath(@__DIR__, "C", "common.jl"),
+            clang_includes = [includedir, CLANG_INCLUDE],
+            clang_args = ["-I", includedir],
+            header_wrapped = (root, current) -> root == current,
+            header_library = x -> "libgdal",
+            clang_diagnostics = true,
+            )
 
-"skip certain expressions"
-function minimal_rewriter(ex::Expr)
-    # comment out predefined expressions
-    if in(ex, skip_expr)
-        return string("# ", ex)
-    end
+# generate wrapper functions without docstrings
+# docstrings will be added after this step
+run(wc)
+rm(joinpath(@__DIR__, "C", "cpl_port.jl"))  # delete empty file
 
-    # if it is a function
-    if ex.head == :function
-        funcname = ex.args[1].args[1]
-        @show funcname
-        # skip predefined functions
-        if funcname in skip_func
-            return ""
-        end
-        # add docstring
-        fnode_vec = functionnode(et, string(funcname))
-        docstr = if isempty(fnode_vec)
-            # this happens for instance when Doxygen is suppressed such as
-            # for this function OGR_G_Intersect from ogr_api.h
-            # /*! @cond Doxygen_Suppress */
-            # /* backward compatibility (non-standard methods) */
-            # int    CPL_DLL OGR_G_Intersect( OGRGeometryH, OGRGeometryH ) CPL_WARN_DEPRECATED("Non standard method. Use OGR_G_Intersects() instead");
-            ""
+"Get the C name out of a expression"
+function cname(ex)
+    if MacroTools.isdef(ex)
+        @capture(ex, function f_(args__) ccall((a_, b_), xs__) end)
+        String(eval(a))
+    else
+        # TODO make MacroTools.namify work for structs and macros
+        if MacroTools.isexpr(ex) && ex.head === :struct
+            String(ex.args[2])
+        elseif MacroTools.isexpr(ex) && ex.head === :macrocall
+            # if the enum has a type specified
+            String(ex.args[3].args[1])
         else
-            fnode = fnode_vec[1]
-            build_docstring(fnode)
-        end
-
-        # turn it into a tuple, special cased in visr/Clang.jl
-        # done because a block Expr gets a begin/end block when printing
-        ex = (docstr, ex)
-    elseif ex.head == :type
-        # detect singletons: "mutable struct A end"
-        # and rewrite them to "const A = Ptr{Void}"
-        # without this rewrite they are not usable:
-        # ERROR: ccall: the type of argument 1 doesn't correspond to a C type
-        # see https://github.com/JuliaGeo/GDAL.jl/pull/41#discussion_r143345433
-        # these singletons are meant to be opaque types, but in C are not of
-        # type `typedef void *` but instead something like
-        # `typedef struct OGRGeomFieldDefnHS *` (for OGRGeomFieldDefnH)
-
-        # detect singletons by checking if any of the block args
-        # are of type Symbol, which is the type of fieldnames
-        # has_fields = any(el isa Symbol for el in ex.args[3].args)
-        # if !has_fields
-        #     typename = ex.args[2]::Symbol
-        #     ex = :(const $typename = Ptr{Void})
-        # end
-        @capture(ex, mutable struct T_ fields__ end)
-        if isempty(fields)
-            ex = :(const $T = Ptr{Cvoid})
+            String(namify(ex))
         end
     end
-    ex
 end
 
-minimal_rewriter(s::AbstractString) = s # keep comments
-minimal_rewriter(A::Vector) = [minimal_rewriter(a) for a in A]
+"Add docstrings to all expressions and writes to a new file"
+function add_docstrings_to_file(inpath::String, outpath::String, doc::EzXML.Document)
+    # wrap string in quote such that it forms one expresion that we can parse
+    header1, header2 = open(inpath) do io
+        header1 = readline(io)
+        header2 = readline(io, keep=true)
+        header1, header2
+    end
 
-context=wrap_c.init(headers=headerpaths,
-                    output_dir=joinpath(srcdir, "C"),
-                    common_file="common.jl",
-                    clang_includes=includedirs,
-                    header_wrapped=header_wrapped,
-                    header_library=x->"libgdal",
-                    rewriter=minimal_rewriter)
+    s = join(["quote", read(inpath, String), "end"], ";")
 
-run(context)
+    file_expr = prettify(Meta.parse(s))
+    # get a list of function expressions
+    exprs = file_expr.args[1].args
+    open(outpath, "w") do io
+        println(io, header1)
+        println(io, header2)
 
-rm(joinpath(srcdir, "C/cpl_port.jl")) # delete empty file
+        for expr in exprs
+            name = cname(expr)
+
+            expr in skip_exprs  && continue
+
+            # names are not unique, also for functions like GDALScaledProgress
+            # we currently just stick with the first one since for one example
+            # that was the best docstring (one had argnames, the other not)
+            # would be good to explore further, e.g. can we only look at C API?
+            node = findfirst("/doxygen/compounddef/sectiondef/memberdef[name=\"$name\"]", doc)
+            docstr = node === nothing ? "" : build_docstring(node)
+            if !isempty(docstr)
+                if '\n' in docstr
+                    println(io, "\"\"\"")
+                    print(io, docstr)
+                    println(io, "\"\"\"")
+                else
+                    # one line docstring
+                    println(io, '"', rstrip(docstr, '.'), '"')
+                end
+            end
+            println(io, prettify(expr))
+            # we want a blank line between functions, and not two at the end
+            expr === last(exprs) || println(io)
+        end
+    end
+end
+
+function add_docstrings_to_all_files(xmlpath::String)
+    # parse Doxygen XML file
+    doc = readxml(xmlpath)
+
+    for headerfile in headerfiles
+        name = replace(basename(headerfile), ".h"=>".jl")
+        name == "cpl_port.jl"  && continue
+        inpath = joinpath(@__DIR__, "C", name)
+        outpath = joinpath(@__DIR__, "../src/C", name)
+        add_docstrings_to_file(inpath, outpath, doc)
+    end
+
+    # we can also add docstrings to common.jl!
+    add_docstrings_to_file(joinpath(@__DIR__, "C/common.jl"), joinpath(@__DIR__, "../src/C/common.jl"), doc)
+end
+
+add_docstrings_to_all_files(xmlpath)
+close(loghandle)
