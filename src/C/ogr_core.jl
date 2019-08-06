@@ -1,7 +1,5 @@
-# Julia wrapper for header: /usr/local/include/ogr_core.h
-# Automatically generated using Clang.jl wrap_c, version 0.0.0
-
-
+# Julia wrapper for header: ogr_core.h
+# Automatically generated using Clang.jl
 
 """
     OGRMalloc(size_t size) -> void *
@@ -9,7 +7,6 @@
 function OGRMalloc()
     ccall((:OGRMalloc, libgdal), Ptr{Cvoid}, ())
 end
-
 
 """
     OGRCalloc(size_t count,
@@ -19,22 +16,17 @@ function OGRCalloc()
     ccall((:OGRCalloc, libgdal), Ptr{Cvoid}, ())
 end
 
-
 """
     OGRRealloc(void * pOld,
                size_t size) -> void *
 """
-function OGRRealloc(arg1, size_t::Cint)
+function OGRRealloc(arg1, size_t)
     ccall((:OGRRealloc, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Cint), arg1, size_t)
 end
 
-
-"""
-"""
 function OGRStrdup(arg1)
     ccall((:OGRStrdup, libgdal), Cstring, (Cstring,), arg1)
 end
-
 
 """
     OGRFree(void * pMemory) -> void
@@ -42,7 +34,6 @@ end
 function OGRFree(arg1)
     ccall((:OGRFree, libgdal), Cvoid, (Ptr{Cvoid},), arg1)
 end
-
 
 """
     OGRGeometryTypeToName(OGRwkbGeometryType eType) -> const char *
@@ -55,10 +46,9 @@ Fetch a human readable name corresponding to an OGRwkbGeometryType value.
 ### Returns
 internal human readable string, or NULL on failure.
 """
-function OGRGeometryTypeToName(eType::OGRwkbGeometryType)
+function OGRGeometryTypeToName(eType)
     ccall((:OGRGeometryTypeToName, libgdal), Cstring, (OGRwkbGeometryType,), eType)
 end
-
 
 """
     OGRMergeGeometryTypes(OGRwkbGeometryType eMain,
@@ -73,10 +63,9 @@ Find common geometry type.
 ### Returns
 the merged geometry type.
 """
-function OGRMergeGeometryTypes(eMain::OGRwkbGeometryType, eExtra::OGRwkbGeometryType)
+function OGRMergeGeometryTypes(eMain, eExtra)
     ccall((:OGRMergeGeometryTypes, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType, OGRwkbGeometryType), eMain, eExtra)
 end
-
 
 """
     OGRMergeGeometryTypesEx(OGRwkbGeometryType eMain,
@@ -93,10 +82,9 @@ Find common geometry type.
 ### Returns
 the merged geometry type.
 """
-function OGRMergeGeometryTypesEx(eMain::OGRwkbGeometryType, eExtra::OGRwkbGeometryType, bAllowPromotingToCurves::Cint)
+function OGRMergeGeometryTypesEx(eMain, eExtra, bAllowPromotingToCurves)
     ccall((:OGRMergeGeometryTypesEx, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType, OGRwkbGeometryType, Cint), eMain, eExtra, bAllowPromotingToCurves)
 end
-
 
 """
     OGR_GT_Flatten(OGRwkbGeometryType eType) -> OGRwkbGeometryType
@@ -109,10 +97,9 @@ Returns the 2D geometry type corresponding to the passed geometry type.
 ### Returns
 2D geometry type corresponding to the passed geometry type.
 """
-function OGR_GT_Flatten(eType::OGRwkbGeometryType)
+function OGR_GT_Flatten(eType)
     ccall((:OGR_GT_Flatten, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType)
 end
-
 
 """
     OGR_GT_SetZ(OGRwkbGeometryType eType) -> OGRwkbGeometryType
@@ -125,10 +112,9 @@ Returns the 3D geometry type corresponding to the passed geometry type.
 ### Returns
 3D geometry type corresponding to the passed geometry type.
 """
-function OGR_GT_SetZ(eType::OGRwkbGeometryType)
+function OGR_GT_SetZ(eType)
     ccall((:OGR_GT_SetZ, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType)
 end
-
 
 """
     OGR_GT_SetM(OGRwkbGeometryType eType) -> OGRwkbGeometryType
@@ -141,10 +127,9 @@ Returns the measured geometry type corresponding to the passed geometry type.
 ### Returns
 measured geometry type corresponding to the passed geometry type.
 """
-function OGR_GT_SetM(eType::OGRwkbGeometryType)
+function OGR_GT_SetM(eType)
     ccall((:OGR_GT_SetM, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType)
 end
-
 
 """
     OGR_GT_SetModifier(OGRwkbGeometryType eType,
@@ -161,10 +146,9 @@ Returns a XY, XYZ, XYM or XYZM geometry type depending on parameter.
 ### Returns
 Output geometry type.
 """
-function OGR_GT_SetModifier(eType::OGRwkbGeometryType, bSetZ::Cint, bSetM::Cint)
+function OGR_GT_SetModifier(eType, bSetZ, bSetM)
     ccall((:OGR_GT_SetModifier, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType, Cint, Cint), eType, bSetZ, bSetM)
 end
-
 
 """
     OGR_GT_HasZ(OGRwkbGeometryType eType) -> int
@@ -177,10 +161,9 @@ Return if the geometry type is a 3D geometry type.
 ### Returns
 TRUE if the geometry type is a 3D geometry type.
 """
-function OGR_GT_HasZ(eType::OGRwkbGeometryType)
+function OGR_GT_HasZ(eType)
     ccall((:OGR_GT_HasZ, libgdal), Cint, (OGRwkbGeometryType,), eType)
 end
-
 
 """
     OGR_GT_HasM(OGRwkbGeometryType eType) -> int
@@ -193,10 +176,9 @@ Return if the geometry type is a measured type.
 ### Returns
 TRUE if the geometry type is a measured type.
 """
-function OGR_GT_HasM(eType::OGRwkbGeometryType)
+function OGR_GT_HasM(eType)
     ccall((:OGR_GT_HasM, libgdal), Cint, (OGRwkbGeometryType,), eType)
 end
-
 
 """
     OGR_GT_IsSubClassOf(OGRwkbGeometryType eType,
@@ -211,10 +193,9 @@ Returns if a type is a subclass of another one.
 ### Returns
 TRUE if eType is a subclass of eSuperType.
 """
-function OGR_GT_IsSubClassOf(eType::OGRwkbGeometryType, eSuperType::OGRwkbGeometryType)
+function OGR_GT_IsSubClassOf(eType, eSuperType)
     ccall((:OGR_GT_IsSubClassOf, libgdal), Cint, (OGRwkbGeometryType, OGRwkbGeometryType), eType, eSuperType)
 end
-
 
 """
     OGR_GT_IsCurve(OGRwkbGeometryType eGeomType) -> int
@@ -227,10 +208,9 @@ Return if a geometry type is an instance of Curve.
 ### Returns
 TRUE if the geometry type is an instance of Curve
 """
-function OGR_GT_IsCurve(arg1::OGRwkbGeometryType)
+function OGR_GT_IsCurve(arg1)
     ccall((:OGR_GT_IsCurve, libgdal), Cint, (OGRwkbGeometryType,), arg1)
 end
-
 
 """
     OGR_GT_IsSurface(OGRwkbGeometryType eGeomType) -> int
@@ -243,10 +223,9 @@ Return if a geometry type is an instance of Surface.
 ### Returns
 TRUE if the geometry type is an instance of Surface
 """
-function OGR_GT_IsSurface(arg1::OGRwkbGeometryType)
+function OGR_GT_IsSurface(arg1)
     ccall((:OGR_GT_IsSurface, libgdal), Cint, (OGRwkbGeometryType,), arg1)
 end
-
 
 """
     OGR_GT_IsNonLinear(OGRwkbGeometryType eGeomType) -> int
@@ -259,10 +238,9 @@ Return if a geometry type is a non-linear geometry type.
 ### Returns
 TRUE if the geometry type is a non-linear geometry type.
 """
-function OGR_GT_IsNonLinear(arg1::OGRwkbGeometryType)
+function OGR_GT_IsNonLinear(arg1)
     ccall((:OGR_GT_IsNonLinear, libgdal), Cint, (OGRwkbGeometryType,), arg1)
 end
-
 
 """
     OGR_GT_GetCollection(OGRwkbGeometryType eType) -> OGRwkbGeometryType
@@ -275,10 +253,9 @@ Returns the collection type that can contain the passed geometry type.
 ### Returns
 the collection type that can contain the passed geometry type or wkbUnknown
 """
-function OGR_GT_GetCollection(eType::OGRwkbGeometryType)
+function OGR_GT_GetCollection(eType)
     ccall((:OGR_GT_GetCollection, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType)
 end
-
 
 """
     OGR_GT_GetCurve(OGRwkbGeometryType eType) -> OGRwkbGeometryType
@@ -291,10 +268,9 @@ Returns the curve geometry type that can contain the passed geometry type.
 ### Returns
 the curve type that can contain the passed geometry type
 """
-function OGR_GT_GetCurve(eType::OGRwkbGeometryType)
+function OGR_GT_GetCurve(eType)
     ccall((:OGR_GT_GetCurve, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType)
 end
-
 
 """
     OGR_GT_GetLinear(OGRwkbGeometryType eType) -> OGRwkbGeometryType
@@ -307,10 +283,9 @@ Returns the non-curve geometry type that can contain the passed geometry type.
 ### Returns
 the non-curve type that can contain the passed geometry type
 """
-function OGR_GT_GetLinear(eType::OGRwkbGeometryType)
+function OGR_GT_GetLinear(eType)
     ccall((:OGR_GT_GetLinear, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType)
 end
-
 
 """
     OGRParseDate(const char * pszInput,
@@ -327,10 +302,9 @@ Parse date string.
 ### Returns
 TRUE if apparently successful or FALSE on failure.
 """
-function OGRParseDate(pszInput, psOutput, nOptions::Cint)
+function OGRParseDate(pszInput, psOutput, nOptions)
     ccall((:OGRParseDate, libgdal), Cint, (Cstring, Ptr{OGRField}, Cint), pszInput, psOutput, nOptions)
 end
-
 
 """
     GDALVersionInfo(const char *) -> const char *
@@ -347,7 +321,6 @@ function GDALVersionInfo(arg1)
     ccall((:GDALVersionInfo, libgdal), Cstring, (Cstring,), arg1)
 end
 
-
 """
     GDALCheckVersion(int nVersionMajor,
                      int nVersionMinor,
@@ -363,6 +336,6 @@ Return TRUE if GDAL library version at runtime matches nVersionMajor.nVersionMin
 ### Returns
 TRUE if GDAL library version at runtime matches nVersionMajor.nVersionMinor, FALSE otherwise.
 """
-function GDALCheckVersion(nVersionMajor::Cint, nVersionMinor::Cint, pszCallingComponentName)
+function GDALCheckVersion(nVersionMajor, nVersionMinor, pszCallingComponentName)
     ccall((:GDALCheckVersion, libgdal), Cint, (Cint, Cint, Cstring), nVersionMajor, nVersionMinor, pszCallingComponentName)
 end

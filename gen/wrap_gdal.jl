@@ -57,6 +57,9 @@ const skip_exprs = [
     :(const GINT64_MAX = GINTBIG_MAX),
     :(const GUINT64_MAX = GUINTBIG_MAX),
     :(const VSI_L_OFFSET_MAX = GUINTBIG_MAX),
+    :(const CPL_STATIC_ASSERT_IF_AVAILABLE = x),
+    :(const CPL_NULLPTR = NULL),
+    :(const VSIStatBufL = __stat64),
     # function aliases give bootstrapping problems
     # since common.jl is loaded before the functions
     :(const CPLReadDir = VSIReadDir),

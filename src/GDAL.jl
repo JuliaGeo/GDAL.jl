@@ -1,6 +1,7 @@
 module GDAL
 
 using Libdl
+using CEnum
 
 # Load in `deps.jl`, complaining if it does not exist
 const depsjl_path = joinpath(@__DIR__, "..", "deps", "deps.jl")
@@ -11,6 +12,7 @@ include(depsjl_path)
 
 module C
     import GDAL: libgdal
+    using CEnum
 
     include("C/misc.jl")
     include("C/common.jl")
@@ -30,7 +32,10 @@ module C
     include("C/ogr_srs_api.jl")
 end
 
-include("C/misc.jl")
+# formerly in "C/misc.jl", to be removed
+const FILE = Nothing # not sure if this works
+const time_t = Nothing # not sure if this works
+
 include("types.jl")
 include("common.jl")
 include("gdal_h.jl")

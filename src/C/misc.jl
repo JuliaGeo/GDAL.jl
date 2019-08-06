@@ -1,2 +1,4 @@
-const FILE = Nothing # not sure if this works
-const time_t = Nothing # not sure if this works
+const Ctm = Base.Libc.TmStruct
+
+# not sure what this should be, it was __stat64
+const VSIStatBufL = Cvoid

@@ -1,7 +1,5 @@
-# Julia wrapper for header: /usr/local/include/cpl_minixml.h
-# Automatically generated using Clang.jl wrap_c, version 0.0.0
-
-
+# Julia wrapper for header: cpl_minixml.h
+# Automatically generated using Clang.jl
 
 """
     CPLParseXMLString(const char * pszString) -> CPLXMLNode *
@@ -18,7 +16,6 @@ function CPLParseXMLString(arg1)
     ccall((:CPLParseXMLString, libgdal), Ptr{CPLXMLNode}, (Cstring,), arg1)
 end
 
-
 """
     CPLDestroyXMLNode(CPLXMLNode * psNode) -> void
 
@@ -30,7 +27,6 @@ Destroy a tree.
 function CPLDestroyXMLNode(arg1)
     ccall((:CPLDestroyXMLNode, libgdal), Cvoid, (Ptr{CPLXMLNode},), arg1)
 end
-
 
 """
     CPLGetXMLNode(CPLXMLNode * psRoot,
@@ -49,7 +45,6 @@ function CPLGetXMLNode(poRoot, pszPath)
     ccall((:CPLGetXMLNode, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, Cstring), poRoot, pszPath)
 end
 
-
 """
     CPLSearchXMLNode(CPLXMLNode * psRoot,
                      const char * pszElement) -> CPLXMLNode *
@@ -67,9 +62,8 @@ function CPLSearchXMLNode(poRoot, pszTarget)
     ccall((:CPLSearchXMLNode, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, Cstring), poRoot, pszTarget)
 end
 
-
 """
-    CPLGetXMLValue(CPLXMLNode * psRoot,
+    CPLGetXMLValue(const CPLXMLNode * psRoot,
                    const char * pszPath,
                    const char * pszDefault) -> const char *
 
@@ -87,7 +81,6 @@ function CPLGetXMLValue(poRoot, pszPath, pszDefault)
     ccall((:CPLGetXMLValue, libgdal), Cstring, (Ptr{CPLXMLNode}, Cstring, Cstring), poRoot, pszPath, pszDefault)
 end
 
-
 """
     CPLCreateXMLNode(CPLXMLNode * poParent,
                      CPLXMLNodeType eType,
@@ -103,10 +96,9 @@ Create an document tree item.
 ### Returns
 the newly created node, now owned by the caller (or parent node).
 """
-function CPLCreateXMLNode(poParent, eType::CPLXMLNodeType, pszText)
+function CPLCreateXMLNode(poParent, eType, pszText)
     ccall((:CPLCreateXMLNode, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, CPLXMLNodeType, Cstring), poParent, eType, pszText)
 end
-
 
 """
     CPLSerializeXMLTree(const CPLXMLNode * psNode) -> char *
@@ -123,7 +115,6 @@ function CPLSerializeXMLTree(psNode)
     ccall((:CPLSerializeXMLTree, libgdal), Cstring, (Ptr{CPLXMLNode},), psNode)
 end
 
-
 """
     CPLAddXMLChild(CPLXMLNode * psParent,
                    CPLXMLNode * psChild) -> void
@@ -137,7 +128,6 @@ Add child node to parent.
 function CPLAddXMLChild(psParent, psChild)
     ccall((:CPLAddXMLChild, libgdal), Cvoid, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psParent, psChild)
 end
-
 
 """
     CPLRemoveXMLChild(CPLXMLNode * psParent,
@@ -156,7 +146,6 @@ function CPLRemoveXMLChild(psParent, psChild)
     ccall((:CPLRemoveXMLChild, libgdal), Cint, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psParent, psChild)
 end
 
-
 """
     CPLAddXMLSibling(CPLXMLNode * psOlderSibling,
                      CPLXMLNode * psNewSibling) -> void
@@ -170,7 +159,6 @@ Add new sibling.
 function CPLAddXMLSibling(psOlderSibling, psNewSibling)
     ccall((:CPLAddXMLSibling, libgdal), Cvoid, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psOlderSibling, psNewSibling)
 end
-
 
 """
     CPLCreateXMLElementAndValue(CPLXMLNode * psParent,
@@ -191,7 +179,6 @@ function CPLCreateXMLElementAndValue(psParent, pszName, pszValue)
     ccall((:CPLCreateXMLElementAndValue, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, Cstring, Cstring), psParent, pszName, pszValue)
 end
 
-
 """
     CPLAddXMLAttributeAndValue(CPLXMLNode * psParent,
                                const char * pszName,
@@ -208,9 +195,8 @@ function CPLAddXMLAttributeAndValue(psParent, pszName, pszValue)
     ccall((:CPLAddXMLAttributeAndValue, libgdal), Cvoid, (Ptr{CPLXMLNode}, Cstring, Cstring), psParent, pszName, pszValue)
 end
 
-
 """
-    CPLCloneXMLTree(CPLXMLNode * psTree) -> CPLXMLNode *
+    CPLCloneXMLTree(const CPLXMLNode * psTree) -> CPLXMLNode *
 
 Copy tree.
 
@@ -223,7 +209,6 @@ a copy of the whole tree.
 function CPLCloneXMLTree(psTree)
     ccall((:CPLCloneXMLTree, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode},), psTree)
 end
-
 
 """
     CPLSetXMLValue(CPLXMLNode * psRoot,
@@ -244,7 +229,6 @@ function CPLSetXMLValue(psRoot, pszPath, pszValue)
     ccall((:CPLSetXMLValue, libgdal), Cint, (Ptr{CPLXMLNode}, Cstring, Cstring), psRoot, pszPath, pszValue)
 end
 
-
 """
     CPLStripXMLNamespace(CPLXMLNode * psRoot,
                          const char * pszNamespace,
@@ -257,10 +241,9 @@ Strip indicated namespaces.
 * **pszNamespace**: the name space prefix (not including colon), or NULL.
 * **bRecurse**: TRUE to recurse over whole document, or FALSE to only operate on the passed node.
 """
-function CPLStripXMLNamespace(psRoot, pszNameSpace, bRecurse::Cint)
+function CPLStripXMLNamespace(psRoot, pszNameSpace, bRecurse)
     ccall((:CPLStripXMLNamespace, libgdal), Cvoid, (Ptr{CPLXMLNode}, Cstring, Cint), psRoot, pszNameSpace, bRecurse)
 end
-
 
 """
     CPLCleanXMLElementName(char * pszTarget) -> void
@@ -273,7 +256,6 @@ Make string into safe XML token.
 function CPLCleanXMLElementName(arg1)
     ccall((:CPLCleanXMLElementName, libgdal), Cvoid, (Cstring,), arg1)
 end
-
 
 """
     CPLParseXMLFile(const char * pszFilename) -> CPLXMLNode *
@@ -289,7 +271,6 @@ NULL on failure, or the document tree on success.
 function CPLParseXMLFile(pszFilename)
     ccall((:CPLParseXMLFile, libgdal), Ptr{CPLXMLNode}, (Cstring,), pszFilename)
 end
-
 
 """
     CPLSerializeXMLTreeToFile(const CPLXMLNode * psTree,

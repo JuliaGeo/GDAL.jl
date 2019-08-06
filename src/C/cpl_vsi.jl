@@ -1,58 +1,50 @@
-# Julia wrapper for header: /usr/local/include/cpl_vsi.h
-# Automatically generated using Clang.jl wrap_c, version 0.0.0
-
-
+# Julia wrapper for header: cpl_vsi.h
+# Automatically generated using Clang.jl
 
 """
     VSIFOpen(const char * pszFilename,
              const char * pszAccess) -> FILE *
 """
-function VSIFOpen(arg1, arg2)
-    ccall((:VSIFOpen, libgdal), Ptr{FILE}, (Cstring, Cstring), arg1, arg2)
+function VSIFOpen()
+    ccall((:VSIFOpen, libgdal), Ptr{Cint}, ())
 end
-
 
 """
     VSIFClose(FILE * fp) -> int
 """
 function VSIFClose(arg1)
-    ccall((:VSIFClose, libgdal), Cint, (Ptr{FILE},), arg1)
+    ccall((:VSIFClose, libgdal), Cint, (Ptr{Cint},), arg1)
 end
-
 
 """
     VSIFSeek(FILE * fp,
              long nOffset,
              int nWhence) -> int
 """
-function VSIFSeek(arg1, arg2::Clong, arg3::Cint)
-    ccall((:VSIFSeek, libgdal), Cint, (Ptr{FILE}, Clong, Cint), arg1, arg2, arg3)
+function VSIFSeek(arg1, arg2, arg3)
+    ccall((:VSIFSeek, libgdal), Cint, (Ptr{Cint}, Clong, Cint), arg1, arg2, arg3)
 end
-
 
 """
     VSIFTell(FILE * fp) -> long
 """
 function VSIFTell(arg1)
-    ccall((:VSIFTell, libgdal), Clong, (Ptr{FILE},), arg1)
+    ccall((:VSIFTell, libgdal), Clong, (Ptr{Cint},), arg1)
 end
-
 
 """
     VSIRewind(FILE * fp) -> void
 """
 function VSIRewind(arg1)
-    ccall((:VSIRewind, libgdal), Cvoid, (Ptr{FILE},), arg1)
+    ccall((:VSIRewind, libgdal), Cvoid, (Ptr{Cint},), arg1)
 end
-
 
 """
     VSIFFlush(FILE * fp) -> void
 """
 function VSIFFlush(arg1)
-    ccall((:VSIFFlush, libgdal), Cvoid, (Ptr{FILE},), arg1)
+    ccall((:VSIFFlush, libgdal), Cvoid, (Ptr{Cint},), arg1)
 end
-
 
 """
     VSIFRead(void * pBuffer,
@@ -64,7 +56,6 @@ function VSIFRead()
     ccall((:VSIFRead, libgdal), Cint, ())
 end
 
-
 """
     VSIFWrite(const void * pBuffer,
               size_t nSize,
@@ -75,59 +66,52 @@ function VSIFWrite()
     ccall((:VSIFWrite, libgdal), Cint, ())
 end
 
-
 """
     VSIFGets(char * pszBuffer,
              int nBufferSize,
              FILE * fp) -> char *
 """
-function VSIFGets(arg1, arg2::Cint, arg3)
-    ccall((:VSIFGets, libgdal), Cstring, (Cstring, Cint, Ptr{FILE}), arg1, arg2, arg3)
+function VSIFGets(arg1, arg2, arg3)
+    ccall((:VSIFGets, libgdal), Cstring, (Cstring, Cint, Ptr{Cint}), arg1, arg2, arg3)
 end
-
 
 """
     VSIFPuts(const char * pszString,
              FILE * fp) -> int
 """
 function VSIFPuts(arg1, arg2)
-    ccall((:VSIFPuts, libgdal), Cint, (Cstring, Ptr{FILE}), arg1, arg2)
+    ccall((:VSIFPuts, libgdal), Cint, (Cstring, Ptr{Cint}), arg1, arg2)
 end
-
 
 """
     VSIFGetc(FILE * fp) -> int
 """
 function VSIFGetc(arg1)
-    ccall((:VSIFGetc, libgdal), Cint, (Ptr{FILE},), arg1)
+    ccall((:VSIFGetc, libgdal), Cint, (Ptr{Cint},), arg1)
 end
-
 
 """
     VSIFPutc(int nChar,
              FILE * fp) -> int
 """
-function VSIFPutc(arg1::Cint, arg2)
-    ccall((:VSIFPutc, libgdal), Cint, (Cint, Ptr{FILE}), arg1, arg2)
+function VSIFPutc(arg1, arg2)
+    ccall((:VSIFPutc, libgdal), Cint, (Cint, Ptr{Cint}), arg1, arg2)
 end
-
 
 """
     VSIUngetc(int c,
               FILE * fp) -> int
 """
-function VSIUngetc(arg1::Cint, arg2)
-    ccall((:VSIUngetc, libgdal), Cint, (Cint, Ptr{FILE}), arg1, arg2)
+function VSIUngetc(arg1, arg2)
+    ccall((:VSIUngetc, libgdal), Cint, (Cint, Ptr{Cint}), arg1, arg2)
 end
-
 
 """
     VSIFEof(FILE * fp) -> int
 """
 function VSIFEof(arg1)
-    ccall((:VSIFEof, libgdal), Cint, (Ptr{FILE},), arg1)
+    ccall((:VSIFEof, libgdal), Cint, (Ptr{Cint},), arg1)
 end
-
 
 """
     VSIStat(const char * pszFilename,
@@ -136,7 +120,6 @@ end
 function VSIStat(arg1, arg2)
     ccall((:VSIStat, libgdal), Cint, (Cstring, Ptr{VSIStatBuf}), arg1, arg2)
 end
-
 
 """
     VSIFOpenL(const char * pszFilename,
@@ -155,7 +138,6 @@ function VSIFOpenL(arg1, arg2)
     ccall((:VSIFOpenL, libgdal), Ptr{VSILFILE}, (Cstring, Cstring), arg1, arg2)
 end
 
-
 """
     VSIFOpenExL(const char * pszFilename,
                 const char * pszAccess,
@@ -171,10 +153,9 @@ Open file.
 ### Returns
 NULL on failure, or the file handle.
 """
-function VSIFOpenExL(arg1, arg2, arg3::Cint)
+function VSIFOpenExL(arg1, arg2, arg3)
     ccall((:VSIFOpenExL, libgdal), Ptr{VSILFILE}, (Cstring, Cstring, Cint), arg1, arg2, arg3)
 end
-
 
 """
     VSIFCloseL(VSILFILE * fp) -> int
@@ -191,7 +172,6 @@ function VSIFCloseL(arg1)
     ccall((:VSIFCloseL, libgdal), Cint, (Ptr{VSILFILE},), arg1)
 end
 
-
 """
     VSIFSeekL(VSILFILE * fp,
               vsi_l_offset nOffset,
@@ -207,10 +187,9 @@ Seek to requested offset.
 ### Returns
 0 on success or -1 one failure.
 """
-function VSIFSeekL(arg1, arg2::vsi_l_offset, arg3::Cint)
+function VSIFSeekL(arg1, arg2, arg3)
     ccall((:VSIFSeekL, libgdal), Cint, (Ptr{VSILFILE}, vsi_l_offset, Cint), arg1, arg2, arg3)
 end
-
 
 """
     VSIFTellL(VSILFILE * fp) -> vsi_l_offset
@@ -227,7 +206,6 @@ function VSIFTellL(arg1)
     ccall((:VSIFTellL, libgdal), vsi_l_offset, (Ptr{VSILFILE},), arg1)
 end
 
-
 """
     VSIRewindL(VSILFILE * fp) -> void
 
@@ -239,7 +217,6 @@ Rewind the file pointer to the beginning of the file.
 function VSIRewindL(arg1)
     ccall((:VSIRewindL, libgdal), Cvoid, (Ptr{VSILFILE},), arg1)
 end
-
 
 """
     VSIFReadL(void * pBuffer,
@@ -262,7 +239,6 @@ function VSIFReadL()
     ccall((:VSIFReadL, libgdal), Cint, ())
 end
 
-
 """
     VSIFReadMultiRangeL(int nRanges,
                         void ** ppData,
@@ -282,10 +258,9 @@ Read several ranges of bytes from file.
 ### Returns
 0 in case of success, -1 otherwise.
 """
-function VSIFReadMultiRangeL(nRanges::Cint, ppData, panOffsets, panSizes, arg1)
+function VSIFReadMultiRangeL(nRanges, ppData, panOffsets, panSizes, arg1)
     ccall((:VSIFReadMultiRangeL, libgdal), Cint, (Cint, Ptr{Ptr{Cvoid}}, Ptr{vsi_l_offset}, Ptr{Cint}, Ptr{VSILFILE}), nRanges, ppData, panOffsets, panSizes, arg1)
 end
-
 
 """
     VSIFWriteL(const void * pBuffer,
@@ -308,7 +283,6 @@ function VSIFWriteL()
     ccall((:VSIFWriteL, libgdal), Cint, ())
 end
 
-
 """
     VSIFEofL(VSILFILE * fp) -> int
 
@@ -324,7 +298,6 @@ function VSIFEofL(arg1)
     ccall((:VSIFEofL, libgdal), Cint, (Ptr{VSILFILE},), arg1)
 end
 
-
 """
     VSIFTruncateL(VSILFILE * fp,
                   vsi_l_offset nNewSize) -> int
@@ -338,10 +311,9 @@ Truncate/expand the file to the specified size.
 ### Returns
 0 on success
 """
-function VSIFTruncateL(arg1, arg2::vsi_l_offset)
+function VSIFTruncateL(arg1, arg2)
     ccall((:VSIFTruncateL, libgdal), Cint, (Ptr{VSILFILE}, vsi_l_offset), arg1, arg2)
 end
-
 
 """
     VSIFFlushL(VSILFILE * fp) -> int
@@ -358,7 +330,6 @@ function VSIFFlushL(arg1)
     ccall((:VSIFFlushL, libgdal), Cint, (Ptr{VSILFILE},), arg1)
 end
 
-
 """
     VSIFPutcL(int nChar,
               VSILFILE * fp) -> int
@@ -372,10 +343,9 @@ Write a single byte to the file.
 ### Returns
 1 in case of success, 0 on error.
 """
-function VSIFPutcL(arg1::Cint, arg2)
+function VSIFPutcL(arg1, arg2)
     ccall((:VSIFPutcL, libgdal), Cint, (Cint, Ptr{VSILFILE}), arg1, arg2)
 end
-
 
 """
     VSIFGetRangeStatusL(VSILFILE * fp,
@@ -392,10 +362,9 @@ Return if a given file range contains data or holes filled with zeroes.
 ### Returns
 extent status: VSI_RANGE_STATUS_UNKNOWN, VSI_RANGE_STATUS_DATA or VSI_RANGE_STATUS_HOLE
 """
-function VSIFGetRangeStatusL(fp, nStart::vsi_l_offset, nLength::vsi_l_offset)
+function VSIFGetRangeStatusL(fp, nStart, nLength)
     ccall((:VSIFGetRangeStatusL, libgdal), VSIRangeStatus, (Ptr{VSILFILE}, vsi_l_offset, vsi_l_offset), fp, nStart, nLength)
 end
-
 
 """
     VSIIngestFile(VSILFILE * fp,
@@ -416,10 +385,9 @@ Ingest a file into memory.
 ### Returns
 TRUE in case of success.
 """
-function VSIIngestFile(fp, pszFilename, ppabyRet, pnSize, nMaxSize::GIntBig)
+function VSIIngestFile(fp, pszFilename, ppabyRet, pnSize, nMaxSize)
     ccall((:VSIIngestFile, libgdal), Cint, (Ptr{VSILFILE}, Cstring, Ptr{Ptr{GByte}}, Ptr{vsi_l_offset}, GIntBig), fp, pszFilename, ppabyRet, pnSize, nMaxSize)
 end
-
 
 """
     VSIStatL(const char * pszFilename,
@@ -438,7 +406,6 @@ function VSIStatL(arg1, arg2)
     ccall((:VSIStatL, libgdal), Cint, (Cstring, Ptr{VSIStatBufL}), arg1, arg2)
 end
 
-
 """
     VSIStatExL(const char * pszFilename,
                VSIStatBufL * psStatBuf,
@@ -454,10 +421,9 @@ Get filesystem object info.
 ### Returns
 0 on success or -1 on an error.
 """
-function VSIStatExL(pszFilename, psStatBuf, nFlags::Cint)
+function VSIStatExL(pszFilename, psStatBuf, nFlags)
     ccall((:VSIStatExL, libgdal), Cint, (Cstring, Ptr{VSIStatBufL}, Cint), pszFilename, psStatBuf, nFlags)
 end
-
 
 """
     VSIIsCaseSensitiveFS(const char * pszFilename) -> int
@@ -474,7 +440,6 @@ function VSIIsCaseSensitiveFS(pszFilename)
     ccall((:VSIIsCaseSensitiveFS, libgdal), Cint, (Cstring,), pszFilename)
 end
 
-
 """
     VSISupportsSparseFiles(const char * pszPath) -> int
 
@@ -490,6 +455,87 @@ function VSISupportsSparseFiles(pszPath)
     ccall((:VSISupportsSparseFiles, libgdal), Cint, (Cstring,), pszPath)
 end
 
+"""
+    VSIHasOptimizedReadMultiRange(const char * pszPath) -> int
+
+Returns if the filesystem supports efficient multi-range reading.
+
+### Parameters
+* **pszPath**: the path of the filesystem object to be tested. UTF-8 encoded.
+
+### Returns
+TRUE if the file system is known to have an efficient multi-range reading.
+"""
+function VSIHasOptimizedReadMultiRange(pszPath)
+    ccall((:VSIHasOptimizedReadMultiRange, libgdal), Cint, (Cstring,), pszPath)
+end
+
+"""
+    VSIGetActualURL(const char * pszFilename) -> const char *
+
+Returns the actual URL of a supplied filename.
+
+### Parameters
+* **pszFilename**: the path of the filesystem object. UTF-8 encoded.
+
+### Returns
+the actual URL corresponding to the supplied filename, or NULL. Should not be freed.
+"""
+function VSIGetActualURL(pszFilename)
+    ccall((:VSIGetActualURL, libgdal), Cstring, (Cstring,), pszFilename)
+end
+
+"""
+    VSIGetSignedURL(const char * pszFilename,
+                    CSLConstList papszOptions) -> char *
+
+Returns a signed URL of a supplied filename.
+
+### Parameters
+* **pszFilename**: the path of the filesystem object. UTF-8 encoded.
+* **papszOptions**: list of options, or NULL. Depend on file system handler. For /vsis3/, /vsigs/, /vsiaz/ and /vsioss/, the following options are supported: 
+
+START_DATE=YYMMDDTHHMMSSZ: date and time in UTC following ISO 8601 standard, corresponding to the start of validity of the URL. If not specified, current date time. 
+
+
+EXPIRATION_DELAY=number_of_seconds: number between 1 and 604800 (seven days) for the validity of the signed URL. Defaults to 3600 (one hour) 
+
+
+VERB=GET/HEAD/DELETE/PUT/POST: HTTP VERB for which the request will be used. Default to GET.
+
+### Returns
+a signed URL, or NULL. Should be freed with CPLFree().
+"""
+function VSIGetSignedURL(pszFilename, papszOptions)
+    ccall((:VSIGetSignedURL, libgdal), Cstring, (Cstring, CSLConstList), pszFilename, papszOptions)
+end
+
+"""
+    VSIGetFileSystemOptions(const char * pszFilename) -> const char *
+
+Return the list of options associated with a virtual file system handler as a serialized XML string.
+
+### Parameters
+* **pszFilename**: a filename, or prefix of a virtual file system handler.
+
+### Returns
+a string, which must not be freed, or NULL if no options is declared.
+"""
+function VSIGetFileSystemOptions(pszFilename)
+    ccall((:VSIGetFileSystemOptions, libgdal), Cstring, (Cstring,), pszFilename)
+end
+
+"""
+    VSIGetFileSystemsPrefixes(void) -> char **
+
+Return the list of prefixes for virtual file system handlers currently registered.
+
+### Returns
+a NULL terminated list of prefixes. Must be freed with CSLDestroy()
+"""
+function VSIGetFileSystemsPrefixes()
+    ccall((:VSIGetFileSystemsPrefixes, libgdal), Ptr{Cstring}, ())
+end
 
 """
     VSIFGetNativeFileDescriptorL(VSILFILE * fp) -> void *
@@ -506,7 +552,6 @@ function VSIFGetNativeFileDescriptorL(arg1)
     ccall((:VSIFGetNativeFileDescriptorL, libgdal), Ptr{Cvoid}, (Ptr{VSILFILE},), arg1)
 end
 
-
 """
     VSICalloc(size_t nCount,
               size_t nSize) -> void *
@@ -517,7 +562,6 @@ function VSICalloc()
     ccall((:VSICalloc, libgdal), Ptr{Cvoid}, ())
 end
 
-
 """
     VSIMalloc(size_t nSize) -> void *
 
@@ -526,7 +570,6 @@ Analog of malloc().
 function VSIMalloc()
     ccall((:VSIMalloc, libgdal), Ptr{Cvoid}, ())
 end
-
 
 """
     VSIFree(void * pData) -> void
@@ -537,17 +580,15 @@ function VSIFree(arg1)
     ccall((:VSIFree, libgdal), Cvoid, (Ptr{Cvoid},), arg1)
 end
 
-
 """
     VSIRealloc(void * pData,
                size_t nNewSize) -> void *
 
 Analog of realloc().
 """
-function VSIRealloc(arg1, size_t::Cint)
+function VSIRealloc(arg1, size_t)
     ccall((:VSIRealloc, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Cint), arg1, size_t)
 end
-
 
 """
     VSIStrdup(const char * pszString) -> char *
@@ -557,7 +598,6 @@ Analog of strdup().
 function VSIStrdup(arg1)
     ccall((:VSIStrdup, libgdal), Cstring, (Cstring,), arg1)
 end
-
 
 """
     VSIMallocAligned(size_t nAlignment,
@@ -572,10 +612,9 @@ Allocates a buffer with an alignment constraint.
 ### Returns
 a buffer aligned on nAlignment and of size nSize, or NULL
 """
-function VSIMallocAligned(nAlignment::Cint, nSize::Cint)
+function VSIMallocAligned(nAlignment, nSize)
     ccall((:VSIMallocAligned, libgdal), Ptr{Cvoid}, (Cint, Cint), nAlignment, nSize)
 end
-
 
 """
     VSIMallocAlignedAuto(size_t nSize) -> void *
@@ -588,10 +627,9 @@ Allocates a buffer with an alignment constraint such that it can be used by the 
 ### Returns
 an aligned buffer of size nSize, or NULL
 """
-function VSIMallocAlignedAuto(nSize::Cint)
+function VSIMallocAlignedAuto(nSize)
     ccall((:VSIMallocAlignedAuto, libgdal), Ptr{Cvoid}, (Cint,), nSize)
 end
-
 
 """
     VSIFreeAligned(void * ptr) -> void
@@ -605,7 +643,6 @@ function VSIFreeAligned(ptr)
     ccall((:VSIFreeAligned, libgdal), Cvoid, (Ptr{Cvoid},), ptr)
 end
 
-
 """
     VSIMallocAlignedAutoVerbose(size_t nSize,
                                 const char * pszFile,
@@ -613,10 +650,9 @@ end
 
 See VSIMallocAlignedAuto()
 """
-function VSIMallocAlignedAutoVerbose(nSize::Cint, pszFile, nLine::Cint)
+function VSIMallocAlignedAutoVerbose(nSize, pszFile, nLine)
     ccall((:VSIMallocAlignedAutoVerbose, libgdal), Ptr{Cvoid}, (Cint, Cstring, Cint), nSize, pszFile, nLine)
 end
-
 
 """
     VSIMalloc2(size_t nSize1,
@@ -624,10 +660,9 @@ end
 
 VSIMalloc2 allocates (nSize1 * nSize2) bytes.
 """
-function VSIMalloc2(nSize1::Cint, nSize2::Cint)
+function VSIMalloc2(nSize1, nSize2)
     ccall((:VSIMalloc2, libgdal), Ptr{Cvoid}, (Cint, Cint), nSize1, nSize2)
 end
-
 
 """
     VSIMalloc3(size_t nSize1,
@@ -636,10 +671,9 @@ end
 
 VSIMalloc3 allocates (nSize1 * nSize2 * nSize3) bytes.
 """
-function VSIMalloc3(nSize1::Cint, nSize2::Cint, nSize3::Cint)
+function VSIMalloc3(nSize1, nSize2, nSize3)
     ccall((:VSIMalloc3, libgdal), Ptr{Cvoid}, (Cint, Cint, Cint), nSize1, nSize2, nSize3)
 end
-
 
 """
     VSIMallocVerbose(size_t nSize,
@@ -648,10 +682,9 @@ end
 
 VSIMallocVerbose.
 """
-function VSIMallocVerbose(nSize::Cint, pszFile, nLine::Cint)
+function VSIMallocVerbose(nSize, pszFile, nLine)
     ccall((:VSIMallocVerbose, libgdal), Ptr{Cvoid}, (Cint, Cstring, Cint), nSize, pszFile, nLine)
 end
-
 
 """
     VSIMalloc2Verbose(size_t nSize1,
@@ -661,10 +694,9 @@ end
 
 VSIMalloc2Verbose.
 """
-function VSIMalloc2Verbose(nSize1::Cint, nSize2::Cint, pszFile, nLine::Cint)
+function VSIMalloc2Verbose(nSize1, nSize2, pszFile, nLine)
     ccall((:VSIMalloc2Verbose, libgdal), Ptr{Cvoid}, (Cint, Cint, Cstring, Cint), nSize1, nSize2, pszFile, nLine)
 end
-
 
 """
     VSIMalloc3Verbose(size_t nSize1,
@@ -675,10 +707,9 @@ end
 
 VSIMalloc3Verbose.
 """
-function VSIMalloc3Verbose(nSize1::Cint, nSize2::Cint, nSize3::Cint, pszFile, nLine::Cint)
+function VSIMalloc3Verbose(nSize1, nSize2, nSize3, pszFile, nLine)
     ccall((:VSIMalloc3Verbose, libgdal), Ptr{Cvoid}, (Cint, Cint, Cint, Cstring, Cint), nSize1, nSize2, nSize3, pszFile, nLine)
 end
-
 
 """
     VSICallocVerbose(size_t nCount,
@@ -688,10 +719,9 @@ end
 
 VSICallocVerbose.
 """
-function VSICallocVerbose(nCount::Cint, nSize::Cint, pszFile, nLine::Cint)
+function VSICallocVerbose(nCount, nSize, pszFile, nLine)
     ccall((:VSICallocVerbose, libgdal), Ptr{Cvoid}, (Cint, Cint, Cstring, Cint), nCount, nSize, pszFile, nLine)
 end
-
 
 """
     VSIReallocVerbose(void * pOldPtr,
@@ -701,10 +731,9 @@ end
 
 VSIReallocVerbose.
 """
-function VSIReallocVerbose(pOldPtr, nNewSize::Cint, pszFile, nLine::Cint)
+function VSIReallocVerbose(pOldPtr, nNewSize, pszFile, nLine)
     ccall((:VSIReallocVerbose, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Cint, Cstring, Cint), pOldPtr, nNewSize, pszFile, nLine)
 end
-
 
 """
     VSIStrdupVerbose(const char * pszStr,
@@ -713,10 +742,9 @@ end
 
 VSIStrdupVerbose.
 """
-function VSIStrdupVerbose(pszStr, pszFile, nLine::Cint)
+function VSIStrdupVerbose(pszStr, pszFile, nLine)
     ccall((:VSIStrdupVerbose, libgdal), Cstring, (Cstring, Cstring, Cint), pszStr, pszFile, nLine)
 end
-
 
 """
     CPLGetPhysicalRAM(void) -> GIntBig
@@ -730,7 +758,6 @@ function CPLGetPhysicalRAM()
     ccall((:CPLGetPhysicalRAM, libgdal), GIntBig, ())
 end
 
-
 """
     CPLGetUsablePhysicalRAM(void) -> GIntBig
 
@@ -742,7 +769,6 @@ the total physical RAM, usable by a process, in bytes (or 0 in case of failure).
 function CPLGetUsablePhysicalRAM()
     ccall((:CPLGetUsablePhysicalRAM, libgdal), GIntBig, ())
 end
-
 
 """
     VSIReadDir(const char * pszPath) -> char **
@@ -759,7 +785,6 @@ function VSIReadDir(arg1)
     ccall((:VSIReadDir, libgdal), Ptr{Cstring}, (Cstring,), arg1)
 end
 
-
 """
     VSIReadDirRecursive(const char * pszPathIn) -> char **
 
@@ -775,7 +800,6 @@ function VSIReadDirRecursive(pszPath)
     ccall((:VSIReadDirRecursive, libgdal), Ptr{Cstring}, (Cstring,), pszPath)
 end
 
-
 """
     VSIReadDirEx(const char * pszPath,
                  int nMaxFiles) -> char **
@@ -789,10 +813,55 @@ Read names in a directory.
 ### Returns
 The list of entries in the directory, or NULL if the directory doesn't exist. Filenames are returned in UTF-8 encoding.
 """
-function VSIReadDirEx(pszPath, nMaxFiles::Cint)
+function VSIReadDirEx(pszPath, nMaxFiles)
     ccall((:VSIReadDirEx, libgdal), Ptr{Cstring}, (Cstring, Cint), pszPath, nMaxFiles)
 end
 
+"""
+    VSIOpenDir(const char * pszPath,
+               int nRecurseDepth,
+               const char *const * papszOptions) -> VSIDIR *
+
+Open a directory to read its entries.
+
+### Parameters
+* **pszPath**: the relative, or absolute path of a directory to read. UTF-8 encoded.
+* **nRecurseDepth**: 0 means do not recurse in subdirectories, 1 means recurse only in the first level of subdirectories, etc. -1 means unlimited recursion level
+* **papszOptions**: NULL terminated list of options, or NULL.
+
+### Returns
+a handle, or NULL in case of error
+"""
+function VSIOpenDir(pszPath, nRecurseDepth, papszOptions)
+    ccall((:VSIOpenDir, libgdal), Ptr{VSIDIR}, (Cstring, Cint, Ptr{Cstring}), pszPath, nRecurseDepth, papszOptions)
+end
+
+"""
+    VSIGetNextDirEntry(VSIDIR * dir) -> const VSIDIREntry *
+
+Return the next entry of the directory.
+
+### Parameters
+* **dir**: Directory handled returned by VSIOpenDir(). Must not be NULL.
+
+### Returns
+a entry, or NULL if there is no more entry in the directory. This return value must not be freed.
+"""
+function VSIGetNextDirEntry(dir)
+    ccall((:VSIGetNextDirEntry, libgdal), Ptr{VSIDIREntry}, (Ptr{VSIDIR},), dir)
+end
+
+"""
+    VSICloseDir(VSIDIR * dir) -> void
+
+Close a directory.
+
+### Parameters
+* **dir**: Directory handled returned by VSIOpenDir().
+"""
+function VSICloseDir(dir)
+    ccall((:VSICloseDir, libgdal), Cvoid, (Ptr{VSIDIR},), dir)
+end
 
 """
     VSIMkdir(const char * pszPathname,
@@ -807,10 +876,26 @@ Create a directory.
 ### Returns
 0 on success or -1 on an error.
 """
-function VSIMkdir(pathname, mode::Clong)
-    ccall((:VSIMkdir, libgdal), Cint, (Cstring, Clong), pathname, mode)
+function VSIMkdir(pszPathname, mode)
+    ccall((:VSIMkdir, libgdal), Cint, (Cstring, Clong), pszPathname, mode)
 end
 
+"""
+    VSIMkdirRecursive(const char * pszPathname,
+                      long mode) -> int
+
+Create a directory and all its ancestors.
+
+### Parameters
+* **pszPathname**: the path to the directory to create. UTF-8 encoded.
+* **mode**: the permissions mode.
+
+### Returns
+0 on success or -1 on an error.
+"""
+function VSIMkdirRecursive(pszPathname, mode)
+    ccall((:VSIMkdirRecursive, libgdal), Cint, (Cstring, Clong), pszPathname, mode)
+end
 
 """
     VSIRmdir(const char * pszDirname) -> int
@@ -823,10 +908,21 @@ Delete a directory.
 ### Returns
 0 on success or -1 on an error.
 """
-function VSIRmdir(pathname)
-    ccall((:VSIRmdir, libgdal), Cint, (Cstring,), pathname)
+function VSIRmdir(pszDirname)
+    ccall((:VSIRmdir, libgdal), Cint, (Cstring,), pszDirname)
 end
 
+"""
+    VSIRmdirRecursive(const char * pszDirname) -> int
+
+Delete a directory recursively.
+
+### Returns
+0 on success or -1 on an error.
+"""
+function VSIRmdirRecursive(pszDirname)
+    ccall((:VSIRmdirRecursive, libgdal), Cint, (Cstring,), pszDirname)
+end
 
 """
     VSIUnlink(const char * pszFilename) -> int
@@ -839,10 +935,9 @@ Delete a file.
 ### Returns
 0 on success or -1 on an error.
 """
-function VSIUnlink(pathname)
-    ccall((:VSIUnlink, libgdal), Cint, (Cstring,), pathname)
+function VSIUnlink(pszFilename)
+    ccall((:VSIUnlink, libgdal), Cint, (Cstring,), pszFilename)
 end
-
 
 """
     VSIRename(const char * oldpath,
@@ -861,16 +956,46 @@ function VSIRename(oldpath, newpath)
     ccall((:VSIRename, libgdal), Cint, (Cstring, Cstring), oldpath, newpath)
 end
 
+"""
+    VSISync(const char * pszSource,
+            const char * pszTarget,
+            const char *const * papszOptions,
+            GDALProgressFunc pProgressFunc,
+            void * pProgressData,
+            char *** ppapszOutputs) -> int
+
+Synchronize a source file/directory with a target file/directory.
+
+### Parameters
+* **pszSource**: Source file or directory. UTF-8 encoded.
+* **pszTarget**: Target file or direcotry. UTF-8 encoded.
+* **papszOptions**: Null terminated list of options, or NULL. Currently accepted options are: 
+
+RECURSIVE=NO (the default is YES) 
+
+
+SYNC_STRATEGY=TIMESTAMP/ETAG. Determines which criterion is used to determine if a target file must be replaced when it already exists and has the same file size as the source. Only applies for a source or target being a network filesystem.
+The default is TIMESTAMP (similarly to how 'aws s3 sync' works), that is to say that for an upload operation, a remote file is replaced if it has a different size or if it is older than the source. For a download operation, a local file is replaced if it has a different size or if it is newer than the remote file.
+The ETAG strategy assumes that the ETag metadata of the remote file is the MD5Sum of the file content, which is only true in the case of /vsis3/ for files not using KMS server side encryption and uploaded in a single PUT operation (so smaller than 50 MB given the default used by GDAL). Only to be used for /vsis3/, /vsigs/ or other filesystems using a MD5Sum as ETAG.
+* **pProgressFunc**: Progress callback, or NULL.
+* **pProgressData**: User data of progress callback, or NULL.
+* **ppapszOutputs**: Unused. Should be set to NULL for now.
+
+### Returns
+TRUE on success or FALSE on an error.
+"""
+function VSISync(pszSource, pszTarget, papszOptions, pProgressFunc, pProgressData, ppapszOutputs)
+    ccall((:VSISync, libgdal), Cint, (Cstring, Cstring, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}, Ptr{Ptr{Cstring}}), pszSource, pszTarget, papszOptions, pProgressFunc, pProgressData, ppapszOutputs)
+end
 
 """
     VSIStrerror(int nErrno) -> char *
 
 Return the error string corresponding to the error number.
 """
-function VSIStrerror(arg1::Cint)
+function VSIStrerror(arg1)
     ccall((:VSIStrerror, libgdal), Cstring, (Cint,), arg1)
 end
-
 
 """
     VSIGetDiskFreeSpace(const char * pszDirname) -> GIntBig
@@ -887,7 +1012,6 @@ function VSIGetDiskFreeSpace(pszDirname)
     ccall((:VSIGetDiskFreeSpace, libgdal), GIntBig, (Cstring,), pszDirname)
 end
 
-
 """
     VSIInstallMemFileHandler(void) -> void
 
@@ -897,13 +1021,9 @@ function VSIInstallMemFileHandler()
     ccall((:VSIInstallMemFileHandler, libgdal), Cvoid, ())
 end
 
-
-"""
-"""
 function VSIInstallLargeFileHandler()
     ccall((:VSIInstallLargeFileHandler, libgdal), Cvoid, ())
 end
-
 
 """
     VSIInstallSubFileHandler() -> void
@@ -914,7 +1034,6 @@ function VSIInstallSubFileHandler()
     ccall((:VSIInstallSubFileHandler, libgdal), Cvoid, ())
 end
 
-
 """
     VSIInstallCurlFileHandler(void) -> void
 
@@ -923,7 +1042,6 @@ Install /vsicurl/ HTTP/FTP file system handler (requires libcurl)
 function VSIInstallCurlFileHandler()
     ccall((:VSIInstallCurlFileHandler, libgdal), Cvoid, ())
 end
-
 
 """
     VSICurlClearCache(void) -> void
@@ -934,6 +1052,17 @@ function VSICurlClearCache()
     ccall((:VSICurlClearCache, libgdal), Cvoid, ())
 end
 
+"""
+    VSICurlPartialClearCache(const char * pszFilenamePrefix) -> void
+
+Clean local cache associated with /vsicurl/ (and related file systems) for a given filename (and its subfiles and subdirectories if it is a directory)
+
+### Parameters
+* **pszFilenamePrefix**: Filename prefix
+"""
+function VSICurlPartialClearCache(pszFilenamePrefix)
+    ccall((:VSICurlPartialClearCache, libgdal), Cvoid, (Cstring,), pszFilenamePrefix)
+end
 
 """
     VSIInstallCurlStreamingFileHandler(void) -> void
@@ -941,7 +1070,6 @@ end
 function VSIInstallCurlStreamingFileHandler()
     ccall((:VSIInstallCurlStreamingFileHandler, libgdal), Cvoid, ())
 end
-
 
 """
     VSIInstallS3FileHandler(void) -> void
@@ -952,14 +1080,12 @@ function VSIInstallS3FileHandler()
     ccall((:VSIInstallS3FileHandler, libgdal), Cvoid, ())
 end
 
-
 """
     VSIInstallS3StreamingFileHandler(void) -> void
 """
 function VSIInstallS3StreamingFileHandler()
     ccall((:VSIInstallS3StreamingFileHandler, libgdal), Cvoid, ())
 end
-
 
 """
     VSIInstallGSFileHandler(void) -> void
@@ -970,7 +1096,6 @@ function VSIInstallGSFileHandler()
     ccall((:VSIInstallGSFileHandler, libgdal), Cvoid, ())
 end
 
-
 """
     VSIInstallGSStreamingFileHandler(void) -> void
 """
@@ -978,6 +1103,53 @@ function VSIInstallGSStreamingFileHandler()
     ccall((:VSIInstallGSStreamingFileHandler, libgdal), Cvoid, ())
 end
 
+"""
+    VSIInstallAzureFileHandler(void) -> void
+
+Install /vsiaz/ Microsoft Azure Blob file system handler (requires libcurl)
+"""
+function VSIInstallAzureFileHandler()
+    ccall((:VSIInstallAzureFileHandler, libgdal), Cvoid, ())
+end
+
+"""
+    VSIInstallAzureStreamingFileHandler(void) -> void
+"""
+function VSIInstallAzureStreamingFileHandler()
+    ccall((:VSIInstallAzureStreamingFileHandler, libgdal), Cvoid, ())
+end
+
+"""
+    VSIInstallOSSFileHandler(void) -> void
+
+Install /vsioss/ Alibaba Cloud Object Storage Service (OSS) file system handler (requires libcurl)
+"""
+function VSIInstallOSSFileHandler()
+    ccall((:VSIInstallOSSFileHandler, libgdal), Cvoid, ())
+end
+
+"""
+    VSIInstallOSSStreamingFileHandler(void) -> void
+"""
+function VSIInstallOSSStreamingFileHandler()
+    ccall((:VSIInstallOSSStreamingFileHandler, libgdal), Cvoid, ())
+end
+
+"""
+    VSIInstallSwiftFileHandler(void) -> void
+
+Install /vsiswift/ OpenStack Swif Object Storage (Swift) file system handler (requires libcurl)
+"""
+function VSIInstallSwiftFileHandler()
+    ccall((:VSIInstallSwiftFileHandler, libgdal), Cvoid, ())
+end
+
+"""
+    VSIInstallSwiftStreamingFileHandler(void) -> void
+"""
+function VSIInstallSwiftStreamingFileHandler()
+    ccall((:VSIInstallSwiftStreamingFileHandler, libgdal), Cvoid, ())
+end
 
 """
     VSIInstallGZipFileHandler() -> void
@@ -988,7 +1160,6 @@ function VSIInstallGZipFileHandler()
     ccall((:VSIInstallGZipFileHandler, libgdal), Cvoid, ())
 end
 
-
 """
     VSIInstallZipFileHandler() -> void
 
@@ -997,7 +1168,6 @@ Install ZIP file system handler.
 function VSIInstallZipFileHandler()
     ccall((:VSIInstallZipFileHandler, libgdal), Cvoid, ())
 end
-
 
 """
     VSIInstallStdinHandler() -> void
@@ -1008,6 +1178,23 @@ function VSIInstallStdinHandler()
     ccall((:VSIInstallStdinHandler, libgdal), Cvoid, ())
 end
 
+"""
+    VSIInstallHdfsHandler() -> void
+
+Install /vsihdfs/ file system handler (requires JVM and HDFS support)
+"""
+function VSIInstallHdfsHandler()
+    ccall((:VSIInstallHdfsHandler, libgdal), Cvoid, ())
+end
+
+"""
+    VSIInstallWebHdfsHandler(void) -> void
+
+Install /vsiwebhdfs/ WebHDFS (Hadoop File System) REST API file system handler (requires libcurl)
+"""
+function VSIInstallWebHdfsHandler()
+    ccall((:VSIInstallWebHdfsHandler, libgdal), Cvoid, ())
+end
 
 """
     VSIInstallStdoutHandler() -> void
@@ -1018,7 +1205,6 @@ function VSIInstallStdoutHandler()
     ccall((:VSIInstallStdoutHandler, libgdal), Cvoid, ())
 end
 
-
 """
     VSIInstallSparseFileHandler() -> void
 
@@ -1027,7 +1213,6 @@ Install /vsisparse/ virtual file handler.
 function VSIInstallSparseFileHandler()
     ccall((:VSIInstallSparseFileHandler, libgdal), Cvoid, ())
 end
-
 
 """
     VSIInstallTarFileHandler(void) -> void
@@ -1038,7 +1223,6 @@ function VSIInstallTarFileHandler()
     ccall((:VSIInstallTarFileHandler, libgdal), Cvoid, ())
 end
 
-
 """
     VSIInstallCryptFileHandler() -> void
 
@@ -1047,7 +1231,6 @@ Install /vsicrypt/ encrypted file system handler (requires libcrypto++)
 function VSIInstallCryptFileHandler()
     ccall((:VSIInstallCryptFileHandler, libgdal), Cvoid, ())
 end
-
 
 """
     VSISetCryptKey(const GByte * pabyKey,
@@ -1059,17 +1242,13 @@ Installs the encryption/decryption key.
 * **pabyKey**: key. Might be NULL to clear previously set key.
 * **nKeySize**: length of the key in bytes. Might be 0 to clear previously set key.
 """
-function VSISetCryptKey(pabyKey, nKeySize::Cint)
+function VSISetCryptKey(pabyKey, nKeySize)
     ccall((:VSISetCryptKey, libgdal), Cvoid, (Ptr{GByte}, Cint), pabyKey, nKeySize)
 end
 
-
-"""
-"""
 function VSICleanupFileManager()
     ccall((:VSICleanupFileManager, libgdal), Cvoid, ())
 end
-
 
 """
     VSIFileFromMemBuffer(const char * pszFilename,
@@ -1088,10 +1267,9 @@ Create memory "file" from a buffer.
 ### Returns
 open file handle on created file (see VSIFOpenL()).
 """
-function VSIFileFromMemBuffer(pszFilename, pabyData, nDataLength::vsi_l_offset, bTakeOwnership::Cint)
+function VSIFileFromMemBuffer(pszFilename, pabyData, nDataLength, bTakeOwnership)
     ccall((:VSIFileFromMemBuffer, libgdal), Ptr{VSILFILE}, (Cstring, Ptr{GByte}, vsi_l_offset, Cint), pszFilename, pabyData, nDataLength, bTakeOwnership)
 end
-
 
 """
     VSIGetMemFileBuffer(const char * pszFilename,
@@ -1108,10 +1286,9 @@ Fetch buffer underlying memory file.
 ### Returns
 pointer to memory buffer or NULL on failure.
 """
-function VSIGetMemFileBuffer(pszFilename, pnDataLength, bUnlinkAndSeize::Cint)
+function VSIGetMemFileBuffer(pszFilename, pnDataLength, bUnlinkAndSeize)
     ccall((:VSIGetMemFileBuffer, libgdal), Ptr{GByte}, (Cstring, Ptr{vsi_l_offset}, Cint), pszFilename, pnDataLength, bUnlinkAndSeize)
 end
-
 
 """
     VSIStdoutSetRedirection(VSIWriteFunction pFct,
@@ -1123,10 +1300,37 @@ Set an alternative write function and output file handle instead of fwrite() / s
 * **pFct**: Function with same signature as fwrite()
 * **stream**: File handle on which to output. Passed to pFct.
 """
-function VSIStdoutSetRedirection(pFct::Cint, stream)
-    ccall((:VSIStdoutSetRedirection, libgdal), Cvoid, (Cint, Ptr{FILE}), pFct, stream)
+function VSIStdoutSetRedirection(pFct, stream)
+    ccall((:VSIStdoutSetRedirection, libgdal), Cvoid, (Cint, Ptr{Cint}), pFct, stream)
 end
 
+"""
+    VSIAllocFilesystemPluginCallbacksStruct(void) -> VSIFilesystemPluginCallbacksStruct *
+
+return a VSIFilesystemPluginCallbacksStruct to be populated at runtime with handler callbacks
+"""
+function VSIAllocFilesystemPluginCallbacksStruct()
+    ccall((:VSIAllocFilesystemPluginCallbacksStruct, libgdal), Ptr{VSIFilesystemPluginCallbacksStruct}, ())
+end
+
+"""
+    VSIFreeFilesystemPluginCallbacksStruct(VSIFilesystemPluginCallbacksStruct * poCb) -> void
+
+free resources allocated by VSIAllocFilesystemPluginCallbacksStruct
+"""
+function VSIFreeFilesystemPluginCallbacksStruct(poCb)
+    ccall((:VSIFreeFilesystemPluginCallbacksStruct, libgdal), Cvoid, (Ptr{VSIFilesystemPluginCallbacksStruct},), poCb)
+end
+
+"""
+    VSIInstallPluginHandler(const char * pszPrefix,
+                            const VSIFilesystemPluginCallbacksStruct * poCb) -> int
+
+register a handler on the given prefix.
+"""
+function VSIInstallPluginHandler(pszPrefix, poCb)
+    ccall((:VSIInstallPluginHandler, libgdal), Cint, (Cstring, Ptr{VSIFilesystemPluginCallbacksStruct}), pszPrefix, poCb)
+end
 
 """
     VSITime(unsigned long * pnTimeToSet) -> unsigned long
@@ -1135,28 +1339,25 @@ function VSITime(arg1)
     ccall((:VSITime, libgdal), Culong, (Ptr{Culong},), arg1)
 end
 
-
 """
     VSICTime(unsigned long nTime) -> const char *
 """
-function VSICTime(arg1::Culong)
+function VSICTime(arg1)
     ccall((:VSICTime, libgdal), Cstring, (Culong,), arg1)
 end
-
 
 """
     VSIGMTime(const time_t * pnTime,
               struct tm * poBrokenTime) -> struct tm *
 """
 function VSIGMTime(pnTime, poBrokenTime)
-    ccall((:VSIGMTime, libgdal), Ptr{Cvoid}, (Ptr{time_t}, Ptr{Cvoid}), pnTime, poBrokenTime)
+    ccall((:VSIGMTime, libgdal), Ptr{Ctm}, (Ptr{Cint}, Ptr{Ctm}), pnTime, poBrokenTime)
 end
-
 
 """
     VSILocalTime(const time_t * pnTime,
                  struct tm * poBrokenTime) -> struct tm *
 """
 function VSILocalTime(pnTime, poBrokenTime)
-    ccall((:VSILocalTime, libgdal), Ptr{Cvoid}, (Ptr{time_t}, Ptr{Cvoid}), pnTime, poBrokenTime)
+    ccall((:VSILocalTime, libgdal), Ptr{Ctm}, (Ptr{Cint}, Ptr{Ctm}), pnTime, poBrokenTime)
 end
