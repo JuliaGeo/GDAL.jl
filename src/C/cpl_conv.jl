@@ -1,7 +1,5 @@
-# Julia wrapper for header: /usr/local/include/cpl_conv.h
-# Automatically generated using Clang.jl wrap_c, version 0.0.0
-
-
+# Julia wrapper for header: cpl_conv.h
+# Automatically generated using Clang.jl
 
 """
     CPLVerifyConfiguration() -> void
@@ -9,7 +7,6 @@
 function CPLVerifyConfiguration()
     ccall((:CPLVerifyConfiguration, libgdal), Cvoid, ())
 end
-
 
 """
     CPLGetConfigOption(const char * pszKey,
@@ -28,7 +25,6 @@ function CPLGetConfigOption(arg1, arg2)
     ccall((:CPLGetConfigOption, libgdal), Cstring, (Cstring, Cstring), arg1, arg2)
 end
 
-
 """
     CPLGetThreadLocalConfigOption(const char * pszKey,
                                   const char * pszDefault) -> const char *
@@ -38,7 +34,6 @@ Same as CPLGetConfigOption() but only with options set with CPLSetThreadLocalCon
 function CPLGetThreadLocalConfigOption(arg1, arg2)
     ccall((:CPLGetThreadLocalConfigOption, libgdal), Cstring, (Cstring, Cstring), arg1, arg2)
 end
-
 
 """
     CPLSetConfigOption(const char * pszKey,
@@ -54,7 +49,6 @@ function CPLSetConfigOption(arg1, arg2)
     ccall((:CPLSetConfigOption, libgdal), Cvoid, (Cstring, Cstring), arg1, arg2)
 end
 
-
 """
     CPLSetThreadLocalConfigOption(const char * pszKey,
                                   const char * pszValue) -> void
@@ -69,14 +63,12 @@ function CPLSetThreadLocalConfigOption(pszKey, pszValue)
     ccall((:CPLSetThreadLocalConfigOption, libgdal), Cvoid, (Cstring, Cstring), pszKey, pszValue)
 end
 
-
 """
     CPLFreeConfig() -> void
 """
 function CPLFreeConfig()
     ccall((:CPLFreeConfig, libgdal), Cvoid, ())
 end
-
 
 """
     CPLGetConfigOptions(void) -> char **
@@ -90,7 +82,6 @@ function CPLGetConfigOptions()
     ccall((:CPLGetConfigOptions, libgdal), Ptr{Cstring}, ())
 end
 
-
 """
     CPLSetConfigOptions(const char *const * papszConfigOptions) -> void
 
@@ -102,7 +93,6 @@ Replace the full list of configuration options with the passed list of KEY=VALUE
 function CPLSetConfigOptions(papszConfigOptions)
     ccall((:CPLSetConfigOptions, libgdal), Cvoid, (Ptr{Cstring},), papszConfigOptions)
 end
-
 
 """
     CPLGetThreadLocalConfigOptions(void) -> char **
@@ -116,7 +106,6 @@ function CPLGetThreadLocalConfigOptions()
     ccall((:CPLGetThreadLocalConfigOptions, libgdal), Ptr{Cstring}, ())
 end
 
-
 """
     CPLSetThreadLocalConfigOptions(const char *const * papszConfigOptions) -> void
 
@@ -129,7 +118,6 @@ function CPLSetThreadLocalConfigOptions(papszConfigOptions)
     ccall((:CPLSetThreadLocalConfigOptions, libgdal), Cvoid, (Ptr{Cstring},), papszConfigOptions)
 end
 
-
 """
     CPLMalloc(size_t nSize) -> void *
 
@@ -141,10 +129,9 @@ Safe version of malloc().
 ### Returns
 pointer to newly allocated memory, only NULL if nSize is zero.
 """
-function CPLMalloc(arg1::Csize_t)
+function CPLMalloc(arg1)
     ccall((:CPLMalloc, libgdal), Ptr{Cvoid}, (Csize_t,), arg1)
 end
-
 
 """
     CPLCalloc(size_t nCount,
@@ -159,10 +146,9 @@ Safe version of calloc().
 ### Returns
 pointer to newly allocated memory, only NULL if nSize * nCount is NULL.
 """
-function CPLCalloc(arg1::Csize_t, arg2::Csize_t)
+function CPLCalloc(arg1, arg2)
     ccall((:CPLCalloc, libgdal), Ptr{Cvoid}, (Csize_t, Csize_t), arg1, arg2)
 end
-
 
 """
     CPLRealloc(void * pData,
@@ -177,10 +163,9 @@ Safe version of realloc().
 ### Returns
 pointer to allocated memory, only NULL if nNewSize is zero.
 """
-function CPLRealloc(arg1, arg2::Csize_t)
+function CPLRealloc(arg1, arg2)
     ccall((:CPLRealloc, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t), arg1, arg2)
 end
-
 
 """
     CPLStrdup(const char * pszString) -> char *
@@ -197,7 +182,6 @@ function CPLStrdup(arg1)
     ccall((:CPLStrdup, libgdal), Cstring, (Cstring,), arg1)
 end
 
-
 """
     CPLStrlwr(char * pszString) -> char *
 
@@ -212,7 +196,6 @@ pointer to the same string, pszString.
 function CPLStrlwr(arg1)
     ccall((:CPLStrlwr, libgdal), Cstring, (Cstring,), arg1)
 end
-
 
 """
     CPLFGets(char * pszBuffer,
@@ -229,10 +212,9 @@ Reads in at most one less than nBufferSize characters from the fp stream and sto
 ### Returns
 pointer to the pszBuffer containing a string read from the file or NULL if the error or end of file was encountered.
 """
-function CPLFGets(arg1, arg2::Cint, arg3)
-    ccall((:CPLFGets, libgdal), Cstring, (Cstring, Cint, Ptr{FILE}), arg1, arg2, arg3)
+function CPLFGets(arg1, arg2, arg3)
+    ccall((:CPLFGets, libgdal), Cstring, (Cstring, Cint, Ptr{Cint}), arg1, arg2, arg3)
 end
-
 
 """
     CPLReadLine(FILE * fp) -> const char *
@@ -246,9 +228,8 @@ Simplified line reading from text file.
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered.
 """
 function CPLReadLine(arg1)
-    ccall((:CPLReadLine, libgdal), Cstring, (Ptr{FILE},), arg1)
+    ccall((:CPLReadLine, libgdal), Cstring, (Ptr{Cint},), arg1)
 end
-
 
 """
     CPLReadLineL(VSILFILE * fp) -> const char *
@@ -265,11 +246,10 @@ function CPLReadLineL(arg1)
     ccall((:CPLReadLineL, libgdal), Cstring, (Ptr{VSILFILE},), arg1)
 end
 
-
 """
     CPLReadLine2L(VSILFILE * fp,
                   int nMaxCars,
-                  const char *const * papszOptions) -> const char *
+                  CSLConstList papszOptions) -> const char *
 
 Simplified line reading from text file.
 
@@ -281,10 +261,30 @@ Simplified line reading from text file.
 ### Returns
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered or the maximum number of characters allowed reached.
 """
-function CPLReadLine2L(arg1, nMaxCols::Cint, papszOptions)
-    ccall((:CPLReadLine2L, libgdal), Cstring, (Ptr{VSILFILE}, Cint, Ptr{Cstring}), arg1, nMaxCols, papszOptions)
+function CPLReadLine2L(arg1, arg2, arg3)
+    ccall((:CPLReadLine2L, libgdal), Cstring, (Ptr{VSILFILE}, Cint, CSLConstList), arg1, arg2, arg3)
 end
 
+"""
+    CPLReadLine3L(VSILFILE * fp,
+                  int nMaxCars,
+                  int * pnBufLength,
+                  CSLConstList papszOptions) -> const char *
+
+Simplified line reading from text file.
+
+### Parameters
+* **fp**: file pointer opened with VSIFOpenL().
+* **nMaxCars**: maximum number of characters allowed, or -1 for no limit.
+* **papszOptions**: NULL-terminated array of options. Unused for now.
+* **pnBufLength**: size of output string (must be non-NULL)
+
+### Returns
+pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered or the maximum number of characters allowed reached.
+"""
+function CPLReadLine3L(arg1, arg2, arg3, arg4)
+    ccall((:CPLReadLine3L, libgdal), Cstring, (Ptr{VSILFILE}, Cint, Ptr{Cint}, CSLConstList), arg1, arg2, arg3, arg4)
+end
 
 """
     CPLAtof(const char *) -> double
@@ -301,7 +301,6 @@ function CPLAtof(arg1)
     ccall((:CPLAtof, libgdal), Cdouble, (Cstring,), arg1)
 end
 
-
 """
     CPLAtofDelim(const char *,
                  char) -> double
@@ -315,10 +314,9 @@ Converts ASCII string to floating point number.
 ### Returns
 Converted value, if any.
 """
-function CPLAtofDelim(arg1, arg2::UInt8)
+function CPLAtofDelim(arg1, arg2)
     ccall((:CPLAtofDelim, libgdal), Cdouble, (Cstring, UInt8), arg1, arg2)
 end
-
 
 """
     CPLStrtod(const char *,
@@ -337,7 +335,6 @@ function CPLStrtod(arg1, arg2)
     ccall((:CPLStrtod, libgdal), Cdouble, (Cstring, Ptr{Cstring}), arg1, arg2)
 end
 
-
 """
     CPLStrtodDelim(const char *,
                    char **,
@@ -353,10 +350,9 @@ Converts ASCII string to floating point number using specified delimiter.
 ### Returns
 Converted value, if any.
 """
-function CPLStrtodDelim(arg1, arg2, arg3::UInt8)
+function CPLStrtodDelim(arg1, arg2, arg3)
     ccall((:CPLStrtodDelim, libgdal), Cdouble, (Cstring, Ptr{Cstring}, UInt8), arg1, arg2, arg3)
 end
-
 
 """
     CPLStrtof(const char *,
@@ -375,7 +371,6 @@ function CPLStrtof(arg1, arg2)
     ccall((:CPLStrtof, libgdal), Cfloat, (Cstring, Ptr{Cstring}), arg1, arg2)
 end
 
-
 """
     CPLStrtofDelim(const char *,
                    char **,
@@ -391,10 +386,9 @@ Converts ASCII string to floating point number using specified delimiter.
 ### Returns
 Converted value, if any.
 """
-function CPLStrtofDelim(arg1, arg2, arg3::UInt8)
+function CPLStrtofDelim(arg1, arg2, arg3)
     ccall((:CPLStrtofDelim, libgdal), Cfloat, (Cstring, Ptr{Cstring}, UInt8), arg1, arg2, arg3)
 end
-
 
 """
     CPLAtofM(const char *) -> double
@@ -410,7 +404,6 @@ Converted value, if any. Zero on failure.
 function CPLAtofM(arg1)
     ccall((:CPLAtofM, libgdal), Cdouble, (Cstring,), arg1)
 end
-
 
 """
     CPLScanString(const char * pszString,
@@ -429,10 +422,9 @@ Scan up to a maximum number of characters from a given string, allocate a buffer
 ### Returns
 Pointer to the resulting string buffer. Caller responsible to free this buffer with CPLFree().
 """
-function CPLScanString(arg1, arg2::Cint, arg3::Cint, arg4::Cint)
+function CPLScanString(arg1, arg2, arg3, arg4)
     ccall((:CPLScanString, libgdal), Cstring, (Cstring, Cint, Cint, Cint), arg1, arg2, arg3, arg4)
 end
-
 
 """
     CPLScanDouble(const char * pszString,
@@ -447,10 +439,9 @@ Extract double from string.
 ### Returns
 Double value, converted from its ASCII form.
 """
-function CPLScanDouble(arg1, arg2::Cint)
+function CPLScanDouble(arg1, arg2)
     ccall((:CPLScanDouble, libgdal), Cdouble, (Cstring, Cint), arg1, arg2)
 end
-
 
 """
     CPLScanLong(const char * pszString,
@@ -465,10 +456,9 @@ Scan up to a maximum number of characters from a string and convert the result t
 ### Returns
 Long value, converted from its ASCII form.
 """
-function CPLScanLong(arg1, arg2::Cint)
+function CPLScanLong(arg1, arg2)
     ccall((:CPLScanLong, libgdal), Clong, (Cstring, Cint), arg1, arg2)
 end
-
 
 """
     CPLScanULong(const char * pszString,
@@ -483,10 +473,9 @@ Scan up to a maximum number of characters from a string and convert the result t
 ### Returns
 Unsigned long value, converted from its ASCII form.
 """
-function CPLScanULong(arg1, arg2::Cint)
+function CPLScanULong(arg1, arg2)
     ccall((:CPLScanULong, libgdal), Culong, (Cstring, Cint), arg1, arg2)
 end
-
 
 """
     CPLScanUIntBig(const char * pszString,
@@ -501,10 +490,9 @@ Extract big integer from string.
 ### Returns
 GUIntBig value, converted from its ASCII form.
 """
-function CPLScanUIntBig(arg1, arg2::Cint)
+function CPLScanUIntBig(arg1, arg2)
     ccall((:CPLScanUIntBig, libgdal), GUIntBig, (Cstring, Cint), arg1, arg2)
 end
-
 
 """
     CPLAtoGIntBig(const char * pszString) -> GIntBig
@@ -521,7 +509,6 @@ function CPLAtoGIntBig(pszString)
     ccall((:CPLAtoGIntBig, libgdal), GIntBig, (Cstring,), pszString)
 end
 
-
 """
     CPLAtoGIntBigEx(const char * pszString,
                     int bWarn,
@@ -537,10 +524,9 @@ Convert a string to a 64 bit signed integer.
 ### Returns
 64 bit signed integer.
 """
-function CPLAtoGIntBigEx(pszString, bWarn::Cint, pbOverflow)
+function CPLAtoGIntBigEx(pszString, bWarn, pbOverflow)
     ccall((:CPLAtoGIntBigEx, libgdal), GIntBig, (Cstring, Cint, Ptr{Cint}), pszString, bWarn, pbOverflow)
 end
-
 
 """
     CPLScanPointer(const char * pszString,
@@ -555,17 +541,16 @@ Extract pointer from string.
 ### Returns
 pointer value, converted from its ASCII form.
 """
-function CPLScanPointer(arg1, arg2::Cint)
+function CPLScanPointer(arg1, arg2)
     ccall((:CPLScanPointer, libgdal), Ptr{Cvoid}, (Cstring, Cint), arg1, arg2)
 end
-
 
 """
     CPLPrintString(char * pszDest,
                    const char * pszSrc,
                    int nMaxLen) -> int
 
-Copy the string pointed to by pszSrc, NOT including the terminating `\0' character, to the array pointed to by pszDest.
+Copy the string pointed to by pszSrc, NOT including the terminating \0 character, to the array pointed to by pszDest.
 
 ### Parameters
 * **pszDest**: Pointer to the destination string buffer. Should be large enough to hold the resulting string.
@@ -575,17 +560,16 @@ Copy the string pointed to by pszSrc, NOT including the terminating `\0' charact
 ### Returns
 Number of characters printed.
 """
-function CPLPrintString(arg1, arg2, arg3::Cint)
+function CPLPrintString(arg1, arg2, arg3)
     ccall((:CPLPrintString, libgdal), Cint, (Cstring, Cstring, Cint), arg1, arg2, arg3)
 end
-
 
 """
     CPLPrintStringFill(char * pszDest,
                        const char * pszSrc,
                        int nMaxLen) -> int
 
-Copy the string pointed to by pszSrc, NOT including the terminating `\0' character, to the array pointed to by pszDest.
+Copy the string pointed to by pszSrc, NOT including the terminating \0 character, to the array pointed to by pszDest.
 
 ### Parameters
 * **pszDest**: Pointer to the destination string buffer. Should be large enough to hold the resulting string.
@@ -595,10 +579,9 @@ Copy the string pointed to by pszSrc, NOT including the terminating `\0' charact
 ### Returns
 Number of characters printed.
 """
-function CPLPrintStringFill(arg1, arg2, arg3::Cint)
+function CPLPrintStringFill(arg1, arg2, arg3)
     ccall((:CPLPrintStringFill, libgdal), Cint, (Cstring, Cstring, Cint), arg1, arg2, arg3)
 end
-
 
 """
     CPLPrintInt32(char * pszBuffer,
@@ -615,10 +598,9 @@ Print GInt32 value into specified string buffer.
 ### Returns
 Number of characters printed.
 """
-function CPLPrintInt32(arg1, arg2::GInt32, arg3::Cint)
+function CPLPrintInt32(arg1, arg2, arg3)
     ccall((:CPLPrintInt32, libgdal), Cint, (Cstring, GInt32, Cint), arg1, arg2, arg3)
 end
-
 
 """
     CPLPrintUIntBig(char * pszBuffer,
@@ -635,10 +617,9 @@ Print GUIntBig value into specified string buffer.
 ### Returns
 Number of characters printed.
 """
-function CPLPrintUIntBig(arg1, arg2::GUIntBig, arg3::Cint)
+function CPLPrintUIntBig(arg1, arg2, arg3)
     ccall((:CPLPrintUIntBig, libgdal), Cint, (Cstring, GUIntBig, Cint), arg1, arg2, arg3)
 end
-
 
 """
     CPLPrintDouble(char * pszBuffer,
@@ -657,10 +638,9 @@ Print double value into specified string buffer.
 ### Returns
 Number of characters printed.
 """
-function CPLPrintDouble(arg1, arg2, arg3::Cdouble, arg4)
+function CPLPrintDouble(arg1, arg2, arg3, arg4)
     ccall((:CPLPrintDouble, libgdal), Cint, (Cstring, Cstring, Cdouble, Cstring), arg1, arg2, arg3, arg4)
 end
-
 
 """
     CPLPrintTime(char * pszBuffer,
@@ -681,10 +661,9 @@ Print specified time value accordingly to the format options and specified local
 ### Returns
 Number of characters printed.
 """
-function CPLPrintTime(arg1, arg2::Cint, arg3, arg4, arg5)
-    ccall((:CPLPrintTime, libgdal), Cint, (Cstring, Cint, Cstring, Ptr{Cvoid}, Cstring), arg1, arg2, arg3, arg4, arg5)
+function CPLPrintTime(arg1, arg2, arg3, arg4, arg5)
+    ccall((:CPLPrintTime, libgdal), Cint, (Cstring, Cint, Cstring, Ptr{Ctm}, Cstring), arg1, arg2, arg3, arg4, arg5)
 end
-
 
 """
     CPLPrintPointer(char * pszBuffer,
@@ -701,10 +680,9 @@ Print pointer value into specified string buffer.
 ### Returns
 Number of characters printed.
 """
-function CPLPrintPointer(arg1, arg2, arg3::Cint)
+function CPLPrintPointer(arg1, arg2, arg3)
     ccall((:CPLPrintPointer, libgdal), Cint, (Cstring, Ptr{Cvoid}, Cint), arg1, arg2, arg3)
 end
-
 
 """
     CPLGetSymbol(const char * pszLibrary,
@@ -723,7 +701,6 @@ function CPLGetSymbol(arg1, arg2)
     ccall((:CPLGetSymbol, libgdal), Ptr{Cvoid}, (Cstring, Cstring), arg1, arg2)
 end
 
-
 """
     CPLGetExecPath(char * pszPathBuf,
                    int nMaxLength) -> int
@@ -737,10 +714,9 @@ Fetch path of executable.
 ### Returns
 FALSE on failure or TRUE on success.
 """
-function CPLGetExecPath(pszPathBuf, nMaxLength::Cint)
+function CPLGetExecPath(pszPathBuf, nMaxLength)
     ccall((:CPLGetExecPath, libgdal), Cint, (Cstring, Cint), pszPathBuf, nMaxLength)
 end
-
 
 """
     CPLGetPath(const char *) -> const char *
@@ -757,7 +733,6 @@ function CPLGetPath(arg1)
     ccall((:CPLGetPath, libgdal), Cstring, (Cstring,), arg1)
 end
 
-
 """
     CPLGetDirname(const char *) -> const char *
 
@@ -772,7 +747,6 @@ Path in an internal string which must not be freed. The string may be destroyed 
 function CPLGetDirname(arg1)
     ccall((:CPLGetDirname, libgdal), Cstring, (Cstring,), arg1)
 end
-
 
 """
     CPLGetFilename(const char *) -> const char *
@@ -789,7 +763,6 @@ function CPLGetFilename(arg1)
     ccall((:CPLGetFilename, libgdal), Cstring, (Cstring,), arg1)
 end
 
-
 """
     CPLGetBasename(const char *) -> const char *
 
@@ -804,7 +777,6 @@ just the non-directory, non-extension portion of the path in an internal string 
 function CPLGetBasename(arg1)
     ccall((:CPLGetBasename, libgdal), Cstring, (Cstring,), arg1)
 end
-
 
 """
     CPLGetExtension(const char *) -> const char *
@@ -821,7 +793,6 @@ function CPLGetExtension(arg1)
     ccall((:CPLGetExtension, libgdal), Cstring, (Cstring,), arg1)
 end
 
-
 """
     CPLGetCurrentDir(void) -> char *
 
@@ -833,7 +804,6 @@ a pointer to buffer, containing current working directory path or NULL in case o
 function CPLGetCurrentDir()
     ccall((:CPLGetCurrentDir, libgdal), Cstring, ())
 end
-
 
 """
     CPLFormFilename(const char * pszPath,
@@ -854,7 +824,6 @@ function CPLFormFilename(pszPath, pszBasename, pszExtension)
     ccall((:CPLFormFilename, libgdal), Cstring, (Cstring, Cstring, Cstring), pszPath, pszBasename, pszExtension)
 end
 
-
 """
     CPLFormCIFilename(const char * pszPath,
                       const char * pszBasename,
@@ -874,7 +843,6 @@ function CPLFormCIFilename(pszPath, pszBasename, pszExtension)
     ccall((:CPLFormCIFilename, libgdal), Cstring, (Cstring, Cstring, Cstring), pszPath, pszBasename, pszExtension)
 end
 
-
 """
     CPLResetExtension(const char *,
                       const char *) -> const char *
@@ -891,7 +859,6 @@ an altered filename with the new extension. Do not modify or free the returned s
 function CPLResetExtension(arg1, arg2)
     ccall((:CPLResetExtension, libgdal), Cstring, (Cstring, Cstring), arg1, arg2)
 end
-
 
 """
     CPLProjectRelativeFilename(const char * pszProjectDir,
@@ -910,7 +877,6 @@ function CPLProjectRelativeFilename(pszProjectDir, pszSecondaryFilename)
     ccall((:CPLProjectRelativeFilename, libgdal), Cstring, (Cstring, Cstring), pszProjectDir, pszSecondaryFilename)
 end
 
-
 """
     CPLIsFilenameRelative(const char * pszFilename) -> int
 
@@ -925,7 +891,6 @@ TRUE if the filename is relative or FALSE if it is absolute.
 function CPLIsFilenameRelative(pszFilename)
     ccall((:CPLIsFilenameRelative, libgdal), Cint, (Cstring,), pszFilename)
 end
-
 
 """
     CPLExtractRelativePath(const char *,
@@ -946,7 +911,6 @@ function CPLExtractRelativePath(arg1, arg2, arg3)
     ccall((:CPLExtractRelativePath, libgdal), Cstring, (Cstring, Cstring, Ptr{Cint}), arg1, arg2, arg3)
 end
 
-
 """
     CPLCleanTrailingSlash(const char *) -> const char *
 
@@ -961,7 +925,6 @@ Path in an internal string which must not be freed. The string may be destroyed 
 function CPLCleanTrailingSlash(arg1)
     ccall((:CPLCleanTrailingSlash, libgdal), Cstring, (Cstring,), arg1)
 end
-
 
 """
     CPLCorrespondingPaths(const char * pszOldFilename,
@@ -982,7 +945,6 @@ function CPLCorrespondingPaths(pszOldFilename, pszNewFilename, papszFileList)
     ccall((:CPLCorrespondingPaths, libgdal), Ptr{Cstring}, (Cstring, Cstring, Ptr{Cstring}), pszOldFilename, pszNewFilename, papszFileList)
 end
 
-
 """
     CPLCheckForFile(char * pszFilename,
                     char ** papszSiblingFiles) -> int
@@ -1000,7 +962,6 @@ function CPLCheckForFile(pszFilename, papszSiblingList)
     ccall((:CPLCheckForFile, libgdal), Cint, (Cstring, Ptr{Cstring}), pszFilename, papszSiblingList)
 end
 
-
 """
     CPLGenerateTempFilename(const char * pszStem) -> const char *
 
@@ -1015,7 +976,6 @@ a filename which is valid till the next CPL call in this thread.
 function CPLGenerateTempFilename(pszStem)
     ccall((:CPLGenerateTempFilename, libgdal), Cstring, (Cstring,), pszStem)
 end
-
 
 """
     CPLExpandTilde(const char * pszFilename) -> const char *
@@ -1032,6 +992,17 @@ function CPLExpandTilde(pszFilename)
     ccall((:CPLExpandTilde, libgdal), Cstring, (Cstring,), pszFilename)
 end
 
+"""
+    CPLGetHomeDir(void) -> const char *
+
+Return the path to the home directory.
+
+### Returns
+the home directory, or NULL.
+"""
+function CPLGetHomeDir()
+    ccall((:CPLGetHomeDir, libgdal), Cstring, ())
+end
 
 """
     CPLFindFile(const char * pszClass,
@@ -1043,7 +1014,6 @@ function CPLFindFile(pszClass, pszBasename)
     ccall((:CPLFindFile, libgdal), Cstring, (Cstring, Cstring), pszClass, pszBasename)
 end
 
-
 """
     CPLDefaultFindFile(const char * pszClass,
                        const char * pszBasename) -> const char *
@@ -1054,16 +1024,14 @@ function CPLDefaultFindFile(pszClass, pszBasename)
     ccall((:CPLDefaultFindFile, libgdal), Cstring, (Cstring, Cstring), pszClass, pszBasename)
 end
 
-
 """
     CPLPushFileFinder(CPLFileFinder pfnFinder) -> void
 
 CPLPushFileFinder.
 """
-function CPLPushFileFinder(pfnFinder::CPLFileFinder)
+function CPLPushFileFinder(pfnFinder)
     ccall((:CPLPushFileFinder, libgdal), Cvoid, (CPLFileFinder,), pfnFinder)
 end
-
 
 """
     CPLPopFileFinder(void) -> CPLFileFinder
@@ -1074,7 +1042,6 @@ function CPLPopFileFinder()
     ccall((:CPLPopFileFinder, libgdal), CPLFileFinder, ())
 end
 
-
 """
     CPLPushFinderLocation(const char *) -> void
 
@@ -1083,7 +1050,6 @@ CPLPushFinderLocation.
 function CPLPushFinderLocation(arg1)
     ccall((:CPLPushFinderLocation, libgdal), Cvoid, (Cstring,), arg1)
 end
-
 
 """
     CPLPopFinderLocation(void) -> void
@@ -1094,7 +1060,6 @@ function CPLPopFinderLocation()
     ccall((:CPLPopFinderLocation, libgdal), Cvoid, ())
 end
 
-
 """
     CPLFinderClean(void) -> void
 
@@ -1103,7 +1068,6 @@ CPLFinderClean.
 function CPLFinderClean()
     ccall((:CPLFinderClean, libgdal), Cvoid, ())
 end
-
 
 """
     CPLStat(const char * pszPath,
@@ -1114,7 +1078,6 @@ Same as VSIStat() except it works on "C:" as if it were "C:\".
 function CPLStat(arg1, arg2)
     ccall((:CPLStat, libgdal), Cint, (Cstring, Ptr{VSIStatBuf}), arg1, arg2)
 end
-
 
 """
     CPLOpenShared(const char * pszFilename,
@@ -1131,10 +1094,9 @@ Open a shared file handle.
 ### Returns
 a file handle or NULL if opening fails.
 """
-function CPLOpenShared(arg1, arg2, arg3::Cint)
-    ccall((:CPLOpenShared, libgdal), Ptr{FILE}, (Cstring, Cstring, Cint), arg1, arg2, arg3)
+function CPLOpenShared()
+    ccall((:CPLOpenShared, libgdal), Ptr{Cint}, ())
 end
-
 
 """
     CPLCloseShared(FILE * fp) -> void
@@ -1145,9 +1107,8 @@ Close shared file.
 * **fp**: file handle from CPLOpenShared() to deaccess.
 """
 function CPLCloseShared(arg1)
-    ccall((:CPLCloseShared, libgdal), Cvoid, (Ptr{FILE},), arg1)
+    ccall((:CPLCloseShared, libgdal), Cvoid, (Ptr{Cint},), arg1)
 end
-
 
 """
     CPLGetSharedList(int * pnCount) -> CPLSharedFileInfo *
@@ -1164,7 +1125,6 @@ function CPLGetSharedList(arg1)
     ccall((:CPLGetSharedList, libgdal), Ptr{CPLSharedFileInfo}, (Ptr{Cint},), arg1)
 end
 
-
 """
     CPLDumpSharedList(FILE * fp) -> void
 
@@ -1174,9 +1134,8 @@ Report open shared files.
 * **fp**: File handle to write to.
 """
 function CPLDumpSharedList(arg1)
-    ccall((:CPLDumpSharedList, libgdal), Cvoid, (Ptr{FILE},), arg1)
+    ccall((:CPLDumpSharedList, libgdal), Cvoid, (Ptr{Cint},), arg1)
 end
-
 
 """
     CPLCleanupSharedFileMutex() -> void
@@ -1184,7 +1143,6 @@ end
 function CPLCleanupSharedFileMutex()
     ccall((:CPLCleanupSharedFileMutex, libgdal), Cvoid, ())
 end
-
 
 """
     CPLDMSToDec(const char * is) -> double
@@ -1195,7 +1153,6 @@ function CPLDMSToDec(is)
     ccall((:CPLDMSToDec, libgdal), Cdouble, (Cstring,), is)
 end
 
-
 """
     CPLDecToDMS(double dfAngle,
                 const char * pszAxis,
@@ -1203,10 +1160,9 @@ end
 
 Translate a decimal degrees value to a DMS string with hemisphere.
 """
-function CPLDecToDMS(dfAngle::Cdouble, pszAxis, nPrecision::Cint)
+function CPLDecToDMS(dfAngle, pszAxis, nPrecision)
     ccall((:CPLDecToDMS, libgdal), Cstring, (Cdouble, Cstring, Cint), dfAngle, pszAxis, nPrecision)
 end
-
 
 """
     CPLPackedDMSToDec(double dfPacked) -> double
@@ -1219,10 +1175,9 @@ Convert a packed DMS value (DDDMMMSSS.SS) into decimal degrees.
 ### Returns
 Angle in decimal degrees.
 """
-function CPLPackedDMSToDec(arg1::Cdouble)
+function CPLPackedDMSToDec(arg1)
     ccall((:CPLPackedDMSToDec, libgdal), Cdouble, (Cdouble,), arg1)
 end
-
 
 """
     CPLDecToPackedDMS(double dfDec) -> double
@@ -1235,10 +1190,9 @@ Convert decimal degrees into packed DMS value (DDDMMMSSS.SS).
 ### Returns
 Angle in packed DMS format.
 """
-function CPLDecToPackedDMS(dfDec::Cdouble)
+function CPLDecToPackedDMS(dfDec)
     ccall((:CPLDecToPackedDMS, libgdal), Cdouble, (Cdouble,), dfDec)
 end
-
 
 """
     CPLStringToComplex(const char * pszString,
@@ -1250,7 +1204,6 @@ Fetch the real and imaginary part of a serialized complex number.
 function CPLStringToComplex(pszString, pdfReal, pdfImag)
     ccall((:CPLStringToComplex, libgdal), Cvoid, (Cstring, Ptr{Cdouble}, Ptr{Cdouble}), pszString, pdfReal, pdfImag)
 end
-
 
 """
     CPLUnlinkTree(const char * pszPath) -> int
@@ -1264,7 +1217,6 @@ function CPLUnlinkTree(arg1)
     ccall((:CPLUnlinkTree, libgdal), Cint, (Cstring,), arg1)
 end
 
-
 """
     CPLCopyFile(const char * pszNewPath,
                 const char * pszOldPath) -> int
@@ -1274,7 +1226,6 @@ Copy a file.
 function CPLCopyFile(pszNewPath, pszOldPath)
     ccall((:CPLCopyFile, libgdal), Cint, (Cstring, Cstring), pszNewPath, pszOldPath)
 end
-
 
 """
     CPLCopyTree(const char * pszNewPath,
@@ -1286,7 +1237,6 @@ function CPLCopyTree(pszNewPath, pszOldPath)
     ccall((:CPLCopyTree, libgdal), Cint, (Cstring, Cstring), pszNewPath, pszOldPath)
 end
 
-
 """
     CPLMoveFile(const char * pszNewPath,
                 const char * pszOldPath) -> int
@@ -1297,18 +1247,16 @@ function CPLMoveFile(pszNewPath, pszOldPath)
     ccall((:CPLMoveFile, libgdal), Cint, (Cstring, Cstring), pszNewPath, pszOldPath)
 end
 
-
 """
     CPLSymlink(const char * pszOldPath,
                const char * pszNewPath,
-               char **) -> int
+               CSLConstList) -> int
 
 Create a symbolic link.
 """
 function CPLSymlink(pszOldPath, pszNewPath, papszOptions)
-    ccall((:CPLSymlink, libgdal), Cint, (Cstring, Cstring, Ptr{Cstring}), pszOldPath, pszNewPath, papszOptions)
+    ccall((:CPLSymlink, libgdal), Cint, (Cstring, Cstring, CSLConstList), pszOldPath, pszNewPath, papszOptions)
 end
-
 
 """
     CPLCreateZip(const char *,
@@ -1317,7 +1265,6 @@ end
 function CPLCreateZip(pszZipFilename, papszOptions)
     ccall((:CPLCreateZip, libgdal), Ptr{Cvoid}, (Cstring, Ptr{Cstring}), pszZipFilename, papszOptions)
 end
-
 
 """
     CPLCreateFileInZip(void *,
@@ -1328,16 +1275,14 @@ function CPLCreateFileInZip(hZip, pszFilename, papszOptions)
     ccall((:CPLCreateFileInZip, libgdal), CPLErr, (Ptr{Cvoid}, Cstring, Ptr{Cstring}), hZip, pszFilename, papszOptions)
 end
 
-
 """
     CPLWriteFileInZip(void *,
                       const void *,
                       int) -> CPLErr
 """
-function CPLWriteFileInZip(hZip, pBuffer, nBufferSize::Cint)
+function CPLWriteFileInZip(hZip, pBuffer, nBufferSize)
     ccall((:CPLWriteFileInZip, libgdal), CPLErr, (Ptr{Cvoid}, Ptr{Cvoid}, Cint), hZip, pBuffer, nBufferSize)
 end
-
 
 """
     CPLCloseFileInZip(void *) -> CPLErr
@@ -1346,14 +1291,12 @@ function CPLCloseFileInZip(hZip)
     ccall((:CPLCloseFileInZip, libgdal), CPLErr, (Ptr{Cvoid},), hZip)
 end
 
-
 """
     CPLCloseZip(void *) -> CPLErr
 """
 function CPLCloseZip(hZip)
     ccall((:CPLCloseZip, libgdal), CPLErr, (Ptr{Cvoid},), hZip)
 end
-
 
 """
     CPLZLibDeflate(const void *,
@@ -1363,10 +1306,9 @@ end
                    size_t,
                    size_t * pnOutBytes) -> void *
 """
-function CPLZLibDeflate(ptr, nBytes::Csize_t, nLevel::Cint, outptr, nOutAvailableBytes::Csize_t, pnOutBytes)
+function CPLZLibDeflate(ptr, nBytes, nLevel, outptr, nOutAvailableBytes, pnOutBytes)
     ccall((:CPLZLibDeflate, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t, Cint, Ptr{Cvoid}, Csize_t, Ptr{Csize_t}), ptr, nBytes, nLevel, outptr, nOutAvailableBytes, pnOutBytes)
 end
-
 
 """
     CPLZLibInflate(const void *,
@@ -1375,15 +1317,14 @@ end
                    size_t,
                    size_t * pnOutBytes) -> void *
 """
-function CPLZLibInflate(ptr, nBytes::Csize_t, outptr, nOutAvailableBytes::Csize_t, pnOutBytes)
+function CPLZLibInflate(ptr, nBytes, outptr, nOutAvailableBytes, pnOutBytes)
     ccall((:CPLZLibInflate, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t, Ptr{Cvoid}, Csize_t, Ptr{Csize_t}), ptr, nBytes, outptr, nOutAvailableBytes, pnOutBytes)
 end
-
 
 """
     CPLValidateXML(const char * pszXMLFilename,
                    const char * pszXSDFilename,
-                   char ** papszOptions) -> int
+                   CSLConstList papszOptions) -> int
 
 Validate a XML file against a XML schema.
 
@@ -1396,9 +1337,8 @@ Validate a XML file against a XML schema.
 TRUE if the XML file validates against the XML schema.
 """
 function CPLValidateXML(pszXMLFilename, pszXSDFilename, papszOptions)
-    ccall((:CPLValidateXML, libgdal), Cint, (Cstring, Cstring, Ptr{Cstring}), pszXMLFilename, pszXSDFilename, papszOptions)
+    ccall((:CPLValidateXML, libgdal), Cint, (Cstring, Cstring, CSLConstList), pszXMLFilename, pszXSDFilename, papszOptions)
 end
-
 
 """
     CPLsetlocale(int category,
@@ -1413,14 +1353,26 @@ Prevents parallel executions of setlocale().
 ### Returns
 See your compiler's documentation on setlocale.
 """
-function CPLsetlocale(category::Cint, locale)
+function CPLsetlocale(category, locale)
     ccall((:CPLsetlocale, libgdal), Cstring, (Cint, Cstring), category, locale)
 end
-
 
 """
     CPLCleanupSetlocaleMutex(void) -> void
 """
 function CPLCleanupSetlocaleMutex()
     ccall((:CPLCleanupSetlocaleMutex, libgdal), Cvoid, ())
+end
+
+"""
+    CPLIsPowerOfTwo(unsigned int i) -> int
+
+### Parameters
+* **i**: - tested number
+
+### Returns
+TRUE if i is power of two otherwise return FALSE
+"""
+function CPLIsPowerOfTwo(i)
+    ccall((:CPLIsPowerOfTwo, libgdal), Cint, (UInt32,), i)
 end

@@ -36,8 +36,7 @@ using Test
     @test unsafe_string(GDAL.C.CPLGetXMLValue(xmlnode_pointer, "b", "")) == "hi"
     # load into Julia struct, mutate, and put back as Ref into GDAL
     xmlnode = unsafe_load(xmlnode_pointer)
-    xmlnode.pszValue = Base.unsafe_convert(Cstring, "c")  # rename "a" to "c"
-    @test unsafe_string(GDAL.C.CPLSerializeXMLTree(Ref(xmlnode))) == "<c>\n  <b>hi</b>\n</c>\n"
+    @test unsafe_string(GDAL.C.CPLSerializeXMLTree(Ref(xmlnode))) == "<a>\n  <b>hi</b>\n</a>\n"
     GDAL.C.CPLDestroyXMLNode(xmlnode_pointer)
 
     # ref https://github.com/JuliaGeo/GDAL.jl/pull/41#discussion_r143345433

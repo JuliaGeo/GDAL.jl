@@ -1,7 +1,5 @@
-# Julia wrapper for header: /usr/local/include/gdalwarper.h
-# Automatically generated using Clang.jl wrap_c, version 0.0.0
-
-
+# Julia wrapper for header: gdalwarper.h
+# Automatically generated using Clang.jl
 
 """
     GDALWarpNoDataMasker(void * pMaskFuncArg,
@@ -16,10 +14,9 @@
                          void * pValidityMask,
                          int * pbOutAllValid) -> CPLErr
 """
-function GDALWarpNoDataMasker(pMaskFuncArg, nBandCount::Cint, eType::GDALDataType, nXOff::Cint, nYOff::Cint, nXSize::Cint, nYSize::Cint, papabyImageData, bMaskIsFloat::Cint, pValidityMask, pbOutAllValid)
+function GDALWarpNoDataMasker(pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, papabyImageData, bMaskIsFloat, pValidityMask, pbOutAllValid)
     ccall((:GDALWarpNoDataMasker, libgdal), CPLErr, (Ptr{Cvoid}, Cint, GDALDataType, Cint, Cint, Cint, Cint, Ptr{Ptr{GByte}}, Cint, Ptr{Cvoid}, Ptr{Cint}), pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, papabyImageData, bMaskIsFloat, pValidityMask, pbOutAllValid)
 end
-
 
 """
     GDALWarpDstAlphaMasker(void * pMaskFuncArg,
@@ -33,10 +30,9 @@ end
                            int bMaskIsFloat,
                            void * pValidityMask) -> CPLErr
 """
-function GDALWarpDstAlphaMasker(pMaskFuncArg, nBandCount::Cint, eType::GDALDataType, nXOff::Cint, nYOff::Cint, nXSize::Cint, nYSize::Cint, arg1, bMaskIsFloat::Cint, pValidityMask)
+function GDALWarpDstAlphaMasker(pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg1, bMaskIsFloat, pValidityMask)
     ccall((:GDALWarpDstAlphaMasker, libgdal), CPLErr, (Ptr{Cvoid}, Cint, GDALDataType, Cint, Cint, Cint, Cint, Ptr{Ptr{GByte}}, Cint, Ptr{Cvoid}), pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg1, bMaskIsFloat, pValidityMask)
 end
-
 
 """
     GDALWarpSrcAlphaMasker(void * pMaskFuncArg,
@@ -51,10 +47,9 @@ end
                            void * pValidityMask,
                            int * pbOutAllOpaque) -> CPLErr
 """
-function GDALWarpSrcAlphaMasker(pMaskFuncArg, nBandCount::Cint, eType::GDALDataType, nXOff::Cint, nYOff::Cint, nXSize::Cint, nYSize::Cint, arg1, bMaskIsFloat::Cint, pValidityMask, pbOutAllOpaque)
+function GDALWarpSrcAlphaMasker(pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg1, bMaskIsFloat, pValidityMask, pbOutAllOpaque)
     ccall((:GDALWarpSrcAlphaMasker, libgdal), CPLErr, (Ptr{Cvoid}, Cint, GDALDataType, Cint, Cint, Cint, Cint, Ptr{Ptr{GByte}}, Cint, Ptr{Cvoid}, Ptr{Cint}), pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg1, bMaskIsFloat, pValidityMask, pbOutAllOpaque)
 end
-
 
 """
     GDALWarpSrcMaskMasker(void * pMaskFuncArg,
@@ -68,10 +63,9 @@ end
                           int bMaskIsFloat,
                           void * pValidityMask) -> CPLErr
 """
-function GDALWarpSrcMaskMasker(pMaskFuncArg, nBandCount::Cint, eType::GDALDataType, nXOff::Cint, nYOff::Cint, nXSize::Cint, nYSize::Cint, arg1, bMaskIsFloat::Cint, pValidityMask)
+function GDALWarpSrcMaskMasker(pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg1, bMaskIsFloat, pValidityMask)
     ccall((:GDALWarpSrcMaskMasker, libgdal), CPLErr, (Ptr{Cvoid}, Cint, GDALDataType, Cint, Cint, Cint, Cint, Ptr{Ptr{GByte}}, Cint, Ptr{Cvoid}), pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg1, bMaskIsFloat, pValidityMask)
 end
-
 
 """
     GDALWarpCutlineMasker(void * pMaskFuncArg,
@@ -85,10 +79,9 @@ end
                           int bMaskIsFloat,
                           void * pValidityMask) -> CPLErr
 """
-function GDALWarpCutlineMasker(pMaskFuncArg, nBandCount::Cint, eType::GDALDataType, nXOff::Cint, nYOff::Cint, nXSize::Cint, nYSize::Cint, arg1, bMaskIsFloat::Cint, pValidityMask)
+function GDALWarpCutlineMasker(pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg1, bMaskIsFloat, pValidityMask)
     ccall((:GDALWarpCutlineMasker, libgdal), CPLErr, (Ptr{Cvoid}, Cint, GDALDataType, Cint, Cint, Cint, Cint, Ptr{Ptr{GByte}}, Cint, Ptr{Cvoid}), pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg1, bMaskIsFloat, pValidityMask)
 end
-
 
 """
     GDALCreateWarpOptions() -> GDALWarpOptions *
@@ -99,7 +92,6 @@ function GDALCreateWarpOptions()
     ccall((:GDALCreateWarpOptions, libgdal), Ptr{GDALWarpOptions}, ())
 end
 
-
 """
     GDALDestroyWarpOptions(GDALWarpOptions * psOptions) -> void
 
@@ -108,7 +100,6 @@ Destroy a warp options structure.
 function GDALDestroyWarpOptions(arg1)
     ccall((:GDALDestroyWarpOptions, libgdal), Cvoid, (Ptr{GDALWarpOptions},), arg1)
 end
-
 
 """
     GDALCloneWarpOptions(const GDALWarpOptions * psSrcOptions) -> GDALWarpOptions *
@@ -119,6 +110,101 @@ function GDALCloneWarpOptions(arg1)
     ccall((:GDALCloneWarpOptions, libgdal), Ptr{GDALWarpOptions}, (Ptr{GDALWarpOptions},), arg1)
 end
 
+"""
+    GDALWarpInitDstNoDataReal(GDALWarpOptions * psOptionsIn,
+                              double dNoDataReal) -> void
+
+Initialize padfDstNoDataReal with specified value.
+
+### Parameters
+* **psOptionsIn**: options to initialize.
+* **dNoDataReal**: value to initialize to.
+"""
+function GDALWarpInitDstNoDataReal(arg1, dNoDataReal)
+    ccall((:GDALWarpInitDstNoDataReal, libgdal), Cvoid, (Ptr{GDALWarpOptions}, Cdouble), arg1, dNoDataReal)
+end
+
+"""
+    GDALWarpInitSrcNoDataReal(GDALWarpOptions * psOptionsIn,
+                              double dNoDataReal) -> void
+
+Initialize padfSrcNoDataReal with specified value.
+
+### Parameters
+* **psOptionsIn**: options to initialize.
+* **dNoDataReal**: value to initialize to.
+"""
+function GDALWarpInitSrcNoDataReal(arg1, dNoDataReal)
+    ccall((:GDALWarpInitSrcNoDataReal, libgdal), Cvoid, (Ptr{GDALWarpOptions}, Cdouble), arg1, dNoDataReal)
+end
+
+"""
+    GDALWarpInitNoDataReal(GDALWarpOptions * psOptionsIn,
+                           double dNoDataReal) -> void
+
+Initialize padfSrcNoDataReal and padfDstNoDataReal with specified value.
+
+### Parameters
+* **psOptionsIn**: options to initialize.
+* **dNoDataReal**: value to initialize to.
+"""
+function GDALWarpInitNoDataReal(arg1, dNoDataReal)
+    ccall((:GDALWarpInitNoDataReal, libgdal), Cvoid, (Ptr{GDALWarpOptions}, Cdouble), arg1, dNoDataReal)
+end
+
+"""
+    GDALWarpInitDstNoDataImag(GDALWarpOptions * psOptionsIn,
+                              double dNoDataImag) -> void
+
+Initialize padfDstNoDataImag with specified value.
+
+### Parameters
+* **psOptionsIn**: options to initialize.
+* **dNoDataImag**: value to initialize to.
+"""
+function GDALWarpInitDstNoDataImag(arg1, dNoDataImag)
+    ccall((:GDALWarpInitDstNoDataImag, libgdal), Cvoid, (Ptr{GDALWarpOptions}, Cdouble), arg1, dNoDataImag)
+end
+
+"""
+    GDALWarpInitSrcNoDataImag(GDALWarpOptions * psOptionsIn,
+                              double dNoDataImag) -> void
+
+Initialize padfSrcNoDataImag with specified value.
+
+### Parameters
+* **psOptionsIn**: options to initialize.
+* **dNoDataImag**: value to initialize to.
+"""
+function GDALWarpInitSrcNoDataImag(arg1, dNoDataImag)
+    ccall((:GDALWarpInitSrcNoDataImag, libgdal), Cvoid, (Ptr{GDALWarpOptions}, Cdouble), arg1, dNoDataImag)
+end
+
+"""
+    GDALWarpResolveWorkingDataType(GDALWarpOptions * psOptions) -> void
+
+If the working data type is unknown, this method will determine a valid working data type to support the data in the src and dest data sets and any noData values.
+
+### Parameters
+* **psOptions**: options to initialize.
+"""
+function GDALWarpResolveWorkingDataType(arg1)
+    ccall((:GDALWarpResolveWorkingDataType, libgdal), Cvoid, (Ptr{GDALWarpOptions},), arg1)
+end
+
+"""
+    GDALWarpInitDefaultBandMapping(GDALWarpOptions * psOptionsIn,
+                                   int nBandCount) -> void
+
+Init src and dst band mappings such that Bands[i] = i+1 for nBandCount Does nothing if psOptionsIn->nBandCount is non-zero.
+
+### Parameters
+* **psOptionsIn**: options to initialize.
+* **nBandCount**: bands to initialize for.
+"""
+function GDALWarpInitDefaultBandMapping(arg1, nBandCount)
+    ccall((:GDALWarpInitDefaultBandMapping, libgdal), Cvoid, (Ptr{GDALWarpOptions}, Cint), arg1, nBandCount)
+end
 
 """
     GDALSerializeWarpOptions(const GDALWarpOptions * psWO) -> CPLXMLNode *
@@ -127,14 +213,12 @@ function GDALSerializeWarpOptions(arg1)
     ccall((:GDALSerializeWarpOptions, libgdal), Ptr{CPLXMLNode}, (Ptr{GDALWarpOptions},), arg1)
 end
 
-
 """
     GDALDeserializeWarpOptions(CPLXMLNode * psTree) -> GDALWarpOptions *
 """
 function GDALDeserializeWarpOptions(arg1)
     ccall((:GDALDeserializeWarpOptions, libgdal), Ptr{GDALWarpOptions}, (Ptr{CPLXMLNode},), arg1)
 end
-
 
 """
     GDALReprojectImage(GDALDatasetH hSrcDS,
@@ -165,10 +249,9 @@ Reproject image.
 ### Returns
 CE_None on success or CE_Failure if something goes wrong.
 """
-function GDALReprojectImage(hSrcDS::GDALDatasetH, pszSrcWKT, hDstDS::GDALDatasetH, pszDstWKT, eResampleAlg::GDALResampleAlg, dfWarpMemoryLimit::Cdouble, dfMaxError::Cdouble, pfnProgress::GDALProgressFunc, pProgressArg, psOptions)
+function GDALReprojectImage(hSrcDS, pszSrcWKT, hDstDS, pszDstWKT, eResampleAlg, dfWarpMemoryLimit, dfMaxError, pfnProgress, pProgressArg, psOptions)
     ccall((:GDALReprojectImage, libgdal), CPLErr, (GDALDatasetH, Cstring, GDALDatasetH, Cstring, GDALResampleAlg, Cdouble, Cdouble, GDALProgressFunc, Ptr{Cvoid}, Ptr{GDALWarpOptions}), hSrcDS, pszSrcWKT, hDstDS, pszDstWKT, eResampleAlg, dfWarpMemoryLimit, dfMaxError, pfnProgress, pProgressArg, psOptions)
 end
-
 
 """
     GDALCreateAndReprojectImage(GDALDatasetH hSrcDS,
@@ -186,10 +269,9 @@ end
 
 Reproject an image and create the target reprojected image.
 """
-function GDALCreateAndReprojectImage(hSrcDS::GDALDatasetH, pszSrcWKT, pszDstFilename, pszDstWKT, hDstDriver::GDALDriverH, papszCreateOptions, eResampleAlg::GDALResampleAlg, dfWarpMemoryLimit::Cdouble, dfMaxError::Cdouble, pfnProgress::GDALProgressFunc, pProgressArg, psOptions)
+function GDALCreateAndReprojectImage(hSrcDS, pszSrcWKT, pszDstFilename, pszDstWKT, hDstDriver, papszCreateOptions, eResampleAlg, dfWarpMemoryLimit, dfMaxError, pfnProgress, pProgressArg, psOptions)
     ccall((:GDALCreateAndReprojectImage, libgdal), CPLErr, (GDALDatasetH, Cstring, Cstring, Cstring, GDALDriverH, Ptr{Cstring}, GDALResampleAlg, Cdouble, Cdouble, GDALProgressFunc, Ptr{Cvoid}, Ptr{GDALWarpOptions}), hSrcDS, pszSrcWKT, pszDstFilename, pszDstWKT, hDstDriver, papszCreateOptions, eResampleAlg, dfWarpMemoryLimit, dfMaxError, pfnProgress, pProgressArg, psOptions)
 end
-
 
 """
     GDALAutoCreateWarpedVRT(GDALDatasetH hSrcDS,
@@ -212,10 +294,9 @@ Create virtual warped dataset automatically.
 ### Returns
 NULL on failure, or a new virtual dataset handle on success.
 """
-function GDALAutoCreateWarpedVRT(hSrcDS::GDALDatasetH, pszSrcWKT, pszDstWKT, eResampleAlg::GDALResampleAlg, dfMaxError::Cdouble, psOptions)
+function GDALAutoCreateWarpedVRT(hSrcDS, pszSrcWKT, pszDstWKT, eResampleAlg, dfMaxError, psOptions)
     ccall((:GDALAutoCreateWarpedVRT, libgdal), GDALDatasetH, (GDALDatasetH, Cstring, Cstring, GDALResampleAlg, Cdouble, Ptr{GDALWarpOptions}), hSrcDS, pszSrcWKT, pszDstWKT, eResampleAlg, dfMaxError, psOptions)
 end
-
 
 """
     GDALCreateWarpedVRT(GDALDatasetH hSrcDS,
@@ -236,10 +317,9 @@ Create virtual warped dataset.
 ### Returns
 NULL on failure, or a new virtual dataset handle on success.
 """
-function GDALCreateWarpedVRT(hSrcDS::GDALDatasetH, nPixels::Cint, nLines::Cint, padfGeoTransform, psOptions)
+function GDALCreateWarpedVRT(hSrcDS, nPixels, nLines, padfGeoTransform, psOptions)
     ccall((:GDALCreateWarpedVRT, libgdal), GDALDatasetH, (GDALDatasetH, Cint, Cint, Ptr{Cdouble}, Ptr{GDALWarpOptions}), hSrcDS, nPixels, nLines, padfGeoTransform, psOptions)
 end
-
 
 """
     GDALInitializeWarpedVRT(GDALDatasetH hDS,
@@ -254,10 +334,9 @@ Set warp info on virtual warped dataset.
 ### Returns
 CE_None on success or CE_Failure if an error occurs.
 """
-function GDALInitializeWarpedVRT(hDS::GDALDatasetH, psWO)
+function GDALInitializeWarpedVRT(hDS, psWO)
     ccall((:GDALInitializeWarpedVRT, libgdal), CPLErr, (GDALDatasetH, Ptr{GDALWarpOptions}), hDS, psWO)
 end
-
 
 """
     GDALCreateWarpOperation(const GDALWarpOptions *) -> GDALWarpOperationH
@@ -266,14 +345,12 @@ function GDALCreateWarpOperation(arg1)
     ccall((:GDALCreateWarpOperation, libgdal), GDALWarpOperationH, (Ptr{GDALWarpOptions},), arg1)
 end
 
-
 """
     GDALDestroyWarpOperation(GDALWarpOperationH) -> void
 """
-function GDALDestroyWarpOperation(arg1::GDALWarpOperationH)
+function GDALDestroyWarpOperation(arg1)
     ccall((:GDALDestroyWarpOperation, libgdal), Cvoid, (GDALWarpOperationH,), arg1)
 end
-
 
 """
     GDALChunkAndWarpImage(GDALWarpOperationH,
@@ -282,10 +359,9 @@ end
                           int,
                           int) -> CPLErr
 """
-function GDALChunkAndWarpImage(arg1::GDALWarpOperationH, arg2::Cint, arg3::Cint, arg4::Cint, arg5::Cint)
+function GDALChunkAndWarpImage(arg1, arg2, arg3, arg4, arg5)
     ccall((:GDALChunkAndWarpImage, libgdal), CPLErr, (GDALWarpOperationH, Cint, Cint, Cint, Cint), arg1, arg2, arg3, arg4, arg5)
 end
-
 
 """
     GDALChunkAndWarpMulti(GDALWarpOperationH,
@@ -294,10 +370,9 @@ end
                           int,
                           int) -> CPLErr
 """
-function GDALChunkAndWarpMulti(arg1::GDALWarpOperationH, arg2::Cint, arg3::Cint, arg4::Cint, arg5::Cint)
+function GDALChunkAndWarpMulti(arg1, arg2, arg3, arg4, arg5)
     ccall((:GDALChunkAndWarpMulti, libgdal), CPLErr, (GDALWarpOperationH, Cint, Cint, Cint, Cint), arg1, arg2, arg3, arg4, arg5)
 end
-
 
 """
     GDALWarpRegion(GDALWarpOperationH,
@@ -310,10 +385,9 @@ end
                    int,
                    int) -> CPLErr
 """
-function GDALWarpRegion(arg1::GDALWarpOperationH, arg2::Cint, arg3::Cint, arg4::Cint, arg5::Cint, arg6::Cint, arg7::Cint, arg8::Cint, arg9::Cint)
+function GDALWarpRegion(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
     ccall((:GDALWarpRegion, libgdal), CPLErr, (GDALWarpOperationH, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
 end
-
 
 """
     GDALWarpRegionToBuffer(GDALWarpOperationH,
@@ -328,30 +402,27 @@ end
                            int,
                            int) -> CPLErr
 """
-function GDALWarpRegionToBuffer(arg1::GDALWarpOperationH, arg2::Cint, arg3::Cint, arg4::Cint, arg5::Cint, arg6, arg7::GDALDataType, arg8::Cint, arg9::Cint, arg10::Cint, arg11::Cint)
+function GDALWarpRegionToBuffer(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11)
     ccall((:GDALWarpRegionToBuffer, libgdal), CPLErr, (GDALWarpOperationH, Cint, Cint, Cint, Cint, Ptr{Cvoid}, GDALDataType, Cint, Cint, Cint, Cint), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11)
 end
-
 
 """
     GWKGetFilterRadius(GDALResampleAlg eResampleAlg) -> int
 """
-function GWKGetFilterRadius(eResampleAlg::GDALResampleAlg)
+function GWKGetFilterRadius(eResampleAlg)
     ccall((:GWKGetFilterRadius, libgdal), Cint, (GDALResampleAlg,), eResampleAlg)
 end
-
 
 """
     GWKGetFilterFunc(GDALResampleAlg eResampleAlg) -> FilterFuncType
 """
-function GWKGetFilterFunc(eResampleAlg::GDALResampleAlg)
+function GWKGetFilterFunc(eResampleAlg)
     ccall((:GWKGetFilterFunc, libgdal), FilterFuncType, (GDALResampleAlg,), eResampleAlg)
 end
-
 
 """
     GWKGetFilterFunc4Values(GDALResampleAlg eResampleAlg) -> FilterFunc4ValuesType
 """
-function GWKGetFilterFunc4Values(eResampleAlg::GDALResampleAlg)
+function GWKGetFilterFunc4Values(eResampleAlg)
     ccall((:GWKGetFilterFunc4Values, libgdal), FilterFunc4ValuesType, (GDALResampleAlg,), eResampleAlg)
 end
