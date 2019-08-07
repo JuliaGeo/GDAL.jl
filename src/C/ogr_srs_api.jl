@@ -141,8 +141,8 @@ function OSRImportFromProj4(arg1, arg2)
 end
 
 """
-    OSRImportFromESRI(OGRSpatialReferenceH,
-                      char **) -> OGRErr
+    OSRImportFromESRI(OGRSpatialReferenceH hSRS,
+                      char ** papszPrj) -> OGRErr
 
 Import coordinate system from ESRI .prj format(s).
 """
@@ -152,9 +152,9 @@ end
 
 """
     OSRImportFromPCI(OGRSpatialReferenceH hSRS,
-                     const char *,
-                     const char *,
-                     double *) -> OGRErr
+                     const char * pszProj,
+                     const char * pszUnits,
+                     double * padfPrjParams) -> OGRErr
 
 Import coordinate system from PCI projection definition.
 """
@@ -163,11 +163,11 @@ function OSRImportFromPCI(hSRS, arg1, arg2, arg3)
 end
 
 """
-    OSRImportFromUSGS(OGRSpatialReferenceH,
-                      long,
-                      long,
-                      double *,
-                      long) -> OGRErr
+    OSRImportFromUSGS(OGRSpatialReferenceH hSRS,
+                      long iProjsys,
+                      long iZone,
+                      double * padfPrjParams,
+                      long iDatum) -> OGRErr
 
 Import coordinate system from USGS projection definition.
 """
@@ -176,8 +176,8 @@ function OSRImportFromUSGS(arg1, arg2, arg3, arg4, arg5)
 end
 
 """
-    OSRImportFromXML(OGRSpatialReferenceH,
-                     const char *) -> OGRErr
+    OSRImportFromXML(OGRSpatialReferenceH hSRS,
+                     const char * pszXML) -> OGRErr
 
 Import coordinate system from XML format (GML only currently).
 """
@@ -186,9 +186,9 @@ function OSRImportFromXML(arg1, arg2)
 end
 
 """
-    OSRImportFromDict(OGRSpatialReferenceH,
-                      const char *,
-                      const char *) -> OGRErr
+    OSRImportFromDict(OGRSpatialReferenceH hSRS,
+                      const char * pszDictFile,
+                      const char * pszCode) -> OGRErr
 
 Read SRS from WKT dictionary.
 
@@ -205,11 +205,11 @@ function OSRImportFromDict(arg1, arg2, arg3)
 end
 
 """
-    OSRImportFromPanorama(OGRSpatialReferenceH,
-                          long,
-                          long,
-                          long,
-                          double *) -> OGRErr
+    OSRImportFromPanorama(OGRSpatialReferenceH hSRS,
+                          long iProjSys,
+                          long iDatum,
+                          long iEllips,
+                          double * padfPrjParams) -> OGRErr
 
 Import coordinate system from "Panorama" GIS projection definition.
 """
@@ -218,8 +218,8 @@ function OSRImportFromPanorama(arg1, arg2, arg3, arg4, arg5)
 end
 
 """
-    OSRImportFromOzi(OGRSpatialReferenceH,
-                     const char *const *) -> OGRErr
+    OSRImportFromOzi(OGRSpatialReferenceH hSRS,
+                     const char *const * papszLines) -> OGRErr
 
 Import coordinate system from OziExplorer projection definition.
 
@@ -245,10 +245,10 @@ function OSRImportFromMICoordSys(arg1, arg2)
 end
 
 """
-    OSRImportFromERM(OGRSpatialReferenceH,
-                     const char *,
-                     const char *,
-                     const char *) -> OGRErr
+    OSRImportFromERM(OGRSpatialReferenceH hSRS,
+                     const char * pszProj,
+                     const char * pszDatum,
+                     const char * pszUnits) -> OGRErr
 
 Create OGR WKT from ERMapper projection definitions.
 """
@@ -309,10 +309,10 @@ function OSRExportToProj4(arg1, arg2)
 end
 
 """
-    OSRExportToPCI(OGRSpatialReferenceH,
-                   char **,
-                   char **,
-                   double **) -> OGRErr
+    OSRExportToPCI(OGRSpatialReferenceH hSRS,
+                   char ** ppszProj,
+                   char ** ppszUnits,
+                   double ** ppadfPrjParams) -> OGRErr
 
 Export coordinate system in PCI projection definition.
 """
@@ -321,11 +321,11 @@ function OSRExportToPCI(arg1, arg2, arg3, arg4)
 end
 
 """
-    OSRExportToUSGS(OGRSpatialReferenceH,
-                    long *,
-                    long *,
-                    double **,
-                    long *) -> OGRErr
+    OSRExportToUSGS(OGRSpatialReferenceH hSRS,
+                    long * piProjSys,
+                    long * piZone,
+                    double ** ppadfPrjParams,
+                    long * piDatum) -> OGRErr
 
 Export coordinate system in USGS GCTP projection definition.
 """
@@ -334,9 +334,9 @@ function OSRExportToUSGS(arg1, arg2, arg3, arg4, arg5)
 end
 
 """
-    OSRExportToXML(OGRSpatialReferenceH,
-                   char **,
-                   const char *) -> OGRErr
+    OSRExportToXML(OGRSpatialReferenceH hSRS,
+                   char ** ppszRawXML,
+                   const char * pszDialect) -> OGRErr
 
 Export coordinate system in XML format.
 """
@@ -345,12 +345,12 @@ function OSRExportToXML(arg1, arg2, arg3)
 end
 
 """
-    OSRExportToPanorama(OGRSpatialReferenceH,
-                        long *,
-                        long *,
-                        long *,
-                        long *,
-                        double *) -> OGRErr
+    OSRExportToPanorama(OGRSpatialReferenceH hSRS,
+                        long * piProjSys,
+                        long * piDatum,
+                        long * piEllips,
+                        long * piZone,
+                        double * padfPrjParams) -> OGRErr
 
 Export coordinate system in "Panorama" GIS projection definition.
 """
@@ -369,10 +369,10 @@ function OSRExportToMICoordSys(arg1, arg2)
 end
 
 """
-    OSRExportToERM(OGRSpatialReferenceH,
-                   char *,
-                   char *,
-                   char *) -> OGRErr
+    OSRExportToERM(OGRSpatialReferenceH hSRS,
+                   char * pszProj,
+                   char * pszDatum,
+                   char * pszUnits) -> OGRErr
 
 Convert coordinate system to ERMapper format.
 """

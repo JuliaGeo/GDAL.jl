@@ -263,7 +263,7 @@ end
                         GDALDatasetH hDstDS,
                         int nSrcCount,
                         GDALDatasetH * pahSrcDS,
-                        const GDALVectorTranslateOptions * psOptions,
+                        const GDALVectorTranslateOptions * psOptionsIn,
                         int * pbUsageError) -> GDALDatasetH
 
 Converts vector data between file formats.
@@ -401,8 +401,8 @@ end
 """
     GDALNearblack(const char * pszDest,
                   GDALDatasetH hDstDS,
-                  GDALDatasetH hSrcDS,
-                  const GDALNearblackOptions * psOptions,
+                  GDALDatasetH hSrcDataset,
+                  const GDALNearblackOptions * psOptionsIn,
                   int * pbUsageError) -> GDALDatasetH
 
 Convert nearly black/white borders to exact value.

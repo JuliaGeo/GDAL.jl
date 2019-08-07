@@ -102,6 +102,45 @@ function cname(ex)
     end
 end
 
+"Based on a name, find the best XML node to generate docs from"
+function findnode(name::String, doc::EzXML.Document)
+    # Names are not unique. We know that kind='friend' (not sure what it is)
+    # does not give good docs and is never the only one, so we skip those.
+    # First we use XPath to find all nodes with this name and not kind='friend'.
+    memberdef = "/doxygen/compounddef/sectiondef/memberdef"
+    nofriend = "not(@kind='friend')"  # :-(
+    nodes = findall("$memberdef[name='$name' and $nofriend]", doc)
+
+    if length(nodes) == 0
+        return nothing
+    elseif length(nodes) == 1
+        return first(nodes)
+    else
+        # If we get multiple nodes back, we have to select the best one.
+        # Looking at the documentation, sometimes there are two similar docstrings,
+        # but one comes from a .cpp file, as seen in location's file attribute,
+        # and the other comes from a .h file (.c is the third option).
+        # Even though this is a C binding, the .cpp node includes the argument names
+        # which makes for an easier to read docstring, since they can be referenced
+        # to the argument names in the parameters list.
+        # Therefore if .cpp is one of the options, go for that.
+
+        # ExXML uses libxml2 which only supports XPath 1.0, meaning
+        # ends-with(@file,'.cpp') is not available, but according to
+        # https://stackoverflow.com/a/11857166/2875964 we can rewrite this as
+        cpp = "'.cpp' = substring(@file, string-length(@file) - string-length('.cpp') +1)"
+
+        for node in nodes
+            cppnode = findfirst("location[$cpp]/..", node)
+            if cppnode !== nothing
+                return cppnode
+            end
+        end
+        # .cpp not present, just pick the first
+        return first(nodes)
+    end          
+end
+
 "Add docstrings to all expressions and writes to a new file"
 function add_docstrings_to_file(inpath::String, outpath::String, doc::EzXML.Document)
     # wrap string in quote such that it forms one expresion that we can parse
@@ -123,14 +162,11 @@ function add_docstrings_to_file(inpath::String, outpath::String, doc::EzXML.Docu
         for expr in exprs
             name = cname(expr)
 
-            expr in skip_exprs  && continue
+            expr in skip_exprs && continue
 
-            # names are not unique, also for functions like GDALScaledProgress
-            # we currently just stick with the first one since for one example
-            # that was the best docstring (one had argnames, the other not)
-            # would be good to explore further, e.g. can we only look at C API?
-            node = findfirst("/doxygen/compounddef/sectiondef/memberdef[name=\"$name\"]", doc)
+            node = findnode(name, doc)
             docstr = node === nothing ? "" : build_docstring(node)
+
             if !isempty(docstr)
                 if '\n' in docstr
                     println(io, "\"\"\"")

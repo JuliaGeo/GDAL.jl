@@ -287,7 +287,7 @@ function CPLReadLine3L(arg1, arg2, arg3, arg4)
 end
 
 """
-    CPLAtof(const char *) -> double
+    CPLAtof(const char * nptr) -> double
 
 Converts ASCII string to floating point number.
 
@@ -302,8 +302,8 @@ function CPLAtof(arg1)
 end
 
 """
-    CPLAtofDelim(const char *,
-                 char) -> double
+    CPLAtofDelim(const char * nptr,
+                 char point) -> double
 
 Converts ASCII string to floating point number.
 
@@ -319,8 +319,8 @@ function CPLAtofDelim(arg1, arg2)
 end
 
 """
-    CPLStrtod(const char *,
-              char **) -> double
+    CPLStrtod(const char * nptr,
+              char ** endptr) -> double
 
 Converts ASCII string to floating point number.
 
@@ -336,9 +336,9 @@ function CPLStrtod(arg1, arg2)
 end
 
 """
-    CPLStrtodDelim(const char *,
-                   char **,
-                   char) -> double
+    CPLStrtodDelim(const char * nptr,
+                   char ** endptr,
+                   char point) -> double
 
 Converts ASCII string to floating point number using specified delimiter.
 
@@ -355,8 +355,8 @@ function CPLStrtodDelim(arg1, arg2, arg3)
 end
 
 """
-    CPLStrtof(const char *,
-              char **) -> float
+    CPLStrtof(const char * nptr,
+              char ** endptr) -> float
 
 Converts ASCII string to floating point number.
 
@@ -372,9 +372,9 @@ function CPLStrtof(arg1, arg2)
 end
 
 """
-    CPLStrtofDelim(const char *,
-                   char **,
-                   char) -> float
+    CPLStrtofDelim(const char * nptr,
+                   char ** endptr,
+                   char point) -> float
 
 Converts ASCII string to floating point number using specified delimiter.
 
@@ -391,7 +391,7 @@ function CPLStrtofDelim(arg1, arg2, arg3)
 end
 
 """
-    CPLAtofM(const char *) -> double
+    CPLAtofM(const char * nptr) -> double
 
 Converts ASCII string to floating point number using any numeric locale.
 
@@ -719,7 +719,7 @@ function CPLGetExecPath(pszPathBuf, nMaxLength)
 end
 
 """
-    CPLGetPath(const char *) -> const char *
+    CPLGetPath(const char * pszFilename) -> const char *
 
 Extract directory path portion of filename.
 
@@ -734,7 +734,7 @@ function CPLGetPath(arg1)
 end
 
 """
-    CPLGetDirname(const char *) -> const char *
+    CPLGetDirname(const char * pszFilename) -> const char *
 
 Extract directory path portion of filename.
 
@@ -749,7 +749,7 @@ function CPLGetDirname(arg1)
 end
 
 """
-    CPLGetFilename(const char *) -> const char *
+    CPLGetFilename(const char * pszFullFilename) -> const char *
 
 Extract non-directory portion of filename.
 
@@ -764,7 +764,7 @@ function CPLGetFilename(arg1)
 end
 
 """
-    CPLGetBasename(const char *) -> const char *
+    CPLGetBasename(const char * pszFullFilename) -> const char *
 
 Extract basename (non-directory, non-extension) portion of filename.
 
@@ -779,7 +779,7 @@ function CPLGetBasename(arg1)
 end
 
 """
-    CPLGetExtension(const char *) -> const char *
+    CPLGetExtension(const char * pszFullFilename) -> const char *
 
 Extract filename extension from full filename.
 
@@ -794,7 +794,7 @@ function CPLGetExtension(arg1)
 end
 
 """
-    CPLGetCurrentDir(void) -> char *
+    CPLGetCurrentDir() -> char *
 
 Get the current working directory name.
 
@@ -844,8 +844,8 @@ function CPLFormCIFilename(pszPath, pszBasename, pszExtension)
 end
 
 """
-    CPLResetExtension(const char *,
-                      const char *) -> const char *
+    CPLResetExtension(const char * pszPath,
+                      const char * pszExt) -> const char *
 
 Replace the extension with the provided one.
 
@@ -893,9 +893,9 @@ function CPLIsFilenameRelative(pszFilename)
 end
 
 """
-    CPLExtractRelativePath(const char *,
-                           const char *,
-                           int *) -> const char *
+    CPLExtractRelativePath(const char * pszBaseDir,
+                           const char * pszTarget,
+                           int * pbGotRelative) -> const char *
 
 Get relative path from directory to target file.
 
@@ -912,7 +912,7 @@ function CPLExtractRelativePath(arg1, arg2, arg3)
 end
 
 """
-    CPLCleanTrailingSlash(const char *) -> const char *
+    CPLCleanTrailingSlash(const char * pszPath) -> const char *
 
 Remove trailing forward/backward slash from the path for UNIX/Windows resp.
 
@@ -993,7 +993,7 @@ function CPLExpandTilde(pszFilename)
 end
 
 """
-    CPLGetHomeDir(void) -> const char *
+    CPLGetHomeDir() -> const char *
 
 Return the path to the home directory.
 
@@ -1015,7 +1015,7 @@ function CPLFindFile(pszClass, pszBasename)
 end
 
 """
-    CPLDefaultFindFile(const char * pszClass,
+    CPLDefaultFindFile(const char *,
                        const char * pszBasename) -> const char *
 
 CPLDefaultFindFile.
@@ -1034,7 +1034,7 @@ function CPLPushFileFinder(pfnFinder)
 end
 
 """
-    CPLPopFileFinder(void) -> CPLFileFinder
+    CPLPopFileFinder() -> CPLFileFinder
 
 CPLPopFileFinder.
 """
@@ -1043,7 +1043,7 @@ function CPLPopFileFinder()
 end
 
 """
-    CPLPushFinderLocation(const char *) -> void
+    CPLPushFinderLocation(const char * pszLocation) -> void
 
 CPLPushFinderLocation.
 """
@@ -1052,7 +1052,7 @@ function CPLPushFinderLocation(arg1)
 end
 
 """
-    CPLPopFinderLocation(void) -> void
+    CPLPopFinderLocation() -> void
 
 CPLPopFinderLocation.
 """
@@ -1061,7 +1061,7 @@ function CPLPopFinderLocation()
 end
 
 """
-    CPLFinderClean(void) -> void
+    CPLFinderClean() -> void
 
 CPLFinderClean.
 """
