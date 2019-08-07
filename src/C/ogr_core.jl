@@ -307,7 +307,7 @@ function OGRParseDate(pszInput, psOutput, nOptions)
 end
 
 """
-    GDALVersionInfo(const char *) -> const char *
+    GDALVersionInfo(const char * pszRequest) -> const char *
 
 Get runtime version information.
 

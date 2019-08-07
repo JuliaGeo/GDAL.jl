@@ -2,7 +2,7 @@
 # Automatically generated using Clang.jl
 
 """
-    GDALGetDataTypeSize(GDALDataType) -> int
+    GDALGetDataTypeSize(GDALDataType eDataType) -> int
 
 Get data type size in bits.
 
@@ -32,7 +32,7 @@ function GDALGetDataTypeSizeBits(eDataType)
 end
 
 """
-    GDALGetDataTypeSizeBytes(GDALDataType) -> int
+    GDALGetDataTypeSizeBytes(GDALDataType eDataType) -> int
 
 Get data type size in bytes.
 
@@ -47,7 +47,7 @@ function GDALGetDataTypeSizeBytes(arg1)
 end
 
 """
-    GDALDataTypeIsComplex(GDALDataType) -> int
+    GDALDataTypeIsComplex(GDALDataType eDataType) -> int
 
 Is data type complex?
 
@@ -59,7 +59,7 @@ function GDALDataTypeIsComplex(arg1)
 end
 
 """
-    GDALDataTypeIsInteger(GDALDataType) -> int
+    GDALDataTypeIsInteger(GDALDataType eDataType) -> int
 
 Is data type integer? (might be complex)
 
@@ -71,7 +71,7 @@ function GDALDataTypeIsInteger(arg1)
 end
 
 """
-    GDALDataTypeIsFloating(GDALDataType) -> int
+    GDALDataTypeIsFloating(GDALDataType eDataType) -> int
 
 Is data type floating? (might be complex)
 
@@ -83,7 +83,7 @@ function GDALDataTypeIsFloating(arg1)
 end
 
 """
-    GDALDataTypeIsSigned(GDALDataType) -> int
+    GDALDataTypeIsSigned(GDALDataType eDataType) -> int
 
 Is data type signed?
 
@@ -95,7 +95,7 @@ function GDALDataTypeIsSigned(arg1)
 end
 
 """
-    GDALGetDataTypeName(GDALDataType) -> const char *
+    GDALGetDataTypeName(GDALDataType eDataType) -> const char *
 
 Get name of data type.
 
@@ -110,7 +110,7 @@ function GDALGetDataTypeName(arg1)
 end
 
 """
-    GDALGetDataTypeByName(const char *) -> GDALDataType
+    GDALGetDataTypeByName(const char * pszName) -> GDALDataType
 
 Get data type by symbolic name.
 
@@ -125,8 +125,8 @@ function GDALGetDataTypeByName(arg1)
 end
 
 """
-    GDALDataTypeUnion(GDALDataType,
-                      GDALDataType) -> GDALDataType
+    GDALDataTypeUnion(GDALDataType eType1,
+                      GDALDataType eType2) -> GDALDataType
 
 Return the smallest data type that can fully express both input data types.
 
@@ -220,7 +220,7 @@ function GDALAdjustValueToDataType(eDT, dfValue, pbClamped, pbRounded)
 end
 
 """
-    GDALGetNonComplexDataType(GDALDataType) -> GDALDataType
+    GDALGetNonComplexDataType(GDALDataType eDataType) -> GDALDataType
 
 Return the base data type for the specified input.
 
@@ -252,7 +252,7 @@ function GDALDataTypeIsConversionLossy(eTypeFrom, eTypeTo)
 end
 
 """
-    GDALGetAsyncStatusTypeName(GDALAsyncStatusType) -> const char *
+    GDALGetAsyncStatusTypeName(GDALAsyncStatusType eAsyncStatusType) -> const char *
 
 Get name of AsyncStatus data type.
 
@@ -267,7 +267,7 @@ function GDALGetAsyncStatusTypeName(arg1)
 end
 
 """
-    GDALGetAsyncStatusTypeByName(const char *) -> GDALAsyncStatusType
+    GDALGetAsyncStatusTypeByName(const char * pszName) -> GDALAsyncStatusType
 
 Get AsyncStatusType by symbolic name.
 
@@ -282,7 +282,7 @@ function GDALGetAsyncStatusTypeByName(arg1)
 end
 
 """
-    GDALGetColorInterpretationName(GDALColorInterp) -> const char *
+    GDALGetColorInterpretationName(GDALColorInterp eInterp) -> const char *
 
 Get name of color interpretation.
 
@@ -312,7 +312,7 @@ function GDALGetColorInterpretationByName(pszName)
 end
 
 """
-    GDALGetPaletteInterpretationName(GDALPaletteInterp) -> const char *
+    GDALGetPaletteInterpretationName(GDALPaletteInterp eInterp) -> const char *
 
 Get name of palette interpretation.
 
@@ -437,6 +437,36 @@ function GDALOpenShared(arg1, arg2)
     ccall((:GDALOpenShared, libgdal), GDALDatasetH, (Cstring, GDALAccess), arg1, arg2)
 end
 
+"""
+    GDALOpenEx(const char * pszFilename,
+               unsigned int nOpenFlags,
+               const char *const * papszAllowedDrivers,
+               const char *const * papszOpenOptions,
+               const char *const * papszSiblingFiles) -> GDALDatasetH
+
+Open a raster or vector file as a GDALDataset.
+
+### Parameters
+* **pszFilename**: the name of the file to access. In the case of exotic drivers this may not refer to a physical file, but instead contain information for the driver on how to access a dataset. It should be in UTF-8 encoding.
+* **nOpenFlags**: a combination of GDAL_OF_ flags that may be combined through logical or operator. 
+
+Driver kind: GDAL_OF_RASTER for raster drivers, GDAL_OF_VECTOR for vector drivers, GDAL_OF_GNM for Geographic Network Model drivers. If none of the value is specified, all kinds are implied. 
+
+
+Access mode: GDAL_OF_READONLY (exclusive)or GDAL_OF_UPDATE. 
+
+
+Shared mode: GDAL_OF_SHARED. If set, it allows the sharing of GDALDataset handles for a dataset with other callers that have set GDAL_OF_SHARED. In particular, GDALOpenEx() will first consult its list of currently open and shared GDALDataset's, and if the GetDescription() name for one exactly matches the pszFilename passed to GDALOpenEx() it will be referenced and returned, if GDALOpenEx() is called from the same thread. 
+
+
+Verbose error: GDAL_OF_VERBOSE_ERROR. If set, a failed attempt to open the file will lead to an error message to be reported.
+* **papszAllowedDrivers**: NULL to consider all candidate drivers, or a NULL terminated list of strings with the driver short names that must be considered.
+* **papszOpenOptions**: NULL, or a NULL terminated list of strings with open options passed to candidate drivers. An option exists for all drivers, OVERVIEW_LEVEL=level, to select a particular overview level of a dataset. The level index starts at 0. The level number can be suffixed by "only" to specify that only this overview level must be visible, and not sub-levels. Open options are validated by default, and a warning is emitted in case the option is not recognized. In some scenarios, it might be not desirable (e.g. when not knowing which driver will open the file), so the special open option VALIDATE_OPEN_OPTIONS can be set to NO to avoid such warnings. Alternatively, since GDAL 2.1, an option name can be preceded by the @ character to indicate that it may not cause a warning if the driver doesn't declare this option.
+* **papszSiblingFiles**: NULL, or a NULL terminated list of strings that are filenames that are auxiliary to the main filename. If NULL is passed, a probing of the file system will be done.
+
+### Returns
+A GDALDatasetH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDataset *.
+"""
 function GDALOpenEx(pszFilename, nOpenFlags, papszAllowedDrivers, papszOpenOptions, papszSiblingFiles)
     ccall((:GDALOpenEx, libgdal), GDALDatasetH, (Cstring, UInt32, Ptr{Cstring}, Ptr{Cstring}, Ptr{Cstring}), pszFilename, nOpenFlags, papszAllowedDrivers, papszOpenOptions, papszSiblingFiles)
 end
@@ -642,8 +672,8 @@ function GDALGetDriverCreationOptionList(arg1)
 end
 
 """
-    GDALInitGCPs(int,
-                 GDAL_GCP *) -> void
+    GDALInitGCPs(int nCount,
+                 GDAL_GCP * psGCP) -> void
 
 Initialize an array of GCPs.
 
@@ -656,8 +686,8 @@ function GDALInitGCPs(arg1, arg2)
 end
 
 """
-    GDALDeinitGCPs(int,
-                   GDAL_GCP *) -> void
+    GDALDeinitGCPs(int nCount,
+                   GDAL_GCP * psGCP) -> void
 
 De-initialize an array of GCPs (initialized with GDALInitGCPs())
 
@@ -670,8 +700,8 @@ function GDALDeinitGCPs(arg1, arg2)
 end
 
 """
-    GDALDuplicateGCPs(int,
-                      const GDAL_GCP *) -> GDAL_GCP *
+    GDALDuplicateGCPs(int nCount,
+                      const GDAL_GCP * pasGCPList) -> GDAL_GCP *
 
 Duplicate an array of GCPs.
 
@@ -742,9 +772,9 @@ function GDALApplyGeoTransform(arg1, arg2, arg3, arg4, arg5)
 end
 
 """
-    GDALComposeGeoTransforms(const double * padfGeoTransform1,
-                             const double * padfGeoTransform2,
-                             double * padfGeoTransformOut) -> void
+    GDALComposeGeoTransforms(const double * padfGT1,
+                             const double * padfGT2,
+                             double * padfGTOut) -> void
 
 Compose two geotransforms.
 
@@ -847,6 +877,14 @@ function GDALGetFileList(arg1)
     ccall((:GDALGetFileList, libgdal), Ptr{Cstring}, (GDALDatasetH,), arg1)
 end
 
+"""
+    GDALClose(GDALDatasetH hDS) -> void
+
+Close GDAL dataset.
+
+### Parameters
+* **hDS**: The dataset to close. May be cast from a "GDALDataset *".
+"""
 function GDALClose(arg1)
     ccall((:GDALClose, libgdal), Cvoid, (GDALDatasetH,), arg1)
 end
@@ -1257,7 +1295,7 @@ end
 """
     GDALRasterBandCopyWholeRaster(GDALRasterBandH hSrcBand,
                                   GDALRasterBandH hDstBand,
-                                  const char *const * constpapszOptions,
+                                  const char *const *const papszOptions,
                                   GDALProgressFunc pfnProgress,
                                   void * pProgressData) -> CPLErr
 
@@ -1280,7 +1318,7 @@ end
 """
     GDALRegenerateOverviews(GDALRasterBandH hSrcBand,
                             int nOverviewCount,
-                            GDALRasterBandH * pahOverviewBands,
+                            GDALRasterBandH * pahOvrBands,
                             const char * pszResampling,
                             GDALProgressFunc pfnProgress,
                             void * pProgressData) -> CPLErr
@@ -2093,9 +2131,9 @@ function GDALSetDefaultHistogramEx(hBand, dfMin, dfMax, nBuckets, panHistogram)
 end
 
 """
-    GDALGetRandomRasterSample(GDALRasterBandH,
-                              int,
-                              float *) -> int
+    GDALGetRandomRasterSample(GDALRasterBandH hBand,
+                              int nSamples,
+                              float * pafSampleBuf) -> int
 
 Undocumented.
 
@@ -2143,7 +2181,7 @@ function GDALFillRaster(hBand, dfRealValue, dfImaginaryValue)
 end
 
 """
-    GDALComputeBandStats(GDALRasterBandH hBand,
+    GDALComputeBandStats(GDALRasterBandH hSrcBand,
                          int nSampleStep,
                          double * pdfMean,
                          double * pdfStdDev,
@@ -2210,8 +2248,8 @@ function GDALSetDefaultRAT(arg1, arg2)
 end
 
 """
-    GDALAddDerivedBandPixelFunc(const char * pszName,
-                                GDALDerivedPixelFunc pfnPixelFunc) -> CPLErr
+    GDALAddDerivedBandPixelFunc(const char * pszFuncName,
+                                GDALDerivedPixelFunc pfnNewFunction) -> CPLErr
 
 This adds a pixel function to the global list of available pixel functions for derived bands.
 
@@ -2393,10 +2431,10 @@ end
 """
     GDALCopyWords(const void *CPL_RESTRICT pSrcData,
                   GDALDataType eSrcType,
-                  int nSrcPixelOffset,
+                  int nSrcPixelStride,
                   void *CPL_RESTRICT pDstData,
                   GDALDataType eDstType,
-                  int nDstPixelOffset,
+                  int nDstPixelStride,
                   int nWordCount) -> void
 
 Copy pixel words from buffer to buffer.
@@ -2408,10 +2446,10 @@ end
 """
     GDALCopyWords64(const void *CPL_RESTRICT pSrcData,
                     GDALDataType eSrcType,
-                    int nSrcPixelOffset,
+                    int nSrcPixelStride,
                     void *CPL_RESTRICT pDstData,
                     GDALDataType eDstType,
-                    int nDstPixelOffset,
+                    int nDstPixelStride,
                     GPtrDiff_t nWordCount) -> void
 
 Copy pixel words from buffer to buffer.
@@ -2456,8 +2494,8 @@ function GDALCopyBits(pabySrcData, nSrcOffset, nSrcStep, pabyDstData, nDstOffset
 end
 
 """
-    GDALLoadWorldFile(const char *,
-                      double *) -> int
+    GDALLoadWorldFile(const char * pszFilename,
+                      double * padfGeoTransform) -> int
 
 Read ESRI world file.
 
@@ -2473,9 +2511,9 @@ function GDALLoadWorldFile(arg1, arg2)
 end
 
 """
-    GDALReadWorldFile(const char *,
-                      const char *,
-                      double *) -> int
+    GDALReadWorldFile(const char * pszBaseFilename,
+                      const char * pszExtension,
+                      double * padfGeoTransform) -> int
 
 Read ESRI world file.
 
@@ -2492,9 +2530,9 @@ function GDALReadWorldFile(arg1, arg2, arg3)
 end
 
 """
-    GDALWriteWorldFile(const char *,
-                       const char *,
-                       double *) -> int
+    GDALWriteWorldFile(const char * pszBaseFilename,
+                       const char * pszExtension,
+                       double * padfGeoTransform) -> int
 
 Write ESRI world file.
 
@@ -2511,11 +2549,11 @@ function GDALWriteWorldFile(arg1, arg2, arg3)
 end
 
 """
-    GDALLoadTabFile(const char *,
-                    double *,
-                    char **,
-                    int *,
-                    GDAL_GCP **) -> int
+    GDALLoadTabFile(const char * pszFilename,
+                    double * padfGeoTransform,
+                    char ** ppszWKT,
+                    int * pnGCPCount,
+                    GDAL_GCP ** ppasGCPs) -> int
 
 Helper function for translator implementer wanting support for MapInfo .tab files.
 
@@ -2534,11 +2572,11 @@ function GDALLoadTabFile(arg1, arg2, arg3, arg4, arg5)
 end
 
 """
-    GDALReadTabFile(const char *,
-                    double *,
-                    char **,
-                    int *,
-                    GDAL_GCP **) -> int
+    GDALReadTabFile(const char * pszBaseFilename,
+                    double * padfGeoTransform,
+                    char ** ppszWKT,
+                    int * pnGCPCount,
+                    GDAL_GCP ** ppasGCPs) -> int
 
 Helper function for translator implementer wanting support for MapInfo .tab files.
 
@@ -2557,11 +2595,11 @@ function GDALReadTabFile(arg1, arg2, arg3, arg4, arg5)
 end
 
 """
-    GDALLoadOziMapFile(const char *,
-                       double *,
-                       char **,
-                       int *,
-                       GDAL_GCP **) -> int
+    GDALLoadOziMapFile(const char * pszFilename,
+                       double * padfGeoTransform,
+                       char ** ppszWKT,
+                       int * pnGCPCount,
+                       GDAL_GCP ** ppasGCPs) -> int
 
 Helper function for translator implementer wanting support for OZI .map.
 
@@ -2580,11 +2618,11 @@ function GDALLoadOziMapFile(arg1, arg2, arg3, arg4, arg5)
 end
 
 """
-    GDALReadOziMapFile(const char *,
-                       double *,
-                       char **,
-                       int *,
-                       GDAL_GCP **) -> int
+    GDALReadOziMapFile(const char * pszBaseFilename,
+                       double * padfGeoTransform,
+                       char ** ppszWKT,
+                       int * pnGCPCount,
+                       GDAL_GCP ** ppasGCPs) -> int
 
 Helper function for translator implementer wanting support for OZI .map.
 
@@ -2603,9 +2641,9 @@ function GDALReadOziMapFile(arg1, arg2, arg3, arg4, arg5)
 end
 
 """
-    GDALDecToDMS(double,
-                 const char *,
-                 int) -> const char *
+    GDALDecToDMS(double dfAngle,
+                 const char * pszAxis,
+                 int nPrecision) -> const char *
 
 Translate a decimal degrees value to a DMS string with hemisphere.
 """
@@ -2614,7 +2652,7 @@ function GDALDecToDMS(arg1, arg2, arg3)
 end
 
 """
-    GDALPackedDMSToDec(double) -> double
+    GDALPackedDMSToDec(double dfPacked) -> double
 
 Convert a packed DMS value (DDDMMMSSS.SS) into decimal degrees.
 """
@@ -2623,7 +2661,7 @@ function GDALPackedDMSToDec(arg1)
 end
 
 """
-    GDALDecToPackedDMS(double) -> double
+    GDALDecToPackedDMS(double dfDec) -> double
 
 Convert decimal degrees into packed DMS value (DDDMMMSSS.SS).
 """
@@ -2632,8 +2670,8 @@ function GDALDecToPackedDMS(arg1)
 end
 
 """
-    GDALExtractRPCInfo(CSLConstList,
-                       GDALRPCInfo *) -> int
+    GDALExtractRPCInfo(CSLConstList papszMD,
+                       GDALRPCInfo * psRPC) -> int
 
 Extract RPC info from metadata, and apply to an RPCInfo structure.
 
@@ -2739,7 +2777,7 @@ function GDALCreateColorRamp(hTable, nStartIndex, psStartColor, nEndIndex, psEnd
 end
 
 """
-    GDALCreateRasterAttributeTable(void) -> GDALRasterAttributeTableH
+    GDALCreateRasterAttributeTable() -> GDALRasterAttributeTableH
 
 Construct empty table.
 """
@@ -2748,7 +2786,7 @@ function GDALCreateRasterAttributeTable()
 end
 
 """
-    GDALDestroyRasterAttributeTable(GDALRasterAttributeTableH) -> void
+    GDALDestroyRasterAttributeTable(GDALRasterAttributeTableH hRAT) -> void
 
 Destroys a RAT.
 """
@@ -2757,7 +2795,7 @@ function GDALDestroyRasterAttributeTable(arg1)
 end
 
 """
-    GDALRATGetColumnCount(GDALRasterAttributeTableH) -> int
+    GDALRATGetColumnCount(GDALRasterAttributeTableH hRAT) -> int
 
 Fetch table column count.
 """
@@ -2766,8 +2804,8 @@ function GDALRATGetColumnCount(arg1)
 end
 
 """
-    GDALRATGetNameOfCol(GDALRasterAttributeTableH,
-                        int) -> const char *
+    GDALRATGetNameOfCol(GDALRasterAttributeTableH hRAT,
+                        int iCol) -> const char *
 
 Fetch name of indicated column.
 
@@ -2783,8 +2821,8 @@ function GDALRATGetNameOfCol(arg1, arg2)
 end
 
 """
-    GDALRATGetUsageOfCol(GDALRasterAttributeTableH,
-                         int) -> GDALRATFieldUsage
+    GDALRATGetUsageOfCol(GDALRasterAttributeTableH hRAT,
+                         int iCol) -> GDALRATFieldUsage
 
 Fetch column usage value.
 
@@ -2800,8 +2838,8 @@ function GDALRATGetUsageOfCol(arg1, arg2)
 end
 
 """
-    GDALRATGetTypeOfCol(GDALRasterAttributeTableH,
-                        int) -> GDALRATFieldType
+    GDALRATGetTypeOfCol(GDALRasterAttributeTableH hRAT,
+                        int iCol) -> GDALRATFieldType
 
 Fetch column type.
 
@@ -2817,8 +2855,8 @@ function GDALRATGetTypeOfCol(arg1, arg2)
 end
 
 """
-    GDALRATGetColOfUsage(GDALRasterAttributeTableH,
-                         GDALRATFieldUsage) -> int
+    GDALRATGetColOfUsage(GDALRasterAttributeTableH hRAT,
+                         GDALRATFieldUsage eUsage) -> int
 
 Fetch column index for given usage.
 """
@@ -2827,7 +2865,7 @@ function GDALRATGetColOfUsage(arg1, arg2)
 end
 
 """
-    GDALRATGetRowCount(GDALRasterAttributeTableH) -> int
+    GDALRATGetRowCount(GDALRasterAttributeTableH hRAT) -> int
 
 Fetch row count.
 """
@@ -2836,9 +2874,9 @@ function GDALRATGetRowCount(arg1)
 end
 
 """
-    GDALRATGetValueAsString(GDALRasterAttributeTableH,
-                            int,
-                            int) -> const char *
+    GDALRATGetValueAsString(GDALRasterAttributeTableH hRAT,
+                            int iRow,
+                            int iField) -> const char *
 
 Fetch field value as a string.
 """
@@ -2847,9 +2885,9 @@ function GDALRATGetValueAsString(arg1, arg2, arg3)
 end
 
 """
-    GDALRATGetValueAsInt(GDALRasterAttributeTableH,
-                         int,
-                         int) -> int
+    GDALRATGetValueAsInt(GDALRasterAttributeTableH hRAT,
+                         int iRow,
+                         int iField) -> int
 
 Fetch field value as a integer.
 """
@@ -2858,9 +2896,9 @@ function GDALRATGetValueAsInt(arg1, arg2, arg3)
 end
 
 """
-    GDALRATGetValueAsDouble(GDALRasterAttributeTableH,
-                            int,
-                            int) -> double
+    GDALRATGetValueAsDouble(GDALRasterAttributeTableH hRAT,
+                            int iRow,
+                            int iField) -> double
 
 Fetch field value as a double.
 """
@@ -2869,10 +2907,10 @@ function GDALRATGetValueAsDouble(arg1, arg2, arg3)
 end
 
 """
-    GDALRATSetValueAsString(GDALRasterAttributeTableH,
-                            int,
-                            int,
-                            const char *) -> void
+    GDALRATSetValueAsString(GDALRasterAttributeTableH hRAT,
+                            int iRow,
+                            int iField,
+                            const char * pszValue) -> void
 
 Set field value from string.
 
@@ -2887,10 +2925,10 @@ function GDALRATSetValueAsString(arg1, arg2, arg3, arg4)
 end
 
 """
-    GDALRATSetValueAsInt(GDALRasterAttributeTableH,
-                         int,
-                         int,
-                         int) -> void
+    GDALRATSetValueAsInt(GDALRasterAttributeTableH hRAT,
+                         int iRow,
+                         int iField,
+                         int nValue) -> void
 
 Set field value from integer.
 """
@@ -2899,10 +2937,10 @@ function GDALRATSetValueAsInt(arg1, arg2, arg3, arg4)
 end
 
 """
-    GDALRATSetValueAsDouble(GDALRasterAttributeTableH,
-                            int,
-                            int,
-                            double) -> void
+    GDALRATSetValueAsDouble(GDALRasterAttributeTableH hRAT,
+                            int iRow,
+                            int iField,
+                            double dfValue) -> void
 
 Set field value from double.
 """
@@ -2962,8 +3000,8 @@ function GDALRATValuesIOAsString(hRAT, eRWFlag, iField, iStartRow, iLength, paps
 end
 
 """
-    GDALRATSetRowCount(GDALRasterAttributeTableH,
-                       int) -> void
+    GDALRATSetRowCount(GDALRasterAttributeTableH hRAT,
+                       int nNewCount) -> void
 
 Set row count.
 
@@ -2976,10 +3014,10 @@ function GDALRATSetRowCount(arg1, arg2)
 end
 
 """
-    GDALRATCreateColumn(GDALRasterAttributeTableH,
-                        const char *,
-                        GDALRATFieldType,
-                        GDALRATFieldUsage) -> CPLErr
+    GDALRATCreateColumn(GDALRasterAttributeTableH hRAT,
+                        const char * pszFieldName,
+                        GDALRATFieldType eFieldType,
+                        GDALRATFieldUsage eFieldUsage) -> CPLErr
 
 Create new column.
 """
@@ -2988,9 +3026,9 @@ function GDALRATCreateColumn(arg1, arg2, arg3, arg4)
 end
 
 """
-    GDALRATSetLinearBinning(GDALRasterAttributeTableH,
-                            double,
-                            double) -> CPLErr
+    GDALRATSetLinearBinning(GDALRasterAttributeTableH hRAT,
+                            double dfRow0Min,
+                            double dfBinSize) -> CPLErr
 
 Set linear binning information.
 """
@@ -2999,9 +3037,9 @@ function GDALRATSetLinearBinning(arg1, arg2, arg3)
 end
 
 """
-    GDALRATGetLinearBinning(GDALRasterAttributeTableH,
-                            double *,
-                            double *) -> int
+    GDALRATGetLinearBinning(GDALRasterAttributeTableH hRAT,
+                            double * pdfRow0Min,
+                            double * pdfBinSize) -> int
 
 Get linear binning information.
 """
@@ -3029,8 +3067,8 @@ function GDALRATGetTableType(hRAT)
 end
 
 """
-    GDALRATInitializeFromColorTable(GDALRasterAttributeTableH,
-                                    GDALColorTableH) -> CPLErr
+    GDALRATInitializeFromColorTable(GDALRasterAttributeTableH hRAT,
+                                    GDALColorTableH hCT) -> CPLErr
 
 Initialize from color table.
 """
@@ -3039,7 +3077,7 @@ function GDALRATInitializeFromColorTable(arg1, arg2)
 end
 
 """
-    GDALRATTranslateToColorTable(GDALRasterAttributeTableH,
+    GDALRATTranslateToColorTable(GDALRasterAttributeTableH hRAT,
                                  int nEntryCount) -> GDALColorTableH
 
 Translate to a color table.
@@ -3049,8 +3087,8 @@ function GDALRATTranslateToColorTable(arg1, nEntryCount)
 end
 
 """
-    GDALRATDumpReadable(GDALRasterAttributeTableH,
-                        FILE *) -> void
+    GDALRATDumpReadable(GDALRasterAttributeTableH hRAT,
+                        FILE * fp) -> void
 
 Dump RAT in readable form.
 """
@@ -3059,7 +3097,7 @@ function GDALRATDumpReadable(arg1, arg2)
 end
 
 """
-    GDALRATClone(const GDALRasterAttributeTableH) -> GDALRasterAttributeTableH
+    GDALRATClone(const GDALRasterAttributeTableH hRAT) -> GDALRasterAttributeTableH
 
 Copy Raster Attribute Table.
 """
@@ -3068,7 +3106,7 @@ function GDALRATClone(arg1)
 end
 
 """
-    GDALRATSerializeJSON(GDALRasterAttributeTableH) -> void *
+    GDALRATSerializeJSON(GDALRasterAttributeTableH hRAT) -> void *
 
 Serialize Raster Attribute Table in Json format.
 """
@@ -3077,8 +3115,8 @@ function GDALRATSerializeJSON(arg1)
 end
 
 """
-    GDALRATGetRowOfValue(GDALRasterAttributeTableH,
-                         double) -> int
+    GDALRATGetRowOfValue(GDALRasterAttributeTableH hRAT,
+                         double dfValue) -> int
 
 Get row for pixel value.
 """
@@ -3087,7 +3125,7 @@ function GDALRATGetRowOfValue(arg1, arg2)
 end
 
 """
-    GDALRATRemoveStatistics(GDALRasterAttributeTableH) -> void
+    GDALRATRemoveStatistics(GDALRasterAttributeTableH hRAT) -> void
 
 Remove Statistics from RAT.
 """

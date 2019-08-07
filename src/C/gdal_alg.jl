@@ -487,8 +487,8 @@ end
                                    const GDAL_GCP * pasGCPList,
                                    int nReqOrder,
                                    int bReversed,
-                                   double tolerance,
-                                   int minimumGcps) -> void *
+                                   double dfTolerance,
+                                   int nMinimumGcps) -> void *
 
 Create GCP based polynomial transformer, with a tolerance threshold to discard GCPs that transform badly.
 """
@@ -601,7 +601,7 @@ function RPCInfoToMD(psRPCInfo)
 end
 
 """
-    GDALCreateRPCTransformer(GDALRPCInfo * psRPC,
+    GDALCreateRPCTransformer(GDALRPCInfo * psRPCInfo,
                              int bReversed,
                              double dfPixErrThreshold,
                              char ** papszOptions) -> void *
@@ -622,7 +622,7 @@ function GDALCreateRPCTransformer(psRPC, bReversed, dfPixErrThreshold, papszOpti
 end
 
 """
-    GDALDestroyRPCTransformer(void * pTransformArg) -> void
+    GDALDestroyRPCTransformer(void * pTransformAlg) -> void
 
 Destroy RPC tranformer.
 """
@@ -634,9 +634,9 @@ end
     GDALRPCTransform(void * pTransformArg,
                      int bDstToSrc,
                      int nPointCount,
-                     double * x,
-                     double * y,
-                     double * z,
+                     double * padfX,
+                     double * padfY,
+                     double * padfZ,
                      int * panSuccess) -> int
 
 RPC transform.

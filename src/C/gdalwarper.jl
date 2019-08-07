@@ -279,7 +279,7 @@ end
                             const char * pszDstWKT,
                             GDALResampleAlg eResampleAlg,
                             double dfMaxError,
-                            const GDALWarpOptions * psOptions) -> GDALDatasetH
+                            const GDALWarpOptions * psOptionsIn) -> GDALDatasetH
 
 Create virtual warped dataset automatically.
 
@@ -339,68 +339,68 @@ function GDALInitializeWarpedVRT(hDS, psWO)
 end
 
 """
-    GDALCreateWarpOperation(const GDALWarpOptions *) -> GDALWarpOperationH
+    GDALCreateWarpOperation(const GDALWarpOptions * psNewOptions) -> GDALWarpOperationH
 """
 function GDALCreateWarpOperation(arg1)
     ccall((:GDALCreateWarpOperation, libgdal), GDALWarpOperationH, (Ptr{GDALWarpOptions},), arg1)
 end
 
 """
-    GDALDestroyWarpOperation(GDALWarpOperationH) -> void
+    GDALDestroyWarpOperation(GDALWarpOperationH hOperation) -> void
 """
 function GDALDestroyWarpOperation(arg1)
     ccall((:GDALDestroyWarpOperation, libgdal), Cvoid, (GDALWarpOperationH,), arg1)
 end
 
 """
-    GDALChunkAndWarpImage(GDALWarpOperationH,
-                          int,
-                          int,
-                          int,
-                          int) -> CPLErr
+    GDALChunkAndWarpImage(GDALWarpOperationH hOperation,
+                          int nDstXOff,
+                          int nDstYOff,
+                          int nDstXSize,
+                          int nDstYSize) -> CPLErr
 """
 function GDALChunkAndWarpImage(arg1, arg2, arg3, arg4, arg5)
     ccall((:GDALChunkAndWarpImage, libgdal), CPLErr, (GDALWarpOperationH, Cint, Cint, Cint, Cint), arg1, arg2, arg3, arg4, arg5)
 end
 
 """
-    GDALChunkAndWarpMulti(GDALWarpOperationH,
-                          int,
-                          int,
-                          int,
-                          int) -> CPLErr
+    GDALChunkAndWarpMulti(GDALWarpOperationH hOperation,
+                          int nDstXOff,
+                          int nDstYOff,
+                          int nDstXSize,
+                          int nDstYSize) -> CPLErr
 """
 function GDALChunkAndWarpMulti(arg1, arg2, arg3, arg4, arg5)
     ccall((:GDALChunkAndWarpMulti, libgdal), CPLErr, (GDALWarpOperationH, Cint, Cint, Cint, Cint), arg1, arg2, arg3, arg4, arg5)
 end
 
 """
-    GDALWarpRegion(GDALWarpOperationH,
-                   int,
-                   int,
-                   int,
-                   int,
-                   int,
-                   int,
-                   int,
-                   int) -> CPLErr
+    GDALWarpRegion(GDALWarpOperationH hOperation,
+                   int nDstXOff,
+                   int nDstYOff,
+                   int nDstXSize,
+                   int nDstYSize,
+                   int nSrcXOff,
+                   int nSrcYOff,
+                   int nSrcXSize,
+                   int nSrcYSize) -> CPLErr
 """
 function GDALWarpRegion(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
     ccall((:GDALWarpRegion, libgdal), CPLErr, (GDALWarpOperationH, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
 end
 
 """
-    GDALWarpRegionToBuffer(GDALWarpOperationH,
-                           int,
-                           int,
-                           int,
-                           int,
-                           void *,
-                           GDALDataType,
-                           int,
-                           int,
-                           int,
-                           int) -> CPLErr
+    GDALWarpRegionToBuffer(GDALWarpOperationH hOperation,
+                           int nDstXOff,
+                           int nDstYOff,
+                           int nDstXSize,
+                           int nDstYSize,
+                           void * pDataBuf,
+                           GDALDataType eBufDataType,
+                           int nSrcXOff,
+                           int nSrcYOff,
+                           int nSrcXSize,
+                           int nSrcYSize) -> CPLErr
 """
 function GDALWarpRegionToBuffer(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11)
     ccall((:GDALWarpRegionToBuffer, libgdal), CPLErr, (GDALWarpOperationH, Cint, Cint, Cint, Cint, Ptr{Cvoid}, GDALDataType, Cint, Cint, Cint, Cint), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11)

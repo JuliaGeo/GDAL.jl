@@ -1013,7 +1013,7 @@ function VSIGetDiskFreeSpace(pszDirname)
 end
 
 """
-    VSIInstallMemFileHandler(void) -> void
+    VSIInstallMemFileHandler() -> void
 
 Install "memory" file system handler.
 """
