@@ -1,6 +1,7 @@
 # Julia wrapper for header: cpl_progress.h
 # Automatically generated using Clang.jl
 
+
 """
     GDALDummyProgress(double,
                       const char *,
@@ -8,7 +9,7 @@
 
 Stub progress function.
 """
-function GDALDummyProgress(arg1, arg2, arg3)
+function gdaldummyprogress(arg1, arg2, arg3)
     ccall((:GDALDummyProgress, libgdal), Cint, (Cdouble, Cstring, Ptr{Cvoid}), arg1, arg2, arg3)
 end
 
@@ -27,7 +28,7 @@ Simple progress report to terminal.
 ### Returns
 Always returns TRUE indicating the process should continue.
 """
-function GDALTermProgress(arg1, arg2, arg3)
+function gdaltermprogress(arg1, arg2, arg3)
     ccall((:GDALTermProgress, libgdal), Cint, (Cdouble, Cstring, Ptr{Cvoid}), arg1, arg2, arg3)
 end
 
@@ -38,7 +39,7 @@ end
 
 Scaled progress transformer.
 """
-function GDALScaledProgress(arg1, arg2, arg3)
+function gdalscaledprogress(arg1, arg2, arg3)
     ccall((:GDALScaledProgress, libgdal), Cint, (Cdouble, Cstring, Ptr{Cvoid}), arg1, arg2, arg3)
 end
 
@@ -59,8 +60,8 @@ Create scaled progress transformer.
 ### Returns
 pointer to pass as pProgressArg to sub functions. Should be freed with GDALDestroyScaledProgress().
 """
-function GDALCreateScaledProgress(arg1, arg2, arg3, arg4)
-    ccall((:GDALCreateScaledProgress, libgdal), Ptr{Cvoid}, (Cdouble, Cdouble, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4)
+function gdalcreatescaledprogress(arg1, arg2, arg3, arg4)
+    failsafe(ccall((:GDALCreateScaledProgress, libgdal), Ptr{Cvoid}, (Cdouble, Cdouble, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -71,6 +72,6 @@ Cleanup scaled progress handle.
 ### Parameters
 * **pData**: scaled progress handle returned by GDALCreateScaledProgress().
 """
-function GDALDestroyScaledProgress(arg1)
+function gdaldestroyscaledprogress(arg1)
     ccall((:GDALDestroyScaledProgress, libgdal), Cvoid, (Ptr{Cvoid},), arg1)
 end

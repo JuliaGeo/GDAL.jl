@@ -1,6 +1,7 @@
 # Julia wrapper for header: cpl_minixml.h
 # Automatically generated using Clang.jl
 
+
 """
     CPLParseXMLString(const char * pszString) -> CPLXMLNode *
 
@@ -12,7 +13,7 @@ Parse an XML string into tree form.
 ### Returns
 parsed tree or NULL on error.
 """
-function CPLParseXMLString(arg1)
+function cplparsexmlstring(arg1)
     ccall((:CPLParseXMLString, libgdal), Ptr{CPLXMLNode}, (Cstring,), arg1)
 end
 
@@ -24,7 +25,7 @@ Destroy a tree.
 ### Parameters
 * **psNode**: the tree to free.
 """
-function CPLDestroyXMLNode(arg1)
+function cpldestroyxmlnode(arg1)
     ccall((:CPLDestroyXMLNode, libgdal), Cvoid, (Ptr{CPLXMLNode},), arg1)
 end
 
@@ -41,7 +42,7 @@ Find node by path.
 ### Returns
 the requested element node, or NULL if not found.
 """
-function CPLGetXMLNode(poRoot, pszPath)
+function cplgetxmlnode(poRoot, pszPath)
     ccall((:CPLGetXMLNode, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, Cstring), poRoot, pszPath)
 end
 
@@ -58,7 +59,7 @@ Search for a node in document.
 ### Returns
 The matching node or NULL on failure.
 """
-function CPLSearchXMLNode(poRoot, pszTarget)
+function cplsearchxmlnode(poRoot, pszTarget)
     ccall((:CPLSearchXMLNode, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, Cstring), poRoot, pszTarget)
 end
 
@@ -77,8 +78,8 @@ Fetch element/attribute value.
 ### Returns
 the requested value or pszDefault if not found.
 """
-function CPLGetXMLValue(poRoot, pszPath, pszDefault)
-    ccall((:CPLGetXMLValue, libgdal), Cstring, (Ptr{CPLXMLNode}, Cstring, Cstring), poRoot, pszPath, pszDefault)
+function cplgetxmlvalue(poRoot, pszPath, pszDefault)
+    unsafe_string(ccall((:CPLGetXMLValue, libgdal), Cstring, (Ptr{CPLXMLNode}, Cstring, Cstring), poRoot, pszPath, pszDefault))
 end
 
 """
@@ -96,7 +97,7 @@ Create an document tree item.
 ### Returns
 the newly created node, now owned by the caller (or parent node).
 """
-function CPLCreateXMLNode(poParent, eType, pszText)
+function cplcreatexmlnode(poParent, eType, pszText)
     ccall((:CPLCreateXMLNode, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, CPLXMLNodeType, Cstring), poParent, eType, pszText)
 end
 
@@ -111,8 +112,8 @@ Convert tree into string document.
 ### Returns
 the document on success or NULL on failure.
 """
-function CPLSerializeXMLTree(psNode)
-    ccall((:CPLSerializeXMLTree, libgdal), Cstring, (Ptr{CPLXMLNode},), psNode)
+function cplserializexmltree(psNode)
+    unsafe_string(ccall((:CPLSerializeXMLTree, libgdal), Cstring, (Ptr{CPLXMLNode},), psNode))
 end
 
 """
@@ -125,7 +126,7 @@ Add child node to parent.
 * **psParent**: the node to attach the child to. May not be NULL.
 * **psChild**: the child to add to the parent. May not be NULL. Should not be a child of any other parent.
 """
-function CPLAddXMLChild(psParent, psChild)
+function cpladdxmlchild(psParent, psChild)
     ccall((:CPLAddXMLChild, libgdal), Cvoid, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psParent, psChild)
 end
 
@@ -142,7 +143,7 @@ Remove child node from parent.
 ### Returns
 TRUE on success or FALSE if the child was not found.
 """
-function CPLRemoveXMLChild(psParent, psChild)
+function cplremovexmlchild(psParent, psChild)
     ccall((:CPLRemoveXMLChild, libgdal), Cint, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psParent, psChild)
 end
 
@@ -156,7 +157,7 @@ Add new sibling.
 * **psOlderSibling**: the node to attach the sibling after.
 * **psNewSibling**: the node to add at the end of psOlderSiblings psNext chain.
 """
-function CPLAddXMLSibling(psOlderSibling, psNewSibling)
+function cpladdxmlsibling(psOlderSibling, psNewSibling)
     ccall((:CPLAddXMLSibling, libgdal), Cvoid, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psOlderSibling, psNewSibling)
 end
 
@@ -175,7 +176,7 @@ Create an element and text value.
 ### Returns
 the pointer to the new element node.
 """
-function CPLCreateXMLElementAndValue(psParent, pszName, pszValue)
+function cplcreatexmlelementandvalue(psParent, pszName, pszValue)
     ccall((:CPLCreateXMLElementAndValue, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, Cstring, Cstring), psParent, pszName, pszValue)
 end
 
@@ -191,7 +192,7 @@ Create an attribute and text value.
 * **pszName**: the attribute name to create.
 * **pszValue**: the text to attach to the attribute. Must not be NULL.
 """
-function CPLAddXMLAttributeAndValue(psParent, pszName, pszValue)
+function cpladdxmlattributeandvalue(psParent, pszName, pszValue)
     ccall((:CPLAddXMLAttributeAndValue, libgdal), Cvoid, (Ptr{CPLXMLNode}, Cstring, Cstring), psParent, pszName, pszValue)
 end
 
@@ -206,7 +207,7 @@ Copy tree.
 ### Returns
 a copy of the whole tree.
 """
-function CPLCloneXMLTree(psTree)
+function cplclonexmltree(psTree)
     ccall((:CPLCloneXMLTree, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode},), psTree)
 end
 
@@ -225,7 +226,7 @@ Set element value by path.
 ### Returns
 TRUE on success.
 """
-function CPLSetXMLValue(psRoot, pszPath, pszValue)
+function cplsetxmlvalue(psRoot, pszPath, pszValue)
     ccall((:CPLSetXMLValue, libgdal), Cint, (Ptr{CPLXMLNode}, Cstring, Cstring), psRoot, pszPath, pszValue)
 end
 
@@ -241,7 +242,7 @@ Strip indicated namespaces.
 * **pszNamespace**: the name space prefix (not including colon), or NULL.
 * **bRecurse**: TRUE to recurse over whole document, or FALSE to only operate on the passed node.
 """
-function CPLStripXMLNamespace(psRoot, pszNameSpace, bRecurse)
+function cplstripxmlnamespace(psRoot, pszNameSpace, bRecurse)
     ccall((:CPLStripXMLNamespace, libgdal), Cvoid, (Ptr{CPLXMLNode}, Cstring, Cint), psRoot, pszNameSpace, bRecurse)
 end
 
@@ -253,7 +254,7 @@ Make string into safe XML token.
 ### Parameters
 * **pszTarget**: the string to be adjusted. It is altered in place.
 """
-function CPLCleanXMLElementName(arg1)
+function cplcleanxmlelementname(arg1)
     ccall((:CPLCleanXMLElementName, libgdal), Cvoid, (Cstring,), arg1)
 end
 
@@ -268,7 +269,7 @@ Parse XML file into tree.
 ### Returns
 NULL on failure, or the document tree on success.
 """
-function CPLParseXMLFile(pszFilename)
+function cplparsexmlfile(pszFilename)
     ccall((:CPLParseXMLFile, libgdal), Ptr{CPLXMLNode}, (Cstring,), pszFilename)
 end
 
@@ -285,6 +286,6 @@ Write document tree to a file.
 ### Returns
 TRUE on success, FALSE otherwise.
 """
-function CPLSerializeXMLTreeToFile(psTree, pszFilename)
+function cplserializexmltreetofile(psTree, pszFilename)
     ccall((:CPLSerializeXMLTreeToFile, libgdal), Cint, (Ptr{CPLXMLNode}, Cstring), psTree, pszFilename)
 end

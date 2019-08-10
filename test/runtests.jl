@@ -5,10 +5,10 @@ using Test
 
     # drivers
     # before being able to use any drivers, they must be registered first
-    GDAL.allregister()
+    GDAL.gdalallregister()
 
-    version = unsafe_string(GDAL.C.GDALVersionInfo("--version"))
-    n_gdal_driver = GDAL.getdrivercount()
+    version = GDAL.gdalversioninfo("--version")
+    n_gdal_driver = GDAL.gdalgetdrivercount()
     n_ogr_driver = GDAL.ogrgetdrivercount()
     @info """$version
     $n_gdal_driver GDAL drivers found
@@ -19,36 +19,34 @@ using Test
     @test n_ogr_driver > 0
 
     # test if the registered error handler also handles CE_Fatal
-    @test_throws GDAL.GDALError GDAL.emergencyerror("we've got a problem")
-    GDAL.errorreset()
+    @test_throws GDAL.GDALError GDAL.cplemergencyerror("we've got a problem")
+    GDAL.cplerrorreset()
 
     # throw errors on non existing files
-    @test_throws GDAL.GDALError GDAL.open("NonExistent", GDAL.GA_ReadOnly)
-    # if a driver is not found, the C API returns a null
-    @test GDAL.C.GDALGetDriverByName("NonExistent") == C_NULL
-    # whilst the rewritten API throws a GDALError
-    @test_throws GDAL.GDALError GDAL.getdriverbyname("NonExistent")
+    @test_throws GDAL.GDALError GDAL.gdalopen("NonExistent", GDAL.GA_ReadOnly)
+    # if a driver is not found it throws a GDALError
+    @test_throws GDAL.GDALError GDAL.gdalgetdriverbyname("NonExistent")
 
-    srs = GDAL.newspatialreference(C_NULL)
-    GDAL.importfromepsg(srs, 4326) # fails if GDAL_DATA is not set correctly
+    srs = GDAL.osrnewspatialreference(C_NULL)
+    GDAL.osrimportfromepsg(srs, 4326) # fails if GDAL_DATA is not set correctly
 
-    xmlnode_pointer = GDAL.C.CPLParseXMLString("<a><b>hi</b></a>")
-    @test unsafe_string(GDAL.C.CPLGetXMLValue(xmlnode_pointer, "b", "")) == "hi"
+    xmlnode_pointer = GDAL.cplparsexmlstring("<a><b>hi</b></a>")
+    @test GDAL.cplgetxmlvalue(xmlnode_pointer, "b", "") == "hi"
     # load into Julia struct, mutate, and put back as Ref into GDAL
     xmlnode = unsafe_load(xmlnode_pointer)
-    @test unsafe_string(GDAL.C.CPLSerializeXMLTree(Ref(xmlnode))) == "<a>\n  <b>hi</b>\n</a>\n"
-    GDAL.C.CPLDestroyXMLNode(xmlnode_pointer)
+    @test GDAL.cplserializexmltree(Ref(xmlnode)) == "<a>\n  <b>hi</b>\n</a>\n"
+    GDAL.cpldestroyxmlnode(xmlnode_pointer)
 
     # ref https://github.com/JuliaGeo/GDAL.jl/pull/41#discussion_r143345433
-    gfld = GDAL.gfld_create("name-a", GDAL.wkbPoint)
-    @test gfld isa Ptr{GDAL.OGRGeomFieldDefnH}
-    @test GDAL.getnameref(gfld) == "name-a"
-    @test GDAL.gettype(gfld) == GDAL.wkbPoint
+    gfld = GDAL.ogr_gfld_create("name-a", GDAL.wkbPoint)
+    @test gfld isa GDAL.OGRGeomFieldDefnH
+    @test GDAL.ogr_gfld_getnameref(gfld) == "name-a"
+    @test GDAL.ogr_gfld_gettype(gfld) == GDAL.wkbPoint
     # same as above but for the lower level C API
-    gfld = GDAL.C.OGR_GFld_Create("name-b", GDAL.C.wkbPolygon)
+    gfld = GDAL.ogr_gfld_create("name-b", GDAL.wkbPolygon)
     @test gfld isa Ptr{Cvoid}
-    @test unsafe_string(GDAL.C.OGR_GFld_GetNameRef(gfld)) == "name-b"
-    @test GDAL.C.OGR_GFld_GetType(gfld) == GDAL.C.wkbPolygon
+    @test GDAL.ogr_gfld_getnameref(gfld) == "name-b"
+    @test GDAL.ogr_gfld_gettype(gfld) == GDAL.wkbPolygon
 
     cd(dirname(@__FILE__)) do
         rm("tmp", recursive=true, force=true)
@@ -60,6 +58,6 @@ using Test
         include("drivers.jl")
     end
 
-    GDAL.destroydrivermanager()
+    GDAL.gdaldestroydrivermanager()
 
 end

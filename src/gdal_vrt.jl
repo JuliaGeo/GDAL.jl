@@ -1,95 +1,90 @@
+# Julia wrapper for header: gdal_vrt.h
+# Automatically generated using Clang.jl
 
 
 """
-    VRTCreate(int,
-              int) -> VRTDatasetH
+    VRTCreate(int nXSize,
+              int nYSize) -> VRTDatasetH
 """
-function vrtcreate(arg1::Integer, arg2::Integer)
-    failsafe(ccall((:VRTCreate, libgdal), Ptr{VRTDatasetH}, (Cint, Cint), arg1, arg2))
+function vrtcreate(arg1, arg2)
+    failsafe(ccall((:VRTCreate, libgdal), VRTDatasetH, (Cint, Cint), arg1, arg2))
 end
 
-
 """
-    VRTFlushCache(VRTDatasetH) -> void
+    VRTFlushCache(VRTDatasetH hDataset) -> void
 """
-function vrtflushcache(arg1::Ref{VRTDatasetH})
-    ccall((:VRTFlushCache, libgdal), Cvoid, (Ptr{Cvoid},), arg1)
+function vrtflushcache(arg1)
+    ccall((:VRTFlushCache, libgdal), Cvoid, (VRTDatasetH,), arg1)
 end
 
-
 """
-    VRTSerializeToXML(VRTDatasetH,
-                      const char *) -> CPLXMLNode *
+    VRTSerializeToXML(VRTDatasetH hDataset,
+                      const char * pszVRTPath) -> CPLXMLNode *
 """
-function vrtserializetoxml(arg1::Ref{VRTDatasetH}, arg2)
-    ccall((:VRTSerializeToXML, libgdal), Ptr{CPLXMLNode}, (Ptr{Cvoid}, Cstring), arg1, arg2)
+function vrtserializetoxml(arg1, arg2)
+    ccall((:VRTSerializeToXML, libgdal), Ptr{CPLXMLNode}, (VRTDatasetH, Cstring), arg1, arg2)
 end
 
-
 """
-    VRTAddBand(VRTDatasetH,
-               GDALDataType,
-               char **) -> int
+    VRTAddBand(VRTDatasetH hDataset,
+               GDALDataType eType,
+               char ** papszOptions) -> int
 """
-function vrtaddband(arg1::Ref{VRTDatasetH}, arg2::GDALDataType, arg3)
-    ccall((:VRTAddBand, libgdal), Cint, (Ptr{Cvoid}, GDALDataType, Ptr{Cstring}), arg1, arg2, arg3)
+function vrtaddband(arg1, arg2, arg3)
+    ccall((:VRTAddBand, libgdal), Cint, (VRTDatasetH, GDALDataType, Ptr{Cstring}), arg1, arg2, arg3)
 end
 
-
 """
-    VRTAddSource(VRTSourcedRasterBandH,
-                 VRTSourceH) -> CPLErr
+    VRTAddSource(VRTSourcedRasterBandH hVRTBand,
+                 VRTSourceH hNewSource) -> CPLErr
 """
-function vrtaddsource(arg1::Ref{VRTSourcedRasterBandH}, arg2::Ref{VRTSourceH})
-    ccall((:VRTAddSource, libgdal), CPLErr, (Ptr{Cvoid}, Ptr{Cvoid}), arg1, arg2)
+function vrtaddsource(arg1, arg2)
+    ccall((:VRTAddSource, libgdal), CPLErr, (VRTSourcedRasterBandH, VRTSourceH), arg1, arg2)
 end
 
-
 """
-    VRTAddSimpleSource(VRTSourcedRasterBandH,
-                       GDALRasterBandH,
-                       int,
-                       int,
-                       int,
-                       int,
-                       int,
-                       int,
-                       int,
-                       int,
-                       const char *,
-                       double) -> CPLErr
+    VRTAddSimpleSource(VRTSourcedRasterBandH hVRTBand,
+                       GDALRasterBandH hSrcBand,
+                       int nSrcXOff,
+                       int nSrcYOff,
+                       int nSrcXSize,
+                       int nSrcYSize,
+                       int nDstXOff,
+                       int nDstYOff,
+                       int nDstXSize,
+                       int nDstYSize,
+                       const char * pszResampling,
+                       double dfNoDataValue) -> CPLErr
 """
-function vrtaddsimplesource(arg1::Ref{VRTSourcedRasterBandH}, arg2::Ref{GDALRasterBandH}, arg3::Integer, arg4::Integer, arg5::Integer, arg6::Integer, arg7::Integer, arg8::Integer, arg9::Integer, arg10::Integer, arg11, arg12::Real)
-    ccall((:VRTAddSimpleSource, libgdal), CPLErr, (Ptr{Cvoid}, Ptr{Cvoid}, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cstring, Cdouble), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12)
+function vrtaddsimplesource(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12)
+    ccall((:VRTAddSimpleSource, libgdal), CPLErr, (VRTSourcedRasterBandH, GDALRasterBandH, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cstring, Cdouble), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12)
 end
 
-
 """
-    VRTAddComplexSource(VRTSourcedRasterBandH,
-                        GDALRasterBandH,
-                        int,
-                        int,
-                        int,
-                        int,
-                        int,
-                        int,
-                        int,
-                        int,
-                        double,
-                        double,
-                        double) -> CPLErr
+    VRTAddComplexSource(VRTSourcedRasterBandH hVRTBand,
+                        GDALRasterBandH hSrcBand,
+                        int nSrcXOff,
+                        int nSrcYOff,
+                        int nSrcXSize,
+                        int nSrcYSize,
+                        int nDstXOff,
+                        int nDstYOff,
+                        int nDstXSize,
+                        int nDstYSize,
+                        double dfScaleOff,
+                        double dfScaleRatio,
+                        double dfNoDataValue) -> CPLErr
 """
-function vrtaddcomplexsource(arg1::Ref{VRTSourcedRasterBandH}, arg2::Ref{GDALRasterBandH}, arg3::Integer, arg4::Integer, arg5::Integer, arg6::Integer, arg7::Integer, arg8::Integer, arg9::Integer, arg10::Integer, arg11::Real, arg12::Real, arg13::Real)
-    ccall((:VRTAddComplexSource, libgdal), CPLErr, (Ptr{Cvoid}, Ptr{Cvoid}, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cdouble, Cdouble, Cdouble), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13)
+function vrtaddcomplexsource(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13)
+    ccall((:VRTAddComplexSource, libgdal), CPLErr, (VRTSourcedRasterBandH, GDALRasterBandH, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cdouble, Cdouble, Cdouble), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13)
 end
 
-
 """
-    VRTAddFuncSource(VRTSourcedRasterBandH,
-                     VRTImageReadFunc,
-                     void *,
-                     double) -> CPLErr
+    VRTAddFuncSource(VRTSourcedRasterBandH hVRTBand,
+                     VRTImageReadFunc pfnReadFunc,
+                     void * pCBData,
+                     double dfNoDataValue) -> CPLErr
 """
-function vrtaddfuncsource(arg1::Ref{VRTSourcedRasterBandH}, arg2::Ref{VRTImageReadFunc}, arg3, arg4::Real)
-    ccall((:VRTAddFuncSource, libgdal), CPLErr, (Ptr{Cvoid}, Ptr{Cvoid}, Ptr{Cvoid}, Cdouble), arg1, arg2, arg3, arg4)
+function vrtaddfuncsource(arg1, arg2, arg3, arg4)
+    ccall((:VRTAddFuncSource, libgdal), CPLErr, (VRTSourcedRasterBandH, VRTImageReadFunc, Ptr{Cvoid}, Cdouble), arg1, arg2, arg3, arg4)
 end
