@@ -77,13 +77,13 @@ function text(node::EzXML.Node, el::AbstractString)
     s === nothing ? "" : strip(nodecontent(s))
 end
 
-"Wrap the one or multiline docstring in appropriate quotes"
+"Wrap the single- or multi-line docstring in appropriate quotes"
 function addquotes(docstr::AbstractString)
     if '\n' in docstr
         string("\"\"\"\n", docstr, "\"\"\"")
     else
-        # one line docstring
-        string('"', rstrip(docstr, '.'), '"')
+        # single line docstring
+        repr(rstrip(docstr, '.'))
     end
 end
 

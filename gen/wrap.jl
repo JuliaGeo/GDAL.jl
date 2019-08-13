@@ -30,7 +30,6 @@ global_logger(logger)
 # several functions for building docstrings
 include(joinpath(@__DIR__, "doc.jl"))
 
-# should be here if you pkg> build GDAL
 includedir = normpath(joinpath(@__DIR__, "..", "deps", "usr", "include"))
 headerfiles = joinpath.(includedir, [
     "cpl_conv.h",
@@ -49,6 +48,12 @@ headerfiles = joinpath.(includedir, [
     "ogr_core.h",
     "ogr_srs_api.h",
 ])
+
+for headerfile in headerfiles
+    if !isfile(headerfile)
+        error("Header file missing, please run `pkg> build GDAL`($headerfile)")
+    end
+end
 
 # skip these; right hand side is undefined usually because of Skipping MacroDefinition
 # or because the right hand side is a function that is defined later
@@ -115,7 +120,7 @@ function rewriter(x::Expr)
         # it is a function wrapper around a ccall
 
         # lowercase the function name
-        f′ = Symbol(lowercase(String(f)))
+        f2 = Symbol(lowercase(String(f)))
 
         # bind the ccall such that we can easily wrap it
         cc = :(ccall($fname, $rettype, $argtypes, $(argvalues...)))
@@ -131,7 +136,7 @@ function rewriter(x::Expr)
             false
         end
 
-        cc′ = if rettype == :Cstring
+        cc2 = if rettype == :Cstring
             :(unsafe_string($cc))
         elseif rettype == :(Ptr{Cstring})
             :(unsafe_loadstringlist($cc))
@@ -142,8 +147,8 @@ function rewriter(x::Expr)
         end
 
         # stitch the modified function expression back together
-        :(function $f′($(fargs...))
-            $cc′
+        :(function $f2($(fargs...))
+            $cc2
         end) |> prettify
     else
         # do not modify expressions that are no ccall function wrappers
@@ -157,8 +162,11 @@ const doc = readxml(xmlpath)
 # custom function that prevents overwriting GDAL.jl by mapping gdal.h to gdal_h.jl
 function header_outputfile(h)
     stem = splitext(basename(h))[1]
-    stem = stem == "gdal" ? "gdal_h" : stem
-    joinpath(output_dir, stem * ".jl")
+    if stem == "gdal"
+        joinpath(output_dir, "gdal_h.jl")
+    else
+        joinpath(output_dir, stem * ".jl")
+    end
 end
 
 # set up the wrapping context
