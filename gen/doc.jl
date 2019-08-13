@@ -7,7 +7,7 @@ function build_function(node::EzXML.Node)
     # code block with function definition
     print(io, "    ", text(node, "name"), "(")
     nspace = position(io)
-    params = findall(node, "param")
+    params = findall("param", node)
     if isempty(params)
         print(io, ")")
     end
