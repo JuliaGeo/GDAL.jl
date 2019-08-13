@@ -44,7 +44,7 @@ The bulk of this package is generated automatically by the scripts under `gen/`.
 
 ## Changelog
 
-Since GDAL.jl v0.2.0 the package has changed considerably. The GDAL C function names are no longer being shortened. This brought many complications forcing us to simulate GDAL's types to disambiguate methods. As an example, the old `GDAL.open` now has to be made explicit: use `GDAL.gdalopen`, `ogr_dr_open`, or `ogropen`. Other options are simpler, `GDAL.allregister` can only become `GDAL.gdalallregister`. To help with updating old code in a semi automatic fashion, look at [this script] which uses [MacroTools.jl](https://mikeinnes.github.io/MacroTools.jl/stable/sourcewalk/) to do function renaming.
+Since GDAL.jl v0.2.0 the package has changed considerably. The GDAL C function names are no longer being shortened. This brought many complications forcing us to simulate GDAL's types to disambiguate methods. As an example, the old `GDAL.open` now has to be made explicit: use `GDAL.gdalopen`, `ogr_dr_open`, or `ogropen`. Other options are simpler, `GDAL.allregister` can only become `GDAL.gdalallregister`. To help with updating old code in a semi automatic fashion, look at [this script](https://gist.github.com/visr/0a2ad3fe92073345c93c2ca42f5f58a0#file-renamer-jl) which uses [MacroTools.jl](https://mikeinnes.github.io/MacroTools.jl/stable/sourcewalk/) to do function renaming.
 
 The `GDAL.C` submodule no longer exists. All functions that were there and not in the main `GDAL` module, have now been moved over.
 
