@@ -6,9 +6,9 @@ struct GDALError <: Exception
 end
 
 function GDALError()
-    class = getlasterrortype()
-    code = getlasterrorno()
-    msg = getlasterrormsg()
+    class = cplgetlasterrortype()
+    code = cplgetlasterrorno()
+    msg = cplgetlasterrormsg()
     GDALError(class, code, msg)
 end
 
@@ -30,7 +30,7 @@ end
 
 "Throw an error if a pointer is null and GDAL reports an error"
 function failsafe(ptr)
-    if ptr == C_NULL && getlasterrortype() in throw_class
+    if ptr == C_NULL && cplgetlasterrortype() in throw_class
         throw(GDALError())
     end
     ptr

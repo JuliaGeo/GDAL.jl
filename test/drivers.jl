@@ -21,5 +21,5 @@ available_drivers = [
 ]
 
 for drivername in available_drivers
-    @test GDAL.getdriverbyname(drivername) != C_NULL
+    @test GDAL.gdalgetdriverbyname(drivername) != C_NULL
 end

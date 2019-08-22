@@ -1,6 +1,7 @@
 # Julia wrapper for header: cpl_virtualmem.h
 # Automatically generated using Clang.jl
 
+
 """
     CPLGetPageSize(void) -> size_t
 
@@ -9,7 +10,7 @@ Return the size of a page of virtual memory.
 ### Returns
 the page size.
 """
-function CPLGetPageSize()
+function cplgetpagesize()
     ccall((:CPLGetPageSize, libgdal), Csize_t, ())
 end
 
@@ -40,8 +41,8 @@ Create a new virtual memory mapping.
 ### Returns
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
-function CPLVirtualMemNew(nSize, nCacheSize, nPageSizeHint, bSingleThreadUsage, eAccessMode, pfnCachePage, pfnUnCachePage, pfnFreeUserData, pCbkUserData)
-    ccall((:CPLVirtualMemNew, libgdal), Ptr{CPLVirtualMem}, (Csize_t, Csize_t, Csize_t, Cint, CPLVirtualMemAccessMode, CPLVirtualMemCachePageCbk, CPLVirtualMemUnCachePageCbk, CPLVirtualMemFreeUserData, Ptr{Cvoid}), nSize, nCacheSize, nPageSizeHint, bSingleThreadUsage, eAccessMode, pfnCachePage, pfnUnCachePage, pfnFreeUserData, pCbkUserData)
+function cplvirtualmemnew(nSize, nCacheSize, nPageSizeHint, bSingleThreadUsage, eAccessMode, pfnCachePage, pfnUnCachePage, pfnFreeUserData, pCbkUserData)
+    failsafe(ccall((:CPLVirtualMemNew, libgdal), Ptr{CPLVirtualMem}, (Csize_t, Csize_t, Csize_t, Cint, CPLVirtualMemAccessMode, CPLVirtualMemCachePageCbk, CPLVirtualMemUnCachePageCbk, CPLVirtualMemFreeUserData, Ptr{Cvoid}), nSize, nCacheSize, nPageSizeHint, bSingleThreadUsage, eAccessMode, pfnCachePage, pfnUnCachePage, pfnFreeUserData, pCbkUserData))
 end
 
 """
@@ -52,7 +53,7 @@ Return if virtual memory mapping of a file is available.
 ### Returns
 TRUE if virtual memory mapping of a file is available.
 """
-function CPLIsVirtualMemFileMapAvailable()
+function cplisvirtualmemfilemapavailable()
     ccall((:CPLIsVirtualMemFileMapAvailable, libgdal), Cint, ())
 end
 
@@ -77,8 +78,8 @@ Create a new virtual memory mapping from a file.
 ### Returns
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
-function CPLVirtualMemFileMapNew(fp, nOffset, nLength, eAccessMode, pfnFreeUserData, pCbkUserData)
-    ccall((:CPLVirtualMemFileMapNew, libgdal), Ptr{CPLVirtualMem}, (Ptr{VSILFILE}, vsi_l_offset, vsi_l_offset, CPLVirtualMemAccessMode, CPLVirtualMemFreeUserData, Ptr{Cvoid}), fp, nOffset, nLength, eAccessMode, pfnFreeUserData, pCbkUserData)
+function cplvirtualmemfilemapnew(fp, nOffset, nLength, eAccessMode, pfnFreeUserData, pCbkUserData)
+    failsafe(ccall((:CPLVirtualMemFileMapNew, libgdal), Ptr{CPLVirtualMem}, (Ptr{VSILFILE}, vsi_l_offset, vsi_l_offset, CPLVirtualMemAccessMode, CPLVirtualMemFreeUserData, Ptr{Cvoid}), fp, nOffset, nLength, eAccessMode, pfnFreeUserData, pCbkUserData))
 end
 
 """
@@ -100,8 +101,8 @@ Create a new virtual memory mapping derived from an other virtual memory mapping
 ### Returns
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
-function CPLVirtualMemDerivedNew(pVMemBase, nOffset, nSize, pfnFreeUserData, pCbkUserData)
-    ccall((:CPLVirtualMemDerivedNew, libgdal), Ptr{CPLVirtualMem}, (Ptr{CPLVirtualMem}, vsi_l_offset, vsi_l_offset, CPLVirtualMemFreeUserData, Ptr{Cvoid}), pVMemBase, nOffset, nSize, pfnFreeUserData, pCbkUserData)
+function cplvirtualmemderivednew(pVMemBase, nOffset, nSize, pfnFreeUserData, pCbkUserData)
+    failsafe(ccall((:CPLVirtualMemDerivedNew, libgdal), Ptr{CPLVirtualMem}, (Ptr{CPLVirtualMem}, vsi_l_offset, vsi_l_offset, CPLVirtualMemFreeUserData, Ptr{Cvoid}), pVMemBase, nOffset, nSize, pfnFreeUserData, pCbkUserData))
 end
 
 """
@@ -112,7 +113,7 @@ Free a virtual memory mapping.
 ### Parameters
 * **ctxt**: context returned by CPLVirtualMemNew().
 """
-function CPLVirtualMemFree(ctxt)
+function cplvirtualmemfree(ctxt)
     ccall((:CPLVirtualMemFree, libgdal), Cvoid, (Ptr{CPLVirtualMem},), ctxt)
 end
 
@@ -127,8 +128,8 @@ Return the pointer to the start of a virtual memory mapping.
 ### Returns
 the pointer to the start of a virtual memory mapping.
 """
-function CPLVirtualMemGetAddr(ctxt)
-    ccall((:CPLVirtualMemGetAddr, libgdal), Ptr{Cvoid}, (Ptr{CPLVirtualMem},), ctxt)
+function cplvirtualmemgetaddr(ctxt)
+    failsafe(ccall((:CPLVirtualMemGetAddr, libgdal), Ptr{Cvoid}, (Ptr{CPLVirtualMem},), ctxt))
 end
 
 """
@@ -142,7 +143,7 @@ Return the size of the virtual memory mapping.
 ### Returns
 the size of the virtual memory mapping.
 """
-function CPLVirtualMemGetSize(ctxt)
+function cplvirtualmemgetsize(ctxt)
     ccall((:CPLVirtualMemGetSize, libgdal), Csize_t, (Ptr{CPLVirtualMem},), ctxt)
 end
 
@@ -157,7 +158,7 @@ Return if the virtual memory mapping is a direct file mapping.
 ### Returns
 TRUE if the virtual memory mapping is a direct file mapping.
 """
-function CPLVirtualMemIsFileMapping(ctxt)
+function cplvirtualmemisfilemapping(ctxt)
     ccall((:CPLVirtualMemIsFileMapping, libgdal), Cint, (Ptr{CPLVirtualMem},), ctxt)
 end
 
@@ -172,7 +173,7 @@ Return the access mode of the virtual memory mapping.
 ### Returns
 the access mode of the virtual memory mapping.
 """
-function CPLVirtualMemGetAccessMode(ctxt)
+function cplvirtualmemgetaccessmode(ctxt)
     ccall((:CPLVirtualMemGetAccessMode, libgdal), CPLVirtualMemAccessMode, (Ptr{CPLVirtualMem},), ctxt)
 end
 
@@ -187,7 +188,7 @@ Return the page size associated to a virtual memory mapping.
 ### Returns
 the page size
 """
-function CPLVirtualMemGetPageSize(ctxt)
+function cplvirtualmemgetpagesize(ctxt)
     ccall((:CPLVirtualMemGetPageSize, libgdal), Csize_t, (Ptr{CPLVirtualMem},), ctxt)
 end
 
@@ -202,7 +203,7 @@ Return TRUE if this memory mapping can be accessed safely from concurrent thread
 ### Returns
 TRUE if this memory mapping can be accessed safely from concurrent threads.
 """
-function CPLVirtualMemIsAccessThreadSafe(ctxt)
+function cplvirtualmemisaccessthreadsafe(ctxt)
     ccall((:CPLVirtualMemIsAccessThreadSafe, libgdal), Cint, (Ptr{CPLVirtualMem},), ctxt)
 end
 
@@ -214,7 +215,7 @@ Declare that a thread will access a virtual memory mapping.
 ### Parameters
 * **ctxt**: context returned by CPLVirtualMemNew().
 """
-function CPLVirtualMemDeclareThread(ctxt)
+function cplvirtualmemdeclarethread(ctxt)
     ccall((:CPLVirtualMemDeclareThread, libgdal), Cvoid, (Ptr{CPLVirtualMem},), ctxt)
 end
 
@@ -226,7 +227,7 @@ Declare that a thread will stop accessing a virtual memory mapping.
 ### Parameters
 * **ctxt**: context returned by CPLVirtualMemNew().
 """
-function CPLVirtualMemUnDeclareThread(ctxt)
+function cplvirtualmemundeclarethread(ctxt)
     ccall((:CPLVirtualMemUnDeclareThread, libgdal), Cvoid, (Ptr{CPLVirtualMem},), ctxt)
 end
 
@@ -244,7 +245,7 @@ Make sure that a region of virtual memory will be realized.
 * **nSize**: the size of the memory region.
 * **bWriteOp**: set to TRUE if the memory are will be accessed in write mode.
 """
-function CPLVirtualMemPin(ctxt, pAddr, nSize, bWriteOp)
+function cplvirtualmempin(ctxt, pAddr, nSize, bWriteOp)
     ccall((:CPLVirtualMemPin, libgdal), Cvoid, (Ptr{CPLVirtualMem}, Ptr{Cvoid}, Csize_t, Cint), ctxt, pAddr, nSize, bWriteOp)
 end
 
@@ -253,6 +254,6 @@ end
 
 Cleanup any resource and handlers related to virtual memory.
 """
-function CPLVirtualMemManagerTerminate()
+function cplvirtualmemmanagerterminate()
     ccall((:CPLVirtualMemManagerTerminate, libgdal), Cvoid, ())
 end

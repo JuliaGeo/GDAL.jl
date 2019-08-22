@@ -1,30 +1,30 @@
-ds_small = GDAL.open("data/utmsmall.tif", GDAL.GA_ReadOnly)
-ds_point = GDAL.openex("data/point.geojson", GDAL.GDAL_OF_VECTOR, C_NULL, C_NULL, C_NULL)
+ds_small = GDAL.gdalopen("data/utmsmall.tif", GDAL.GA_ReadOnly)
+ds_point = GDAL.gdalopenex("data/point.geojson", GDAL.GDAL_OF_VECTOR, C_NULL, C_NULL, C_NULL)
 
 # GDALInfo
 # infooptionsnew checks if the options are valid
-@test_throws GDAL.GDALError GDAL.infooptionsnew(["-novalidoption"], C_NULL)
+@test_throws GDAL.GDALError GDAL.gdalinfooptionsnew(["-novalidoption"], C_NULL)
 # check not only that a GDALError is thrown, but also its contents
 try
-    GDAL.infooptionsnew(["-novalidoption"], C_NULL)
+    GDAL.gdalinfooptionsnew(["-novalidoption"], C_NULL)
 catch err
     @test err.class === GDAL.CE_Failure
     @test err.code === Cint(6)
     @test err.msg == "Unknown option name '-novalidoption'"
 end
 
-options = GDAL.infooptionsnew(["-checksum"], C_NULL)
-infostr = GDAL.info(ds_small, options)
+options = GDAL.gdalinfooptionsnew(["-checksum"], C_NULL)
+infostr = GDAL.gdalinfo(ds_small, options)
 @test occursin("Checksum=50054", infostr)
-GDAL.infooptionsfree(options)
+GDAL.gdalinfooptionsfree(options)
 
 # GDALTranslate
 # resample to a 5×5 ascii grid
 optvec = ["-of","AAIGrid","-r","cubic","-tr","1200","1200"]
-options = GDAL.translateoptionsnew(optvec, C_NULL)
-ds_tiny_asc = GDAL.translate("data/utmtiny.asc", ds_small, options, C_NULL)
-GDAL.translateoptionsfree(options)
-GDAL.close(ds_tiny_asc)
+options = GDAL.gdaltranslateoptionsnew(optvec, C_NULL)
+ds_tiny_asc = GDAL.gdaltranslate("data/utmtiny.asc", ds_small, options, C_NULL)
+GDAL.gdaltranslateoptionsfree(options)
+GDAL.gdalclose(ds_tiny_asc)
 @test replace(read("data/utmtiny.asc", String), "\r" => "") == """
     ncols        5
     nrows        5
@@ -39,9 +39,9 @@ GDAL.close(ds_tiny_asc)
     """
 # also create a Byte GeoTIFF version for later use
 optvec = ["-r","cubic","-tr","1200","1200","-ot","Byte"]
-options = GDAL.translateoptionsnew(optvec, C_NULL)
-ds_tiny = GDAL.translate("data/utmtiny.tif", ds_small, options, C_NULL)
-GDAL.translateoptionsfree(options)
+options = GDAL.gdaltranslateoptionsnew(optvec, C_NULL)
+ds_tiny = GDAL.gdaltranslate("data/utmtiny.tif", ds_small, options, C_NULL)
+GDAL.gdaltranslateoptionsfree(options)
 
 tinydata = UInt8[
     128 126 161 185 193;
@@ -50,9 +50,9 @@ tinydata = UInt8[
      93 114 164 172 181;
      83 101 140 128 122]
 
-band = GDAL.getrasterband(ds_tiny, 1)
+band = GDAL.gdalgetrasterband(ds_tiny, 1)
 read_data = zero(tinydata)
-GDAL.rasterio(band, GDAL.GF_Read, 0, 0, 5, 5,
+GDAL.gdalrasterio(band, GDAL.GF_Read, 0, 0, 5, 5,
               read_data, 5, 5, GDAL.GDT_Byte, 0, 0)
 @test read_data' == tinydata
 
@@ -65,18 +65,18 @@ GDAL.rasterio(band, GDAL.GF_Read, 0, 0, 5, 5,
 # when using
 # options = GDAL.warpappoptionsnew(["-t_srs","EPSG:4326"], C_NULL)
 # should we require PROJ.4 or not?
-options = GDAL.warpappoptionsnew(["-of","MEM"], C_NULL)  # in memory
-ds_warped = GDAL.warp("data/utmsmall.mem", Ptr{GDAL.GDALDatasetH}(C_NULL), 1, [ds_small], options, C_NULL)
-GDAL.warpappoptionsfree(options)
-GDAL.close(ds_warped)
+options = GDAL.gdalwarpappoptionsnew(["-of","MEM"], C_NULL)  # in memory
+ds_warped = GDAL.gdalwarp("data/utmsmall.mem", Ptr{GDAL.GDALDatasetH}(C_NULL), 1, [ds_small], options, C_NULL)
+GDAL.gdalwarpappoptionsfree(options)
+GDAL.gdalclose(ds_warped)
 
 
 # GDALDEMProcessing
 # calculate hillshade
-options = GDAL.demprocessingoptionsnew(["-of","AAIGrid"], C_NULL)
-ds_dempr = GDAL.demprocessing("data/utmtiny-hillshade.asc", ds_tiny, "hillshade", C_NULL, options, C_NULL)
-GDAL.demprocessingoptionsfree(options)
-GDAL.close(ds_dempr)
+options = GDAL.gdaldemprocessingoptionsnew(["-of","AAIGrid"], C_NULL)
+ds_dempr = GDAL.gdaldemprocessing("data/utmtiny-hillshade.asc", ds_tiny, "hillshade", C_NULL, options, C_NULL)
+GDAL.gdaldemprocessingoptionsfree(options)
+GDAL.gdalclose(ds_dempr)
 @test replace(read("data/utmtiny-hillshade.asc", String), "\r" => "") == """
     ncols        5
     nrows        5
@@ -96,13 +96,13 @@ rm("data/utmtiny-hillshade.prj")
 
 # GDALNearblack
 # not ascii because it doesn't support `create`
-options = GDAL.nearblackoptionsnew(["-of","GTiff","-color","0"], C_NULL)
-ds_nearblack = GDAL.nearblack("data/utmtiny-nearblack.tif", Ptr{GDAL.GDALDatasetH}(C_NULL), ds_tiny, options, C_NULL)
-GDAL.nearblackoptionsfree(options)
+options = GDAL.gdalnearblackoptionsnew(["-of","GTiff","-color","0"], C_NULL)
+ds_nearblack = GDAL.gdalnearblack("data/utmtiny-nearblack.tif", Ptr{GDAL.GDALDatasetH}(C_NULL), ds_tiny, options, C_NULL)
+GDAL.gdalnearblackoptionsfree(options)
 # do rasterio to read result
-band = GDAL.getrasterband(ds_nearblack, 1)
+band = GDAL.gdalgetrasterband(ds_nearblack, 1)
 read_data = zero(tinydata)
-GDAL.rasterio(band, GDAL.GF_Read, 0, 0, 5, 5,
+GDAL.gdalrasterio(band, GDAL.GF_Read, 0, 0, 5, 5,
               read_data, 5, 5, GDAL.GDT_Byte, 0, 0)
 nbdata = read_data'
 # by default the outer two pixels are zeroed
@@ -110,45 +110,45 @@ nbexpected = zero(tinydata)
 nbexpected[3,3] = tinydata[3,3]
 @test nbdata == nbexpected
 
-GDAL.close(ds_nearblack)
+GDAL.gdalclose(ds_nearblack)
 rm("data/utmtiny-nearblack.tif")
 
 
 # GDALGrid
-options = GDAL.gridoptionsnew(["-of","MEM","-outsize","3","10","-txe","100","100.3","-tye","0","0.1"], C_NULL)
-ds_grid = GDAL.grid("data/point-grid.mem", ds_point, options, C_NULL)
-GDAL.gridoptionsfree(options)
+options = GDAL.gdalgridoptionsnew(["-of","MEM","-outsize","3","10","-txe","100","100.3","-tye","0","0.1"], C_NULL)
+ds_grid = GDAL.gdalgrid("data/point-grid.mem", ds_point, options, C_NULL)
+GDAL.gdalgridoptionsfree(options)
 geotransform = fill(0.0, 6)
-GDAL.getgeotransform(ds_grid, geotransform)
+GDAL.gdalgetgeotransform(ds_grid, geotransform)
 @test geotransform ≈ [100.0,0.1,0.0,0.0,0.0,0.01]
-GDAL.close(ds_grid)
+GDAL.gdalclose(ds_grid)
 
 
 # GDALRasterize
-options = GDAL.rasterizeoptionsnew(["-of","MEM","-tr","0.05","0.05"], C_NULL)
-ds_rasterize = GDAL.rasterize("data/point-rasterize.mem", Ptr{GDAL.GDALDatasetH}(C_NULL), ds_point, options, C_NULL)
-GDAL.rasterizeoptionsfree(options)
+options = GDAL.gdalrasterizeoptionsnew(["-of","MEM","-tr","0.05","0.05"], C_NULL)
+ds_rasterize = GDAL.gdalrasterize("data/point-rasterize.mem", Ptr{GDAL.GDALDatasetH}(C_NULL), ds_point, options, C_NULL)
+GDAL.gdalrasterizeoptionsfree(options)
 geotransform = fill(0.0, 6)
-GDAL.getgeotransform(ds_rasterize, geotransform)
+GDAL.gdalgetgeotransform(ds_rasterize, geotransform)
 @test geotransform ≈ [99.975,0.05,0.0,0.1143,0.0,-0.05]
-GDAL.close(ds_rasterize)
+GDAL.gdalclose(ds_rasterize)
 
 
 # GDALBuildVRT
-options = GDAL.buildvrtoptionsnew([], C_NULL)
-ds_buildvrt = GDAL.buildvrt("data/utmtiny.vrt", 1, [ds_tiny], C_NULL, options, C_NULL)
-GDAL.buildvrtoptionsfree(options)
-GDAL.close(ds_buildvrt)
+options = GDAL.gdalbuildvrtoptionsnew([], C_NULL)
+ds_buildvrt = GDAL.gdalbuildvrt("data/utmtiny.vrt", 1, [ds_tiny], C_NULL, options, C_NULL)
+GDAL.gdalbuildvrtoptionsfree(options)
+GDAL.gdalclose(ds_buildvrt)
 @test occursin("<SourceFilename relativeToVRT=\"1\">utmtiny.tif</SourceFilename>", read("data/utmtiny.vrt", String))
 rm("data/utmtiny.vrt")
 
 
 # GDALVectorTranslate
 # convert a GeoJSON to CSV with X and Y columns
-options = GDAL.vectortranslateoptionsnew(["-f","CSV","-lco","GEOMETRY=AS_XY"], C_NULL)
-ds_csv = GDAL.vectortranslate("data/point.csv", Ptr{GDAL.GDALDatasetH}(C_NULL), 1, [ds_point], options, C_NULL)
-GDAL.vectortranslateoptionsfree(options)
-GDAL.close(ds_csv)
+options = GDAL.gdalvectortranslateoptionsnew(["-f","CSV","-lco","GEOMETRY=AS_XY"], C_NULL)
+ds_csv = GDAL.gdalvectortranslate("data/point.csv", Ptr{GDAL.GDALDatasetH}(C_NULL), 1, [ds_point], options, C_NULL)
+GDAL.gdalvectortranslateoptionsfree(options)
+GDAL.gdalclose(ds_csv)
 dstcsv = """
     X,Y,FID,pointname
     100,0,2,point-a
@@ -160,9 +160,9 @@ dstcsv = """
 rm("data/point.csv")
 
 
-GDAL.close(ds_small)
-GDAL.close(ds_tiny)
-GDAL.close(ds_point)
+GDAL.gdalclose(ds_small)
+GDAL.gdalclose(ds_tiny)
+GDAL.gdalclose(ds_point)
 
 rm("data/utmtiny.asc.aux.xml")
 rm("data/utmtiny.prj")

@@ -10,41 +10,27 @@ if !isfile(depsjl_path)
 end
 include(depsjl_path)
 
-module C
-    import GDAL: libgdal
-    using CEnum
+const Ctm = Base.Libc.TmStruct
 
-    include("C/misc.jl")
-    include("C/common.jl")
-    include("C/cpl_conv.jl")
-    include("C/cpl_error.jl")
-    include("C/cpl_minixml.jl")
-    include("C/cpl_progress.jl")
-    include("C/cpl_virtualmem.jl")
-    include("C/cpl_vsi.jl")
-    include("C/gdal.jl")
-    include("C/gdal_alg.jl")
-    include("C/gdal_vrt.jl")
-    include("C/gdal_utils.jl")
-    include("C/gdalwarper.jl")
-    include("C/ogr_api.jl")
-    include("C/ogr_core.jl")
-    include("C/ogr_srs_api.jl")
-end
-
-# formerly in "C/misc.jl", to be removed
-const FILE = Nothing # not sure if this works
-const time_t = Nothing # not sure if this works
-
-include("types.jl")
 include("common.jl")
+
 include("gdal_h.jl")
 include("gdal_alg.jl")
 include("gdal_vrt.jl")
 include("gdal_utils.jl")
+include("gdalwarper.jl")
+
 include("ogr_api.jl")
 include("ogr_srs_api.jl")
+include("ogr_core.jl")
+
 include("cpl_error.jl")
+include("cpl_conv.jl")
+include("cpl_error.jl")
+include("cpl_minixml.jl")
+include("cpl_progress.jl")
+include("cpl_virtualmem.jl")
+include("cpl_vsi.jl")
 
 include("error.jl")
 
@@ -58,19 +44,19 @@ function __init__()
 
     # register custom error handler
     funcptr = @cfunction(gdaljl_errorhandler, Ptr{Cvoid}, (CPLErr, Cint, Cstring))
-    C.CPLSetErrorHandler(funcptr)
+    cplseterrorhandler(funcptr)
 
     # get GDAL version number
-    versionstring = unsafe_string(C.GDALVersionInfo("RELEASE_NAME"))
+    versionstring = gdalversioninfo("RELEASE_NAME")
     GDALVERSION[] = VersionNumber(versionstring)
 
     # set GDAL_DATA location, this overrides setting the environment variable
     GDAL_DATA[] = abspath(@__DIR__, "..", "deps", "usr", "share", "gdal")
-    C.CPLSetConfigOption("GDAL_DATA", GDAL_DATA[])
+    cplsetconfigoption("GDAL_DATA", GDAL_DATA[])
 
     # set PROJ_LIB location, this overrides setting the environment variable
     PROJ_LIB[] = abspath(@__DIR__, "..", "deps", "usr", "share", "proj")
-    ccall((:OSRSetPROJSearchPaths, libgdal), Cvoid, (Ptr{Cstring},), [PROJ_LIB[]])
+    osrsetprojsearchpaths([PROJ_LIB[]])
 end
 
 """

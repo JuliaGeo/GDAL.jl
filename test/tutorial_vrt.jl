@@ -4,16 +4,16 @@ utmsmall = joinpath(@__DIR__, "data/utmsmall.tif")
 utmsmall_vrt = joinpath(@__DIR__, "tmp/utmsmall.vrt")
 
 # To create a VRT dataset that is a clone of an existing dataset use the CreateCopy() method.
-driver = GDAL.getdriverbyname("VRT")
-src_dataset = GDAL.openshared(utmsmall, GDAL.GA_ReadOnly)
+driver = GDAL.gdalgetdriverbyname("VRT")
+src_dataset = GDAL.gdalopenshared(utmsmall, GDAL.GA_ReadOnly)
 progressfunc = convert(Ptr{GDAL.GDALProgressFunc}, C_NULL)
-vrt_dataset = GDAL.createcopy(driver, utmsmall_vrt, src_dataset, 0,
+vrt_dataset = GDAL.gdalcreatecopy(driver, utmsmall_vrt, src_dataset, 0,
                               C_NULL, progressfunc, C_NULL)
 
-GDAL.setmetadataitem(vrt_dataset, "SourceAgency", "JuliaGeo", "")
+GDAL.gdalsetmetadataitem(vrt_dataset, "SourceAgency", "JuliaGeo", "")
 
-GDAL.close(src_dataset)
-GDAL.close(vrt_dataset)
+GDAL.gdalclose(src_dataset)
+GDAL.gdalclose(vrt_dataset)
 
 # checking the contents of the VRT XML
 vrt_xml = read(utmsmall_vrt, String)
