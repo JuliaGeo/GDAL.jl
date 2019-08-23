@@ -137,7 +137,7 @@ function rewriter(x::Expr)
         end
 
         cc2 = if rettype == :Cstring
-            :(unsafe_string($cc))
+            :(string_or_nothing($cc))
         elseif rettype == :(Ptr{Cstring})
             :(unsafe_loadstringlist($cc))
         elseif isptrvoid

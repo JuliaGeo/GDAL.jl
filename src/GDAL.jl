@@ -59,6 +59,15 @@ function __init__()
     osrsetprojsearchpaths([PROJ_LIB[]])
 end
 
+"Load a Cstring to a string, unless it is NULL, then return nothing"
+function string_or_nothing(cs::Cstring)
+    if cs == C_NULL
+        nothing
+    else
+        unsafe_string(cs)
+    end
+end
+
 """
 Load a null-terminated list of strings
 
