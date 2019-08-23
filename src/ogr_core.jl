@@ -26,7 +26,7 @@ function ogrrealloc(arg1, size_t)
 end
 
 function ogrstrdup(arg1)
-    unsafe_string(ccall((:OGRStrdup, libgdal), Cstring, (Cstring,), arg1))
+    string_or_nothing(ccall((:OGRStrdup, libgdal), Cstring, (Cstring,), arg1))
 end
 
 """
@@ -48,7 +48,7 @@ Fetch a human readable name corresponding to an OGRwkbGeometryType value.
 internal human readable string, or NULL on failure.
 """
 function ogrgeometrytypetoname(eType)
-    unsafe_string(ccall((:OGRGeometryTypeToName, libgdal), Cstring, (OGRwkbGeometryType,), eType))
+    string_or_nothing(ccall((:OGRGeometryTypeToName, libgdal), Cstring, (OGRwkbGeometryType,), eType))
 end
 
 """
@@ -319,7 +319,7 @@ Get runtime version information.
 an internal string containing the requested information.
 """
 function gdalversioninfo(arg1)
-    unsafe_string(ccall((:GDALVersionInfo, libgdal), Cstring, (Cstring,), arg1))
+    string_or_nothing(ccall((:GDALVersionInfo, libgdal), Cstring, (Cstring,), arg1))
 end
 
 """

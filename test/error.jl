@@ -39,6 +39,12 @@
         @test err.msg === "Unknown option name '-novalidoption'"
     end
 
+    @testset "Cstring handling" begin
+        # string_or_nothing should return nothing here
+        srs = GDAL.osrnewspatialreference(C_NULL)
+        @test GDAL.osrgetattrvalue(srs, "NoSuchAttr", 0) === nothing
+    end
+
     # Quoting cpl_error.cpp regarding CE_Fatal:
     # > The default behaviour of CPLError() is to report errors to stderr,
     # > and to abort() after reporting a CE_Fatal error.  It is expected that

@@ -11,7 +11,7 @@ Return the string representation for the OGRAxisOrientation enumeration.
 an internal string
 """
 function osraxisenumtoname(eOrientation)
-    unsafe_string(ccall((:OSRAxisEnumToName, libgdal), Cstring, (OGRAxisOrientation,), eOrientation))
+    string_or_nothing(ccall((:OSRAxisEnumToName, libgdal), Cstring, (OGRAxisOrientation,), eOrientation))
 end
 
 """
@@ -424,7 +424,7 @@ end
 Return the CRS name.
 """
 function osrgetname(hSRS)
-    unsafe_string(ccall((:OSRGetName, libgdal), Cstring, (OGRSpatialReferenceH,), hSRS))
+    string_or_nothing(ccall((:OSRGetName, libgdal), Cstring, (OGRSpatialReferenceH,), hSRS))
 end
 
 """
@@ -446,7 +446,7 @@ end
 Fetch indicated attribute of named node.
 """
 function osrgetattrvalue(hSRS, pszName, iChild)
-    unsafe_string(ccall((:OSRGetAttrValue, libgdal), Cstring, (OGRSpatialReferenceH, Cstring, Cint), hSRS, pszName, iChild))
+    string_or_nothing(ccall((:OSRGetAttrValue, libgdal), Cstring, (OGRSpatialReferenceH, Cstring, Cint), hSRS, pszName, iChild))
 end
 
 """
@@ -808,7 +808,7 @@ end
 Get the authority code for a node.
 """
 function osrgetauthoritycode(hSRS, pszTargetKey)
-    unsafe_string(ccall((:OSRGetAuthorityCode, libgdal), Cstring, (OGRSpatialReferenceH, Cstring), hSRS, pszTargetKey))
+    string_or_nothing(ccall((:OSRGetAuthorityCode, libgdal), Cstring, (OGRSpatialReferenceH, Cstring), hSRS, pszTargetKey))
 end
 
 """
@@ -818,7 +818,7 @@ end
 Get the authority name for a node.
 """
 function osrgetauthorityname(hSRS, pszTargetKey)
-    unsafe_string(ccall((:OSRGetAuthorityName, libgdal), Cstring, (OGRSpatialReferenceH, Cstring), hSRS, pszTargetKey))
+    string_or_nothing(ccall((:OSRGetAuthorityName, libgdal), Cstring, (OGRSpatialReferenceH, Cstring), hSRS, pszTargetKey))
 end
 
 """
@@ -988,7 +988,7 @@ function osrepsgtreatsaslatlong(hSRS)
 end
 
 """
-    OSREPSGTreatsAsNorthingEasting(OGRSpatialReferenceH hSRS) -> int
+    (OGRSpatialReferenceH hSRS) -> int
 
 This function returns TRUE if EPSG feels this geographic coordinate system should be treated as having northing/easting coordinate ordering.
 """
@@ -1005,7 +1005,7 @@ end
 Fetch the orientation of one axis.
 """
 function osrgetaxis(hSRS, pszTargetKey, iAxis, peOrientation)
-    unsafe_string(ccall((:OSRGetAxis, libgdal), Cstring, (OGRSpatialReferenceH, Cstring, Cint, Ptr{OGRAxisOrientation}), hSRS, pszTargetKey, iAxis, peOrientation))
+    string_or_nothing(ccall((:OSRGetAxis, libgdal), Cstring, (OGRSpatialReferenceH, Cstring, Cint, Ptr{OGRAxisOrientation}), hSRS, pszTargetKey, iAxis, peOrientation))
 end
 
 """

@@ -23,7 +23,7 @@ Get the value of a configuration option.
 the value associated to the key, or the default value if not found
 """
 function cplgetconfigoption(arg1, arg2)
-    unsafe_string(ccall((:CPLGetConfigOption, libgdal), Cstring, (Cstring, Cstring), arg1, arg2))
+    string_or_nothing(ccall((:CPLGetConfigOption, libgdal), Cstring, (Cstring, Cstring), arg1, arg2))
 end
 
 """
@@ -33,7 +33,7 @@ end
 Same as CPLGetConfigOption() but only with options set with CPLSetThreadLocalConfigOption()
 """
 function cplgetthreadlocalconfigoption(arg1, arg2)
-    unsafe_string(ccall((:CPLGetThreadLocalConfigOption, libgdal), Cstring, (Cstring, Cstring), arg1, arg2))
+    string_or_nothing(ccall((:CPLGetThreadLocalConfigOption, libgdal), Cstring, (Cstring, Cstring), arg1, arg2))
 end
 
 """
@@ -180,7 +180,7 @@ Safe version of strdup() function.
 pointer to a newly allocated copy of the string. Free with CPLFree() or VSIFree().
 """
 function cplstrdup(arg1)
-    unsafe_string(ccall((:CPLStrdup, libgdal), Cstring, (Cstring,), arg1))
+    string_or_nothing(ccall((:CPLStrdup, libgdal), Cstring, (Cstring,), arg1))
 end
 
 """
@@ -195,7 +195,7 @@ Convert each characters of the string to lower case.
 pointer to the same string, pszString.
 """
 function cplstrlwr(arg1)
-    unsafe_string(ccall((:CPLStrlwr, libgdal), Cstring, (Cstring,), arg1))
+    string_or_nothing(ccall((:CPLStrlwr, libgdal), Cstring, (Cstring,), arg1))
 end
 
 """
@@ -214,7 +214,7 @@ Reads in at most one less than nBufferSize characters from the fp stream and sto
 pointer to the pszBuffer containing a string read from the file or NULL if the error or end of file was encountered.
 """
 function cplfgets(arg1, arg2, arg3)
-    unsafe_string(ccall((:CPLFGets, libgdal), Cstring, (Cstring, Cint, Ptr{Cint}), arg1, arg2, arg3))
+    string_or_nothing(ccall((:CPLFGets, libgdal), Cstring, (Cstring, Cint, Ptr{Cint}), arg1, arg2, arg3))
 end
 
 """
@@ -229,7 +229,7 @@ Simplified line reading from text file.
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered.
 """
 function cplreadline(arg1)
-    unsafe_string(ccall((:CPLReadLine, libgdal), Cstring, (Ptr{Cint},), arg1))
+    string_or_nothing(ccall((:CPLReadLine, libgdal), Cstring, (Ptr{Cint},), arg1))
 end
 
 """
@@ -244,7 +244,7 @@ Simplified line reading from text file.
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered.
 """
 function cplreadlinel(arg1)
-    unsafe_string(ccall((:CPLReadLineL, libgdal), Cstring, (Ptr{VSILFILE},), arg1))
+    string_or_nothing(ccall((:CPLReadLineL, libgdal), Cstring, (Ptr{VSILFILE},), arg1))
 end
 
 """
@@ -263,7 +263,7 @@ Simplified line reading from text file.
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered or the maximum number of characters allowed reached.
 """
 function cplreadline2l(arg1, arg2, arg3)
-    unsafe_string(ccall((:CPLReadLine2L, libgdal), Cstring, (Ptr{VSILFILE}, Cint, CSLConstList), arg1, arg2, arg3))
+    string_or_nothing(ccall((:CPLReadLine2L, libgdal), Cstring, (Ptr{VSILFILE}, Cint, CSLConstList), arg1, arg2, arg3))
 end
 
 """
@@ -284,7 +284,7 @@ Simplified line reading from text file.
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered or the maximum number of characters allowed reached.
 """
 function cplreadline3l(arg1, arg2, arg3, arg4)
-    unsafe_string(ccall((:CPLReadLine3L, libgdal), Cstring, (Ptr{VSILFILE}, Cint, Ptr{Cint}, CSLConstList), arg1, arg2, arg3, arg4))
+    string_or_nothing(ccall((:CPLReadLine3L, libgdal), Cstring, (Ptr{VSILFILE}, Cint, Ptr{Cint}, CSLConstList), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -424,7 +424,7 @@ Scan up to a maximum number of characters from a given string, allocate a buffer
 Pointer to the resulting string buffer. Caller responsible to free this buffer with CPLFree().
 """
 function cplscanstring(arg1, arg2, arg3, arg4)
-    unsafe_string(ccall((:CPLScanString, libgdal), Cstring, (Cstring, Cint, Cint, Cint), arg1, arg2, arg3, arg4))
+    string_or_nothing(ccall((:CPLScanString, libgdal), Cstring, (Cstring, Cint, Cint, Cint), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -731,7 +731,7 @@ Extract directory path portion of filename.
 Path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call. The returned will generally not contain a trailing path separator.
 """
 function cplgetpath(arg1)
-    unsafe_string(ccall((:CPLGetPath, libgdal), Cstring, (Cstring,), arg1))
+    string_or_nothing(ccall((:CPLGetPath, libgdal), Cstring, (Cstring,), arg1))
 end
 
 """
@@ -746,7 +746,7 @@ Extract directory path portion of filename.
 Path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call. The returned will generally not contain a trailing path separator.
 """
 function cplgetdirname(arg1)
-    unsafe_string(ccall((:CPLGetDirname, libgdal), Cstring, (Cstring,), arg1))
+    string_or_nothing(ccall((:CPLGetDirname, libgdal), Cstring, (Cstring,), arg1))
 end
 
 """
@@ -761,7 +761,7 @@ Extract non-directory portion of filename.
 just the non-directory portion of the path (points back into original string).
 """
 function cplgetfilename(arg1)
-    unsafe_string(ccall((:CPLGetFilename, libgdal), Cstring, (Cstring,), arg1))
+    string_or_nothing(ccall((:CPLGetFilename, libgdal), Cstring, (Cstring,), arg1))
 end
 
 """
@@ -776,7 +776,7 @@ Extract basename (non-directory, non-extension) portion of filename.
 just the non-directory, non-extension portion of the path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call.
 """
 function cplgetbasename(arg1)
-    unsafe_string(ccall((:CPLGetBasename, libgdal), Cstring, (Cstring,), arg1))
+    string_or_nothing(ccall((:CPLGetBasename, libgdal), Cstring, (Cstring,), arg1))
 end
 
 """
@@ -791,7 +791,7 @@ Extract filename extension from full filename.
 just the extension portion of the path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call.
 """
 function cplgetextension(arg1)
-    unsafe_string(ccall((:CPLGetExtension, libgdal), Cstring, (Cstring,), arg1))
+    string_or_nothing(ccall((:CPLGetExtension, libgdal), Cstring, (Cstring,), arg1))
 end
 
 """
@@ -803,7 +803,7 @@ Get the current working directory name.
 a pointer to buffer, containing current working directory path or NULL in case of error. User is responsible to free that buffer after usage with CPLFree() function. If HAVE_GETCWD macro is not defined, the function returns NULL.
 """
 function cplgetcurrentdir()
-    unsafe_string(ccall((:CPLGetCurrentDir, libgdal), Cstring, ()))
+    string_or_nothing(ccall((:CPLGetCurrentDir, libgdal), Cstring, ()))
 end
 
 """
@@ -822,7 +822,7 @@ Build a full file path from a passed path, file basename and extension.
 a fully formed filename in an internal static string. Do not modify or free the returned string. The string may be destroyed by the next CPL call.
 """
 function cplformfilename(pszPath, pszBasename, pszExtension)
-    unsafe_string(ccall((:CPLFormFilename, libgdal), Cstring, (Cstring, Cstring, Cstring), pszPath, pszBasename, pszExtension))
+    string_or_nothing(ccall((:CPLFormFilename, libgdal), Cstring, (Cstring, Cstring, Cstring), pszPath, pszBasename, pszExtension))
 end
 
 """
@@ -841,7 +841,7 @@ Case insensitive file searching, returning full path.
 a fully formed filename in an internal static string. Do not modify or free the returned string. The string may be destroyed by the next CPL call.
 """
 function cplformcifilename(pszPath, pszBasename, pszExtension)
-    unsafe_string(ccall((:CPLFormCIFilename, libgdal), Cstring, (Cstring, Cstring, Cstring), pszPath, pszBasename, pszExtension))
+    string_or_nothing(ccall((:CPLFormCIFilename, libgdal), Cstring, (Cstring, Cstring, Cstring), pszPath, pszBasename, pszExtension))
 end
 
 """
@@ -858,7 +858,7 @@ Replace the extension with the provided one.
 an altered filename with the new extension. Do not modify or free the returned string. The string may be destroyed by the next CPL call.
 """
 function cplresetextension(arg1, arg2)
-    unsafe_string(ccall((:CPLResetExtension, libgdal), Cstring, (Cstring, Cstring), arg1, arg2))
+    string_or_nothing(ccall((:CPLResetExtension, libgdal), Cstring, (Cstring, Cstring), arg1, arg2))
 end
 
 """
@@ -875,7 +875,7 @@ Find a file relative to a project file.
 a composed path to the secondary file. The returned string is internal and should not be altered, freed, or depending on past the next CPL call.
 """
 function cplprojectrelativefilename(pszProjectDir, pszSecondaryFilename)
-    unsafe_string(ccall((:CPLProjectRelativeFilename, libgdal), Cstring, (Cstring, Cstring), pszProjectDir, pszSecondaryFilename))
+    string_or_nothing(ccall((:CPLProjectRelativeFilename, libgdal), Cstring, (Cstring, Cstring), pszProjectDir, pszSecondaryFilename))
 end
 
 """
@@ -909,7 +909,7 @@ Get relative path from directory to target file.
 an adjusted path or the original if it could not be made relative to the pszBaseFile's path.
 """
 function cplextractrelativepath(arg1, arg2, arg3)
-    unsafe_string(ccall((:CPLExtractRelativePath, libgdal), Cstring, (Cstring, Cstring, Ptr{Cint}), arg1, arg2, arg3))
+    string_or_nothing(ccall((:CPLExtractRelativePath, libgdal), Cstring, (Cstring, Cstring, Ptr{Cint}), arg1, arg2, arg3))
 end
 
 """
@@ -924,7 +924,7 @@ Remove trailing forward/backward slash from the path for UNIX/Windows resp.
 Path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call.
 """
 function cplcleantrailingslash(arg1)
-    unsafe_string(ccall((:CPLCleanTrailingSlash, libgdal), Cstring, (Cstring,), arg1))
+    string_or_nothing(ccall((:CPLCleanTrailingSlash, libgdal), Cstring, (Cstring,), arg1))
 end
 
 """
@@ -975,7 +975,7 @@ Generate temporary file name.
 a filename which is valid till the next CPL call in this thread.
 """
 function cplgeneratetempfilename(pszStem)
-    unsafe_string(ccall((:CPLGenerateTempFilename, libgdal), Cstring, (Cstring,), pszStem))
+    string_or_nothing(ccall((:CPLGenerateTempFilename, libgdal), Cstring, (Cstring,), pszStem))
 end
 
 """
@@ -990,7 +990,7 @@ Expands ~/ at start of filename.
 an expanded filename.
 """
 function cplexpandtilde(pszFilename)
-    unsafe_string(ccall((:CPLExpandTilde, libgdal), Cstring, (Cstring,), pszFilename))
+    string_or_nothing(ccall((:CPLExpandTilde, libgdal), Cstring, (Cstring,), pszFilename))
 end
 
 """
@@ -1002,7 +1002,7 @@ Return the path to the home directory.
 the home directory, or NULL.
 """
 function cplgethomedir()
-    unsafe_string(ccall((:CPLGetHomeDir, libgdal), Cstring, ()))
+    string_or_nothing(ccall((:CPLGetHomeDir, libgdal), Cstring, ()))
 end
 
 """
@@ -1012,7 +1012,7 @@ end
 CPLFindFile.
 """
 function cplfindfile(pszClass, pszBasename)
-    unsafe_string(ccall((:CPLFindFile, libgdal), Cstring, (Cstring, Cstring), pszClass, pszBasename))
+    string_or_nothing(ccall((:CPLFindFile, libgdal), Cstring, (Cstring, Cstring), pszClass, pszBasename))
 end
 
 """
@@ -1022,7 +1022,7 @@ end
 CPLDefaultFindFile.
 """
 function cpldefaultfindfile(pszClass, pszBasename)
-    unsafe_string(ccall((:CPLDefaultFindFile, libgdal), Cstring, (Cstring, Cstring), pszClass, pszBasename))
+    string_or_nothing(ccall((:CPLDefaultFindFile, libgdal), Cstring, (Cstring, Cstring), pszClass, pszBasename))
 end
 
 """
@@ -1162,7 +1162,7 @@ end
 Translate a decimal degrees value to a DMS string with hemisphere.
 """
 function cpldectodms(dfAngle, pszAxis, nPrecision)
-    unsafe_string(ccall((:CPLDecToDMS, libgdal), Cstring, (Cdouble, Cstring, Cint), dfAngle, pszAxis, nPrecision))
+    string_or_nothing(ccall((:CPLDecToDMS, libgdal), Cstring, (Cdouble, Cstring, Cint), dfAngle, pszAxis, nPrecision))
 end
 
 """
@@ -1355,7 +1355,7 @@ Prevents parallel executions of setlocale().
 See your compiler's documentation on setlocale.
 """
 function cplsetlocale(category, locale)
-    unsafe_string(ccall((:CPLsetlocale, libgdal), Cstring, (Cint, Cstring), category, locale))
+    string_or_nothing(ccall((:CPLsetlocale, libgdal), Cstring, (Cint, Cstring), category, locale))
 end
 
 """

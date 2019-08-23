@@ -56,7 +56,7 @@ Get the last error message.
 the last error message, or NULL if there is no posted error message.
 """
 function cplgetlasterrormsg()
-    unsafe_string(ccall((:CPLGetLastErrorMsg, libgdal), Cstring, ()))
+    string_or_nothing(ccall((:CPLGetLastErrorMsg, libgdal), Cstring, ()))
 end
 
 """

@@ -73,7 +73,7 @@ end
              FILE * fp) -> char *
 """
 function vsifgets(arg1, arg2, arg3)
-    unsafe_string(ccall((:VSIFGets, libgdal), Cstring, (Cstring, Cint, Ptr{Cint}), arg1, arg2, arg3))
+    string_or_nothing(ccall((:VSIFGets, libgdal), Cstring, (Cstring, Cint, Ptr{Cint}), arg1, arg2, arg3))
 end
 
 """
@@ -483,7 +483,7 @@ Returns the actual URL of a supplied filename.
 the actual URL corresponding to the supplied filename, or NULL. Should not be freed.
 """
 function vsigetactualurl(pszFilename)
-    unsafe_string(ccall((:VSIGetActualURL, libgdal), Cstring, (Cstring,), pszFilename))
+    string_or_nothing(ccall((:VSIGetActualURL, libgdal), Cstring, (Cstring,), pszFilename))
 end
 
 """
@@ -508,7 +508,7 @@ VERB=GET/HEAD/DELETE/PUT/POST: HTTP VERB for which the request will be used. Def
 a signed URL, or NULL. Should be freed with CPLFree().
 """
 function vsigetsignedurl(pszFilename, papszOptions)
-    unsafe_string(ccall((:VSIGetSignedURL, libgdal), Cstring, (Cstring, CSLConstList), pszFilename, papszOptions))
+    string_or_nothing(ccall((:VSIGetSignedURL, libgdal), Cstring, (Cstring, CSLConstList), pszFilename, papszOptions))
 end
 
 """
@@ -523,7 +523,7 @@ Return the list of options associated with a virtual file system handler as a se
 a string, which must not be freed, or NULL if no options is declared.
 """
 function vsigetfilesystemoptions(pszFilename)
-    unsafe_string(ccall((:VSIGetFileSystemOptions, libgdal), Cstring, (Cstring,), pszFilename))
+    string_or_nothing(ccall((:VSIGetFileSystemOptions, libgdal), Cstring, (Cstring,), pszFilename))
 end
 
 """
@@ -597,7 +597,7 @@ end
 Analog of strdup().
 """
 function vsistrdup(arg1)
-    unsafe_string(ccall((:VSIStrdup, libgdal), Cstring, (Cstring,), arg1))
+    string_or_nothing(ccall((:VSIStrdup, libgdal), Cstring, (Cstring,), arg1))
 end
 
 """
@@ -744,7 +744,7 @@ end
 VSIStrdupVerbose.
 """
 function vsistrdupverbose(pszStr, pszFile, nLine)
-    unsafe_string(ccall((:VSIStrdupVerbose, libgdal), Cstring, (Cstring, Cstring, Cint), pszStr, pszFile, nLine))
+    string_or_nothing(ccall((:VSIStrdupVerbose, libgdal), Cstring, (Cstring, Cstring, Cint), pszStr, pszFile, nLine))
 end
 
 """
@@ -995,7 +995,7 @@ end
 Return the error string corresponding to the error number.
 """
 function vsistrerror(arg1)
-    unsafe_string(ccall((:VSIStrerror, libgdal), Cstring, (Cint,), arg1))
+    string_or_nothing(ccall((:VSIStrerror, libgdal), Cstring, (Cint,), arg1))
 end
 
 """
@@ -1344,7 +1344,7 @@ end
     VSICTime(unsigned long nTime) -> const char *
 """
 function vsictime(arg1)
-    unsafe_string(ccall((:VSICTime, libgdal), Cstring, (Culong,), arg1))
+    string_or_nothing(ccall((:VSICTime, libgdal), Cstring, (Culong,), arg1))
 end
 
 """
