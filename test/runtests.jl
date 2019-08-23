@@ -18,15 +18,6 @@ using Test
     @test n_gdal_driver > 0
     @test n_ogr_driver > 0
 
-    # test if the registered error handler also handles CE_Fatal
-    @test_throws GDAL.GDALError GDAL.cplemergencyerror("we've got a problem")
-    GDAL.cplerrorreset()
-
-    # throw errors on non existing files
-    @test_throws GDAL.GDALError GDAL.gdalopen("NonExistent", GDAL.GA_ReadOnly)
-    # if a driver is not found it throws a GDALError
-    @test_throws GDAL.GDALError GDAL.gdalgetdriverbyname("NonExistent")
-
     srs = GDAL.osrnewspatialreference(C_NULL)
     GDAL.osrimportfromepsg(srs, 4326) # fails if GDAL_DATA is not set correctly
 
@@ -56,6 +47,7 @@ using Test
         include("tutorial_vrt.jl")
         include("gdal_utils.jl")
         include("drivers.jl")
+        include("error.jl")
     end
 
     GDAL.gdaldestroydrivermanager()

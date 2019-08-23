@@ -2,17 +2,6 @@ ds_small = GDAL.gdalopen("data/utmsmall.tif", GDAL.GA_ReadOnly)
 ds_point = GDAL.gdalopenex("data/point.geojson", GDAL.GDAL_OF_VECTOR, C_NULL, C_NULL, C_NULL)
 
 # GDALInfo
-# infooptionsnew checks if the options are valid
-@test_throws GDAL.GDALError GDAL.gdalinfooptionsnew(["-novalidoption"], C_NULL)
-# check not only that a GDALError is thrown, but also its contents
-try
-    GDAL.gdalinfooptionsnew(["-novalidoption"], C_NULL)
-catch err
-    @test err.class === GDAL.CE_Failure
-    @test err.code === Cint(6)
-    @test err.msg == "Unknown option name '-novalidoption'"
-end
-
 options = GDAL.gdalinfooptionsnew(["-checksum"], C_NULL)
 infostr = GDAL.gdalinfo(ds_small, options)
 @test occursin("Checksum=50054", infostr)

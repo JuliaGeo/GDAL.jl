@@ -3,6 +3,11 @@ struct GDALError <: Exception
     class::CPLErr
     code::Cint
     msg::String
+    # reset GDAL's error stack on construction
+    function GDALError(class, code, msg)
+        cplerrorreset()
+        new(class, code, msg)
+    end
 end
 
 function GDALError()
