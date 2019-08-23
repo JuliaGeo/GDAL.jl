@@ -3,13 +3,17 @@ struct GDALError <: Exception
     class::CPLErr
     code::Cint
     msg::String
+    # reset GDAL's error stack on construction
+    function GDALError(class, code, msg)
+        cplerrorreset()
+        new(class, code, msg)
+    end
 end
 
 function GDALError()
     class = cplgetlasterrortype()
     code = cplgetlasterrorno()
     msg = cplgetlasterrormsg()
-    cplerrorreset()
     GDALError(class, code, msg)
 end
 
@@ -24,9 +28,7 @@ function gdaljl_errorhandler(class::CPLErr, errno::Cint, errmsg::Cstring)
     # function signature needs to match the one in __init__, and the signature
     # of the callback for a custom error handler in the GDAL docs
     if class in throw_class
-        msg = unsafe_string(errmsg)
-        cplerrorreset()
-        throw(GDALError(class, errno, msg))
+        throw(GDALError(class, errno, unsafe_string(errmsg)))
     end
     return C_NULL
 end
