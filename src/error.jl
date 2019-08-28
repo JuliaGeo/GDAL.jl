@@ -22,6 +22,13 @@ function Base.showerror(io::IO, err::GDALError)
     println(io, err)
 end
 
+"""The custom GDAL error handling function that we set in __init__
+
+This function will get called by GDAL itself when it decides it wants to throw
+an error. We turn the error into a GDALError and throw it from Julia. This allows
+us to get GDALErrors that look similar to the ones that we throw when our own error
+checking code decides it should throw.
+"""
 function gdaljl_errorhandler(class::CPLErr, errno::Cint, errmsg::Cstring)
     # function signature needs to match the one in __init__, and the signature
     # of the callback for a custom error handler in the GDAL docs
@@ -43,6 +50,10 @@ end
 Handle anything returned from GDAL
 
 When values are returned from GDAL, always check if there was a failure using `maybe_throw`.
+If the failure was thrown by GDAL itself, it will not even get to `aftercare` and end up in
+`gdaljl_errorhandler`. However in many cases even though GDAL sets the error state to `CE_Failure`
+it will not throw the error. However we always do, to make sure not failure goes unnoticed.
+If an error might be expected, one can use `try .. catch` to handle this.
 
 Depending on the return type, we do extra work.
 """

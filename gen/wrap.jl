@@ -143,7 +143,9 @@ function rewriter(x::Expr)
         end
 
         cc2 = if occursin(r"^cpl.*error", String(f2))
-            # since we call these in aftercare, no aftercare to prevent calling itself
+            # We will take care of GDAL error states and memory freeing by
+            # calling `aftercare`, except for `cpl*error*` functions, as these
+            # will be called by `aftercare` itself, so we prevent a loop.
             if rettype == :Cstring
                 :(unsafe_string($cc))
             else
