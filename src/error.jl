@@ -82,5 +82,8 @@ function aftercare(ptr::Ptr{Cstring})
         i += 1
         cstring = unsafe_load(ptr, i)
     end
+    # TODO it seems that, like aftercare(::Cstring), we need to
+    # free the memory ourselves with CSLDestroy (not currently wrapped)
+    # not sure if that is true for some or all functions
     strings
 end
