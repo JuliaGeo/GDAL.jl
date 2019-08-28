@@ -7,14 +7,14 @@
              const char * pszAccess) -> FILE *
 """
 function vsifopen()
-    ccall((:VSIFOpen, libgdal), Ptr{Cint}, ())
+    aftercare(ccall((:VSIFOpen, libgdal), Ptr{Cint}, ()))
 end
 
 """
     VSIFClose(FILE * fp) -> int
 """
 function vsifclose(arg1)
-    ccall((:VSIFClose, libgdal), Cint, (Ptr{Cint},), arg1)
+    aftercare(ccall((:VSIFClose, libgdal), Cint, (Ptr{Cint},), arg1))
 end
 
 """
@@ -23,28 +23,28 @@ end
              int nWhence) -> int
 """
 function vsifseek(arg1, arg2, arg3)
-    ccall((:VSIFSeek, libgdal), Cint, (Ptr{Cint}, Clong, Cint), arg1, arg2, arg3)
+    aftercare(ccall((:VSIFSeek, libgdal), Cint, (Ptr{Cint}, Clong, Cint), arg1, arg2, arg3))
 end
 
 """
     VSIFTell(FILE * fp) -> long
 """
 function vsiftell(arg1)
-    ccall((:VSIFTell, libgdal), Clong, (Ptr{Cint},), arg1)
+    aftercare(ccall((:VSIFTell, libgdal), Clong, (Ptr{Cint},), arg1))
 end
 
 """
     VSIRewind(FILE * fp) -> void
 """
 function vsirewind(arg1)
-    ccall((:VSIRewind, libgdal), Cvoid, (Ptr{Cint},), arg1)
+    aftercare(ccall((:VSIRewind, libgdal), Cvoid, (Ptr{Cint},), arg1))
 end
 
 """
     VSIFFlush(FILE * fp) -> void
 """
 function vsifflush(arg1)
-    ccall((:VSIFFlush, libgdal), Cvoid, (Ptr{Cint},), arg1)
+    aftercare(ccall((:VSIFFlush, libgdal), Cvoid, (Ptr{Cint},), arg1))
 end
 
 """
@@ -54,7 +54,7 @@ end
              FILE * fp) -> size_t
 """
 function vsifread()
-    ccall((:VSIFRead, libgdal), Cint, ())
+    aftercare(ccall((:VSIFRead, libgdal), Cint, ()))
 end
 
 """
@@ -64,7 +64,7 @@ end
               FILE * fp) -> size_t
 """
 function vsifwrite()
-    ccall((:VSIFWrite, libgdal), Cint, ())
+    aftercare(ccall((:VSIFWrite, libgdal), Cint, ()))
 end
 
 """
@@ -73,7 +73,7 @@ end
              FILE * fp) -> char *
 """
 function vsifgets(arg1, arg2, arg3)
-    unsafe_string(ccall((:VSIFGets, libgdal), Cstring, (Cstring, Cint, Ptr{Cint}), arg1, arg2, arg3))
+    aftercare(ccall((:VSIFGets, libgdal), Cstring, (Cstring, Cint, Ptr{Cint}), arg1, arg2, arg3), false)
 end
 
 """
@@ -81,14 +81,14 @@ end
              FILE * fp) -> int
 """
 function vsifputs(arg1, arg2)
-    ccall((:VSIFPuts, libgdal), Cint, (Cstring, Ptr{Cint}), arg1, arg2)
+    aftercare(ccall((:VSIFPuts, libgdal), Cint, (Cstring, Ptr{Cint}), arg1, arg2))
 end
 
 """
     VSIFGetc(FILE * fp) -> int
 """
 function vsifgetc(arg1)
-    ccall((:VSIFGetc, libgdal), Cint, (Ptr{Cint},), arg1)
+    aftercare(ccall((:VSIFGetc, libgdal), Cint, (Ptr{Cint},), arg1))
 end
 
 """
@@ -96,7 +96,7 @@ end
              FILE * fp) -> int
 """
 function vsifputc(arg1, arg2)
-    ccall((:VSIFPutc, libgdal), Cint, (Cint, Ptr{Cint}), arg1, arg2)
+    aftercare(ccall((:VSIFPutc, libgdal), Cint, (Cint, Ptr{Cint}), arg1, arg2))
 end
 
 """
@@ -104,14 +104,14 @@ end
               FILE * fp) -> int
 """
 function vsiungetc(arg1, arg2)
-    ccall((:VSIUngetc, libgdal), Cint, (Cint, Ptr{Cint}), arg1, arg2)
+    aftercare(ccall((:VSIUngetc, libgdal), Cint, (Cint, Ptr{Cint}), arg1, arg2))
 end
 
 """
     VSIFEof(FILE * fp) -> int
 """
 function vsifeof(arg1)
-    ccall((:VSIFEof, libgdal), Cint, (Ptr{Cint},), arg1)
+    aftercare(ccall((:VSIFEof, libgdal), Cint, (Ptr{Cint},), arg1))
 end
 
 """
@@ -119,7 +119,7 @@ end
             VSIStatBuf * pStatBuf) -> int
 """
 function vsistat(arg1, arg2)
-    ccall((:VSIStat, libgdal), Cint, (Cstring, Ptr{VSIStatBuf}), arg1, arg2)
+    aftercare(ccall((:VSIStat, libgdal), Cint, (Cstring, Ptr{VSIStatBuf}), arg1, arg2))
 end
 
 """
@@ -136,7 +136,7 @@ Open file.
 NULL on failure, or the file handle.
 """
 function vsifopenl(arg1, arg2)
-    ccall((:VSIFOpenL, libgdal), Ptr{VSILFILE}, (Cstring, Cstring), arg1, arg2)
+    aftercare(ccall((:VSIFOpenL, libgdal), Ptr{VSILFILE}, (Cstring, Cstring), arg1, arg2))
 end
 
 """
@@ -155,7 +155,7 @@ Open file.
 NULL on failure, or the file handle.
 """
 function vsifopenexl(arg1, arg2, arg3)
-    ccall((:VSIFOpenExL, libgdal), Ptr{VSILFILE}, (Cstring, Cstring, Cint), arg1, arg2, arg3)
+    aftercare(ccall((:VSIFOpenExL, libgdal), Ptr{VSILFILE}, (Cstring, Cstring, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -170,7 +170,7 @@ Close file.
 0 on success or -1 on failure.
 """
 function vsifclosel(arg1)
-    ccall((:VSIFCloseL, libgdal), Cint, (Ptr{VSILFILE},), arg1)
+    aftercare(ccall((:VSIFCloseL, libgdal), Cint, (Ptr{VSILFILE},), arg1))
 end
 
 """
@@ -189,7 +189,7 @@ Seek to requested offset.
 0 on success or -1 one failure.
 """
 function vsifseekl(arg1, arg2, arg3)
-    ccall((:VSIFSeekL, libgdal), Cint, (Ptr{VSILFILE}, vsi_l_offset, Cint), arg1, arg2, arg3)
+    aftercare(ccall((:VSIFSeekL, libgdal), Cint, (Ptr{VSILFILE}, vsi_l_offset, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -204,7 +204,7 @@ Tell current file offset.
 file offset in bytes.
 """
 function vsiftelll(arg1)
-    ccall((:VSIFTellL, libgdal), vsi_l_offset, (Ptr{VSILFILE},), arg1)
+    aftercare(ccall((:VSIFTellL, libgdal), vsi_l_offset, (Ptr{VSILFILE},), arg1))
 end
 
 """
@@ -216,7 +216,7 @@ Rewind the file pointer to the beginning of the file.
 * **fp**: file handle opened with VSIFOpenL().
 """
 function vsirewindl(arg1)
-    ccall((:VSIRewindL, libgdal), Cvoid, (Ptr{VSILFILE},), arg1)
+    aftercare(ccall((:VSIRewindL, libgdal), Cvoid, (Ptr{VSILFILE},), arg1))
 end
 
 """
@@ -237,7 +237,7 @@ Read bytes from file.
 number of objects successfully read.
 """
 function vsifreadl()
-    ccall((:VSIFReadL, libgdal), Cint, ())
+    aftercare(ccall((:VSIFReadL, libgdal), Cint, ()))
 end
 
 """
@@ -260,7 +260,7 @@ Read several ranges of bytes from file.
 0 in case of success, -1 otherwise.
 """
 function vsifreadmultirangel(nRanges, ppData, panOffsets, panSizes, arg1)
-    ccall((:VSIFReadMultiRangeL, libgdal), Cint, (Cint, Ptr{Ptr{Cvoid}}, Ptr{vsi_l_offset}, Ptr{Cint}, Ptr{VSILFILE}), nRanges, ppData, panOffsets, panSizes, arg1)
+    aftercare(ccall((:VSIFReadMultiRangeL, libgdal), Cint, (Cint, Ptr{Ptr{Cvoid}}, Ptr{vsi_l_offset}, Ptr{Cint}, Ptr{VSILFILE}), nRanges, ppData, panOffsets, panSizes, arg1))
 end
 
 """
@@ -281,7 +281,7 @@ Write bytes to file.
 number of objects successfully written.
 """
 function vsifwritel()
-    ccall((:VSIFWriteL, libgdal), Cint, ())
+    aftercare(ccall((:VSIFWriteL, libgdal), Cint, ()))
 end
 
 """
@@ -296,7 +296,7 @@ Test for end of file.
 TRUE if at EOF else FALSE.
 """
 function vsifeofl(arg1)
-    ccall((:VSIFEofL, libgdal), Cint, (Ptr{VSILFILE},), arg1)
+    aftercare(ccall((:VSIFEofL, libgdal), Cint, (Ptr{VSILFILE},), arg1))
 end
 
 """
@@ -313,7 +313,7 @@ Truncate/expand the file to the specified size.
 0 on success
 """
 function vsiftruncatel(arg1, arg2)
-    ccall((:VSIFTruncateL, libgdal), Cint, (Ptr{VSILFILE}, vsi_l_offset), arg1, arg2)
+    aftercare(ccall((:VSIFTruncateL, libgdal), Cint, (Ptr{VSILFILE}, vsi_l_offset), arg1, arg2))
 end
 
 """
@@ -328,7 +328,7 @@ Flush pending writes to disk.
 0 on success or -1 on error.
 """
 function vsifflushl(arg1)
-    ccall((:VSIFFlushL, libgdal), Cint, (Ptr{VSILFILE},), arg1)
+    aftercare(ccall((:VSIFFlushL, libgdal), Cint, (Ptr{VSILFILE},), arg1))
 end
 
 """
@@ -345,7 +345,7 @@ Write a single byte to the file.
 1 in case of success, 0 on error.
 """
 function vsifputcl(arg1, arg2)
-    ccall((:VSIFPutcL, libgdal), Cint, (Cint, Ptr{VSILFILE}), arg1, arg2)
+    aftercare(ccall((:VSIFPutcL, libgdal), Cint, (Cint, Ptr{VSILFILE}), arg1, arg2))
 end
 
 """
@@ -364,7 +364,7 @@ Return if a given file range contains data or holes filled with zeroes.
 extent status: VSI_RANGE_STATUS_UNKNOWN, VSI_RANGE_STATUS_DATA or VSI_RANGE_STATUS_HOLE
 """
 function vsifgetrangestatusl(fp, nStart, nLength)
-    ccall((:VSIFGetRangeStatusL, libgdal), VSIRangeStatus, (Ptr{VSILFILE}, vsi_l_offset, vsi_l_offset), fp, nStart, nLength)
+    aftercare(ccall((:VSIFGetRangeStatusL, libgdal), VSIRangeStatus, (Ptr{VSILFILE}, vsi_l_offset, vsi_l_offset), fp, nStart, nLength))
 end
 
 """
@@ -387,7 +387,7 @@ Ingest a file into memory.
 TRUE in case of success.
 """
 function vsiingestfile(fp, pszFilename, ppabyRet, pnSize, nMaxSize)
-    ccall((:VSIIngestFile, libgdal), Cint, (Ptr{VSILFILE}, Cstring, Ptr{Ptr{GByte}}, Ptr{vsi_l_offset}, GIntBig), fp, pszFilename, ppabyRet, pnSize, nMaxSize)
+    aftercare(ccall((:VSIIngestFile, libgdal), Cint, (Ptr{VSILFILE}, Cstring, Ptr{Ptr{GByte}}, Ptr{vsi_l_offset}, GIntBig), fp, pszFilename, ppabyRet, pnSize, nMaxSize))
 end
 
 """
@@ -404,7 +404,7 @@ Get filesystem object info.
 0 on success or -1 on an error.
 """
 function vsistatl(arg1, arg2)
-    ccall((:VSIStatL, libgdal), Cint, (Cstring, Ptr{VSIStatBufL}), arg1, arg2)
+    aftercare(ccall((:VSIStatL, libgdal), Cint, (Cstring, Ptr{VSIStatBufL}), arg1, arg2))
 end
 
 """
@@ -423,7 +423,7 @@ Get filesystem object info.
 0 on success or -1 on an error.
 """
 function vsistatexl(pszFilename, psStatBuf, nFlags)
-    ccall((:VSIStatExL, libgdal), Cint, (Cstring, Ptr{VSIStatBufL}, Cint), pszFilename, psStatBuf, nFlags)
+    aftercare(ccall((:VSIStatExL, libgdal), Cint, (Cstring, Ptr{VSIStatBufL}, Cint), pszFilename, psStatBuf, nFlags))
 end
 
 """
@@ -438,7 +438,7 @@ Returns if the filenames of the filesystem are case sensitive.
 TRUE if the filenames of the filesystem are case sensitive.
 """
 function vsiiscasesensitivefs(pszFilename)
-    ccall((:VSIIsCaseSensitiveFS, libgdal), Cint, (Cstring,), pszFilename)
+    aftercare(ccall((:VSIIsCaseSensitiveFS, libgdal), Cint, (Cstring,), pszFilename))
 end
 
 """
@@ -453,7 +453,7 @@ Returns if the filesystem supports sparse files.
 TRUE if the file system is known to support sparse files. FALSE may be returned both in cases where it is known to not support them, or when it is unknown.
 """
 function vsisupportssparsefiles(pszPath)
-    ccall((:VSISupportsSparseFiles, libgdal), Cint, (Cstring,), pszPath)
+    aftercare(ccall((:VSISupportsSparseFiles, libgdal), Cint, (Cstring,), pszPath))
 end
 
 """
@@ -468,7 +468,7 @@ Returns if the filesystem supports efficient multi-range reading.
 TRUE if the file system is known to have an efficient multi-range reading.
 """
 function vsihasoptimizedreadmultirange(pszPath)
-    ccall((:VSIHasOptimizedReadMultiRange, libgdal), Cint, (Cstring,), pszPath)
+    aftercare(ccall((:VSIHasOptimizedReadMultiRange, libgdal), Cint, (Cstring,), pszPath))
 end
 
 """
@@ -483,7 +483,7 @@ Returns the actual URL of a supplied filename.
 the actual URL corresponding to the supplied filename, or NULL. Should not be freed.
 """
 function vsigetactualurl(pszFilename)
-    unsafe_string(ccall((:VSIGetActualURL, libgdal), Cstring, (Cstring,), pszFilename))
+    aftercare(ccall((:VSIGetActualURL, libgdal), Cstring, (Cstring,), pszFilename), false)
 end
 
 """
@@ -508,7 +508,7 @@ VERB=GET/HEAD/DELETE/PUT/POST: HTTP VERB for which the request will be used. Def
 a signed URL, or NULL. Should be freed with CPLFree().
 """
 function vsigetsignedurl(pszFilename, papszOptions)
-    unsafe_string(ccall((:VSIGetSignedURL, libgdal), Cstring, (Cstring, CSLConstList), pszFilename, papszOptions))
+    aftercare(ccall((:VSIGetSignedURL, libgdal), Cstring, (Cstring, CSLConstList), pszFilename, papszOptions), false)
 end
 
 """
@@ -523,7 +523,7 @@ Return the list of options associated with a virtual file system handler as a se
 a string, which must not be freed, or NULL if no options is declared.
 """
 function vsigetfilesystemoptions(pszFilename)
-    unsafe_string(ccall((:VSIGetFileSystemOptions, libgdal), Cstring, (Cstring,), pszFilename))
+    aftercare(ccall((:VSIGetFileSystemOptions, libgdal), Cstring, (Cstring,), pszFilename), false)
 end
 
 """
@@ -535,7 +535,7 @@ Return the list of prefixes for virtual file system handlers currently registere
 a NULL terminated list of prefixes. Must be freed with CSLDestroy()
 """
 function vsigetfilesystemsprefixes()
-    unsafe_loadstringlist(ccall((:VSIGetFileSystemsPrefixes, libgdal), Ptr{Cstring}, ()))
+    aftercare(ccall((:VSIGetFileSystemsPrefixes, libgdal), Ptr{Cstring}, ()))
 end
 
 """
@@ -550,7 +550,7 @@ Returns the "native" file descriptor for the virtual handle.
 the native file descriptor, or NULL.
 """
 function vsifgetnativefiledescriptorl(arg1)
-    failsafe(ccall((:VSIFGetNativeFileDescriptorL, libgdal), Ptr{Cvoid}, (Ptr{VSILFILE},), arg1))
+    aftercare(ccall((:VSIFGetNativeFileDescriptorL, libgdal), Ptr{Cvoid}, (Ptr{VSILFILE},), arg1))
 end
 
 """
@@ -560,7 +560,7 @@ end
 Analog of calloc().
 """
 function vsicalloc()
-    failsafe(ccall((:VSICalloc, libgdal), Ptr{Cvoid}, ()))
+    aftercare(ccall((:VSICalloc, libgdal), Ptr{Cvoid}, ()))
 end
 
 """
@@ -569,7 +569,7 @@ end
 Analog of malloc().
 """
 function vsimalloc()
-    failsafe(ccall((:VSIMalloc, libgdal), Ptr{Cvoid}, ()))
+    aftercare(ccall((:VSIMalloc, libgdal), Ptr{Cvoid}, ()))
 end
 
 """
@@ -578,7 +578,7 @@ end
 Analog of free() for data allocated with VSIMalloc(), VSICalloc(), VSIRealloc()
 """
 function vsifree(arg1)
-    ccall((:VSIFree, libgdal), Cvoid, (Ptr{Cvoid},), arg1)
+    aftercare(ccall((:VSIFree, libgdal), Cvoid, (Ptr{Cvoid},), arg1))
 end
 
 """
@@ -588,7 +588,7 @@ end
 Analog of realloc().
 """
 function vsirealloc(arg1, size_t)
-    failsafe(ccall((:VSIRealloc, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Cint), arg1, size_t))
+    aftercare(ccall((:VSIRealloc, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Cint), arg1, size_t))
 end
 
 """
@@ -597,7 +597,7 @@ end
 Analog of strdup().
 """
 function vsistrdup(arg1)
-    unsafe_string(ccall((:VSIStrdup, libgdal), Cstring, (Cstring,), arg1))
+    aftercare(ccall((:VSIStrdup, libgdal), Cstring, (Cstring,), arg1), false)
 end
 
 """
@@ -614,7 +614,7 @@ Allocates a buffer with an alignment constraint.
 a buffer aligned on nAlignment and of size nSize, or NULL
 """
 function vsimallocaligned(nAlignment, nSize)
-    failsafe(ccall((:VSIMallocAligned, libgdal), Ptr{Cvoid}, (Cint, Cint), nAlignment, nSize))
+    aftercare(ccall((:VSIMallocAligned, libgdal), Ptr{Cvoid}, (Cint, Cint), nAlignment, nSize))
 end
 
 """
@@ -629,7 +629,7 @@ Allocates a buffer with an alignment constraint such that it can be used by the 
 an aligned buffer of size nSize, or NULL
 """
 function vsimallocalignedauto(nSize)
-    failsafe(ccall((:VSIMallocAlignedAuto, libgdal), Ptr{Cvoid}, (Cint,), nSize))
+    aftercare(ccall((:VSIMallocAlignedAuto, libgdal), Ptr{Cvoid}, (Cint,), nSize))
 end
 
 """
@@ -641,7 +641,7 @@ Free a buffer allocated with VSIMallocAligned().
 * **ptr**: Buffer to free.
 """
 function vsifreealigned(ptr)
-    ccall((:VSIFreeAligned, libgdal), Cvoid, (Ptr{Cvoid},), ptr)
+    aftercare(ccall((:VSIFreeAligned, libgdal), Cvoid, (Ptr{Cvoid},), ptr))
 end
 
 """
@@ -652,7 +652,7 @@ end
 See VSIMallocAlignedAuto()
 """
 function vsimallocalignedautoverbose(nSize, pszFile, nLine)
-    failsafe(ccall((:VSIMallocAlignedAutoVerbose, libgdal), Ptr{Cvoid}, (Cint, Cstring, Cint), nSize, pszFile, nLine))
+    aftercare(ccall((:VSIMallocAlignedAutoVerbose, libgdal), Ptr{Cvoid}, (Cint, Cstring, Cint), nSize, pszFile, nLine))
 end
 
 """
@@ -662,7 +662,7 @@ end
 VSIMalloc2 allocates (nSize1 * nSize2) bytes.
 """
 function vsimalloc2(nSize1, nSize2)
-    failsafe(ccall((:VSIMalloc2, libgdal), Ptr{Cvoid}, (Cint, Cint), nSize1, nSize2))
+    aftercare(ccall((:VSIMalloc2, libgdal), Ptr{Cvoid}, (Cint, Cint), nSize1, nSize2))
 end
 
 """
@@ -673,7 +673,7 @@ end
 VSIMalloc3 allocates (nSize1 * nSize2 * nSize3) bytes.
 """
 function vsimalloc3(nSize1, nSize2, nSize3)
-    failsafe(ccall((:VSIMalloc3, libgdal), Ptr{Cvoid}, (Cint, Cint, Cint), nSize1, nSize2, nSize3))
+    aftercare(ccall((:VSIMalloc3, libgdal), Ptr{Cvoid}, (Cint, Cint, Cint), nSize1, nSize2, nSize3))
 end
 
 """
@@ -684,7 +684,7 @@ end
 VSIMallocVerbose.
 """
 function vsimallocverbose(nSize, pszFile, nLine)
-    failsafe(ccall((:VSIMallocVerbose, libgdal), Ptr{Cvoid}, (Cint, Cstring, Cint), nSize, pszFile, nLine))
+    aftercare(ccall((:VSIMallocVerbose, libgdal), Ptr{Cvoid}, (Cint, Cstring, Cint), nSize, pszFile, nLine))
 end
 
 """
@@ -696,7 +696,7 @@ end
 VSIMalloc2Verbose.
 """
 function vsimalloc2verbose(nSize1, nSize2, pszFile, nLine)
-    failsafe(ccall((:VSIMalloc2Verbose, libgdal), Ptr{Cvoid}, (Cint, Cint, Cstring, Cint), nSize1, nSize2, pszFile, nLine))
+    aftercare(ccall((:VSIMalloc2Verbose, libgdal), Ptr{Cvoid}, (Cint, Cint, Cstring, Cint), nSize1, nSize2, pszFile, nLine))
 end
 
 """
@@ -709,7 +709,7 @@ end
 VSIMalloc3Verbose.
 """
 function vsimalloc3verbose(nSize1, nSize2, nSize3, pszFile, nLine)
-    failsafe(ccall((:VSIMalloc3Verbose, libgdal), Ptr{Cvoid}, (Cint, Cint, Cint, Cstring, Cint), nSize1, nSize2, nSize3, pszFile, nLine))
+    aftercare(ccall((:VSIMalloc3Verbose, libgdal), Ptr{Cvoid}, (Cint, Cint, Cint, Cstring, Cint), nSize1, nSize2, nSize3, pszFile, nLine))
 end
 
 """
@@ -721,7 +721,7 @@ end
 VSICallocVerbose.
 """
 function vsicallocverbose(nCount, nSize, pszFile, nLine)
-    failsafe(ccall((:VSICallocVerbose, libgdal), Ptr{Cvoid}, (Cint, Cint, Cstring, Cint), nCount, nSize, pszFile, nLine))
+    aftercare(ccall((:VSICallocVerbose, libgdal), Ptr{Cvoid}, (Cint, Cint, Cstring, Cint), nCount, nSize, pszFile, nLine))
 end
 
 """
@@ -733,7 +733,7 @@ end
 VSIReallocVerbose.
 """
 function vsireallocverbose(pOldPtr, nNewSize, pszFile, nLine)
-    failsafe(ccall((:VSIReallocVerbose, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Cint, Cstring, Cint), pOldPtr, nNewSize, pszFile, nLine))
+    aftercare(ccall((:VSIReallocVerbose, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Cint, Cstring, Cint), pOldPtr, nNewSize, pszFile, nLine))
 end
 
 """
@@ -744,7 +744,7 @@ end
 VSIStrdupVerbose.
 """
 function vsistrdupverbose(pszStr, pszFile, nLine)
-    unsafe_string(ccall((:VSIStrdupVerbose, libgdal), Cstring, (Cstring, Cstring, Cint), pszStr, pszFile, nLine))
+    aftercare(ccall((:VSIStrdupVerbose, libgdal), Cstring, (Cstring, Cstring, Cint), pszStr, pszFile, nLine), false)
 end
 
 """
@@ -756,7 +756,7 @@ Return the total physical RAM in bytes.
 the total physical RAM in bytes (or 0 in case of failure).
 """
 function cplgetphysicalram()
-    ccall((:CPLGetPhysicalRAM, libgdal), GIntBig, ())
+    aftercare(ccall((:CPLGetPhysicalRAM, libgdal), GIntBig, ()))
 end
 
 """
@@ -768,7 +768,7 @@ Return the total physical RAM, usable by a process, in bytes.
 the total physical RAM, usable by a process, in bytes (or 0 in case of failure).
 """
 function cplgetusablephysicalram()
-    ccall((:CPLGetUsablePhysicalRAM, libgdal), GIntBig, ())
+    aftercare(ccall((:CPLGetUsablePhysicalRAM, libgdal), GIntBig, ()))
 end
 
 """
@@ -783,7 +783,7 @@ Read names in a directory.
 The list of entries in the directory, or NULL if the directory doesn't exist. Filenames are returned in UTF-8 encoding.
 """
 function vsireaddir(arg1)
-    unsafe_loadstringlist(ccall((:VSIReadDir, libgdal), Ptr{Cstring}, (Cstring,), arg1))
+    aftercare(ccall((:VSIReadDir, libgdal), Ptr{Cstring}, (Cstring,), arg1))
 end
 
 """
@@ -798,7 +798,7 @@ Read names in a directory recursively.
 The list of entries in the directory and subdirectories or NULL if the directory doesn't exist. Filenames are returned in UTF-8 encoding.
 """
 function vsireaddirrecursive(pszPath)
-    unsafe_loadstringlist(ccall((:VSIReadDirRecursive, libgdal), Ptr{Cstring}, (Cstring,), pszPath))
+    aftercare(ccall((:VSIReadDirRecursive, libgdal), Ptr{Cstring}, (Cstring,), pszPath))
 end
 
 """
@@ -815,7 +815,7 @@ Read names in a directory.
 The list of entries in the directory, or NULL if the directory doesn't exist. Filenames are returned in UTF-8 encoding.
 """
 function vsireaddirex(pszPath, nMaxFiles)
-    unsafe_loadstringlist(ccall((:VSIReadDirEx, libgdal), Ptr{Cstring}, (Cstring, Cint), pszPath, nMaxFiles))
+    aftercare(ccall((:VSIReadDirEx, libgdal), Ptr{Cstring}, (Cstring, Cint), pszPath, nMaxFiles))
 end
 
 """
@@ -834,7 +834,7 @@ Open a directory to read its entries.
 a handle, or NULL in case of error
 """
 function vsiopendir(pszPath, nRecurseDepth, papszOptions)
-    failsafe(ccall((:VSIOpenDir, libgdal), Ptr{VSIDIR}, (Cstring, Cint, Ptr{Cstring}), pszPath, nRecurseDepth, papszOptions))
+    aftercare(ccall((:VSIOpenDir, libgdal), Ptr{VSIDIR}, (Cstring, Cint, Ptr{Cstring}), pszPath, nRecurseDepth, papszOptions))
 end
 
 """
@@ -849,7 +849,7 @@ Return the next entry of the directory.
 a entry, or NULL if there is no more entry in the directory. This return value must not be freed.
 """
 function vsigetnextdirentry(dir)
-    ccall((:VSIGetNextDirEntry, libgdal), Ptr{VSIDIREntry}, (Ptr{VSIDIR},), dir)
+    aftercare(ccall((:VSIGetNextDirEntry, libgdal), Ptr{VSIDIREntry}, (Ptr{VSIDIR},), dir))
 end
 
 """
@@ -861,7 +861,7 @@ Close a directory.
 * **dir**: Directory handled returned by VSIOpenDir().
 """
 function vsiclosedir(dir)
-    ccall((:VSICloseDir, libgdal), Cvoid, (Ptr{VSIDIR},), dir)
+    aftercare(ccall((:VSICloseDir, libgdal), Cvoid, (Ptr{VSIDIR},), dir))
 end
 
 """
@@ -878,7 +878,7 @@ Create a directory.
 0 on success or -1 on an error.
 """
 function vsimkdir(pszPathname, mode)
-    ccall((:VSIMkdir, libgdal), Cint, (Cstring, Clong), pszPathname, mode)
+    aftercare(ccall((:VSIMkdir, libgdal), Cint, (Cstring, Clong), pszPathname, mode))
 end
 
 """
@@ -895,7 +895,7 @@ Create a directory and all its ancestors.
 0 on success or -1 on an error.
 """
 function vsimkdirrecursive(pszPathname, mode)
-    ccall((:VSIMkdirRecursive, libgdal), Cint, (Cstring, Clong), pszPathname, mode)
+    aftercare(ccall((:VSIMkdirRecursive, libgdal), Cint, (Cstring, Clong), pszPathname, mode))
 end
 
 """
@@ -910,7 +910,7 @@ Delete a directory.
 0 on success or -1 on an error.
 """
 function vsirmdir(pszDirname)
-    ccall((:VSIRmdir, libgdal), Cint, (Cstring,), pszDirname)
+    aftercare(ccall((:VSIRmdir, libgdal), Cint, (Cstring,), pszDirname))
 end
 
 """
@@ -922,7 +922,7 @@ Delete a directory recursively.
 0 on success or -1 on an error.
 """
 function vsirmdirrecursive(pszDirname)
-    ccall((:VSIRmdirRecursive, libgdal), Cint, (Cstring,), pszDirname)
+    aftercare(ccall((:VSIRmdirRecursive, libgdal), Cint, (Cstring,), pszDirname))
 end
 
 """
@@ -937,7 +937,7 @@ Delete a file.
 0 on success or -1 on an error.
 """
 function vsiunlink(pszFilename)
-    ccall((:VSIUnlink, libgdal), Cint, (Cstring,), pszFilename)
+    aftercare(ccall((:VSIUnlink, libgdal), Cint, (Cstring,), pszFilename))
 end
 
 """
@@ -954,7 +954,7 @@ Rename a file.
 0 on success or -1 on an error.
 """
 function vsirename(oldpath, newpath)
-    ccall((:VSIRename, libgdal), Cint, (Cstring, Cstring), oldpath, newpath)
+    aftercare(ccall((:VSIRename, libgdal), Cint, (Cstring, Cstring), oldpath, newpath))
 end
 
 """
@@ -986,7 +986,7 @@ The ETAG strategy assumes that the ETag metadata of the remote file is the MD5Su
 TRUE on success or FALSE on an error.
 """
 function vsisync(pszSource, pszTarget, papszOptions, pProgressFunc, pProgressData, ppapszOutputs)
-    ccall((:VSISync, libgdal), Cint, (Cstring, Cstring, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}, Ptr{Ptr{Cstring}}), pszSource, pszTarget, papszOptions, pProgressFunc, pProgressData, ppapszOutputs)
+    aftercare(ccall((:VSISync, libgdal), Cint, (Cstring, Cstring, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}, Ptr{Ptr{Cstring}}), pszSource, pszTarget, papszOptions, pProgressFunc, pProgressData, ppapszOutputs))
 end
 
 """
@@ -995,7 +995,7 @@ end
 Return the error string corresponding to the error number.
 """
 function vsistrerror(arg1)
-    unsafe_string(ccall((:VSIStrerror, libgdal), Cstring, (Cint,), arg1))
+    aftercare(ccall((:VSIStrerror, libgdal), Cstring, (Cint,), arg1), false)
 end
 
 """
@@ -1010,7 +1010,7 @@ Return free disk space available on the filesystem.
 The free space in bytes. Or -1 in case of error.
 """
 function vsigetdiskfreespace(pszDirname)
-    ccall((:VSIGetDiskFreeSpace, libgdal), GIntBig, (Cstring,), pszDirname)
+    aftercare(ccall((:VSIGetDiskFreeSpace, libgdal), GIntBig, (Cstring,), pszDirname))
 end
 
 """
@@ -1019,11 +1019,11 @@ end
 Install "memory" file system handler.
 """
 function vsiinstallmemfilehandler()
-    ccall((:VSIInstallMemFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallMemFileHandler, libgdal), Cvoid, ()))
 end
 
 function vsiinstalllargefilehandler()
-    ccall((:VSIInstallLargeFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallLargeFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1032,7 +1032,7 @@ end
 Install /vsisubfile/ virtual file handler.
 """
 function vsiinstallsubfilehandler()
-    ccall((:VSIInstallSubFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallSubFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1041,7 +1041,7 @@ end
 Install /vsicurl/ HTTP/FTP file system handler (requires libcurl)
 """
 function vsiinstallcurlfilehandler()
-    ccall((:VSIInstallCurlFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallCurlFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1050,7 +1050,7 @@ end
 Clean local cache associated with /vsicurl/ (and related file systems)
 """
 function vsicurlclearcache()
-    ccall((:VSICurlClearCache, libgdal), Cvoid, ())
+    aftercare(ccall((:VSICurlClearCache, libgdal), Cvoid, ()))
 end
 
 """
@@ -1062,14 +1062,14 @@ Clean local cache associated with /vsicurl/ (and related file systems) for a giv
 * **pszFilenamePrefix**: Filename prefix
 """
 function vsicurlpartialclearcache(pszFilenamePrefix)
-    ccall((:VSICurlPartialClearCache, libgdal), Cvoid, (Cstring,), pszFilenamePrefix)
+    aftercare(ccall((:VSICurlPartialClearCache, libgdal), Cvoid, (Cstring,), pszFilenamePrefix))
 end
 
 """
     VSIInstallCurlStreamingFileHandler(void) -> void
 """
 function vsiinstallcurlstreamingfilehandler()
-    ccall((:VSIInstallCurlStreamingFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallCurlStreamingFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1078,14 +1078,14 @@ end
 Install /vsis3/ Amazon S3 file system handler (requires libcurl)
 """
 function vsiinstalls3filehandler()
-    ccall((:VSIInstallS3FileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallS3FileHandler, libgdal), Cvoid, ()))
 end
 
 """
     VSIInstallS3StreamingFileHandler(void) -> void
 """
 function vsiinstalls3streamingfilehandler()
-    ccall((:VSIInstallS3StreamingFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallS3StreamingFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1094,14 +1094,14 @@ end
 Install /vsigs/ Google Cloud Storage file system handler (requires libcurl)
 """
 function vsiinstallgsfilehandler()
-    ccall((:VSIInstallGSFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallGSFileHandler, libgdal), Cvoid, ()))
 end
 
 """
     VSIInstallGSStreamingFileHandler(void) -> void
 """
 function vsiinstallgsstreamingfilehandler()
-    ccall((:VSIInstallGSStreamingFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallGSStreamingFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1110,14 +1110,14 @@ end
 Install /vsiaz/ Microsoft Azure Blob file system handler (requires libcurl)
 """
 function vsiinstallazurefilehandler()
-    ccall((:VSIInstallAzureFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallAzureFileHandler, libgdal), Cvoid, ()))
 end
 
 """
     VSIInstallAzureStreamingFileHandler(void) -> void
 """
 function vsiinstallazurestreamingfilehandler()
-    ccall((:VSIInstallAzureStreamingFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallAzureStreamingFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1126,14 +1126,14 @@ end
 Install /vsioss/ Alibaba Cloud Object Storage Service (OSS) file system handler (requires libcurl)
 """
 function vsiinstallossfilehandler()
-    ccall((:VSIInstallOSSFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallOSSFileHandler, libgdal), Cvoid, ()))
 end
 
 """
     VSIInstallOSSStreamingFileHandler(void) -> void
 """
 function vsiinstallossstreamingfilehandler()
-    ccall((:VSIInstallOSSStreamingFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallOSSStreamingFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1142,14 +1142,14 @@ end
 Install /vsiswift/ OpenStack Swif Object Storage (Swift) file system handler (requires libcurl)
 """
 function vsiinstallswiftfilehandler()
-    ccall((:VSIInstallSwiftFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallSwiftFileHandler, libgdal), Cvoid, ()))
 end
 
 """
     VSIInstallSwiftStreamingFileHandler(void) -> void
 """
 function vsiinstallswiftstreamingfilehandler()
-    ccall((:VSIInstallSwiftStreamingFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallSwiftStreamingFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1158,7 +1158,7 @@ end
 Install GZip file system handler.
 """
 function vsiinstallgzipfilehandler()
-    ccall((:VSIInstallGZipFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallGZipFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1167,7 +1167,7 @@ end
 Install ZIP file system handler.
 """
 function vsiinstallzipfilehandler()
-    ccall((:VSIInstallZipFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallZipFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1176,7 +1176,7 @@ end
 Install /vsistdin/ file system handler.
 """
 function vsiinstallstdinhandler()
-    ccall((:VSIInstallStdinHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallStdinHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1185,7 +1185,7 @@ end
 Install /vsihdfs/ file system handler (requires JVM and HDFS support)
 """
 function vsiinstallhdfshandler()
-    ccall((:VSIInstallHdfsHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallHdfsHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1194,7 +1194,7 @@ end
 Install /vsiwebhdfs/ WebHDFS (Hadoop File System) REST API file system handler (requires libcurl)
 """
 function vsiinstallwebhdfshandler()
-    ccall((:VSIInstallWebHdfsHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallWebHdfsHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1203,7 +1203,7 @@ end
 Install /vsistdout/ file system handler.
 """
 function vsiinstallstdouthandler()
-    ccall((:VSIInstallStdoutHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallStdoutHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1212,7 +1212,7 @@ end
 Install /vsisparse/ virtual file handler.
 """
 function vsiinstallsparsefilehandler()
-    ccall((:VSIInstallSparseFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallSparseFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1221,7 +1221,7 @@ end
 Install /vsitar/ file system handler.
 """
 function vsiinstalltarfilehandler()
-    ccall((:VSIInstallTarFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallTarFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1230,7 +1230,7 @@ end
 Install /vsicrypt/ encrypted file system handler (requires libcrypto++)
 """
 function vsiinstallcryptfilehandler()
-    ccall((:VSIInstallCryptFileHandler, libgdal), Cvoid, ())
+    aftercare(ccall((:VSIInstallCryptFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -1244,11 +1244,11 @@ Installs the encryption/decryption key.
 * **nKeySize**: length of the key in bytes. Might be 0 to clear previously set key.
 """
 function vsisetcryptkey(pabyKey, nKeySize)
-    ccall((:VSISetCryptKey, libgdal), Cvoid, (Ptr{GByte}, Cint), pabyKey, nKeySize)
+    aftercare(ccall((:VSISetCryptKey, libgdal), Cvoid, (Ptr{GByte}, Cint), pabyKey, nKeySize))
 end
 
 function vsicleanupfilemanager()
-    ccall((:VSICleanupFileManager, libgdal), Cvoid, ())
+    aftercare(ccall((:VSICleanupFileManager, libgdal), Cvoid, ()))
 end
 
 """
@@ -1269,7 +1269,7 @@ Create memory "file" from a buffer.
 open file handle on created file (see VSIFOpenL()).
 """
 function vsifilefrommembuffer(pszFilename, pabyData, nDataLength, bTakeOwnership)
-    ccall((:VSIFileFromMemBuffer, libgdal), Ptr{VSILFILE}, (Cstring, Ptr{GByte}, vsi_l_offset, Cint), pszFilename, pabyData, nDataLength, bTakeOwnership)
+    aftercare(ccall((:VSIFileFromMemBuffer, libgdal), Ptr{VSILFILE}, (Cstring, Ptr{GByte}, vsi_l_offset, Cint), pszFilename, pabyData, nDataLength, bTakeOwnership))
 end
 
 """
@@ -1288,7 +1288,7 @@ Fetch buffer underlying memory file.
 pointer to memory buffer or NULL on failure.
 """
 function vsigetmemfilebuffer(pszFilename, pnDataLength, bUnlinkAndSeize)
-    ccall((:VSIGetMemFileBuffer, libgdal), Ptr{GByte}, (Cstring, Ptr{vsi_l_offset}, Cint), pszFilename, pnDataLength, bUnlinkAndSeize)
+    aftercare(ccall((:VSIGetMemFileBuffer, libgdal), Ptr{GByte}, (Cstring, Ptr{vsi_l_offset}, Cint), pszFilename, pnDataLength, bUnlinkAndSeize))
 end
 
 """
@@ -1302,7 +1302,7 @@ Set an alternative write function and output file handle instead of fwrite() / s
 * **stream**: File handle on which to output. Passed to pFct.
 """
 function vsistdoutsetredirection(pFct, stream)
-    ccall((:VSIStdoutSetRedirection, libgdal), Cvoid, (Cint, Ptr{Cint}), pFct, stream)
+    aftercare(ccall((:VSIStdoutSetRedirection, libgdal), Cvoid, (Cint, Ptr{Cint}), pFct, stream))
 end
 
 """
@@ -1311,7 +1311,7 @@ end
 return a VSIFilesystemPluginCallbacksStruct to be populated at runtime with handler callbacks
 """
 function vsiallocfilesystemplugincallbacksstruct()
-    ccall((:VSIAllocFilesystemPluginCallbacksStruct, libgdal), Ptr{VSIFilesystemPluginCallbacksStruct}, ())
+    aftercare(ccall((:VSIAllocFilesystemPluginCallbacksStruct, libgdal), Ptr{VSIFilesystemPluginCallbacksStruct}, ()))
 end
 
 """
@@ -1320,7 +1320,7 @@ end
 free resources allocated by VSIAllocFilesystemPluginCallbacksStruct
 """
 function vsifreefilesystemplugincallbacksstruct(poCb)
-    ccall((:VSIFreeFilesystemPluginCallbacksStruct, libgdal), Cvoid, (Ptr{VSIFilesystemPluginCallbacksStruct},), poCb)
+    aftercare(ccall((:VSIFreeFilesystemPluginCallbacksStruct, libgdal), Cvoid, (Ptr{VSIFilesystemPluginCallbacksStruct},), poCb))
 end
 
 """
@@ -1330,21 +1330,21 @@ end
 register a handler on the given prefix.
 """
 function vsiinstallpluginhandler(pszPrefix, poCb)
-    ccall((:VSIInstallPluginHandler, libgdal), Cint, (Cstring, Ptr{VSIFilesystemPluginCallbacksStruct}), pszPrefix, poCb)
+    aftercare(ccall((:VSIInstallPluginHandler, libgdal), Cint, (Cstring, Ptr{VSIFilesystemPluginCallbacksStruct}), pszPrefix, poCb))
 end
 
 """
     VSITime(unsigned long * pnTimeToSet) -> unsigned long
 """
 function vsitime(arg1)
-    ccall((:VSITime, libgdal), Culong, (Ptr{Culong},), arg1)
+    aftercare(ccall((:VSITime, libgdal), Culong, (Ptr{Culong},), arg1))
 end
 
 """
     VSICTime(unsigned long nTime) -> const char *
 """
 function vsictime(arg1)
-    unsafe_string(ccall((:VSICTime, libgdal), Cstring, (Culong,), arg1))
+    aftercare(ccall((:VSICTime, libgdal), Cstring, (Culong,), arg1), false)
 end
 
 """
@@ -1352,7 +1352,7 @@ end
               struct tm * poBrokenTime) -> struct tm *
 """
 function vsigmtime(pnTime, poBrokenTime)
-    ccall((:VSIGMTime, libgdal), Ptr{Ctm}, (Ptr{Cint}, Ptr{Ctm}), pnTime, poBrokenTime)
+    aftercare(ccall((:VSIGMTime, libgdal), Ptr{Ctm}, (Ptr{Cint}, Ptr{Ctm}), pnTime, poBrokenTime))
 end
 
 """
@@ -1360,5 +1360,5 @@ end
                  struct tm * poBrokenTime) -> struct tm *
 """
 function vsilocaltime(pnTime, poBrokenTime)
-    ccall((:VSILocalTime, libgdal), Ptr{Ctm}, (Ptr{Cint}, Ptr{Ctm}), pnTime, poBrokenTime)
+    aftercare(ccall((:VSILocalTime, libgdal), Ptr{Ctm}, (Ptr{Cint}, Ptr{Ctm}), pnTime, poBrokenTime))
 end

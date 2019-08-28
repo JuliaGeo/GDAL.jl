@@ -14,7 +14,7 @@ Parse an XML string into tree form.
 parsed tree or NULL on error.
 """
 function cplparsexmlstring(arg1)
-    ccall((:CPLParseXMLString, libgdal), Ptr{CPLXMLNode}, (Cstring,), arg1)
+    aftercare(ccall((:CPLParseXMLString, libgdal), Ptr{CPLXMLNode}, (Cstring,), arg1))
 end
 
 """
@@ -26,7 +26,7 @@ Destroy a tree.
 * **psNode**: the tree to free.
 """
 function cpldestroyxmlnode(arg1)
-    ccall((:CPLDestroyXMLNode, libgdal), Cvoid, (Ptr{CPLXMLNode},), arg1)
+    aftercare(ccall((:CPLDestroyXMLNode, libgdal), Cvoid, (Ptr{CPLXMLNode},), arg1))
 end
 
 """
@@ -43,7 +43,7 @@ Find node by path.
 the requested element node, or NULL if not found.
 """
 function cplgetxmlnode(poRoot, pszPath)
-    ccall((:CPLGetXMLNode, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, Cstring), poRoot, pszPath)
+    aftercare(ccall((:CPLGetXMLNode, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, Cstring), poRoot, pszPath))
 end
 
 """
@@ -60,7 +60,7 @@ Search for a node in document.
 The matching node or NULL on failure.
 """
 function cplsearchxmlnode(poRoot, pszTarget)
-    ccall((:CPLSearchXMLNode, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, Cstring), poRoot, pszTarget)
+    aftercare(ccall((:CPLSearchXMLNode, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, Cstring), poRoot, pszTarget))
 end
 
 """
@@ -79,7 +79,7 @@ Fetch element/attribute value.
 the requested value or pszDefault if not found.
 """
 function cplgetxmlvalue(poRoot, pszPath, pszDefault)
-    unsafe_string(ccall((:CPLGetXMLValue, libgdal), Cstring, (Ptr{CPLXMLNode}, Cstring, Cstring), poRoot, pszPath, pszDefault))
+    aftercare(ccall((:CPLGetXMLValue, libgdal), Cstring, (Ptr{CPLXMLNode}, Cstring, Cstring), poRoot, pszPath, pszDefault), false)
 end
 
 """
@@ -98,7 +98,7 @@ Create an document tree item.
 the newly created node, now owned by the caller (or parent node).
 """
 function cplcreatexmlnode(poParent, eType, pszText)
-    ccall((:CPLCreateXMLNode, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, CPLXMLNodeType, Cstring), poParent, eType, pszText)
+    aftercare(ccall((:CPLCreateXMLNode, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, CPLXMLNodeType, Cstring), poParent, eType, pszText))
 end
 
 """
@@ -113,7 +113,7 @@ Convert tree into string document.
 the document on success or NULL on failure.
 """
 function cplserializexmltree(psNode)
-    unsafe_string(ccall((:CPLSerializeXMLTree, libgdal), Cstring, (Ptr{CPLXMLNode},), psNode))
+    aftercare(ccall((:CPLSerializeXMLTree, libgdal), Cstring, (Ptr{CPLXMLNode},), psNode), false)
 end
 
 """
@@ -127,7 +127,7 @@ Add child node to parent.
 * **psChild**: the child to add to the parent. May not be NULL. Should not be a child of any other parent.
 """
 function cpladdxmlchild(psParent, psChild)
-    ccall((:CPLAddXMLChild, libgdal), Cvoid, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psParent, psChild)
+    aftercare(ccall((:CPLAddXMLChild, libgdal), Cvoid, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psParent, psChild))
 end
 
 """
@@ -144,7 +144,7 @@ Remove child node from parent.
 TRUE on success or FALSE if the child was not found.
 """
 function cplremovexmlchild(psParent, psChild)
-    ccall((:CPLRemoveXMLChild, libgdal), Cint, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psParent, psChild)
+    aftercare(ccall((:CPLRemoveXMLChild, libgdal), Cint, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psParent, psChild))
 end
 
 """
@@ -158,7 +158,7 @@ Add new sibling.
 * **psNewSibling**: the node to add at the end of psOlderSiblings psNext chain.
 """
 function cpladdxmlsibling(psOlderSibling, psNewSibling)
-    ccall((:CPLAddXMLSibling, libgdal), Cvoid, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psOlderSibling, psNewSibling)
+    aftercare(ccall((:CPLAddXMLSibling, libgdal), Cvoid, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psOlderSibling, psNewSibling))
 end
 
 """
@@ -177,7 +177,7 @@ Create an element and text value.
 the pointer to the new element node.
 """
 function cplcreatexmlelementandvalue(psParent, pszName, pszValue)
-    ccall((:CPLCreateXMLElementAndValue, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, Cstring, Cstring), psParent, pszName, pszValue)
+    aftercare(ccall((:CPLCreateXMLElementAndValue, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, Cstring, Cstring), psParent, pszName, pszValue))
 end
 
 """
@@ -193,7 +193,7 @@ Create an attribute and text value.
 * **pszValue**: the text to attach to the attribute. Must not be NULL.
 """
 function cpladdxmlattributeandvalue(psParent, pszName, pszValue)
-    ccall((:CPLAddXMLAttributeAndValue, libgdal), Cvoid, (Ptr{CPLXMLNode}, Cstring, Cstring), psParent, pszName, pszValue)
+    aftercare(ccall((:CPLAddXMLAttributeAndValue, libgdal), Cvoid, (Ptr{CPLXMLNode}, Cstring, Cstring), psParent, pszName, pszValue))
 end
 
 """
@@ -208,7 +208,7 @@ Copy tree.
 a copy of the whole tree.
 """
 function cplclonexmltree(psTree)
-    ccall((:CPLCloneXMLTree, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode},), psTree)
+    aftercare(ccall((:CPLCloneXMLTree, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode},), psTree))
 end
 
 """
@@ -227,7 +227,7 @@ Set element value by path.
 TRUE on success.
 """
 function cplsetxmlvalue(psRoot, pszPath, pszValue)
-    ccall((:CPLSetXMLValue, libgdal), Cint, (Ptr{CPLXMLNode}, Cstring, Cstring), psRoot, pszPath, pszValue)
+    aftercare(ccall((:CPLSetXMLValue, libgdal), Cint, (Ptr{CPLXMLNode}, Cstring, Cstring), psRoot, pszPath, pszValue))
 end
 
 """
@@ -243,7 +243,7 @@ Strip indicated namespaces.
 * **bRecurse**: TRUE to recurse over whole document, or FALSE to only operate on the passed node.
 """
 function cplstripxmlnamespace(psRoot, pszNameSpace, bRecurse)
-    ccall((:CPLStripXMLNamespace, libgdal), Cvoid, (Ptr{CPLXMLNode}, Cstring, Cint), psRoot, pszNameSpace, bRecurse)
+    aftercare(ccall((:CPLStripXMLNamespace, libgdal), Cvoid, (Ptr{CPLXMLNode}, Cstring, Cint), psRoot, pszNameSpace, bRecurse))
 end
 
 """
@@ -255,7 +255,7 @@ Make string into safe XML token.
 * **pszTarget**: the string to be adjusted. It is altered in place.
 """
 function cplcleanxmlelementname(arg1)
-    ccall((:CPLCleanXMLElementName, libgdal), Cvoid, (Cstring,), arg1)
+    aftercare(ccall((:CPLCleanXMLElementName, libgdal), Cvoid, (Cstring,), arg1))
 end
 
 """
@@ -270,7 +270,7 @@ Parse XML file into tree.
 NULL on failure, or the document tree on success.
 """
 function cplparsexmlfile(pszFilename)
-    ccall((:CPLParseXMLFile, libgdal), Ptr{CPLXMLNode}, (Cstring,), pszFilename)
+    aftercare(ccall((:CPLParseXMLFile, libgdal), Ptr{CPLXMLNode}, (Cstring,), pszFilename))
 end
 
 """
@@ -287,5 +287,5 @@ Write document tree to a file.
 TRUE on success, FALSE otherwise.
 """
 function cplserializexmltreetofile(psTree, pszFilename)
-    ccall((:CPLSerializeXMLTreeToFile, libgdal), Cint, (Ptr{CPLXMLNode}, Cstring), psTree, pszFilename)
+    aftercare(ccall((:CPLSerializeXMLTreeToFile, libgdal), Cint, (Ptr{CPLXMLNode}, Cstring), psTree, pszFilename))
 end

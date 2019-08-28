@@ -2,7 +2,7 @@
     # throw errors on non existing files
     @test_throws GDAL.GDALError GDAL.gdalopen("NonExistent", GDAL.GA_ReadOnly)
     # if a driver is not found it doesn't throw a GDALError
-    @test GDAL.gdalgetdriverbyname("NonExistent") === C_NULL
+    @test GDAL.gdalgetdriverbyname("NotADriver") === C_NULL
 
     @testset "error reset" begin
         # everything ok, no errors
@@ -37,6 +37,12 @@
         @test err.class === GDAL.CE_Failure
         @test err.code === Cint(6)
         @test err.msg === "Unknown option name '-novalidoption'"
+    end
+
+    @testset "Cstring handling" begin
+        # string_or_nothing should return nothing here
+        srs = GDAL.osrnewspatialreference(C_NULL)
+        @test GDAL.osrgetattrvalue(srs, "NoSuchAttr", 0) === nothing
     end
 
     # Quoting cpl_error.cpp regarding CE_Fatal:

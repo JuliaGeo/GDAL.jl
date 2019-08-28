@@ -14,7 +14,7 @@ Get data type size in bits.
 the number of bits or zero if it is not recognised.
 """
 function gdalgetdatatypesize(arg1)
-    ccall((:GDALGetDataTypeSize, libgdal), Cint, (GDALDataType,), arg1)
+    aftercare(ccall((:GDALGetDataTypeSize, libgdal), Cint, (GDALDataType,), arg1))
 end
 
 """
@@ -29,7 +29,7 @@ Get data type size in bits.
 the number of bits or zero if it is not recognised.
 """
 function gdalgetdatatypesizebits(eDataType)
-    ccall((:GDALGetDataTypeSizeBits, libgdal), Cint, (GDALDataType,), eDataType)
+    aftercare(ccall((:GDALGetDataTypeSizeBits, libgdal), Cint, (GDALDataType,), eDataType))
 end
 
 """
@@ -44,7 +44,7 @@ Get data type size in bytes.
 the number of bytes or zero if it is not recognised.
 """
 function gdalgetdatatypesizebytes(arg1)
-    ccall((:GDALGetDataTypeSizeBytes, libgdal), Cint, (GDALDataType,), arg1)
+    aftercare(ccall((:GDALGetDataTypeSizeBytes, libgdal), Cint, (GDALDataType,), arg1))
 end
 
 """
@@ -56,7 +56,7 @@ Is data type complex?
 TRUE if the passed type is complex (one of GDT_CInt16, GDT_CInt32, GDT_CFloat32 or GDT_CFloat64), that is it consists of a real and imaginary component.
 """
 function gdaldatatypeiscomplex(arg1)
-    ccall((:GDALDataTypeIsComplex, libgdal), Cint, (GDALDataType,), arg1)
+    aftercare(ccall((:GDALDataTypeIsComplex, libgdal), Cint, (GDALDataType,), arg1))
 end
 
 """
@@ -68,7 +68,7 @@ Is data type integer? (might be complex)
 TRUE if the passed type is integer (one of GDT_Byte, GDT_Int16, GDT_UInt16, GDT_Int32, GDT_UInt32, GDT_CInt16, GDT_CInt32).
 """
 function gdaldatatypeisinteger(arg1)
-    ccall((:GDALDataTypeIsInteger, libgdal), Cint, (GDALDataType,), arg1)
+    aftercare(ccall((:GDALDataTypeIsInteger, libgdal), Cint, (GDALDataType,), arg1))
 end
 
 """
@@ -80,7 +80,7 @@ Is data type floating? (might be complex)
 TRUE if the passed type is floating (one of GDT_Float32, GDT_Float64, GDT_CFloat32, GDT_CFloat64)
 """
 function gdaldatatypeisfloating(arg1)
-    ccall((:GDALDataTypeIsFloating, libgdal), Cint, (GDALDataType,), arg1)
+    aftercare(ccall((:GDALDataTypeIsFloating, libgdal), Cint, (GDALDataType,), arg1))
 end
 
 """
@@ -92,7 +92,7 @@ Is data type signed?
 TRUE if the passed type is signed.
 """
 function gdaldatatypeissigned(arg1)
-    ccall((:GDALDataTypeIsSigned, libgdal), Cint, (GDALDataType,), arg1)
+    aftercare(ccall((:GDALDataTypeIsSigned, libgdal), Cint, (GDALDataType,), arg1))
 end
 
 """
@@ -107,7 +107,7 @@ Get name of data type.
 string corresponding to existing data type or NULL pointer if invalid type given.
 """
 function gdalgetdatatypename(arg1)
-    unsafe_string(ccall((:GDALGetDataTypeName, libgdal), Cstring, (GDALDataType,), arg1))
+    aftercare(ccall((:GDALGetDataTypeName, libgdal), Cstring, (GDALDataType,), arg1), false)
 end
 
 """
@@ -122,7 +122,7 @@ Get data type by symbolic name.
 GDAL data type.
 """
 function gdalgetdatatypebyname(arg1)
-    ccall((:GDALGetDataTypeByName, libgdal), GDALDataType, (Cstring,), arg1)
+    aftercare(ccall((:GDALGetDataTypeByName, libgdal), GDALDataType, (Cstring,), arg1))
 end
 
 """
@@ -139,7 +139,7 @@ Return the smallest data type that can fully express both input data types.
 a data type able to express eType1 and eType2.
 """
 function gdaldatatypeunion(arg1, arg2)
-    ccall((:GDALDataTypeUnion, libgdal), GDALDataType, (GDALDataType, GDALDataType), arg1, arg2)
+    aftercare(ccall((:GDALDataTypeUnion, libgdal), GDALDataType, (GDALDataType, GDALDataType), arg1, arg2))
 end
 
 """
@@ -158,7 +158,7 @@ Union a data type with the one found for a value.
 a data type able to express eDT and dValue.
 """
 function gdaldatatypeunionwithvalue(eDT, dValue, bComplex)
-    ccall((:GDALDataTypeUnionWithValue, libgdal), GDALDataType, (GDALDataType, Cdouble, Cint), eDT, dValue, bComplex)
+    aftercare(ccall((:GDALDataTypeUnionWithValue, libgdal), GDALDataType, (GDALDataType, Cdouble, Cint), eDT, dValue, bComplex))
 end
 
 """
@@ -179,7 +179,7 @@ Finds the smallest data type able to support the given requirements.
 a best fit GDALDataType for supporting the requirements
 """
 function gdalfinddatatype(nBits, bSigned, bFloating, bComplex)
-    ccall((:GDALFindDataType, libgdal), GDALDataType, (Cint, Cint, Cint, Cint), nBits, bSigned, bFloating, bComplex)
+    aftercare(ccall((:GDALFindDataType, libgdal), GDALDataType, (Cint, Cint, Cint, Cint), nBits, bSigned, bFloating, bComplex))
 end
 
 """
@@ -196,7 +196,7 @@ Finds the smallest data type able to support the provided value.
 a best fit GDALDataType for supporting the value
 """
 function gdalfinddatatypeforvalue(dValue, bComplex)
-    ccall((:GDALFindDataTypeForValue, libgdal), GDALDataType, (Cdouble, Cint), dValue, bComplex)
+    aftercare(ccall((:GDALFindDataTypeForValue, libgdal), GDALDataType, (Cdouble, Cint), dValue, bComplex))
 end
 
 """
@@ -217,7 +217,7 @@ Adjust a value to the output data type.
 adjusted value
 """
 function gdaladjustvaluetodatatype(eDT, dfValue, pbClamped, pbRounded)
-    ccall((:GDALAdjustValueToDataType, libgdal), Cdouble, (GDALDataType, Cdouble, Ptr{Cint}, Ptr{Cint}), eDT, dfValue, pbClamped, pbRounded)
+    aftercare(ccall((:GDALAdjustValueToDataType, libgdal), Cdouble, (GDALDataType, Cdouble, Ptr{Cint}, Ptr{Cint}), eDT, dfValue, pbClamped, pbRounded))
 end
 
 """
@@ -232,7 +232,7 @@ Return the base data type for the specified input.
 GDAL data type.
 """
 function gdalgetnoncomplexdatatype(arg1)
-    ccall((:GDALGetNonComplexDataType, libgdal), GDALDataType, (GDALDataType,), arg1)
+    aftercare(ccall((:GDALGetNonComplexDataType, libgdal), GDALDataType, (GDALDataType,), arg1))
 end
 
 """
@@ -249,7 +249,7 @@ Is conversion from eTypeFrom to eTypeTo potentially lossy.
 TRUE if conversion from eTypeFrom to eTypeTo potentially lossy.
 """
 function gdaldatatypeisconversionlossy(eTypeFrom, eTypeTo)
-    ccall((:GDALDataTypeIsConversionLossy, libgdal), Cint, (GDALDataType, GDALDataType), eTypeFrom, eTypeTo)
+    aftercare(ccall((:GDALDataTypeIsConversionLossy, libgdal), Cint, (GDALDataType, GDALDataType), eTypeFrom, eTypeTo))
 end
 
 """
@@ -264,7 +264,7 @@ Get name of AsyncStatus data type.
 string corresponding to type.
 """
 function gdalgetasyncstatustypename(arg1)
-    unsafe_string(ccall((:GDALGetAsyncStatusTypeName, libgdal), Cstring, (GDALAsyncStatusType,), arg1))
+    aftercare(ccall((:GDALGetAsyncStatusTypeName, libgdal), Cstring, (GDALAsyncStatusType,), arg1), false)
 end
 
 """
@@ -279,7 +279,7 @@ Get AsyncStatusType by symbolic name.
 GDAL AsyncStatus type.
 """
 function gdalgetasyncstatustypebyname(arg1)
-    ccall((:GDALGetAsyncStatusTypeByName, libgdal), GDALAsyncStatusType, (Cstring,), arg1)
+    aftercare(ccall((:GDALGetAsyncStatusTypeByName, libgdal), GDALAsyncStatusType, (Cstring,), arg1))
 end
 
 """
@@ -294,7 +294,7 @@ Get name of color interpretation.
 string corresponding to color interpretation or NULL pointer if invalid enumerator given.
 """
 function gdalgetcolorinterpretationname(arg1)
-    unsafe_string(ccall((:GDALGetColorInterpretationName, libgdal), Cstring, (GDALColorInterp,), arg1))
+    aftercare(ccall((:GDALGetColorInterpretationName, libgdal), Cstring, (GDALColorInterp,), arg1), false)
 end
 
 """
@@ -309,7 +309,7 @@ Get color interpretation by symbolic name.
 GDAL color interpretation.
 """
 function gdalgetcolorinterpretationbyname(pszName)
-    ccall((:GDALGetColorInterpretationByName, libgdal), GDALColorInterp, (Cstring,), pszName)
+    aftercare(ccall((:GDALGetColorInterpretationByName, libgdal), GDALColorInterp, (Cstring,), pszName))
 end
 
 """
@@ -324,7 +324,7 @@ Get name of palette interpretation.
 string corresponding to palette interpretation.
 """
 function gdalgetpaletteinterpretationname(arg1)
-    unsafe_string(ccall((:GDALGetPaletteInterpretationName, libgdal), Cstring, (GDALPaletteInterp,), arg1))
+    aftercare(ccall((:GDALGetPaletteInterpretationName, libgdal), Cstring, (GDALPaletteInterp,), arg1), false)
 end
 
 """
@@ -333,7 +333,7 @@ end
 Register all known configured GDAL drivers.
 """
 function gdalallregister()
-    ccall((:GDALAllRegister, libgdal), Cvoid, ())
+    aftercare(ccall((:GDALAllRegister, libgdal), Cvoid, ()))
 end
 
 """
@@ -348,7 +348,7 @@ end
 Create a new dataset with this driver.
 """
 function gdalcreate(hDriver, arg1, arg2, arg3, arg4, arg5, arg6)
-    failsafe(ccall((:GDALCreate, libgdal), GDALDatasetH, (GDALDriverH, Cstring, Cint, Cint, Cint, GDALDataType, CSLConstList), hDriver, arg1, arg2, arg3, arg4, arg5, arg6))
+    aftercare(ccall((:GDALCreate, libgdal), GDALDatasetH, (GDALDriverH, Cstring, Cint, Cint, Cint, GDALDataType, CSLConstList), hDriver, arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 """
@@ -363,7 +363,7 @@ end
 Create a copy of a dataset.
 """
 function gdalcreatecopy(arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-    failsafe(ccall((:GDALCreateCopy, libgdal), GDALDatasetH, (GDALDriverH, Cstring, GDALDatasetH, Cint, CSLConstList, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6, arg7))
+    aftercare(ccall((:GDALCreateCopy, libgdal), GDALDatasetH, (GDALDriverH, Cstring, GDALDatasetH, Cint, CSLConstList, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6, arg7))
 end
 
 """
@@ -380,7 +380,7 @@ Identify the driver that can open a raster file.
 A GDALDriverH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDriver *.
 """
 function gdalidentifydriver(pszFilename, papszFileList)
-    failsafe(ccall((:GDALIdentifyDriver, libgdal), GDALDriverH, (Cstring, CSLConstList), pszFilename, papszFileList))
+    aftercare(ccall((:GDALIdentifyDriver, libgdal), GDALDriverH, (Cstring, CSLConstList), pszFilename, papszFileList))
 end
 
 """
@@ -401,7 +401,7 @@ Identify the driver that can open a raster file.
 A GDALDriverH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDriver *.
 """
 function gdalidentifydriverex(pszFilename, nIdentifyFlags, papszAllowedDrivers, papszFileList)
-    failsafe(ccall((:GDALIdentifyDriverEx, libgdal), GDALDriverH, (Cstring, UInt32, Ptr{Cstring}, Ptr{Cstring}), pszFilename, nIdentifyFlags, papszAllowedDrivers, papszFileList))
+    aftercare(ccall((:GDALIdentifyDriverEx, libgdal), GDALDriverH, (Cstring, UInt32, Ptr{Cstring}, Ptr{Cstring}), pszFilename, nIdentifyFlags, papszAllowedDrivers, papszFileList))
 end
 
 """
@@ -418,7 +418,7 @@ Open a raster file as a GDALDataset.
 A GDALDatasetH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDataset *.
 """
 function gdalopen(pszFilename, eAccess)
-    failsafe(ccall((:GDALOpen, libgdal), GDALDatasetH, (Cstring, GDALAccess), pszFilename, eAccess))
+    aftercare(ccall((:GDALOpen, libgdal), GDALDatasetH, (Cstring, GDALAccess), pszFilename, eAccess))
 end
 
 """
@@ -435,7 +435,7 @@ Open a raster file as a GDALDataset.
 A GDALDatasetH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDataset *.
 """
 function gdalopenshared(arg1, arg2)
-    failsafe(ccall((:GDALOpenShared, libgdal), GDALDatasetH, (Cstring, GDALAccess), arg1, arg2))
+    aftercare(ccall((:GDALOpenShared, libgdal), GDALDatasetH, (Cstring, GDALAccess), arg1, arg2))
 end
 
 """
@@ -469,7 +469,7 @@ Verbose error: GDAL_OF_VERBOSE_ERROR. If set, a failed attempt to open the file 
 A GDALDatasetH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDataset *.
 """
 function gdalopenex(pszFilename, nOpenFlags, papszAllowedDrivers, papszOpenOptions, papszSiblingFiles)
-    failsafe(ccall((:GDALOpenEx, libgdal), GDALDatasetH, (Cstring, UInt32, Ptr{Cstring}, Ptr{Cstring}, Ptr{Cstring}), pszFilename, nOpenFlags, papszAllowedDrivers, papszOpenOptions, papszSiblingFiles))
+    aftercare(ccall((:GDALOpenEx, libgdal), GDALDatasetH, (Cstring, UInt32, Ptr{Cstring}, Ptr{Cstring}, Ptr{Cstring}), pszFilename, nOpenFlags, papszAllowedDrivers, papszOpenOptions, papszSiblingFiles))
 end
 
 """
@@ -478,7 +478,7 @@ end
 List open datasets.
 """
 function gdaldumpopendatasets(arg1)
-    ccall((:GDALDumpOpenDatasets, libgdal), Cint, (Ptr{Cint},), arg1)
+    aftercare(ccall((:GDALDumpOpenDatasets, libgdal), Cint, (Ptr{Cint},), arg1))
 end
 
 """
@@ -487,7 +487,7 @@ end
 Fetch a driver based on the short name.
 """
 function gdalgetdriverbyname(arg1)
-    failsafe(ccall((:GDALGetDriverByName, libgdal), GDALDriverH, (Cstring,), arg1))
+    aftercare(ccall((:GDALGetDriverByName, libgdal), GDALDriverH, (Cstring,), arg1))
 end
 
 """
@@ -496,7 +496,7 @@ end
 Fetch the number of registered drivers.
 """
 function gdalgetdrivercount()
-    ccall((:GDALGetDriverCount, libgdal), Cint, ())
+    aftercare(ccall((:GDALGetDriverCount, libgdal), Cint, ()))
 end
 
 """
@@ -505,7 +505,7 @@ end
 Fetch driver by index.
 """
 function gdalgetdriver(arg1)
-    failsafe(ccall((:GDALGetDriver, libgdal), GDALDriverH, (Cint,), arg1))
+    aftercare(ccall((:GDALGetDriver, libgdal), GDALDriverH, (Cint,), arg1))
 end
 
 """
@@ -514,7 +514,7 @@ end
 Create a GDALDriver.
 """
 function gdalcreatedriver()
-    failsafe(ccall((:GDALCreateDriver, libgdal), GDALDriverH, ()))
+    aftercare(ccall((:GDALCreateDriver, libgdal), GDALDriverH, ()))
 end
 
 """
@@ -526,7 +526,7 @@ Destroy a GDALDriver.
 * **hDriver**: the driver to destroy.
 """
 function gdaldestroydriver(arg1)
-    ccall((:GDALDestroyDriver, libgdal), Cvoid, (GDALDriverH,), arg1)
+    aftercare(ccall((:GDALDestroyDriver, libgdal), Cvoid, (GDALDriverH,), arg1))
 end
 
 """
@@ -535,7 +535,7 @@ end
 Register a driver for use.
 """
 function gdalregisterdriver(arg1)
-    ccall((:GDALRegisterDriver, libgdal), Cint, (GDALDriverH,), arg1)
+    aftercare(ccall((:GDALRegisterDriver, libgdal), Cint, (GDALDriverH,), arg1))
 end
 
 """
@@ -544,7 +544,7 @@ end
 Deregister the passed driver.
 """
 function gdalderegisterdriver(arg1)
-    ccall((:GDALDeregisterDriver, libgdal), Cvoid, (GDALDriverH,), arg1)
+    aftercare(ccall((:GDALDeregisterDriver, libgdal), Cvoid, (GDALDriverH,), arg1))
 end
 
 """
@@ -553,14 +553,14 @@ end
 Destroy the driver manager.
 """
 function gdaldestroydrivermanager()
-    ccall((:GDALDestroyDriverManager, libgdal), Cvoid, ())
+    aftercare(ccall((:GDALDestroyDriverManager, libgdal), Cvoid, ()))
 end
 
 """
     GDALDestroy(void) -> void
 """
 function gdaldestroy()
-    ccall((:GDALDestroy, libgdal), Cvoid, ())
+    aftercare(ccall((:GDALDestroy, libgdal), Cvoid, ()))
 end
 
 """
@@ -570,7 +570,7 @@ end
 Delete named dataset.
 """
 function gdaldeletedataset(arg1, arg2)
-    ccall((:GDALDeleteDataset, libgdal), CPLErr, (GDALDriverH, Cstring), arg1, arg2)
+    aftercare(ccall((:GDALDeleteDataset, libgdal), CPLErr, (GDALDriverH, Cstring), arg1, arg2))
 end
 
 """
@@ -581,7 +581,7 @@ end
 Rename a dataset.
 """
 function gdalrenamedataset(arg1, pszNewName, pszOldName)
-    ccall((:GDALRenameDataset, libgdal), CPLErr, (GDALDriverH, Cstring, Cstring), arg1, pszNewName, pszOldName)
+    aftercare(ccall((:GDALRenameDataset, libgdal), CPLErr, (GDALDriverH, Cstring, Cstring), arg1, pszNewName, pszOldName))
 end
 
 """
@@ -592,7 +592,7 @@ end
 Copy the files of a dataset.
 """
 function gdalcopydatasetfiles(arg1, pszNewName, pszOldName)
-    ccall((:GDALCopyDatasetFiles, libgdal), CPLErr, (GDALDriverH, Cstring, Cstring), arg1, pszNewName, pszOldName)
+    aftercare(ccall((:GDALCopyDatasetFiles, libgdal), CPLErr, (GDALDriverH, Cstring, Cstring), arg1, pszNewName, pszOldName))
 end
 
 """
@@ -609,7 +609,7 @@ Validate the list of creation options that are handled by a driver.
 TRUE if the list of creation options is compatible with the Create() and CreateCopy() method of the driver, FALSE otherwise.
 """
 function gdalvalidatecreationoptions(arg1, papszCreationOptions)
-    ccall((:GDALValidateCreationOptions, libgdal), Cint, (GDALDriverH, CSLConstList), arg1, papszCreationOptions)
+    aftercare(ccall((:GDALValidateCreationOptions, libgdal), Cint, (GDALDriverH, CSLConstList), arg1, papszCreationOptions))
 end
 
 """
@@ -624,7 +624,7 @@ Return the short name of a driver.
 the short name of the driver. The returned string should not be freed and is owned by the driver.
 """
 function gdalgetdrivershortname(arg1)
-    unsafe_string(ccall((:GDALGetDriverShortName, libgdal), Cstring, (GDALDriverH,), arg1))
+    aftercare(ccall((:GDALGetDriverShortName, libgdal), Cstring, (GDALDriverH,), arg1), false)
 end
 
 """
@@ -639,7 +639,7 @@ Return the long name of a driver.
 the long name of the driver or empty string. The returned string should not be freed and is owned by the driver.
 """
 function gdalgetdriverlongname(arg1)
-    unsafe_string(ccall((:GDALGetDriverLongName, libgdal), Cstring, (GDALDriverH,), arg1))
+    aftercare(ccall((:GDALGetDriverLongName, libgdal), Cstring, (GDALDriverH,), arg1), false)
 end
 
 """
@@ -654,7 +654,7 @@ Return the URL to the help that describes the driver.
 the URL to the help that describes the driver or NULL. The returned string should not be freed and is owned by the driver.
 """
 function gdalgetdriverhelptopic(arg1)
-    unsafe_string(ccall((:GDALGetDriverHelpTopic, libgdal), Cstring, (GDALDriverH,), arg1))
+    aftercare(ccall((:GDALGetDriverHelpTopic, libgdal), Cstring, (GDALDriverH,), arg1), false)
 end
 
 """
@@ -669,7 +669,7 @@ Return the list of creation options of the driver.
 an XML string that describes the list of creation options or empty string. The returned string should not be freed and is owned by the driver.
 """
 function gdalgetdrivercreationoptionlist(arg1)
-    unsafe_string(ccall((:GDALGetDriverCreationOptionList, libgdal), Cstring, (GDALDriverH,), arg1))
+    aftercare(ccall((:GDALGetDriverCreationOptionList, libgdal), Cstring, (GDALDriverH,), arg1), false)
 end
 
 """
@@ -683,7 +683,7 @@ Initialize an array of GCPs.
 * **psGCP**: array of GCPs of size nCount.
 """
 function gdalinitgcps(arg1, arg2)
-    ccall((:GDALInitGCPs, libgdal), Cvoid, (Cint, Ptr{GDAL_GCP}), arg1, arg2)
+    aftercare(ccall((:GDALInitGCPs, libgdal), Cvoid, (Cint, Ptr{GDAL_GCP}), arg1, arg2))
 end
 
 """
@@ -697,7 +697,7 @@ De-initialize an array of GCPs (initialized with GDALInitGCPs())
 * **psGCP**: array of GCPs of size nCount.
 """
 function gdaldeinitgcps(arg1, arg2)
-    ccall((:GDALDeinitGCPs, libgdal), Cvoid, (Cint, Ptr{GDAL_GCP}), arg1, arg2)
+    aftercare(ccall((:GDALDeinitGCPs, libgdal), Cvoid, (Cint, Ptr{GDAL_GCP}), arg1, arg2))
 end
 
 """
@@ -711,7 +711,7 @@ Duplicate an array of GCPs.
 * **pasGCPList**: array of GCPs of size nCount.
 """
 function gdalduplicategcps(arg1, arg2)
-    ccall((:GDALDuplicateGCPs, libgdal), Ptr{GDAL_GCP}, (Cint, Ptr{GDAL_GCP}), arg1, arg2)
+    aftercare(ccall((:GDALDuplicateGCPs, libgdal), Ptr{GDAL_GCP}, (Cint, Ptr{GDAL_GCP}), arg1, arg2))
 end
 
 """
@@ -732,7 +732,7 @@ Generate Geotransform from GCPs.
 TRUE on success or FALSE if there aren't enough points to prepare a geotransform, the pointers are ill-determined or if bApproxOK is FALSE and the fit is poor.
 """
 function gdalgcpstogeotransform(nGCPCount, pasGCPs, padfGeoTransform, bApproxOK)
-    ccall((:GDALGCPsToGeoTransform, libgdal), Cint, (Cint, Ptr{GDAL_GCP}, Ptr{Cdouble}, Cint), nGCPCount, pasGCPs, padfGeoTransform, bApproxOK)
+    aftercare(ccall((:GDALGCPsToGeoTransform, libgdal), Cint, (Cint, Ptr{GDAL_GCP}, Ptr{Cdouble}, Cint), nGCPCount, pasGCPs, padfGeoTransform, bApproxOK))
 end
 
 """
@@ -749,7 +749,7 @@ Invert Geotransform.
 TRUE on success or FALSE if the equation is uninvertable.
 """
 function gdalinvgeotransform(padfGeoTransformIn, padfInvGeoTransformOut)
-    ccall((:GDALInvGeoTransform, libgdal), Cint, (Ptr{Cdouble}, Ptr{Cdouble}), padfGeoTransformIn, padfInvGeoTransformOut)
+    aftercare(ccall((:GDALInvGeoTransform, libgdal), Cint, (Ptr{Cdouble}, Ptr{Cdouble}), padfGeoTransformIn, padfInvGeoTransformOut))
 end
 
 """
@@ -769,7 +769,7 @@ Apply GeoTransform to x/y coordinate.
 * **pdfGeoY**: output location where geo_y (northing/latitude) location is placed.
 """
 function gdalapplygeotransform(arg1, arg2, arg3, arg4, arg5)
-    ccall((:GDALApplyGeoTransform, libgdal), Cvoid, (Ptr{Cdouble}, Cdouble, Cdouble, Ptr{Cdouble}, Ptr{Cdouble}), arg1, arg2, arg3, arg4, arg5)
+    aftercare(ccall((:GDALApplyGeoTransform, libgdal), Cvoid, (Ptr{Cdouble}, Cdouble, Cdouble, Ptr{Cdouble}, Ptr{Cdouble}), arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -785,7 +785,7 @@ Compose two geotransforms.
 * **padfGTOut**: the output geotransform, six values, may safely be the same array as padfGT1 or padfGT2.
 """
 function gdalcomposegeotransforms(padfGeoTransform1, padfGeoTransform2, padfGeoTransformOut)
-    ccall((:GDALComposeGeoTransforms, libgdal), Cvoid, (Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}), padfGeoTransform1, padfGeoTransform2, padfGeoTransformOut)
+    aftercare(ccall((:GDALComposeGeoTransforms, libgdal), Cvoid, (Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}), padfGeoTransform1, padfGeoTransform2, padfGeoTransformOut))
 end
 
 """
@@ -794,7 +794,7 @@ end
 Fetch list of metadata domains.
 """
 function gdalgetmetadatadomainlist(hObject)
-    unsafe_loadstringlist(ccall((:GDALGetMetadataDomainList, libgdal), Ptr{Cstring}, (GDALMajorObjectH,), hObject))
+    aftercare(ccall((:GDALGetMetadataDomainList, libgdal), Ptr{Cstring}, (GDALMajorObjectH,), hObject))
 end
 
 """
@@ -804,7 +804,7 @@ end
 Fetch metadata.
 """
 function gdalgetmetadata(arg1, arg2)
-    unsafe_loadstringlist(ccall((:GDALGetMetadata, libgdal), Ptr{Cstring}, (GDALMajorObjectH, Cstring), arg1, arg2))
+    aftercare(ccall((:GDALGetMetadata, libgdal), Ptr{Cstring}, (GDALMajorObjectH, Cstring), arg1, arg2))
 end
 
 """
@@ -815,7 +815,7 @@ end
 Set metadata.
 """
 function gdalsetmetadata(arg1, arg2, arg3)
-    ccall((:GDALSetMetadata, libgdal), CPLErr, (GDALMajorObjectH, CSLConstList, Cstring), arg1, arg2, arg3)
+    aftercare(ccall((:GDALSetMetadata, libgdal), CPLErr, (GDALMajorObjectH, CSLConstList, Cstring), arg1, arg2, arg3))
 end
 
 """
@@ -826,7 +826,7 @@ end
 Fetch single metadata item.
 """
 function gdalgetmetadataitem(arg1, arg2, arg3)
-    unsafe_string(ccall((:GDALGetMetadataItem, libgdal), Cstring, (GDALMajorObjectH, Cstring, Cstring), arg1, arg2, arg3))
+    aftercare(ccall((:GDALGetMetadataItem, libgdal), Cstring, (GDALMajorObjectH, Cstring, Cstring), arg1, arg2, arg3), false)
 end
 
 """
@@ -838,7 +838,7 @@ end
 Set single metadata item.
 """
 function gdalsetmetadataitem(arg1, arg2, arg3, arg4)
-    ccall((:GDALSetMetadataItem, libgdal), CPLErr, (GDALMajorObjectH, Cstring, Cstring, Cstring), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:GDALSetMetadataItem, libgdal), CPLErr, (GDALMajorObjectH, Cstring, Cstring, Cstring), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -847,7 +847,7 @@ end
 Fetch object description.
 """
 function gdalgetdescription(arg1)
-    unsafe_string(ccall((:GDALGetDescription, libgdal), Cstring, (GDALMajorObjectH,), arg1))
+    aftercare(ccall((:GDALGetDescription, libgdal), Cstring, (GDALMajorObjectH,), arg1), false)
 end
 
 """
@@ -857,7 +857,7 @@ end
 Set object description.
 """
 function gdalsetdescription(arg1, arg2)
-    ccall((:GDALSetDescription, libgdal), Cvoid, (GDALMajorObjectH, Cstring), arg1, arg2)
+    aftercare(ccall((:GDALSetDescription, libgdal), Cvoid, (GDALMajorObjectH, Cstring), arg1, arg2))
 end
 
 """
@@ -866,7 +866,7 @@ end
 Fetch the driver to which this dataset relates.
 """
 function gdalgetdatasetdriver(arg1)
-    failsafe(ccall((:GDALGetDatasetDriver, libgdal), GDALDriverH, (GDALDatasetH,), arg1))
+    aftercare(ccall((:GDALGetDatasetDriver, libgdal), GDALDriverH, (GDALDatasetH,), arg1))
 end
 
 """
@@ -875,7 +875,7 @@ end
 Fetch files forming dataset.
 """
 function gdalgetfilelist(arg1)
-    unsafe_loadstringlist(ccall((:GDALGetFileList, libgdal), Ptr{Cstring}, (GDALDatasetH,), arg1))
+    aftercare(ccall((:GDALGetFileList, libgdal), Ptr{Cstring}, (GDALDatasetH,), arg1))
 end
 
 """
@@ -887,7 +887,7 @@ Close GDAL dataset.
 * **hDS**: The dataset to close. May be cast from a "GDALDataset *".
 """
 function gdalclose(arg1)
-    ccall((:GDALClose, libgdal), Cvoid, (GDALDatasetH,), arg1)
+    aftercare(ccall((:GDALClose, libgdal), Cvoid, (GDALDatasetH,), arg1))
 end
 
 """
@@ -896,7 +896,7 @@ end
 Fetch raster width in pixels.
 """
 function gdalgetrasterxsize(arg1)
-    ccall((:GDALGetRasterXSize, libgdal), Cint, (GDALDatasetH,), arg1)
+    aftercare(ccall((:GDALGetRasterXSize, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 """
@@ -905,7 +905,7 @@ end
 Fetch raster height in pixels.
 """
 function gdalgetrasterysize(arg1)
-    ccall((:GDALGetRasterYSize, libgdal), Cint, (GDALDatasetH,), arg1)
+    aftercare(ccall((:GDALGetRasterYSize, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 """
@@ -914,7 +914,7 @@ end
 Fetch the number of raster bands on this dataset.
 """
 function gdalgetrastercount(arg1)
-    ccall((:GDALGetRasterCount, libgdal), Cint, (GDALDatasetH,), arg1)
+    aftercare(ccall((:GDALGetRasterCount, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 """
@@ -924,7 +924,7 @@ end
 Fetch a band object for a dataset.
 """
 function gdalgetrasterband(arg1, arg2)
-    failsafe(ccall((:GDALGetRasterBand, libgdal), GDALRasterBandH, (GDALDatasetH, Cint), arg1, arg2))
+    aftercare(ccall((:GDALGetRasterBand, libgdal), GDALRasterBandH, (GDALDatasetH, Cint), arg1, arg2))
 end
 
 """
@@ -935,7 +935,7 @@ end
 Add a band to a dataset.
 """
 function gdaladdband(hDS, eType, papszOptions)
-    ccall((:GDALAddBand, libgdal), CPLErr, (GDALDatasetH, GDALDataType, CSLConstList), hDS, eType, papszOptions)
+    aftercare(ccall((:GDALAddBand, libgdal), CPLErr, (GDALDatasetH, GDALDataType, CSLConstList), hDS, eType, papszOptions))
 end
 
 """
@@ -978,7 +978,7 @@ Sets up an asynchronous data request.
 handle representing the request.
 """
 function gdalbeginasyncreader(hDS, nXOff, nYOff, nXSize, nYSize, pBuf, nBufXSize, nBufYSize, eBufType, nBandCount, panBandMap, nPixelSpace, nLineSpace, nBandSpace, papszOptions)
-    failsafe(ccall((:GDALBeginAsyncReader, libgdal), GDALAsyncReaderH, (GDALDatasetH, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, Cint, Cint, Cint, CSLConstList), hDS, nXOff, nYOff, nXSize, nYSize, pBuf, nBufXSize, nBufYSize, eBufType, nBandCount, panBandMap, nPixelSpace, nLineSpace, nBandSpace, papszOptions))
+    aftercare(ccall((:GDALBeginAsyncReader, libgdal), GDALAsyncReaderH, (GDALDatasetH, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, Cint, Cint, Cint, CSLConstList), hDS, nXOff, nYOff, nXSize, nYSize, pBuf, nBufXSize, nBufYSize, eBufType, nBandCount, panBandMap, nPixelSpace, nLineSpace, nBandSpace, papszOptions))
 end
 
 """
@@ -992,7 +992,7 @@ End asynchronous request.
 * **hAsyncReaderH**: handle returned by GDALBeginAsyncReader()
 """
 function gdalendasyncreader(hDS, hAsynchReaderH)
-    ccall((:GDALEndAsyncReader, libgdal), Cvoid, (GDALDatasetH, GDALAsyncReaderH), hDS, hAsynchReaderH)
+    aftercare(ccall((:GDALEndAsyncReader, libgdal), Cvoid, (GDALDatasetH, GDALAsyncReaderH), hDS, hAsynchReaderH))
 end
 
 """
@@ -1015,7 +1015,7 @@ end
 Read/write a region of image data from multiple bands.
 """
 function gdaldatasetrasterio(hDS, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nBandCount, panBandCount, nPixelSpace, nLineSpace, nBandSpace)
-    ccall((:GDALDatasetRasterIO, libgdal), CPLErr, (GDALDatasetH, GDALRWFlag, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, Cint, Cint, Cint), hDS, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nBandCount, panBandCount, nPixelSpace, nLineSpace, nBandSpace)
+    aftercare(ccall((:GDALDatasetRasterIO, libgdal), CPLErr, (GDALDatasetH, GDALRWFlag, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, Cint, Cint, Cint), hDS, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nBandCount, panBandCount, nPixelSpace, nLineSpace, nBandSpace))
 end
 
 """
@@ -1039,7 +1039,7 @@ end
 Read/write a region of image data from multiple bands.
 """
 function gdaldatasetrasterioex(hDS, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nBandCount, panBandCount, nPixelSpace, nLineSpace, nBandSpace, psExtraArg)
-    ccall((:GDALDatasetRasterIOEx, libgdal), CPLErr, (GDALDatasetH, GDALRWFlag, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, GSpacing, GSpacing, GSpacing, Ptr{GDALRasterIOExtraArg}), hDS, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nBandCount, panBandCount, nPixelSpace, nLineSpace, nBandSpace, psExtraArg)
+    aftercare(ccall((:GDALDatasetRasterIOEx, libgdal), CPLErr, (GDALDatasetH, GDALRWFlag, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, GSpacing, GSpacing, GSpacing, Ptr{GDALRasterIOExtraArg}), hDS, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nBandCount, panBandCount, nPixelSpace, nLineSpace, nBandSpace, psExtraArg))
 end
 
 """
@@ -1058,7 +1058,7 @@ end
 Advise driver of upcoming read requests.
 """
 function gdaldatasetadviseread(hDS, nDSXOff, nDSYOff, nDSXSize, nDSYSize, nBXSize, nBYSize, eBDataType, nBandCount, panBandCount, papszOptions)
-    ccall((:GDALDatasetAdviseRead, libgdal), CPLErr, (GDALDatasetH, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, CSLConstList), hDS, nDSXOff, nDSYOff, nDSXSize, nDSYSize, nBXSize, nBYSize, eBDataType, nBandCount, panBandCount, papszOptions)
+    aftercare(ccall((:GDALDatasetAdviseRead, libgdal), CPLErr, (GDALDatasetH, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, CSLConstList), hDS, nDSXOff, nDSYOff, nDSXSize, nDSYSize, nBXSize, nBYSize, eBDataType, nBandCount, panBandCount, papszOptions))
 end
 
 """
@@ -1067,7 +1067,7 @@ end
 Fetch the projection definition string for this dataset.
 """
 function gdalgetprojectionref(arg1)
-    unsafe_string(ccall((:GDALGetProjectionRef, libgdal), Cstring, (GDALDatasetH,), arg1))
+    aftercare(ccall((:GDALGetProjectionRef, libgdal), Cstring, (GDALDatasetH,), arg1), false)
 end
 
 """
@@ -1076,7 +1076,7 @@ end
 Fetch the projection definition string for this dataset.
 """
 function gdalgetspatialref(arg1)
-    failsafe(ccall((:GDALGetSpatialRef, libgdal), OGRSpatialReferenceH, (GDALDatasetH,), arg1))
+    aftercare(ccall((:GDALGetSpatialRef, libgdal), OGRSpatialReferenceH, (GDALDatasetH,), arg1))
 end
 
 """
@@ -1086,7 +1086,7 @@ end
 Set the projection reference string for this dataset.
 """
 function gdalsetprojection(arg1, arg2)
-    ccall((:GDALSetProjection, libgdal), CPLErr, (GDALDatasetH, Cstring), arg1, arg2)
+    aftercare(ccall((:GDALSetProjection, libgdal), CPLErr, (GDALDatasetH, Cstring), arg1, arg2))
 end
 
 """
@@ -1096,7 +1096,7 @@ end
 Set the spatial reference system for this dataset.
 """
 function gdalsetspatialref(arg1, arg2)
-    ccall((:GDALSetSpatialRef, libgdal), CPLErr, (GDALDatasetH, OGRSpatialReferenceH), arg1, arg2)
+    aftercare(ccall((:GDALSetSpatialRef, libgdal), CPLErr, (GDALDatasetH, OGRSpatialReferenceH), arg1, arg2))
 end
 
 """
@@ -1106,7 +1106,7 @@ end
 Fetch the affine transformation coefficients.
 """
 function gdalgetgeotransform(arg1, arg2)
-    ccall((:GDALGetGeoTransform, libgdal), CPLErr, (GDALDatasetH, Ptr{Cdouble}), arg1, arg2)
+    aftercare(ccall((:GDALGetGeoTransform, libgdal), CPLErr, (GDALDatasetH, Ptr{Cdouble}), arg1, arg2))
 end
 
 """
@@ -1116,7 +1116,7 @@ end
 Set the affine transformation coefficients.
 """
 function gdalsetgeotransform(arg1, arg2)
-    ccall((:GDALSetGeoTransform, libgdal), CPLErr, (GDALDatasetH, Ptr{Cdouble}), arg1, arg2)
+    aftercare(ccall((:GDALSetGeoTransform, libgdal), CPLErr, (GDALDatasetH, Ptr{Cdouble}), arg1, arg2))
 end
 
 """
@@ -1125,7 +1125,7 @@ end
 Get number of GCPs.
 """
 function gdalgetgcpcount(arg1)
-    ccall((:GDALGetGCPCount, libgdal), Cint, (GDALDatasetH,), arg1)
+    aftercare(ccall((:GDALGetGCPCount, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 """
@@ -1134,7 +1134,7 @@ end
 Get output projection for GCPs.
 """
 function gdalgetgcpprojection(arg1)
-    unsafe_string(ccall((:GDALGetGCPProjection, libgdal), Cstring, (GDALDatasetH,), arg1))
+    aftercare(ccall((:GDALGetGCPProjection, libgdal), Cstring, (GDALDatasetH,), arg1), false)
 end
 
 """
@@ -1143,7 +1143,7 @@ end
 Get output spatial reference system for GCPs.
 """
 function gdalgetgcpspatialref(arg1)
-    failsafe(ccall((:GDALGetGCPSpatialRef, libgdal), OGRSpatialReferenceH, (GDALDatasetH,), arg1))
+    aftercare(ccall((:GDALGetGCPSpatialRef, libgdal), OGRSpatialReferenceH, (GDALDatasetH,), arg1))
 end
 
 """
@@ -1152,7 +1152,7 @@ end
 Fetch GCPs.
 """
 function gdalgetgcps(arg1)
-    ccall((:GDALGetGCPs, libgdal), Ptr{GDAL_GCP}, (GDALDatasetH,), arg1)
+    aftercare(ccall((:GDALGetGCPs, libgdal), Ptr{GDAL_GCP}, (GDALDatasetH,), arg1))
 end
 
 """
@@ -1164,7 +1164,7 @@ end
 Assign GCPs.
 """
 function gdalsetgcps(arg1, arg2, arg3, arg4)
-    ccall((:GDALSetGCPs, libgdal), CPLErr, (GDALDatasetH, Cint, Ptr{GDAL_GCP}, Cstring), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:GDALSetGCPs, libgdal), CPLErr, (GDALDatasetH, Cint, Ptr{GDAL_GCP}, Cstring), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -1176,7 +1176,7 @@ end
 Assign GCPs.
 """
 function gdalsetgcps2(arg1, arg2, arg3, arg4)
-    ccall((:GDALSetGCPs2, libgdal), CPLErr, (GDALDatasetH, Cint, Ptr{GDAL_GCP}, OGRSpatialReferenceH), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:GDALSetGCPs2, libgdal), CPLErr, (GDALDatasetH, Cint, Ptr{GDAL_GCP}, OGRSpatialReferenceH), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -1186,7 +1186,7 @@ end
 Fetch a format specific internally meaningful handle.
 """
 function gdalgetinternalhandle(arg1, arg2)
-    failsafe(ccall((:GDALGetInternalHandle, libgdal), Ptr{Cvoid}, (GDALDatasetH, Cstring), arg1, arg2))
+    aftercare(ccall((:GDALGetInternalHandle, libgdal), Ptr{Cvoid}, (GDALDatasetH, Cstring), arg1, arg2))
 end
 
 """
@@ -1195,7 +1195,7 @@ end
 Add one to dataset reference count.
 """
 function gdalreferencedataset(arg1)
-    ccall((:GDALReferenceDataset, libgdal), Cint, (GDALDatasetH,), arg1)
+    aftercare(ccall((:GDALReferenceDataset, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 """
@@ -1204,7 +1204,7 @@ end
 Subtract one from dataset reference count.
 """
 function gdaldereferencedataset(arg1)
-    ccall((:GDALDereferenceDataset, libgdal), Cint, (GDALDatasetH,), arg1)
+    aftercare(ccall((:GDALDereferenceDataset, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 """
@@ -1213,7 +1213,7 @@ end
 Drop a reference to this object, and destroy if no longer referenced.
 """
 function gdalreleasedataset(arg1)
-    ccall((:GDALReleaseDataset, libgdal), Cint, (GDALDatasetH,), arg1)
+    aftercare(ccall((:GDALReleaseDataset, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 """
@@ -1229,7 +1229,7 @@ end
 Build raster overview(s)
 """
 function gdalbuildoverviews(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
-    ccall((:GDALBuildOverviews, libgdal), CPLErr, (GDALDatasetH, Cstring, Cint, Ptr{Cint}, Cint, Ptr{Cint}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
+    aftercare(ccall((:GDALBuildOverviews, libgdal), CPLErr, (GDALDatasetH, Cstring, Cint, Ptr{Cint}, Cint, Ptr{Cint}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8))
 end
 
 """
@@ -1239,7 +1239,7 @@ end
 Fetch all open GDAL dataset handles.
 """
 function gdalgetopendatasets(hDS, pnCount)
-    ccall((:GDALGetOpenDatasets, libgdal), Cvoid, (Ptr{Ptr{GDALDatasetH}}, Ptr{Cint}), hDS, pnCount)
+    aftercare(ccall((:GDALGetOpenDatasets, libgdal), Cvoid, (Ptr{Ptr{GDALDatasetH}}, Ptr{Cint}), hDS, pnCount))
 end
 
 """
@@ -1248,7 +1248,7 @@ end
 Return access flag.
 """
 function gdalgetaccess(hDS)
-    ccall((:GDALGetAccess, libgdal), Cint, (GDALDatasetH,), hDS)
+    aftercare(ccall((:GDALGetAccess, libgdal), Cint, (GDALDatasetH,), hDS))
 end
 
 """
@@ -1257,7 +1257,7 @@ end
 Flush all write cached data to disk.
 """
 function gdalflushcache(hDS)
-    ccall((:GDALFlushCache, libgdal), Cvoid, (GDALDatasetH,), hDS)
+    aftercare(ccall((:GDALFlushCache, libgdal), Cvoid, (GDALDatasetH,), hDS))
 end
 
 """
@@ -1267,7 +1267,7 @@ end
 Adds a mask band to the dataset.
 """
 function gdalcreatedatasetmaskband(hDS, nFlags)
-    ccall((:GDALCreateDatasetMaskBand, libgdal), CPLErr, (GDALDatasetH, Cint), hDS, nFlags)
+    aftercare(ccall((:GDALCreateDatasetMaskBand, libgdal), CPLErr, (GDALDatasetH, Cint), hDS, nFlags))
 end
 
 """
@@ -1290,7 +1290,7 @@ Copy all dataset raster data.
 CE_None on success, or CE_Failure on failure.
 """
 function gdaldatasetcopywholeraster(hSrcDS, hDstDS, papszOptions, pfnProgress, pProgressData)
-    ccall((:GDALDatasetCopyWholeRaster, libgdal), CPLErr, (GDALDatasetH, GDALDatasetH, CSLConstList, GDALProgressFunc, Ptr{Cvoid}), hSrcDS, hDstDS, papszOptions, pfnProgress, pProgressData)
+    aftercare(ccall((:GDALDatasetCopyWholeRaster, libgdal), CPLErr, (GDALDatasetH, GDALDatasetH, CSLConstList, GDALProgressFunc, Ptr{Cvoid}), hSrcDS, hDstDS, papszOptions, pfnProgress, pProgressData))
 end
 
 """
@@ -1313,7 +1313,7 @@ Copy a whole raster band.
 CE_None on success, or CE_Failure on failure.
 """
 function gdalrasterbandcopywholeraster(hSrcBand, hDstBand, constpapszOptions, pfnProgress, pProgressData)
-    ccall((:GDALRasterBandCopyWholeRaster, libgdal), CPLErr, (GDALRasterBandH, GDALRasterBandH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), hSrcBand, hDstBand, constpapszOptions, pfnProgress, pProgressData)
+    aftercare(ccall((:GDALRasterBandCopyWholeRaster, libgdal), CPLErr, (GDALRasterBandH, GDALRasterBandH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), hSrcBand, hDstBand, constpapszOptions, pfnProgress, pProgressData))
 end
 
 """
@@ -1338,7 +1338,7 @@ Generate downsampled overviews.
 CE_None on success or CE_Failure on failure.
 """
 function gdalregenerateoverviews(hSrcBand, nOverviewCount, pahOverviewBands, pszResampling, pfnProgress, pProgressData)
-    ccall((:GDALRegenerateOverviews, libgdal), CPLErr, (GDALRasterBandH, Cint, Ptr{GDALRasterBandH}, Cstring, GDALProgressFunc, Ptr{Cvoid}), hSrcBand, nOverviewCount, pahOverviewBands, pszResampling, pfnProgress, pProgressData)
+    aftercare(ccall((:GDALRegenerateOverviews, libgdal), CPLErr, (GDALRasterBandH, Cint, Ptr{GDALRasterBandH}, Cstring, GDALProgressFunc, Ptr{Cvoid}), hSrcBand, nOverviewCount, pahOverviewBands, pszResampling, pfnProgress, pProgressData))
 end
 
 """
@@ -1353,7 +1353,7 @@ Get the number of layers in this dataset.
 layer count.
 """
 function gdaldatasetgetlayercount(arg1)
-    ccall((:GDALDatasetGetLayerCount, libgdal), Cint, (GDALDatasetH,), arg1)
+    aftercare(ccall((:GDALDatasetGetLayerCount, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 """
@@ -1370,7 +1370,7 @@ Fetch a layer by index.
 the layer, or NULL if iLayer is out of range or an error occurs.
 """
 function gdaldatasetgetlayer(arg1, arg2)
-    failsafe(ccall((:GDALDatasetGetLayer, libgdal), OGRLayerH, (GDALDatasetH, Cint), arg1, arg2))
+    aftercare(ccall((:GDALDatasetGetLayer, libgdal), OGRLayerH, (GDALDatasetH, Cint), arg1, arg2))
 end
 
 """
@@ -1387,7 +1387,7 @@ Fetch a layer by name.
 the layer, or NULL if Layer is not found or an error occurs.
 """
 function gdaldatasetgetlayerbyname(arg1, arg2)
-    failsafe(ccall((:GDALDatasetGetLayerByName, libgdal), OGRLayerH, (GDALDatasetH, Cstring), arg1, arg2))
+    aftercare(ccall((:GDALDatasetGetLayerByName, libgdal), OGRLayerH, (GDALDatasetH, Cstring), arg1, arg2))
 end
 
 """
@@ -1404,7 +1404,7 @@ Delete the indicated layer from the datasource.
 OGRERR_NONE on success, or OGRERR_UNSUPPORTED_OPERATION if deleting layers is not supported for this datasource.
 """
 function gdaldatasetdeletelayer(arg1, arg2)
-    ccall((:GDALDatasetDeleteLayer, libgdal), OGRErr, (GDALDatasetH, Cint), arg1, arg2)
+    aftercare(ccall((:GDALDatasetDeleteLayer, libgdal), OGRErr, (GDALDatasetH, Cint), arg1, arg2))
 end
 
 """
@@ -1427,7 +1427,7 @@ This function attempts to create a new layer on the dataset with the indicated n
 NULL is returned on failure, or a new OGRLayer handle on success.
 """
 function gdaldatasetcreatelayer(arg1, arg2, arg3, arg4, arg5)
-    failsafe(ccall((:GDALDatasetCreateLayer, libgdal), OGRLayerH, (GDALDatasetH, Cstring, OGRSpatialReferenceH, OGRwkbGeometryType, CSLConstList), arg1, arg2, arg3, arg4, arg5))
+    aftercare(ccall((:GDALDatasetCreateLayer, libgdal), OGRLayerH, (GDALDatasetH, Cstring, OGRSpatialReferenceH, OGRwkbGeometryType, CSLConstList), arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -1448,7 +1448,7 @@ Duplicate an existing layer.
 an handle to the layer, or NULL if an error occurs.
 """
 function gdaldatasetcopylayer(arg1, arg2, arg3, arg4)
-    failsafe(ccall((:GDALDatasetCopyLayer, libgdal), OGRLayerH, (GDALDatasetH, OGRLayerH, Cstring, CSLConstList), arg1, arg2, arg3, arg4))
+    aftercare(ccall((:GDALDatasetCopyLayer, libgdal), OGRLayerH, (GDALDatasetH, OGRLayerH, Cstring, CSLConstList), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -1460,7 +1460,7 @@ Reset feature reading to start on the first feature.
 * **hDS**: dataset handle
 """
 function gdaldatasetresetreading(arg1)
-    ccall((:GDALDatasetResetReading, libgdal), Cvoid, (GDALDatasetH,), arg1)
+    aftercare(ccall((:GDALDatasetResetReading, libgdal), Cvoid, (GDALDatasetH,), arg1))
 end
 
 """
@@ -1483,7 +1483,7 @@ Fetch the next available feature from this dataset.
 a feature, or NULL if no more features are available.
 """
 function gdaldatasetgetnextfeature(hDS, phBelongingLayer, pdfProgressPct, pfnProgress, pProgressData)
-    failsafe(ccall((:GDALDatasetGetNextFeature, libgdal), OGRFeatureH, (GDALDatasetH, Ptr{OGRLayerH}, Ptr{Cdouble}, GDALProgressFunc, Ptr{Cvoid}), hDS, phBelongingLayer, pdfProgressPct, pfnProgress, pProgressData))
+    aftercare(ccall((:GDALDatasetGetNextFeature, libgdal), OGRFeatureH, (GDALDatasetH, Ptr{OGRLayerH}, Ptr{Cdouble}, GDALProgressFunc, Ptr{Cvoid}), hDS, phBelongingLayer, pdfProgressPct, pfnProgress, pProgressData))
 end
 
 """
@@ -1500,7 +1500,7 @@ Test if capability is available.
 TRUE if capability available otherwise FALSE.
 """
 function gdaldatasettestcapability(arg1, arg2)
-    ccall((:GDALDatasetTestCapability, libgdal), Cint, (GDALDatasetH, Cstring), arg1, arg2)
+    aftercare(ccall((:GDALDatasetTestCapability, libgdal), Cint, (GDALDatasetH, Cstring), arg1, arg2))
 end
 
 """
@@ -1521,7 +1521,7 @@ Execute an SQL statement against the data store.
 an OGRLayer containing the results of the query. Deallocate with ReleaseResultSet().
 """
 function gdaldatasetexecutesql(arg1, arg2, arg3, arg4)
-    failsafe(ccall((:GDALDatasetExecuteSQL, libgdal), OGRLayerH, (GDALDatasetH, Cstring, OGRGeometryH, Cstring), arg1, arg2, arg3, arg4))
+    aftercare(ccall((:GDALDatasetExecuteSQL, libgdal), OGRLayerH, (GDALDatasetH, Cstring, OGRGeometryH, Cstring), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -1535,7 +1535,7 @@ Release results of ExecuteSQL().
 * **hLayer**: the result of a previous ExecuteSQL() call.
 """
 function gdaldatasetreleaseresultset(arg1, arg2)
-    ccall((:GDALDatasetReleaseResultSet, libgdal), Cvoid, (GDALDatasetH, OGRLayerH), arg1, arg2)
+    aftercare(ccall((:GDALDatasetReleaseResultSet, libgdal), Cvoid, (GDALDatasetH, OGRLayerH), arg1, arg2))
 end
 
 """
@@ -1550,7 +1550,7 @@ Returns dataset style table.
 handle to a style table which should not be modified or freed by the caller.
 """
 function gdaldatasetgetstyletable(arg1)
-    failsafe(ccall((:GDALDatasetGetStyleTable, libgdal), OGRStyleTableH, (GDALDatasetH,), arg1))
+    aftercare(ccall((:GDALDatasetGetStyleTable, libgdal), OGRStyleTableH, (GDALDatasetH,), arg1))
 end
 
 """
@@ -1564,7 +1564,7 @@ Set dataset style table.
 * **hStyleTable**: style table handle to set
 """
 function gdaldatasetsetstyletabledirectly(arg1, arg2)
-    ccall((:GDALDatasetSetStyleTableDirectly, libgdal), Cvoid, (GDALDatasetH, OGRStyleTableH), arg1, arg2)
+    aftercare(ccall((:GDALDatasetSetStyleTableDirectly, libgdal), Cvoid, (GDALDatasetH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -1578,7 +1578,7 @@ Set dataset style table.
 * **hStyleTable**: style table handle to set
 """
 function gdaldatasetsetstyletable(arg1, arg2)
-    ccall((:GDALDatasetSetStyleTable, libgdal), Cvoid, (GDALDatasetH, OGRStyleTableH), arg1, arg2)
+    aftercare(ccall((:GDALDatasetSetStyleTable, libgdal), Cvoid, (GDALDatasetH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -1595,7 +1595,7 @@ For datasources which support transactions, StartTransaction creates a transacti
 OGRERR_NONE on success.
 """
 function gdaldatasetstarttransaction(hDS, bForce)
-    ccall((:GDALDatasetStartTransaction, libgdal), OGRErr, (GDALDatasetH, Cint), hDS, bForce)
+    aftercare(ccall((:GDALDatasetStartTransaction, libgdal), OGRErr, (GDALDatasetH, Cint), hDS, bForce))
 end
 
 """
@@ -1607,7 +1607,7 @@ For datasources which support transactions, CommitTransaction commits a transact
 OGRERR_NONE on success.
 """
 function gdaldatasetcommittransaction(hDS)
-    ccall((:GDALDatasetCommitTransaction, libgdal), OGRErr, (GDALDatasetH,), hDS)
+    aftercare(ccall((:GDALDatasetCommitTransaction, libgdal), OGRErr, (GDALDatasetH,), hDS))
 end
 
 """
@@ -1619,7 +1619,7 @@ For datasources which support transactions, RollbackTransaction will roll back a
 OGRERR_NONE on success.
 """
 function gdaldatasetrollbacktransaction(hDS)
-    ccall((:GDALDatasetRollbackTransaction, libgdal), OGRErr, (GDALDatasetH,), hDS)
+    aftercare(ccall((:GDALDatasetRollbackTransaction, libgdal), OGRErr, (GDALDatasetH,), hDS))
 end
 
 """
@@ -1628,7 +1628,7 @@ end
 Fetch the pixel data type for this band.
 """
 function gdalgetrasterdatatype(arg1)
-    ccall((:GDALGetRasterDataType, libgdal), GDALDataType, (GDALRasterBandH,), arg1)
+    aftercare(ccall((:GDALGetRasterDataType, libgdal), GDALDataType, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -1639,7 +1639,7 @@ end
 Fetch the "natural" block size of this band.
 """
 function gdalgetblocksize(arg1, pnXSize, pnYSize)
-    ccall((:GDALGetBlockSize, libgdal), Cvoid, (GDALRasterBandH, Ptr{Cint}, Ptr{Cint}), arg1, pnXSize, pnYSize)
+    aftercare(ccall((:GDALGetBlockSize, libgdal), Cvoid, (GDALRasterBandH, Ptr{Cint}, Ptr{Cint}), arg1, pnXSize, pnYSize))
 end
 
 """
@@ -1652,7 +1652,7 @@ end
 Retrieve the actual block size for a given block offset.
 """
 function gdalgetactualblocksize(arg1, nXBlockOff, nYBlockOff, pnXValid, pnYValid)
-    ccall((:GDALGetActualBlockSize, libgdal), CPLErr, (GDALRasterBandH, Cint, Cint, Ptr{Cint}, Ptr{Cint}), arg1, nXBlockOff, nYBlockOff, pnXValid, pnYValid)
+    aftercare(ccall((:GDALGetActualBlockSize, libgdal), CPLErr, (GDALRasterBandH, Cint, Cint, Ptr{Cint}, Ptr{Cint}), arg1, nXBlockOff, nYBlockOff, pnXValid, pnYValid))
 end
 
 """
@@ -1669,7 +1669,7 @@ end
 Advise driver of upcoming read requests.
 """
 function gdalrasteradviseread(hRB, nDSXOff, nDSYOff, nDSXSize, nDSYSize, nBXSize, nBYSize, eBDataType, papszOptions)
-    ccall((:GDALRasterAdviseRead, libgdal), CPLErr, (GDALRasterBandH, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, CSLConstList), hRB, nDSXOff, nDSYOff, nDSXSize, nDSYSize, nBXSize, nBYSize, eBDataType, papszOptions)
+    aftercare(ccall((:GDALRasterAdviseRead, libgdal), CPLErr, (GDALRasterBandH, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, CSLConstList), hRB, nDSXOff, nDSYOff, nDSXSize, nDSYSize, nBXSize, nBYSize, eBDataType, papszOptions))
 end
 
 """
@@ -1689,7 +1689,7 @@ end
 Read/write a region of image data for this band.
 """
 function gdalrasterio(hRBand, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nPixelSpace, nLineSpace)
-    ccall((:GDALRasterIO, libgdal), CPLErr, (GDALRasterBandH, GDALRWFlag, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, Cint, Cint), hRBand, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nPixelSpace, nLineSpace)
+    aftercare(ccall((:GDALRasterIO, libgdal), CPLErr, (GDALRasterBandH, GDALRWFlag, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, Cint, Cint), hRBand, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nPixelSpace, nLineSpace))
 end
 
 """
@@ -1710,7 +1710,7 @@ end
 Read/write a region of image data for this band.
 """
 function gdalrasterioex(hRBand, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nPixelSpace, nLineSpace, psExtraArg)
-    ccall((:GDALRasterIOEx, libgdal), CPLErr, (GDALRasterBandH, GDALRWFlag, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, GSpacing, GSpacing, Ptr{GDALRasterIOExtraArg}), hRBand, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nPixelSpace, nLineSpace, psExtraArg)
+    aftercare(ccall((:GDALRasterIOEx, libgdal), CPLErr, (GDALRasterBandH, GDALRWFlag, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, GSpacing, GSpacing, Ptr{GDALRasterIOExtraArg}), hRBand, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nPixelSpace, nLineSpace, psExtraArg))
 end
 
 """
@@ -1722,7 +1722,7 @@ end
 Read a block of image data efficiently.
 """
 function gdalreadblock(arg1, arg2, arg3, arg4)
-    ccall((:GDALReadBlock, libgdal), CPLErr, (GDALRasterBandH, Cint, Cint, Ptr{Cvoid}), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:GDALReadBlock, libgdal), CPLErr, (GDALRasterBandH, Cint, Cint, Ptr{Cvoid}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -1734,7 +1734,7 @@ end
 Write a block of image data efficiently.
 """
 function gdalwriteblock(arg1, arg2, arg3, arg4)
-    ccall((:GDALWriteBlock, libgdal), CPLErr, (GDALRasterBandH, Cint, Cint, Ptr{Cvoid}), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:GDALWriteBlock, libgdal), CPLErr, (GDALRasterBandH, Cint, Cint, Ptr{Cvoid}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -1743,7 +1743,7 @@ end
 Fetch XSize of raster.
 """
 function gdalgetrasterbandxsize(arg1)
-    ccall((:GDALGetRasterBandXSize, libgdal), Cint, (GDALRasterBandH,), arg1)
+    aftercare(ccall((:GDALGetRasterBandXSize, libgdal), Cint, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -1752,7 +1752,7 @@ end
 Fetch YSize of raster.
 """
 function gdalgetrasterbandysize(arg1)
-    ccall((:GDALGetRasterBandYSize, libgdal), Cint, (GDALRasterBandH,), arg1)
+    aftercare(ccall((:GDALGetRasterBandYSize, libgdal), Cint, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -1761,7 +1761,7 @@ end
 Find out if we have update permission for this band.
 """
 function gdalgetrasteraccess(arg1)
-    ccall((:GDALGetRasterAccess, libgdal), GDALAccess, (GDALRasterBandH,), arg1)
+    aftercare(ccall((:GDALGetRasterAccess, libgdal), GDALAccess, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -1770,7 +1770,7 @@ end
 Fetch the band number.
 """
 function gdalgetbandnumber(arg1)
-    ccall((:GDALGetBandNumber, libgdal), Cint, (GDALRasterBandH,), arg1)
+    aftercare(ccall((:GDALGetBandNumber, libgdal), Cint, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -1779,7 +1779,7 @@ end
 Fetch the owning dataset handle.
 """
 function gdalgetbanddataset(arg1)
-    failsafe(ccall((:GDALGetBandDataset, libgdal), GDALDatasetH, (GDALRasterBandH,), arg1))
+    aftercare(ccall((:GDALGetBandDataset, libgdal), GDALDatasetH, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -1788,7 +1788,7 @@ end
 How should this band be interpreted as color?
 """
 function gdalgetrastercolorinterpretation(arg1)
-    ccall((:GDALGetRasterColorInterpretation, libgdal), GDALColorInterp, (GDALRasterBandH,), arg1)
+    aftercare(ccall((:GDALGetRasterColorInterpretation, libgdal), GDALColorInterp, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -1798,7 +1798,7 @@ end
 Set color interpretation of a band.
 """
 function gdalsetrastercolorinterpretation(arg1, arg2)
-    ccall((:GDALSetRasterColorInterpretation, libgdal), CPLErr, (GDALRasterBandH, GDALColorInterp), arg1, arg2)
+    aftercare(ccall((:GDALSetRasterColorInterpretation, libgdal), CPLErr, (GDALRasterBandH, GDALColorInterp), arg1, arg2))
 end
 
 """
@@ -1807,7 +1807,7 @@ end
 Fetch the color table associated with band.
 """
 function gdalgetrastercolortable(arg1)
-    failsafe(ccall((:GDALGetRasterColorTable, libgdal), GDALColorTableH, (GDALRasterBandH,), arg1))
+    aftercare(ccall((:GDALGetRasterColorTable, libgdal), GDALColorTableH, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -1817,7 +1817,7 @@ end
 Set the raster color table.
 """
 function gdalsetrastercolortable(arg1, arg2)
-    ccall((:GDALSetRasterColorTable, libgdal), CPLErr, (GDALRasterBandH, GDALColorTableH), arg1, arg2)
+    aftercare(ccall((:GDALSetRasterColorTable, libgdal), CPLErr, (GDALRasterBandH, GDALColorTableH), arg1, arg2))
 end
 
 """
@@ -1826,7 +1826,7 @@ end
 Check for arbitrary overviews.
 """
 function gdalhasarbitraryoverviews(arg1)
-    ccall((:GDALHasArbitraryOverviews, libgdal), Cint, (GDALRasterBandH,), arg1)
+    aftercare(ccall((:GDALHasArbitraryOverviews, libgdal), Cint, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -1835,7 +1835,7 @@ end
 Return the number of overview layers available.
 """
 function gdalgetoverviewcount(arg1)
-    ccall((:GDALGetOverviewCount, libgdal), Cint, (GDALRasterBandH,), arg1)
+    aftercare(ccall((:GDALGetOverviewCount, libgdal), Cint, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -1845,7 +1845,7 @@ end
 Fetch overview raster band object.
 """
 function gdalgetoverview(arg1, arg2)
-    failsafe(ccall((:GDALGetOverview, libgdal), GDALRasterBandH, (GDALRasterBandH, Cint), arg1, arg2))
+    aftercare(ccall((:GDALGetOverview, libgdal), GDALRasterBandH, (GDALRasterBandH, Cint), arg1, arg2))
 end
 
 """
@@ -1855,7 +1855,7 @@ end
 Fetch the no data value for this band.
 """
 function gdalgetrasternodatavalue(arg1, arg2)
-    ccall((:GDALGetRasterNoDataValue, libgdal), Cdouble, (GDALRasterBandH, Ptr{Cint}), arg1, arg2)
+    aftercare(ccall((:GDALGetRasterNoDataValue, libgdal), Cdouble, (GDALRasterBandH, Ptr{Cint}), arg1, arg2))
 end
 
 """
@@ -1865,7 +1865,7 @@ end
 Set the no data value for this band.
 """
 function gdalsetrasternodatavalue(arg1, arg2)
-    ccall((:GDALSetRasterNoDataValue, libgdal), CPLErr, (GDALRasterBandH, Cdouble), arg1, arg2)
+    aftercare(ccall((:GDALSetRasterNoDataValue, libgdal), CPLErr, (GDALRasterBandH, Cdouble), arg1, arg2))
 end
 
 """
@@ -1874,7 +1874,7 @@ end
 Remove the no data value for this band.
 """
 function gdaldeleterasternodatavalue(arg1)
-    ccall((:GDALDeleteRasterNoDataValue, libgdal), CPLErr, (GDALRasterBandH,), arg1)
+    aftercare(ccall((:GDALDeleteRasterNoDataValue, libgdal), CPLErr, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -1883,7 +1883,7 @@ end
 Fetch the list of category names for this raster.
 """
 function gdalgetrastercategorynames(arg1)
-    unsafe_loadstringlist(ccall((:GDALGetRasterCategoryNames, libgdal), Ptr{Cstring}, (GDALRasterBandH,), arg1))
+    aftercare(ccall((:GDALGetRasterCategoryNames, libgdal), Ptr{Cstring}, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -1893,7 +1893,7 @@ end
 Set the category names for this band.
 """
 function gdalsetrastercategorynames(arg1, arg2)
-    ccall((:GDALSetRasterCategoryNames, libgdal), CPLErr, (GDALRasterBandH, CSLConstList), arg1, arg2)
+    aftercare(ccall((:GDALSetRasterCategoryNames, libgdal), CPLErr, (GDALRasterBandH, CSLConstList), arg1, arg2))
 end
 
 """
@@ -1903,7 +1903,7 @@ end
 Fetch the minimum value for this band.
 """
 function gdalgetrasterminimum(arg1, pbSuccess)
-    ccall((:GDALGetRasterMinimum, libgdal), Cdouble, (GDALRasterBandH, Ptr{Cint}), arg1, pbSuccess)
+    aftercare(ccall((:GDALGetRasterMinimum, libgdal), Cdouble, (GDALRasterBandH, Ptr{Cint}), arg1, pbSuccess))
 end
 
 """
@@ -1913,7 +1913,7 @@ end
 Fetch the maximum value for this band.
 """
 function gdalgetrastermaximum(arg1, pbSuccess)
-    ccall((:GDALGetRasterMaximum, libgdal), Cdouble, (GDALRasterBandH, Ptr{Cint}), arg1, pbSuccess)
+    aftercare(ccall((:GDALGetRasterMaximum, libgdal), Cdouble, (GDALRasterBandH, Ptr{Cint}), arg1, pbSuccess))
 end
 
 """
@@ -1928,7 +1928,7 @@ end
 Fetch image statistics.
 """
 function gdalgetrasterstatistics(arg1, bApproxOK, bForce, pdfMin, pdfMax, pdfMean, pdfStdDev)
-    ccall((:GDALGetRasterStatistics, libgdal), CPLErr, (GDALRasterBandH, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}), arg1, bApproxOK, bForce, pdfMin, pdfMax, pdfMean, pdfStdDev)
+    aftercare(ccall((:GDALGetRasterStatistics, libgdal), CPLErr, (GDALRasterBandH, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}), arg1, bApproxOK, bForce, pdfMin, pdfMax, pdfMean, pdfStdDev))
 end
 
 """
@@ -1944,7 +1944,7 @@ end
 Compute image statistics.
 """
 function gdalcomputerasterstatistics(arg1, bApproxOK, pdfMin, pdfMax, pdfMean, pdfStdDev, pfnProgress, pProgressData)
-    ccall((:GDALComputeRasterStatistics, libgdal), CPLErr, (GDALRasterBandH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, GDALProgressFunc, Ptr{Cvoid}), arg1, bApproxOK, pdfMin, pdfMax, pdfMean, pdfStdDev, pfnProgress, pProgressData)
+    aftercare(ccall((:GDALComputeRasterStatistics, libgdal), CPLErr, (GDALRasterBandH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, GDALProgressFunc, Ptr{Cvoid}), arg1, bApproxOK, pdfMin, pdfMax, pdfMean, pdfStdDev, pfnProgress, pProgressData))
 end
 
 """
@@ -1957,7 +1957,7 @@ end
 Set statistics on band.
 """
 function gdalsetrasterstatistics(hBand, dfMin, dfMax, dfMean, dfStdDev)
-    ccall((:GDALSetRasterStatistics, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble, Cdouble, Cdouble), hBand, dfMin, dfMax, dfMean, dfStdDev)
+    aftercare(ccall((:GDALSetRasterStatistics, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble, Cdouble, Cdouble), hBand, dfMin, dfMax, dfMean, dfStdDev))
 end
 
 """
@@ -1966,7 +1966,7 @@ end
 Return raster unit type.
 """
 function gdalgetrasterunittype(arg1)
-    unsafe_string(ccall((:GDALGetRasterUnitType, libgdal), Cstring, (GDALRasterBandH,), arg1))
+    aftercare(ccall((:GDALGetRasterUnitType, libgdal), Cstring, (GDALRasterBandH,), arg1), false)
 end
 
 """
@@ -1976,7 +1976,7 @@ end
 Set unit type.
 """
 function gdalsetrasterunittype(hBand, pszNewValue)
-    ccall((:GDALSetRasterUnitType, libgdal), CPLErr, (GDALRasterBandH, Cstring), hBand, pszNewValue)
+    aftercare(ccall((:GDALSetRasterUnitType, libgdal), CPLErr, (GDALRasterBandH, Cstring), hBand, pszNewValue))
 end
 
 """
@@ -1986,7 +1986,7 @@ end
 Fetch the raster value offset.
 """
 function gdalgetrasteroffset(arg1, pbSuccess)
-    ccall((:GDALGetRasterOffset, libgdal), Cdouble, (GDALRasterBandH, Ptr{Cint}), arg1, pbSuccess)
+    aftercare(ccall((:GDALGetRasterOffset, libgdal), Cdouble, (GDALRasterBandH, Ptr{Cint}), arg1, pbSuccess))
 end
 
 """
@@ -1996,7 +1996,7 @@ end
 Set scaling offset.
 """
 function gdalsetrasteroffset(hBand, dfNewOffset)
-    ccall((:GDALSetRasterOffset, libgdal), CPLErr, (GDALRasterBandH, Cdouble), hBand, dfNewOffset)
+    aftercare(ccall((:GDALSetRasterOffset, libgdal), CPLErr, (GDALRasterBandH, Cdouble), hBand, dfNewOffset))
 end
 
 """
@@ -2006,7 +2006,7 @@ end
 Fetch the raster value scale.
 """
 function gdalgetrasterscale(arg1, pbSuccess)
-    ccall((:GDALGetRasterScale, libgdal), Cdouble, (GDALRasterBandH, Ptr{Cint}), arg1, pbSuccess)
+    aftercare(ccall((:GDALGetRasterScale, libgdal), Cdouble, (GDALRasterBandH, Ptr{Cint}), arg1, pbSuccess))
 end
 
 """
@@ -2016,7 +2016,7 @@ end
 Set scaling ratio.
 """
 function gdalsetrasterscale(hBand, dfNewOffset)
-    ccall((:GDALSetRasterScale, libgdal), CPLErr, (GDALRasterBandH, Cdouble), hBand, dfNewOffset)
+    aftercare(ccall((:GDALSetRasterScale, libgdal), CPLErr, (GDALRasterBandH, Cdouble), hBand, dfNewOffset))
 end
 
 """
@@ -2027,7 +2027,7 @@ end
 Compute the min/max values for a band.
 """
 function gdalcomputerasterminmax(hBand, bApproxOK, adfMinMax)
-    ccall((:GDALComputeRasterMinMax, libgdal), Cvoid, (GDALRasterBandH, Cint, Ptr{Cdouble}), hBand, bApproxOK, adfMinMax)
+    aftercare(ccall((:GDALComputeRasterMinMax, libgdal), Cvoid, (GDALRasterBandH, Cint, Ptr{Cdouble}), hBand, bApproxOK, adfMinMax))
 end
 
 """
@@ -2036,7 +2036,7 @@ end
 Flush raster data cache.
 """
 function gdalflushrastercache(hBand)
-    ccall((:GDALFlushRasterCache, libgdal), CPLErr, (GDALRasterBandH,), hBand)
+    aftercare(ccall((:GDALFlushRasterCache, libgdal), CPLErr, (GDALRasterBandH,), hBand))
 end
 
 """
@@ -2053,7 +2053,7 @@ end
 Compute raster histogram.
 """
 function gdalgetrasterhistogram(hBand, dfMin, dfMax, nBuckets, panHistogram, bIncludeOutOfRange, bApproxOK, pfnProgress, pProgressData)
-    ccall((:GDALGetRasterHistogram, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble, Cint, Ptr{Cint}, Cint, Cint, GDALProgressFunc, Ptr{Cvoid}), hBand, dfMin, dfMax, nBuckets, panHistogram, bIncludeOutOfRange, bApproxOK, pfnProgress, pProgressData)
+    aftercare(ccall((:GDALGetRasterHistogram, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble, Cint, Ptr{Cint}, Cint, Cint, GDALProgressFunc, Ptr{Cvoid}), hBand, dfMin, dfMax, nBuckets, panHistogram, bIncludeOutOfRange, bApproxOK, pfnProgress, pProgressData))
 end
 
 """
@@ -2070,7 +2070,7 @@ end
 Compute raster histogram.
 """
 function gdalgetrasterhistogramex(hBand, dfMin, dfMax, nBuckets, panHistogram, bIncludeOutOfRange, bApproxOK, pfnProgress, pProgressData)
-    ccall((:GDALGetRasterHistogramEx, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble, Cint, Ptr{GUIntBig}, Cint, Cint, GDALProgressFunc, Ptr{Cvoid}), hBand, dfMin, dfMax, nBuckets, panHistogram, bIncludeOutOfRange, bApproxOK, pfnProgress, pProgressData)
+    aftercare(ccall((:GDALGetRasterHistogramEx, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble, Cint, Ptr{GUIntBig}, Cint, Cint, GDALProgressFunc, Ptr{Cvoid}), hBand, dfMin, dfMax, nBuckets, panHistogram, bIncludeOutOfRange, bApproxOK, pfnProgress, pProgressData))
 end
 
 """
@@ -2086,7 +2086,7 @@ end
 Fetch default raster histogram.
 """
 function gdalgetdefaulthistogram(hBand, pdfMin, pdfMax, pnBuckets, ppanHistogram, bForce, pfnProgress, pProgressData)
-    ccall((:GDALGetDefaultHistogram, libgdal), CPLErr, (GDALRasterBandH, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}, Ptr{Ptr{Cint}}, Cint, GDALProgressFunc, Ptr{Cvoid}), hBand, pdfMin, pdfMax, pnBuckets, ppanHistogram, bForce, pfnProgress, pProgressData)
+    aftercare(ccall((:GDALGetDefaultHistogram, libgdal), CPLErr, (GDALRasterBandH, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}, Ptr{Ptr{Cint}}, Cint, GDALProgressFunc, Ptr{Cvoid}), hBand, pdfMin, pdfMax, pnBuckets, ppanHistogram, bForce, pfnProgress, pProgressData))
 end
 
 """
@@ -2102,7 +2102,7 @@ end
 Fetch default raster histogram.
 """
 function gdalgetdefaulthistogramex(hBand, pdfMin, pdfMax, pnBuckets, ppanHistogram, bForce, pfnProgress, pProgressData)
-    ccall((:GDALGetDefaultHistogramEx, libgdal), CPLErr, (GDALRasterBandH, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}, Ptr{Ptr{GUIntBig}}, Cint, GDALProgressFunc, Ptr{Cvoid}), hBand, pdfMin, pdfMax, pnBuckets, ppanHistogram, bForce, pfnProgress, pProgressData)
+    aftercare(ccall((:GDALGetDefaultHistogramEx, libgdal), CPLErr, (GDALRasterBandH, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}, Ptr{Ptr{GUIntBig}}, Cint, GDALProgressFunc, Ptr{Cvoid}), hBand, pdfMin, pdfMax, pnBuckets, ppanHistogram, bForce, pfnProgress, pProgressData))
 end
 
 """
@@ -2115,7 +2115,7 @@ end
 Set default histogram.
 """
 function gdalsetdefaulthistogram(hBand, dfMin, dfMax, nBuckets, panHistogram)
-    ccall((:GDALSetDefaultHistogram, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble, Cint, Ptr{Cint}), hBand, dfMin, dfMax, nBuckets, panHistogram)
+    aftercare(ccall((:GDALSetDefaultHistogram, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble, Cint, Ptr{Cint}), hBand, dfMin, dfMax, nBuckets, panHistogram))
 end
 
 """
@@ -2128,7 +2128,7 @@ end
 Set default histogram.
 """
 function gdalsetdefaulthistogramex(hBand, dfMin, dfMax, nBuckets, panHistogram)
-    ccall((:GDALSetDefaultHistogramEx, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble, Cint, Ptr{GUIntBig}), hBand, dfMin, dfMax, nBuckets, panHistogram)
+    aftercare(ccall((:GDALSetDefaultHistogramEx, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble, Cint, Ptr{GUIntBig}), hBand, dfMin, dfMax, nBuckets, panHistogram))
 end
 
 """
@@ -2147,7 +2147,7 @@ Undocumented.
 undocumented
 """
 function gdalgetrandomrastersample(arg1, arg2, arg3)
-    ccall((:GDALGetRandomRasterSample, libgdal), Cint, (GDALRasterBandH, Cint, Ptr{Cfloat}), arg1, arg2, arg3)
+    aftercare(ccall((:GDALGetRandomRasterSample, libgdal), Cint, (GDALRasterBandH, Cint, Ptr{Cfloat}), arg1, arg2, arg3))
 end
 
 """
@@ -2157,7 +2157,7 @@ end
 Fetch best sampling overview.
 """
 function gdalgetrastersampleoverview(arg1, arg2)
-    failsafe(ccall((:GDALGetRasterSampleOverview, libgdal), GDALRasterBandH, (GDALRasterBandH, Cint), arg1, arg2))
+    aftercare(ccall((:GDALGetRasterSampleOverview, libgdal), GDALRasterBandH, (GDALRasterBandH, Cint), arg1, arg2))
 end
 
 """
@@ -2167,7 +2167,7 @@ end
 Fetch best sampling overview.
 """
 function gdalgetrastersampleoverviewex(arg1, arg2)
-    failsafe(ccall((:GDALGetRasterSampleOverviewEx, libgdal), GDALRasterBandH, (GDALRasterBandH, GUIntBig), arg1, arg2))
+    aftercare(ccall((:GDALGetRasterSampleOverviewEx, libgdal), GDALRasterBandH, (GDALRasterBandH, GUIntBig), arg1, arg2))
 end
 
 """
@@ -2178,7 +2178,7 @@ end
 Fill this band with a constant value.
 """
 function gdalfillraster(hBand, dfRealValue, dfImaginaryValue)
-    ccall((:GDALFillRaster, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble), hBand, dfRealValue, dfImaginaryValue)
+    aftercare(ccall((:GDALFillRaster, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble), hBand, dfRealValue, dfImaginaryValue))
 end
 
 """
@@ -2203,7 +2203,7 @@ Undocumented.
 undocumented
 """
 function gdalcomputebandstats(hBand, nSampleStep, pdfMean, pdfStdDev, pfnProgress, pProgressData)
-    ccall((:GDALComputeBandStats, libgdal), CPLErr, (GDALRasterBandH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, GDALProgressFunc, Ptr{Cvoid}), hBand, nSampleStep, pdfMean, pdfStdDev, pfnProgress, pProgressData)
+    aftercare(ccall((:GDALComputeBandStats, libgdal), CPLErr, (GDALRasterBandH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, GDALProgressFunc, Ptr{Cvoid}), hBand, nSampleStep, pdfMean, pdfStdDev, pfnProgress, pProgressData))
 end
 
 """
@@ -2226,7 +2226,7 @@ Undocumented.
 undocumented
 """
 function gdaloverviewmagnitudecorrection(hBaseBand, nOverviewCount, pahOverviews, pfnProgress, pProgressData)
-    ccall((:GDALOverviewMagnitudeCorrection, libgdal), CPLErr, (GDALRasterBandH, Cint, Ptr{GDALRasterBandH}, GDALProgressFunc, Ptr{Cvoid}), hBaseBand, nOverviewCount, pahOverviews, pfnProgress, pProgressData)
+    aftercare(ccall((:GDALOverviewMagnitudeCorrection, libgdal), CPLErr, (GDALRasterBandH, Cint, Ptr{GDALRasterBandH}, GDALProgressFunc, Ptr{Cvoid}), hBaseBand, nOverviewCount, pahOverviews, pfnProgress, pProgressData))
 end
 
 """
@@ -2235,7 +2235,7 @@ end
 Fetch default Raster Attribute Table.
 """
 function gdalgetdefaultrat(hBand)
-    failsafe(ccall((:GDALGetDefaultRAT, libgdal), GDALRasterAttributeTableH, (GDALRasterBandH,), hBand))
+    aftercare(ccall((:GDALGetDefaultRAT, libgdal), GDALRasterAttributeTableH, (GDALRasterBandH,), hBand))
 end
 
 """
@@ -2245,7 +2245,7 @@ end
 Set default Raster Attribute Table.
 """
 function gdalsetdefaultrat(arg1, arg2)
-    ccall((:GDALSetDefaultRAT, libgdal), CPLErr, (GDALRasterBandH, GDALRasterAttributeTableH), arg1, arg2)
+    aftercare(ccall((:GDALSetDefaultRAT, libgdal), CPLErr, (GDALRasterBandH, GDALRasterAttributeTableH), arg1, arg2))
 end
 
 """
@@ -2262,7 +2262,7 @@ This adds a pixel function to the global list of available pixel functions for d
 CE_None, invalid (NULL) parameters are currently ignored.
 """
 function gdaladdderivedbandpixelfunc(pszName, pfnPixelFunc)
-    ccall((:GDALAddDerivedBandPixelFunc, libgdal), CPLErr, (Cstring, GDALDerivedPixelFunc), pszName, pfnPixelFunc)
+    aftercare(ccall((:GDALAddDerivedBandPixelFunc, libgdal), CPLErr, (Cstring, GDALDerivedPixelFunc), pszName, pfnPixelFunc))
 end
 
 """
@@ -2271,7 +2271,7 @@ end
 Return the mask band associated with the band.
 """
 function gdalgetmaskband(hBand)
-    failsafe(ccall((:GDALGetMaskBand, libgdal), GDALRasterBandH, (GDALRasterBandH,), hBand))
+    aftercare(ccall((:GDALGetMaskBand, libgdal), GDALRasterBandH, (GDALRasterBandH,), hBand))
 end
 
 """
@@ -2280,7 +2280,7 @@ end
 Return the status flags of the mask band associated with the band.
 """
 function gdalgetmaskflags(hBand)
-    ccall((:GDALGetMaskFlags, libgdal), Cint, (GDALRasterBandH,), hBand)
+    aftercare(ccall((:GDALGetMaskFlags, libgdal), Cint, (GDALRasterBandH,), hBand))
 end
 
 """
@@ -2290,7 +2290,7 @@ end
 Adds a mask band to the current band.
 """
 function gdalcreatemaskband(hBand, nFlags)
-    ccall((:GDALCreateMaskBand, libgdal), CPLErr, (GDALRasterBandH, Cint), hBand, nFlags)
+    aftercare(ccall((:GDALCreateMaskBand, libgdal), CPLErr, (GDALRasterBandH, Cint), hBand, nFlags))
 end
 
 """
@@ -2317,7 +2317,7 @@ Get the coverage status of a sub-window of the raster.
 a binary-or'ed combination of possible values GDAL_DATA_COVERAGE_STATUS_UNIMPLEMENTED, GDAL_DATA_COVERAGE_STATUS_DATA and GDAL_DATA_COVERAGE_STATUS_EMPTY
 """
 function gdalgetdatacoveragestatus(hBand, nXOff, nYOff, nXSize, nYSize, nMaskFlagStop, pdfDataPct)
-    ccall((:GDALGetDataCoverageStatus, libgdal), Cint, (GDALRasterBandH, Cint, Cint, Cint, Cint, Cint, Ptr{Cdouble}), hBand, nXOff, nYOff, nXSize, nYSize, nMaskFlagStop, pdfDataPct)
+    aftercare(ccall((:GDALGetDataCoverageStatus, libgdal), Cint, (GDALRasterBandH, Cint, Cint, Cint, Cint, Cint, Ptr{Cdouble}), hBand, nXOff, nYOff, nXSize, nYSize, nMaskFlagStop, pdfDataPct))
 end
 
 """
@@ -2342,7 +2342,7 @@ Get async IO update.
 GARIO_ status, details described above.
 """
 function gdalargetnextupdatedregion(hARIO, dfTimeout, pnXBufOff, pnYBufOff, pnXBufSize, pnYBufSize)
-    ccall((:GDALARGetNextUpdatedRegion, libgdal), GDALAsyncStatusType, (GDALAsyncReaderH, Cdouble, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}), hARIO, dfTimeout, pnXBufOff, pnYBufOff, pnXBufSize, pnYBufSize)
+    aftercare(ccall((:GDALARGetNextUpdatedRegion, libgdal), GDALAsyncStatusType, (GDALAsyncReaderH, Cdouble, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}), hARIO, dfTimeout, pnXBufOff, pnYBufOff, pnXBufSize, pnYBufSize))
 end
 
 """
@@ -2359,7 +2359,7 @@ Lock image buffer.
 TRUE if successful, or FALSE on an error.
 """
 function gdalarlockbuffer(hARIO, dfTimeout)
-    ccall((:GDALARLockBuffer, libgdal), Cint, (GDALAsyncReaderH, Cdouble), hARIO, dfTimeout)
+    aftercare(ccall((:GDALARLockBuffer, libgdal), Cint, (GDALAsyncReaderH, Cdouble), hARIO, dfTimeout))
 end
 
 """
@@ -2371,7 +2371,7 @@ Unlock image buffer.
 * **hARIO**: handle to async reader.
 """
 function gdalarunlockbuffer(hARIO)
-    ccall((:GDALARUnlockBuffer, libgdal), Cvoid, (GDALAsyncReaderH,), hARIO)
+    aftercare(ccall((:GDALARUnlockBuffer, libgdal), Cvoid, (GDALAsyncReaderH,), hARIO))
 end
 
 """
@@ -2390,7 +2390,7 @@ General utility option processing.
 updated nArgc argument count. Return of 0 requests terminate without error, return of -1 requests exit with error code.
 """
 function gdalgeneralcmdlineprocessor(nArgc, ppapszArgv, nOptions)
-    ccall((:GDALGeneralCmdLineProcessor, libgdal), Cint, (Cint, Ptr{Ptr{Cstring}}, Cint), nArgc, ppapszArgv, nOptions)
+    aftercare(ccall((:GDALGeneralCmdLineProcessor, libgdal), Cint, (Cint, Ptr{Ptr{Cstring}}, Cint), nArgc, ppapszArgv, nOptions))
 end
 
 """
@@ -2408,7 +2408,7 @@ Byte swap words in-place.
 * **nWordSkip**: the byte offset from the start of one word to the start of the next. For packed buffers this is the same as nWordSize.
 """
 function gdalswapwords(pData, nWordSize, nWordCount, nWordSkip)
-    ccall((:GDALSwapWords, libgdal), Cvoid, (Ptr{Cvoid}, Cint, Cint, Cint), pData, nWordSize, nWordCount, nWordSkip)
+    aftercare(ccall((:GDALSwapWords, libgdal), Cvoid, (Ptr{Cvoid}, Cint, Cint, Cint), pData, nWordSize, nWordCount, nWordSkip))
 end
 
 """
@@ -2426,7 +2426,7 @@ Byte swap words in-place.
 * **nWordSkip**: the byte offset from the start of one word to the start of the next. For packed buffers this is the same as nWordSize.
 """
 function gdalswapwordsex(pData, nWordSize, nWordCount, nWordSkip)
-    ccall((:GDALSwapWordsEx, libgdal), Cvoid, (Ptr{Cvoid}, Cint, Csize_t, Cint), pData, nWordSize, nWordCount, nWordSkip)
+    aftercare(ccall((:GDALSwapWordsEx, libgdal), Cvoid, (Ptr{Cvoid}, Cint, Csize_t, Cint), pData, nWordSize, nWordCount, nWordSkip))
 end
 
 """
@@ -2441,7 +2441,7 @@ end
 Copy pixel words from buffer to buffer.
 """
 function gdalcopywords(pSrcData, eSrcType, nSrcPixelOffset, pDstData, eDstType, nDstPixelOffset, nWordCount)
-    ccall((:GDALCopyWords, libgdal), Cvoid, (Ptr{Cvoid}, GDALDataType, Cint, Ptr{Cvoid}, GDALDataType, Cint, Cint), pSrcData, eSrcType, nSrcPixelOffset, pDstData, eDstType, nDstPixelOffset, nWordCount)
+    aftercare(ccall((:GDALCopyWords, libgdal), Cvoid, (Ptr{Cvoid}, GDALDataType, Cint, Ptr{Cvoid}, GDALDataType, Cint, Cint), pSrcData, eSrcType, nSrcPixelOffset, pDstData, eDstType, nDstPixelOffset, nWordCount))
 end
 
 """
@@ -2465,7 +2465,7 @@ Copy pixel words from buffer to buffer.
 * **nWordCount**: number of words to be copied
 """
 function gdalcopywords64(pSrcData, eSrcType, nSrcPixelOffset, pDstData, eDstType, nDstPixelOffset, nWordCount)
-    ccall((:GDALCopyWords64, libgdal), Cvoid, (Ptr{Cvoid}, GDALDataType, Cint, Ptr{Cvoid}, GDALDataType, Cint, GPtrDiff_t), pSrcData, eSrcType, nSrcPixelOffset, pDstData, eDstType, nDstPixelOffset, nWordCount)
+    aftercare(ccall((:GDALCopyWords64, libgdal), Cvoid, (Ptr{Cvoid}, GDALDataType, Cint, Ptr{Cvoid}, GDALDataType, Cint, GPtrDiff_t), pSrcData, eSrcType, nSrcPixelOffset, pDstData, eDstType, nDstPixelOffset, nWordCount))
 end
 
 """
@@ -2491,7 +2491,7 @@ Bitwise word copying.
 * **nStepCount**: the number of words to copy.
 """
 function gdalcopybits(pabySrcData, nSrcOffset, nSrcStep, pabyDstData, nDstOffset, nDstStep, nBitCount, nStepCount)
-    ccall((:GDALCopyBits, libgdal), Cvoid, (Ptr{GByte}, Cint, Cint, Ptr{GByte}, Cint, Cint, Cint, Cint), pabySrcData, nSrcOffset, nSrcStep, pabyDstData, nDstOffset, nDstStep, nBitCount, nStepCount)
+    aftercare(ccall((:GDALCopyBits, libgdal), Cvoid, (Ptr{GByte}, Cint, Cint, Ptr{GByte}, Cint, Cint, Cint, Cint), pabySrcData, nSrcOffset, nSrcStep, pabyDstData, nDstOffset, nDstStep, nBitCount, nStepCount))
 end
 
 """
@@ -2508,7 +2508,7 @@ Read ESRI world file.
 TRUE on success or FALSE on failure.
 """
 function gdalloadworldfile(arg1, arg2)
-    ccall((:GDALLoadWorldFile, libgdal), Cint, (Cstring, Ptr{Cdouble}), arg1, arg2)
+    aftercare(ccall((:GDALLoadWorldFile, libgdal), Cint, (Cstring, Ptr{Cdouble}), arg1, arg2))
 end
 
 """
@@ -2527,7 +2527,7 @@ Read ESRI world file.
 TRUE on success or FALSE on failure.
 """
 function gdalreadworldfile(arg1, arg2, arg3)
-    ccall((:GDALReadWorldFile, libgdal), Cint, (Cstring, Cstring, Ptr{Cdouble}), arg1, arg2, arg3)
+    aftercare(ccall((:GDALReadWorldFile, libgdal), Cint, (Cstring, Cstring, Ptr{Cdouble}), arg1, arg2, arg3))
 end
 
 """
@@ -2546,7 +2546,7 @@ Write ESRI world file.
 TRUE on success or FALSE on failure.
 """
 function gdalwriteworldfile(arg1, arg2, arg3)
-    ccall((:GDALWriteWorldFile, libgdal), Cint, (Cstring, Cstring, Ptr{Cdouble}), arg1, arg2, arg3)
+    aftercare(ccall((:GDALWriteWorldFile, libgdal), Cint, (Cstring, Cstring, Ptr{Cdouble}), arg1, arg2, arg3))
 end
 
 """
@@ -2569,7 +2569,7 @@ Helper function for translator implementer wanting support for MapInfo .tab file
 TRUE in case of success, FALSE otherwise.
 """
 function gdalloadtabfile(arg1, arg2, arg3, arg4, arg5)
-    ccall((:GDALLoadTabFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5)
+    aftercare(ccall((:GDALLoadTabFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -2592,7 +2592,7 @@ Helper function for translator implementer wanting support for MapInfo .tab file
 TRUE in case of success, FALSE otherwise.
 """
 function gdalreadtabfile(arg1, arg2, arg3, arg4, arg5)
-    ccall((:GDALReadTabFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5)
+    aftercare(ccall((:GDALReadTabFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -2615,7 +2615,7 @@ Helper function for translator implementer wanting support for OZI .map.
 TRUE in case of success, FALSE otherwise.
 """
 function gdalloadozimapfile(arg1, arg2, arg3, arg4, arg5)
-    ccall((:GDALLoadOziMapFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5)
+    aftercare(ccall((:GDALLoadOziMapFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -2638,7 +2638,7 @@ Helper function for translator implementer wanting support for OZI .map.
 TRUE in case of success, FALSE otherwise.
 """
 function gdalreadozimapfile(arg1, arg2, arg3, arg4, arg5)
-    ccall((:GDALReadOziMapFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5)
+    aftercare(ccall((:GDALReadOziMapFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -2649,7 +2649,7 @@ end
 Translate a decimal degrees value to a DMS string with hemisphere.
 """
 function gdaldectodms(arg1, arg2, arg3)
-    unsafe_string(ccall((:GDALDecToDMS, libgdal), Cstring, (Cdouble, Cstring, Cint), arg1, arg2, arg3))
+    aftercare(ccall((:GDALDecToDMS, libgdal), Cstring, (Cdouble, Cstring, Cint), arg1, arg2, arg3), false)
 end
 
 """
@@ -2658,7 +2658,7 @@ end
 Convert a packed DMS value (DDDMMMSSS.SS) into decimal degrees.
 """
 function gdalpackeddmstodec(arg1)
-    ccall((:GDALPackedDMSToDec, libgdal), Cdouble, (Cdouble,), arg1)
+    aftercare(ccall((:GDALPackedDMSToDec, libgdal), Cdouble, (Cdouble,), arg1))
 end
 
 """
@@ -2667,7 +2667,7 @@ end
 Convert decimal degrees into packed DMS value (DDDMMMSSS.SS).
 """
 function gdaldectopackeddms(arg1)
-    ccall((:GDALDecToPackedDMS, libgdal), Cdouble, (Cdouble,), arg1)
+    aftercare(ccall((:GDALDecToPackedDMS, libgdal), Cdouble, (Cdouble,), arg1))
 end
 
 """
@@ -2684,7 +2684,7 @@ Extract RPC info from metadata, and apply to an RPCInfo structure.
 TRUE in case of success. FALSE in case of failure.
 """
 function gdalextractrpcinfo(arg1, arg2)
-    ccall((:GDALExtractRPCInfo, libgdal), Cint, (CSLConstList, Ptr{GDALRPCInfo}), arg1, arg2)
+    aftercare(ccall((:GDALExtractRPCInfo, libgdal), Cint, (CSLConstList, Ptr{GDALRPCInfo}), arg1, arg2))
 end
 
 """
@@ -2693,7 +2693,7 @@ end
 Construct a new color table.
 """
 function gdalcreatecolortable(arg1)
-    failsafe(ccall((:GDALCreateColorTable, libgdal), GDALColorTableH, (GDALPaletteInterp,), arg1))
+    aftercare(ccall((:GDALCreateColorTable, libgdal), GDALColorTableH, (GDALPaletteInterp,), arg1))
 end
 
 """
@@ -2702,7 +2702,7 @@ end
 Destroys a color table.
 """
 function gdaldestroycolortable(arg1)
-    ccall((:GDALDestroyColorTable, libgdal), Cvoid, (GDALColorTableH,), arg1)
+    aftercare(ccall((:GDALDestroyColorTable, libgdal), Cvoid, (GDALColorTableH,), arg1))
 end
 
 """
@@ -2711,7 +2711,7 @@ end
 Make a copy of a color table.
 """
 function gdalclonecolortable(arg1)
-    failsafe(ccall((:GDALCloneColorTable, libgdal), GDALColorTableH, (GDALColorTableH,), arg1))
+    aftercare(ccall((:GDALCloneColorTable, libgdal), GDALColorTableH, (GDALColorTableH,), arg1))
 end
 
 """
@@ -2720,7 +2720,7 @@ end
 Fetch palette interpretation.
 """
 function gdalgetpaletteinterpretation(arg1)
-    ccall((:GDALGetPaletteInterpretation, libgdal), GDALPaletteInterp, (GDALColorTableH,), arg1)
+    aftercare(ccall((:GDALGetPaletteInterpretation, libgdal), GDALPaletteInterp, (GDALColorTableH,), arg1))
 end
 
 """
@@ -2729,7 +2729,7 @@ end
 Get number of color entries in table.
 """
 function gdalgetcolorentrycount(arg1)
-    ccall((:GDALGetColorEntryCount, libgdal), Cint, (GDALColorTableH,), arg1)
+    aftercare(ccall((:GDALGetColorEntryCount, libgdal), Cint, (GDALColorTableH,), arg1))
 end
 
 """
@@ -2739,7 +2739,7 @@ end
 Fetch a color entry from table.
 """
 function gdalgetcolorentry(arg1, arg2)
-    ccall((:GDALGetColorEntry, libgdal), Ptr{GDALColorEntry}, (GDALColorTableH, Cint), arg1, arg2)
+    aftercare(ccall((:GDALGetColorEntry, libgdal), Ptr{GDALColorEntry}, (GDALColorTableH, Cint), arg1, arg2))
 end
 
 """
@@ -2750,7 +2750,7 @@ end
 Fetch a table entry in RGB format.
 """
 function gdalgetcolorentryasrgb(arg1, arg2, arg3)
-    ccall((:GDALGetColorEntryAsRGB, libgdal), Cint, (GDALColorTableH, Cint, Ptr{GDALColorEntry}), arg1, arg2, arg3)
+    aftercare(ccall((:GDALGetColorEntryAsRGB, libgdal), Cint, (GDALColorTableH, Cint, Ptr{GDALColorEntry}), arg1, arg2, arg3))
 end
 
 """
@@ -2761,7 +2761,7 @@ end
 Set entry in color table.
 """
 function gdalsetcolorentry(arg1, arg2, arg3)
-    ccall((:GDALSetColorEntry, libgdal), Cvoid, (GDALColorTableH, Cint, Ptr{GDALColorEntry}), arg1, arg2, arg3)
+    aftercare(ccall((:GDALSetColorEntry, libgdal), Cvoid, (GDALColorTableH, Cint, Ptr{GDALColorEntry}), arg1, arg2, arg3))
 end
 
 """
@@ -2774,7 +2774,7 @@ end
 Create color ramp.
 """
 function gdalcreatecolorramp(hTable, nStartIndex, psStartColor, nEndIndex, psEndColor)
-    ccall((:GDALCreateColorRamp, libgdal), Cvoid, (GDALColorTableH, Cint, Ptr{GDALColorEntry}, Cint, Ptr{GDALColorEntry}), hTable, nStartIndex, psStartColor, nEndIndex, psEndColor)
+    aftercare(ccall((:GDALCreateColorRamp, libgdal), Cvoid, (GDALColorTableH, Cint, Ptr{GDALColorEntry}, Cint, Ptr{GDALColorEntry}), hTable, nStartIndex, psStartColor, nEndIndex, psEndColor))
 end
 
 """
@@ -2783,7 +2783,7 @@ end
 Construct empty table.
 """
 function gdalcreaterasterattributetable()
-    failsafe(ccall((:GDALCreateRasterAttributeTable, libgdal), GDALRasterAttributeTableH, ()))
+    aftercare(ccall((:GDALCreateRasterAttributeTable, libgdal), GDALRasterAttributeTableH, ()))
 end
 
 """
@@ -2792,7 +2792,7 @@ end
 Destroys a RAT.
 """
 function gdaldestroyrasterattributetable(arg1)
-    ccall((:GDALDestroyRasterAttributeTable, libgdal), Cvoid, (GDALRasterAttributeTableH,), arg1)
+    aftercare(ccall((:GDALDestroyRasterAttributeTable, libgdal), Cvoid, (GDALRasterAttributeTableH,), arg1))
 end
 
 """
@@ -2801,7 +2801,7 @@ end
 Fetch table column count.
 """
 function gdalratgetcolumncount(arg1)
-    ccall((:GDALRATGetColumnCount, libgdal), Cint, (GDALRasterAttributeTableH,), arg1)
+    aftercare(ccall((:GDALRATGetColumnCount, libgdal), Cint, (GDALRasterAttributeTableH,), arg1))
 end
 
 """
@@ -2818,7 +2818,7 @@ Fetch name of indicated column.
 name.
 """
 function gdalratgetnameofcol(arg1, arg2)
-    unsafe_string(ccall((:GDALRATGetNameOfCol, libgdal), Cstring, (GDALRasterAttributeTableH, Cint), arg1, arg2))
+    aftercare(ccall((:GDALRATGetNameOfCol, libgdal), Cstring, (GDALRasterAttributeTableH, Cint), arg1, arg2), false)
 end
 
 """
@@ -2835,7 +2835,7 @@ Fetch column usage value.
 usage.
 """
 function gdalratgetusageofcol(arg1, arg2)
-    ccall((:GDALRATGetUsageOfCol, libgdal), GDALRATFieldUsage, (GDALRasterAttributeTableH, Cint), arg1, arg2)
+    aftercare(ccall((:GDALRATGetUsageOfCol, libgdal), GDALRATFieldUsage, (GDALRasterAttributeTableH, Cint), arg1, arg2))
 end
 
 """
@@ -2852,7 +2852,7 @@ Fetch column type.
 type.
 """
 function gdalratgettypeofcol(arg1, arg2)
-    ccall((:GDALRATGetTypeOfCol, libgdal), GDALRATFieldType, (GDALRasterAttributeTableH, Cint), arg1, arg2)
+    aftercare(ccall((:GDALRATGetTypeOfCol, libgdal), GDALRATFieldType, (GDALRasterAttributeTableH, Cint), arg1, arg2))
 end
 
 """
@@ -2862,7 +2862,7 @@ end
 Fetch column index for given usage.
 """
 function gdalratgetcolofusage(arg1, arg2)
-    ccall((:GDALRATGetColOfUsage, libgdal), Cint, (GDALRasterAttributeTableH, GDALRATFieldUsage), arg1, arg2)
+    aftercare(ccall((:GDALRATGetColOfUsage, libgdal), Cint, (GDALRasterAttributeTableH, GDALRATFieldUsage), arg1, arg2))
 end
 
 """
@@ -2871,7 +2871,7 @@ end
 Fetch row count.
 """
 function gdalratgetrowcount(arg1)
-    ccall((:GDALRATGetRowCount, libgdal), Cint, (GDALRasterAttributeTableH,), arg1)
+    aftercare(ccall((:GDALRATGetRowCount, libgdal), Cint, (GDALRasterAttributeTableH,), arg1))
 end
 
 """
@@ -2882,7 +2882,7 @@ end
 Fetch field value as a string.
 """
 function gdalratgetvalueasstring(arg1, arg2, arg3)
-    unsafe_string(ccall((:GDALRATGetValueAsString, libgdal), Cstring, (GDALRasterAttributeTableH, Cint, Cint), arg1, arg2, arg3))
+    aftercare(ccall((:GDALRATGetValueAsString, libgdal), Cstring, (GDALRasterAttributeTableH, Cint, Cint), arg1, arg2, arg3), false)
 end
 
 """
@@ -2893,7 +2893,7 @@ end
 Fetch field value as a integer.
 """
 function gdalratgetvalueasint(arg1, arg2, arg3)
-    ccall((:GDALRATGetValueAsInt, libgdal), Cint, (GDALRasterAttributeTableH, Cint, Cint), arg1, arg2, arg3)
+    aftercare(ccall((:GDALRATGetValueAsInt, libgdal), Cint, (GDALRasterAttributeTableH, Cint, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -2904,7 +2904,7 @@ end
 Fetch field value as a double.
 """
 function gdalratgetvalueasdouble(arg1, arg2, arg3)
-    ccall((:GDALRATGetValueAsDouble, libgdal), Cdouble, (GDALRasterAttributeTableH, Cint, Cint), arg1, arg2, arg3)
+    aftercare(ccall((:GDALRATGetValueAsDouble, libgdal), Cdouble, (GDALRasterAttributeTableH, Cint, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -2922,7 +2922,7 @@ Set field value from string.
 * **pszValue**: value.
 """
 function gdalratsetvalueasstring(arg1, arg2, arg3, arg4)
-    ccall((:GDALRATSetValueAsString, libgdal), Cvoid, (GDALRasterAttributeTableH, Cint, Cint, Cstring), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:GDALRATSetValueAsString, libgdal), Cvoid, (GDALRasterAttributeTableH, Cint, Cint, Cstring), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -2934,7 +2934,7 @@ end
 Set field value from integer.
 """
 function gdalratsetvalueasint(arg1, arg2, arg3, arg4)
-    ccall((:GDALRATSetValueAsInt, libgdal), Cvoid, (GDALRasterAttributeTableH, Cint, Cint, Cint), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:GDALRATSetValueAsInt, libgdal), Cvoid, (GDALRasterAttributeTableH, Cint, Cint, Cint), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -2946,7 +2946,7 @@ end
 Set field value from double.
 """
 function gdalratsetvalueasdouble(arg1, arg2, arg3, arg4)
-    ccall((:GDALRATSetValueAsDouble, libgdal), Cvoid, (GDALRasterAttributeTableH, Cint, Cint, Cdouble), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:GDALRATSetValueAsDouble, libgdal), Cvoid, (GDALRasterAttributeTableH, Cint, Cint, Cdouble), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -2955,7 +2955,7 @@ end
 Determine whether changes made to this RAT are reflected directly in the dataset.
 """
 function gdalratchangesarewrittentofile(hRAT)
-    ccall((:GDALRATChangesAreWrittenToFile, libgdal), Cint, (GDALRasterAttributeTableH,), hRAT)
+    aftercare(ccall((:GDALRATChangesAreWrittenToFile, libgdal), Cint, (GDALRasterAttributeTableH,), hRAT))
 end
 
 """
@@ -2969,7 +2969,7 @@ end
 Read or Write a block of doubles to/from the Attribute Table.
 """
 function gdalratvaluesioasdouble(hRAT, eRWFlag, iField, iStartRow, iLength, pdfData)
-    ccall((:GDALRATValuesIOAsDouble, libgdal), CPLErr, (GDALRasterAttributeTableH, GDALRWFlag, Cint, Cint, Cint, Ptr{Cdouble}), hRAT, eRWFlag, iField, iStartRow, iLength, pdfData)
+    aftercare(ccall((:GDALRATValuesIOAsDouble, libgdal), CPLErr, (GDALRasterAttributeTableH, GDALRWFlag, Cint, Cint, Cint, Ptr{Cdouble}), hRAT, eRWFlag, iField, iStartRow, iLength, pdfData))
 end
 
 """
@@ -2983,7 +2983,7 @@ end
 Read or Write a block of ints to/from the Attribute Table.
 """
 function gdalratvaluesioasinteger(hRAT, eRWFlag, iField, iStartRow, iLength, pnData)
-    ccall((:GDALRATValuesIOAsInteger, libgdal), CPLErr, (GDALRasterAttributeTableH, GDALRWFlag, Cint, Cint, Cint, Ptr{Cint}), hRAT, eRWFlag, iField, iStartRow, iLength, pnData)
+    aftercare(ccall((:GDALRATValuesIOAsInteger, libgdal), CPLErr, (GDALRasterAttributeTableH, GDALRWFlag, Cint, Cint, Cint, Ptr{Cint}), hRAT, eRWFlag, iField, iStartRow, iLength, pnData))
 end
 
 """
@@ -2997,7 +2997,7 @@ end
 Read or Write a block of strings to/from the Attribute Table.
 """
 function gdalratvaluesioasstring(hRAT, eRWFlag, iField, iStartRow, iLength, papszStrList)
-    ccall((:GDALRATValuesIOAsString, libgdal), CPLErr, (GDALRasterAttributeTableH, GDALRWFlag, Cint, Cint, Cint, CSLConstList), hRAT, eRWFlag, iField, iStartRow, iLength, papszStrList)
+    aftercare(ccall((:GDALRATValuesIOAsString, libgdal), CPLErr, (GDALRasterAttributeTableH, GDALRWFlag, Cint, Cint, Cint, CSLConstList), hRAT, eRWFlag, iField, iStartRow, iLength, papszStrList))
 end
 
 """
@@ -3011,7 +3011,7 @@ Set row count.
 * **nNewCount**: the new number of rows.
 """
 function gdalratsetrowcount(arg1, arg2)
-    ccall((:GDALRATSetRowCount, libgdal), Cvoid, (GDALRasterAttributeTableH, Cint), arg1, arg2)
+    aftercare(ccall((:GDALRATSetRowCount, libgdal), Cvoid, (GDALRasterAttributeTableH, Cint), arg1, arg2))
 end
 
 """
@@ -3023,7 +3023,7 @@ end
 Create new column.
 """
 function gdalratcreatecolumn(arg1, arg2, arg3, arg4)
-    ccall((:GDALRATCreateColumn, libgdal), CPLErr, (GDALRasterAttributeTableH, Cstring, GDALRATFieldType, GDALRATFieldUsage), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:GDALRATCreateColumn, libgdal), CPLErr, (GDALRasterAttributeTableH, Cstring, GDALRATFieldType, GDALRATFieldUsage), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -3034,7 +3034,7 @@ end
 Set linear binning information.
 """
 function gdalratsetlinearbinning(arg1, arg2, arg3)
-    ccall((:GDALRATSetLinearBinning, libgdal), CPLErr, (GDALRasterAttributeTableH, Cdouble, Cdouble), arg1, arg2, arg3)
+    aftercare(ccall((:GDALRATSetLinearBinning, libgdal), CPLErr, (GDALRasterAttributeTableH, Cdouble, Cdouble), arg1, arg2, arg3))
 end
 
 """
@@ -3045,7 +3045,7 @@ end
 Get linear binning information.
 """
 function gdalratgetlinearbinning(arg1, arg2, arg3)
-    ccall((:GDALRATGetLinearBinning, libgdal), Cint, (GDALRasterAttributeTableH, Ptr{Cdouble}, Ptr{Cdouble}), arg1, arg2, arg3)
+    aftercare(ccall((:GDALRATGetLinearBinning, libgdal), Cint, (GDALRasterAttributeTableH, Ptr{Cdouble}, Ptr{Cdouble}), arg1, arg2, arg3))
 end
 
 """
@@ -3055,7 +3055,7 @@ end
 Set RAT Table Type.
 """
 function gdalratsettabletype(hRAT, eInTableType)
-    ccall((:GDALRATSetTableType, libgdal), CPLErr, (GDALRasterAttributeTableH, GDALRATTableType), hRAT, eInTableType)
+    aftercare(ccall((:GDALRATSetTableType, libgdal), CPLErr, (GDALRasterAttributeTableH, GDALRATTableType), hRAT, eInTableType))
 end
 
 """
@@ -3064,7 +3064,7 @@ end
 Get Rat Table Type.
 """
 function gdalratgettabletype(hRAT)
-    ccall((:GDALRATGetTableType, libgdal), GDALRATTableType, (GDALRasterAttributeTableH,), hRAT)
+    aftercare(ccall((:GDALRATGetTableType, libgdal), GDALRATTableType, (GDALRasterAttributeTableH,), hRAT))
 end
 
 """
@@ -3074,7 +3074,7 @@ end
 Initialize from color table.
 """
 function gdalratinitializefromcolortable(arg1, arg2)
-    ccall((:GDALRATInitializeFromColorTable, libgdal), CPLErr, (GDALRasterAttributeTableH, GDALColorTableH), arg1, arg2)
+    aftercare(ccall((:GDALRATInitializeFromColorTable, libgdal), CPLErr, (GDALRasterAttributeTableH, GDALColorTableH), arg1, arg2))
 end
 
 """
@@ -3084,7 +3084,7 @@ end
 Translate to a color table.
 """
 function gdalrattranslatetocolortable(arg1, nEntryCount)
-    failsafe(ccall((:GDALRATTranslateToColorTable, libgdal), GDALColorTableH, (GDALRasterAttributeTableH, Cint), arg1, nEntryCount))
+    aftercare(ccall((:GDALRATTranslateToColorTable, libgdal), GDALColorTableH, (GDALRasterAttributeTableH, Cint), arg1, nEntryCount))
 end
 
 """
@@ -3094,7 +3094,7 @@ end
 Dump RAT in readable form.
 """
 function gdalratdumpreadable(arg1, arg2)
-    ccall((:GDALRATDumpReadable, libgdal), Cvoid, (GDALRasterAttributeTableH, Ptr{Cint}), arg1, arg2)
+    aftercare(ccall((:GDALRATDumpReadable, libgdal), Cvoid, (GDALRasterAttributeTableH, Ptr{Cint}), arg1, arg2))
 end
 
 """
@@ -3103,7 +3103,7 @@ end
 Copy Raster Attribute Table.
 """
 function gdalratclone(arg1)
-    failsafe(ccall((:GDALRATClone, libgdal), GDALRasterAttributeTableH, (GDALRasterAttributeTableH,), arg1))
+    aftercare(ccall((:GDALRATClone, libgdal), GDALRasterAttributeTableH, (GDALRasterAttributeTableH,), arg1))
 end
 
 """
@@ -3112,7 +3112,7 @@ end
 Serialize Raster Attribute Table in Json format.
 """
 function gdalratserializejson(arg1)
-    failsafe(ccall((:GDALRATSerializeJSON, libgdal), Ptr{Cvoid}, (GDALRasterAttributeTableH,), arg1))
+    aftercare(ccall((:GDALRATSerializeJSON, libgdal), Ptr{Cvoid}, (GDALRasterAttributeTableH,), arg1))
 end
 
 """
@@ -3122,7 +3122,7 @@ end
 Get row for pixel value.
 """
 function gdalratgetrowofvalue(arg1, arg2)
-    ccall((:GDALRATGetRowOfValue, libgdal), Cint, (GDALRasterAttributeTableH, Cdouble), arg1, arg2)
+    aftercare(ccall((:GDALRATGetRowOfValue, libgdal), Cint, (GDALRasterAttributeTableH, Cdouble), arg1, arg2))
 end
 
 """
@@ -3131,7 +3131,7 @@ end
 Remove Statistics from RAT.
 """
 function gdalratremovestatistics(arg1)
-    ccall((:GDALRATRemoveStatistics, libgdal), Cvoid, (GDALRasterAttributeTableH,), arg1)
+    aftercare(ccall((:GDALRATRemoveStatistics, libgdal), Cvoid, (GDALRasterAttributeTableH,), arg1))
 end
 
 """
@@ -3143,7 +3143,7 @@ Set maximum cache memory.
 * **nNewSizeInBytes**: the maximum number of bytes for caching.
 """
 function gdalsetcachemax(nBytes)
-    ccall((:GDALSetCacheMax, libgdal), Cvoid, (Cint,), nBytes)
+    aftercare(ccall((:GDALSetCacheMax, libgdal), Cvoid, (Cint,), nBytes))
 end
 
 """
@@ -3155,7 +3155,7 @@ Get maximum cache memory.
 maximum in bytes.
 """
 function gdalgetcachemax()
-    ccall((:GDALGetCacheMax, libgdal), Cint, ())
+    aftercare(ccall((:GDALGetCacheMax, libgdal), Cint, ()))
 end
 
 """
@@ -3167,7 +3167,7 @@ Get cache memory used.
 the number of bytes of memory currently in use by the GDALRasterBlock memory caching.
 """
 function gdalgetcacheused()
-    ccall((:GDALGetCacheUsed, libgdal), Cint, ())
+    aftercare(ccall((:GDALGetCacheUsed, libgdal), Cint, ()))
 end
 
 """
@@ -3179,7 +3179,7 @@ Set maximum cache memory.
 * **nNewSizeInBytes**: the maximum number of bytes for caching.
 """
 function gdalsetcachemax64(nBytes)
-    ccall((:GDALSetCacheMax64, libgdal), Cvoid, (GIntBig,), nBytes)
+    aftercare(ccall((:GDALSetCacheMax64, libgdal), Cvoid, (GIntBig,), nBytes))
 end
 
 """
@@ -3191,7 +3191,7 @@ Get maximum cache memory.
 maximum in bytes.
 """
 function gdalgetcachemax64()
-    ccall((:GDALGetCacheMax64, libgdal), GIntBig, ())
+    aftercare(ccall((:GDALGetCacheMax64, libgdal), GIntBig, ()))
 end
 
 """
@@ -3203,7 +3203,7 @@ Get cache memory used.
 the number of bytes of memory currently in use by the GDALRasterBlock memory caching.
 """
 function gdalgetcacheused64()
-    ccall((:GDALGetCacheUsed64, libgdal), GIntBig, ())
+    aftercare(ccall((:GDALGetCacheUsed64, libgdal), GIntBig, ()))
 end
 
 """
@@ -3215,7 +3215,7 @@ Try to flush one cached raster block.
 TRUE if one block was flushed, FALSE if there are no cached blocks or if they are currently locked.
 """
 function gdalflushcacheblock()
-    ccall((:GDALFlushCacheBlock, libgdal), Cint, ())
+    aftercare(ccall((:GDALFlushCacheBlock, libgdal), Cint, ()))
 end
 
 """
@@ -3264,7 +3264,7 @@ Create a CPLVirtualMem object from a GDAL dataset object.
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
 function gdaldatasetgetvirtualmem(hDS, eRWFlag, nXOff, nYOff, nXSize, nYSize, nBufXSize, nBufYSize, eBufType, nBandCount, panBandMap, nPixelSpace, nLineSpace, nBandSpace, nCacheSize, nPageSizeHint, bSingleThreadUsage, papszOptions)
-    failsafe(ccall((:GDALDatasetGetVirtualMem, libgdal), Ptr{CPLVirtualMem}, (GDALDatasetH, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, Cint, GIntBig, GIntBig, Csize_t, Csize_t, Cint, CSLConstList), hDS, eRWFlag, nXOff, nYOff, nXSize, nYSize, nBufXSize, nBufYSize, eBufType, nBandCount, panBandMap, nPixelSpace, nLineSpace, nBandSpace, nCacheSize, nPageSizeHint, bSingleThreadUsage, papszOptions))
+    aftercare(ccall((:GDALDatasetGetVirtualMem, libgdal), Ptr{CPLVirtualMem}, (GDALDatasetH, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, Cint, GIntBig, GIntBig, Csize_t, Csize_t, Cint, CSLConstList), hDS, eRWFlag, nXOff, nYOff, nXSize, nYSize, nBufXSize, nBufYSize, eBufType, nBandCount, panBandMap, nPixelSpace, nLineSpace, nBandSpace, nCacheSize, nPageSizeHint, bSingleThreadUsage, papszOptions))
 end
 
 """
@@ -3307,7 +3307,7 @@ Create a CPLVirtualMem object from a GDAL raster band object.
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
 function gdalrasterbandgetvirtualmem(hBand, eRWFlag, nXOff, nYOff, nXSize, nYSize, nBufXSize, nBufYSize, eBufType, nPixelSpace, nLineSpace, nCacheSize, nPageSizeHint, bSingleThreadUsage, papszOptions)
-    failsafe(ccall((:GDALRasterBandGetVirtualMem, libgdal), Ptr{CPLVirtualMem}, (GDALRasterBandH, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, GIntBig, Csize_t, Csize_t, Cint, CSLConstList), hBand, eRWFlag, nXOff, nYOff, nXSize, nYSize, nBufXSize, nBufYSize, eBufType, nPixelSpace, nLineSpace, nCacheSize, nPageSizeHint, bSingleThreadUsage, papszOptions))
+    aftercare(ccall((:GDALRasterBandGetVirtualMem, libgdal), Ptr{CPLVirtualMem}, (GDALRasterBandH, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, GIntBig, Csize_t, Csize_t, Cint, CSLConstList), hBand, eRWFlag, nXOff, nYOff, nXSize, nYSize, nBufXSize, nBufYSize, eBufType, nPixelSpace, nLineSpace, nCacheSize, nPageSizeHint, bSingleThreadUsage, papszOptions))
 end
 
 """
@@ -3320,7 +3320,7 @@ end
 Create a CPLVirtualMem object from a GDAL raster band object.
 """
 function gdalgetvirtualmemauto(hBand, eRWFlag, pnPixelSpace, pnLineSpace, papszOptions)
-    failsafe(ccall((:GDALGetVirtualMemAuto, libgdal), Ptr{CPLVirtualMem}, (GDALRasterBandH, GDALRWFlag, Ptr{Cint}, Ptr{GIntBig}, CSLConstList), hBand, eRWFlag, pnPixelSpace, pnLineSpace, papszOptions))
+    aftercare(ccall((:GDALGetVirtualMemAuto, libgdal), Ptr{CPLVirtualMem}, (GDALRasterBandH, GDALRWFlag, Ptr{Cint}, Ptr{GIntBig}, CSLConstList), hBand, eRWFlag, pnPixelSpace, pnLineSpace, papszOptions))
 end
 
 """
@@ -3363,7 +3363,7 @@ Create a CPLVirtualMem object from a GDAL dataset object, with tiling organizati
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
 function gdaldatasetgettiledvirtualmem(hDS, eRWFlag, nXOff, nYOff, nXSize, nYSize, nTileXSize, nTileYSize, eBufType, nBandCount, panBandMap, eTileOrganization, nCacheSize, bSingleThreadUsage, papszOptions)
-    failsafe(ccall((:GDALDatasetGetTiledVirtualMem, libgdal), Ptr{CPLVirtualMem}, (GDALDatasetH, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, GDALTileOrganization, Csize_t, Cint, CSLConstList), hDS, eRWFlag, nXOff, nYOff, nXSize, nYSize, nTileXSize, nTileYSize, eBufType, nBandCount, panBandMap, eTileOrganization, nCacheSize, bSingleThreadUsage, papszOptions))
+    aftercare(ccall((:GDALDatasetGetTiledVirtualMem, libgdal), Ptr{CPLVirtualMem}, (GDALDatasetH, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, GDALTileOrganization, Csize_t, Cint, CSLConstList), hDS, eRWFlag, nXOff, nYOff, nXSize, nYSize, nTileXSize, nTileYSize, eBufType, nBandCount, panBandMap, eTileOrganization, nCacheSize, bSingleThreadUsage, papszOptions))
 end
 
 """
@@ -3400,7 +3400,7 @@ Create a CPLVirtualMem object from a GDAL rasterband object, with tiling organiz
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
 function gdalrasterbandgettiledvirtualmem(hBand, eRWFlag, nXOff, nYOff, nXSize, nYSize, nTileXSize, nTileYSize, eBufType, nCacheSize, bSingleThreadUsage, papszOptions)
-    failsafe(ccall((:GDALRasterBandGetTiledVirtualMem, libgdal), Ptr{CPLVirtualMem}, (GDALRasterBandH, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Csize_t, Cint, CSLConstList), hBand, eRWFlag, nXOff, nYOff, nXSize, nYSize, nTileXSize, nTileYSize, eBufType, nCacheSize, bSingleThreadUsage, papszOptions))
+    aftercare(ccall((:GDALRasterBandGetTiledVirtualMem, libgdal), Ptr{CPLVirtualMem}, (GDALRasterBandH, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Csize_t, Cint, CSLConstList), hBand, eRWFlag, nXOff, nYOff, nXSize, nYSize, nTileXSize, nTileYSize, eBufType, nCacheSize, bSingleThreadUsage, papszOptions))
 end
 
 """
@@ -3421,7 +3421,7 @@ Create a virtual pansharpened dataset.
 NULL on failure, or a new virtual dataset handle on success to be closed with GDALClose().
 """
 function gdalcreatepansharpenedvrt(pszXML, hPanchroBand, nInputSpectralBands, pahInputSpectralBands)
-    failsafe(ccall((:GDALCreatePansharpenedVRT, libgdal), GDALDatasetH, (Cstring, GDALRasterBandH, Cint, Ptr{GDALRasterBandH}), pszXML, hPanchroBand, nInputSpectralBands, pahInputSpectralBands))
+    aftercare(ccall((:GDALCreatePansharpenedVRT, libgdal), GDALDatasetH, (Cstring, GDALRasterBandH, Cint, Ptr{GDALRasterBandH}), pszXML, hPanchroBand, nInputSpectralBands, pahInputSpectralBands))
 end
 
 """
@@ -3438,5 +3438,5 @@ Dump the structure of a JPEG2000 file as a XML tree.
 XML tree (to be freed with CPLDestroyXMLNode()) or NULL in case of error
 """
 function gdalgetjpeg2000structure(pszFilename, papszOptions)
-    ccall((:GDALGetJPEG2000Structure, libgdal), Ptr{CPLXMLNode}, (Cstring, CSLConstList), pszFilename, papszOptions)
+    aftercare(ccall((:GDALGetJPEG2000Structure, libgdal), Ptr{CPLXMLNode}, (Cstring, CSLConstList), pszFilename, papszOptions))
 end

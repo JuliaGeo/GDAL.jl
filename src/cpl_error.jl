@@ -80,7 +80,7 @@ Fetch the user data for the error context.
 the user data pointer for the error context
 """
 function cplgeterrorhandleruserdata()
-    failsafe(ccall((:CPLGetErrorHandlerUserData, libgdal), Ptr{Cvoid}, ()))
+    ccall((:CPLGetErrorHandlerUserData, libgdal), Ptr{Cvoid}, ())
 end
 
 """
@@ -140,7 +140,7 @@ end
 Whether failures should be turned into warnings.
 """
 function cplturnfailureintowarning(bOn)
-    ccall((:CPLTurnFailureIntoWarning, libgdal), Cvoid, (Cint,), bOn)
+    aftercare(ccall((:CPLTurnFailureIntoWarning, libgdal), Cvoid, (Cint,), bOn))
 end
 
 """
@@ -155,7 +155,7 @@ Install custom error handler.
 returns the previously installed error handler.
 """
 function cplseterrorhandler(arg1)
-    failsafe(ccall((:CPLSetErrorHandler, libgdal), CPLErrorHandler, (CPLErrorHandler,), arg1))
+    ccall((:CPLSetErrorHandler, libgdal), CPLErrorHandler, (CPLErrorHandler,), arg1)
 end
 
 """
@@ -172,7 +172,7 @@ Install custom error handle with user's data.
 returns the previously installed error handler.
 """
 function cplseterrorhandlerex(arg1, arg2)
-    failsafe(ccall((:CPLSetErrorHandlerEx, libgdal), CPLErrorHandler, (CPLErrorHandler, Ptr{Cvoid}), arg1, arg2))
+    ccall((:CPLSetErrorHandlerEx, libgdal), CPLErrorHandler, (CPLErrorHandler, Ptr{Cvoid}), arg1, arg2)
 end
 
 """
@@ -230,5 +230,5 @@ end
 Report failure of a logical assertion.
 """
 function _cplassert(arg1, arg2, arg3)
-    ccall((:_CPLAssert, libgdal), Cvoid, (Cstring, Cstring, Cint), arg1, arg2, arg3)
+    aftercare(ccall((:_CPLAssert, libgdal), Cvoid, (Cstring, Cstring, Cint), arg1, arg2, arg3))
 end

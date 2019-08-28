@@ -59,23 +59,4 @@ function __init__()
     osrsetprojsearchpaths([PROJ_LIB[]])
 end
 
-"""
-Load a null-terminated list of strings
-
-That is it expects a `StringList`, in the sense of the CPL functions,
-as a null-terminated array of strings.
-"""
-function unsafe_loadstringlist(ptr::Ptr{Cstring})
-    strings = Vector{String}()
-    (ptr == C_NULL) && return strings
-    i = 1
-    cstring = unsafe_load(ptr, i)
-    while cstring != C_NULL
-        push!(strings, unsafe_string(cstring))
-        i += 1
-        cstring = unsafe_load(ptr, i)
-    end
-    strings
-end
-
 end # module

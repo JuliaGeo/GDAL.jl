@@ -20,7 +20,7 @@ Create a geometry object of the appropriate type from its well known binary repr
 OGRERR_NONE if all goes well, otherwise any of OGRERR_NOT_ENOUGH_DATA, OGRERR_UNSUPPORTED_GEOMETRY_TYPE, or OGRERR_CORRUPT_DATA may be returned.
 """
 function ogr_g_createfromwkb(arg1, arg2, arg3, arg4)
-    ccall((:OGR_G_CreateFromWkb, libgdal), OGRErr, (Ptr{Cvoid}, OGRSpatialReferenceH, Ptr{OGRGeometryH}, Cint), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:OGR_G_CreateFromWkb, libgdal), OGRErr, (Ptr{Cvoid}, OGRSpatialReferenceH, Ptr{OGRGeometryH}, Cint), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -39,7 +39,7 @@ Create a geometry object of the appropriate type from its well known text repres
 OGRERR_NONE if all goes well, otherwise any of OGRERR_NOT_ENOUGH_DATA, OGRERR_UNSUPPORTED_GEOMETRY_TYPE, or OGRERR_CORRUPT_DATA may be returned.
 """
 function ogr_g_createfromwkt(arg1, arg2, arg3)
-    ccall((:OGR_G_CreateFromWkt, libgdal), OGRErr, (Ptr{Cstring}, OGRSpatialReferenceH, Ptr{OGRGeometryH}), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_G_CreateFromWkt, libgdal), OGRErr, (Ptr{Cstring}, OGRSpatialReferenceH, Ptr{OGRGeometryH}), arg1, arg2, arg3))
 end
 
 """
@@ -52,7 +52,7 @@ end
 Create a geometry object of the appropriate type from its FGF (FDO Geometry Format) binary representation.
 """
 function ogr_g_createfromfgf(arg1, arg2, arg3, arg4, arg5)
-    ccall((:OGR_G_CreateFromFgf, libgdal), OGRErr, (Ptr{Cvoid}, OGRSpatialReferenceH, Ptr{OGRGeometryH}, Cint, Ptr{Cint}), arg1, arg2, arg3, arg4, arg5)
+    aftercare(ccall((:OGR_G_CreateFromFgf, libgdal), OGRErr, (Ptr{Cvoid}, OGRSpatialReferenceH, Ptr{OGRGeometryH}, Cint, Ptr{Cint}), arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -64,7 +64,7 @@ Destroy geometry object.
 * **hGeom**: handle to the geometry to delete.
 """
 function ogr_g_destroygeometry(arg1)
-    ccall((:OGR_G_DestroyGeometry, libgdal), Cvoid, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_DestroyGeometry, libgdal), Cvoid, (OGRGeometryH,), arg1))
 end
 
 """
@@ -79,7 +79,7 @@ Create an empty geometry of desired type.
 handle to the newly create geometry or NULL on failure. Should be freed with OGR_G_DestroyGeometry() after use.
 """
 function ogr_g_creategeometry(arg1)
-    failsafe(ccall((:OGR_G_CreateGeometry, libgdal), OGRGeometryH, (OGRwkbGeometryType,), arg1))
+    aftercare(ccall((:OGR_G_CreateGeometry, libgdal), OGRGeometryH, (OGRwkbGeometryType,), arg1))
 end
 
 """
@@ -110,7 +110,7 @@ Stroke arc to linestring.
 OGRLineString geometry representing an approximation of the arc.
 """
 function ogr_g_approximatearcangles(dfCenterX, dfCenterY, dfZ, dfPrimaryRadius, dfSecondaryAxis, dfRotation, dfStartAngle, dfEndAngle, dfMaxAngleStepSizeDegrees)
-    failsafe(ccall((:OGR_G_ApproximateArcAngles, libgdal), OGRGeometryH, (Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), dfCenterX, dfCenterY, dfZ, dfPrimaryRadius, dfSecondaryAxis, dfRotation, dfStartAngle, dfEndAngle, dfMaxAngleStepSizeDegrees))
+    aftercare(ccall((:OGR_G_ApproximateArcAngles, libgdal), OGRGeometryH, (Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), dfCenterX, dfCenterY, dfZ, dfPrimaryRadius, dfSecondaryAxis, dfRotation, dfStartAngle, dfEndAngle, dfMaxAngleStepSizeDegrees))
 end
 
 """
@@ -125,7 +125,7 @@ Convert to polygon.
 the converted geometry (ownership to caller).
 """
 function ogr_g_forcetopolygon(arg1)
-    failsafe(ccall((:OGR_G_ForceToPolygon, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_ForceToPolygon, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -140,7 +140,7 @@ Convert to line string.
 the converted geometry (ownership to caller).
 """
 function ogr_g_forcetolinestring(arg1)
-    failsafe(ccall((:OGR_G_ForceToLineString, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_ForceToLineString, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -155,7 +155,7 @@ Convert to multipolygon.
 the converted geometry (ownership to caller).
 """
 function ogr_g_forcetomultipolygon(arg1)
-    failsafe(ccall((:OGR_G_ForceToMultiPolygon, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_ForceToMultiPolygon, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -170,7 +170,7 @@ Convert to multipoint.
 the converted geometry (ownership to caller).
 """
 function ogr_g_forcetomultipoint(arg1)
-    failsafe(ccall((:OGR_G_ForceToMultiPoint, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_ForceToMultiPoint, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -185,7 +185,7 @@ Convert to multilinestring.
 the converted geometry (ownership to caller).
 """
 function ogr_g_forcetomultilinestring(arg1)
-    failsafe(ccall((:OGR_G_ForceToMultiLineString, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_ForceToMultiLineString, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -204,7 +204,7 @@ Convert to another geometry type.
 new geometry.
 """
 function ogr_g_forceto(hGeom, eTargetType, papszOptions)
-    failsafe(ccall((:OGR_G_ForceTo, libgdal), OGRGeometryH, (OGRGeometryH, OGRwkbGeometryType, Ptr{Cstring}), hGeom, eTargetType, papszOptions))
+    aftercare(ccall((:OGR_G_ForceTo, libgdal), OGRGeometryH, (OGRGeometryH, OGRwkbGeometryType, Ptr{Cstring}), hGeom, eTargetType, papszOptions))
 end
 
 """
@@ -219,7 +219,7 @@ Get the dimension of this geometry.
 0 for points, 1 for lines and 2 for surfaces.
 """
 function ogr_g_getdimension(arg1)
-    ccall((:OGR_G_GetDimension, libgdal), Cint, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_GetDimension, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -234,7 +234,7 @@ Get the dimension of the coordinates in this geometry.
 this will return 2 or 3.
 """
 function ogr_g_getcoordinatedimension(arg1)
-    ccall((:OGR_G_GetCoordinateDimension, libgdal), Cint, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_GetCoordinateDimension, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -249,7 +249,7 @@ Get the dimension of the coordinates in this geometry.
 this will return 2 for XY, 3 for XYZ and XYM, and 4 for XYZM data.
 """
 function ogr_g_coordinatedimension(arg1)
-    ccall((:OGR_G_CoordinateDimension, libgdal), Cint, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_CoordinateDimension, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -263,7 +263,7 @@ Set the coordinate dimension.
 * **nNewDimension**: New coordinate dimension value, either 2 or 3.
 """
 function ogr_g_setcoordinatedimension(arg1, arg2)
-    ccall((:OGR_G_SetCoordinateDimension, libgdal), Cvoid, (OGRGeometryH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_G_SetCoordinateDimension, libgdal), Cvoid, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -278,7 +278,7 @@ See whether this geometry has Z coordinates.
 TRUE if the geometry has Z coordinates.
 """
 function ogr_g_is3d(arg1)
-    ccall((:OGR_G_Is3D, libgdal), Cint, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_Is3D, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -293,7 +293,7 @@ See whether this geometry is measured.
 TRUE if the geometry has M coordinates.
 """
 function ogr_g_ismeasured(arg1)
-    ccall((:OGR_G_IsMeasured, libgdal), Cint, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_IsMeasured, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -307,7 +307,7 @@ Add or remove the Z coordinate dimension.
 * **bIs3D**: Should the geometry have a Z dimension, either TRUE or FALSE.
 """
 function ogr_g_set3d(arg1, arg2)
-    ccall((:OGR_G_Set3D, libgdal), Cvoid, (OGRGeometryH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_G_Set3D, libgdal), Cvoid, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -321,7 +321,7 @@ Add or remove the M coordinate dimension.
 * **bIsMeasured**: Should the geometry have a M dimension, either TRUE or FALSE.
 """
 function ogr_g_setmeasured(arg1, arg2)
-    ccall((:OGR_G_SetMeasured, libgdal), Cvoid, (OGRGeometryH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_G_SetMeasured, libgdal), Cvoid, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -336,7 +336,7 @@ Make a copy of this object.
 an handle on the copy of the geometry with the spatial reference system as the original.
 """
 function ogr_g_clone(arg1)
-    failsafe(ccall((:OGR_G_Clone, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_Clone, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -350,7 +350,7 @@ Computes and returns the bounding envelope for this geometry in the passed psEnv
 * **psEnvelope**: the structure in which to place the results.
 """
 function ogr_g_getenvelope(arg1, arg2)
-    ccall((:OGR_G_GetEnvelope, libgdal), Cvoid, (OGRGeometryH, Ptr{OGREnvelope}), arg1, arg2)
+    aftercare(ccall((:OGR_G_GetEnvelope, libgdal), Cvoid, (OGRGeometryH, Ptr{OGREnvelope}), arg1, arg2))
 end
 
 """
@@ -364,7 +364,7 @@ Computes and returns the bounding envelope (3D) for this geometry in the passed 
 * **psEnvelope**: the structure in which to place the results.
 """
 function ogr_g_getenvelope3d(arg1, arg2)
-    ccall((:OGR_G_GetEnvelope3D, libgdal), Cvoid, (OGRGeometryH, Ptr{OGREnvelope3D}), arg1, arg2)
+    aftercare(ccall((:OGR_G_GetEnvelope3D, libgdal), Cvoid, (OGRGeometryH, Ptr{OGREnvelope3D}), arg1, arg2))
 end
 
 """
@@ -383,7 +383,7 @@ Assign geometry from well known binary data.
 OGRERR_NONE if all goes well, otherwise any of OGRERR_NOT_ENOUGH_DATA, OGRERR_UNSUPPORTED_GEOMETRY_TYPE, or OGRERR_CORRUPT_DATA may be returned.
 """
 function ogr_g_importfromwkb(arg1, arg2, arg3)
-    ccall((:OGR_G_ImportFromWkb, libgdal), OGRErr, (OGRGeometryH, Ptr{Cvoid}, Cint), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_G_ImportFromWkb, libgdal), OGRErr, (OGRGeometryH, Ptr{Cvoid}, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -402,7 +402,7 @@ Convert a geometry well known binary format.
 Currently OGRERR_NONE is always returned.
 """
 function ogr_g_exporttowkb(arg1, arg2, arg3)
-    ccall((:OGR_G_ExportToWkb, libgdal), OGRErr, (OGRGeometryH, OGRwkbByteOrder, Ptr{Cuchar}), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_G_ExportToWkb, libgdal), OGRErr, (OGRGeometryH, OGRwkbByteOrder, Ptr{Cuchar}), arg1, arg2, arg3))
 end
 
 """
@@ -421,7 +421,7 @@ Convert a geometry into SFSQL 1.2 / ISO SQL/MM Part 3 well known binary format.
 Currently OGRERR_NONE is always returned.
 """
 function ogr_g_exporttoisowkb(arg1, arg2, arg3)
-    ccall((:OGR_G_ExportToIsoWkb, libgdal), OGRErr, (OGRGeometryH, OGRwkbByteOrder, Ptr{Cuchar}), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_G_ExportToIsoWkb, libgdal), OGRErr, (OGRGeometryH, OGRwkbByteOrder, Ptr{Cuchar}), arg1, arg2, arg3))
 end
 
 """
@@ -436,7 +436,7 @@ Returns size of related binary representation.
 size of binary representation in bytes.
 """
 function ogr_g_wkbsize(hGeom)
-    ccall((:OGR_G_WkbSize, libgdal), Cint, (OGRGeometryH,), hGeom)
+    aftercare(ccall((:OGR_G_WkbSize, libgdal), Cint, (OGRGeometryH,), hGeom))
 end
 
 """
@@ -453,7 +453,7 @@ Assign geometry from well known text data.
 OGRERR_NONE if all goes well, otherwise any of OGRERR_NOT_ENOUGH_DATA, OGRERR_UNSUPPORTED_GEOMETRY_TYPE, or OGRERR_CORRUPT_DATA may be returned.
 """
 function ogr_g_importfromwkt(arg1, arg2)
-    ccall((:OGR_G_ImportFromWkt, libgdal), OGRErr, (OGRGeometryH, Ptr{Cstring}), arg1, arg2)
+    aftercare(ccall((:OGR_G_ImportFromWkt, libgdal), OGRErr, (OGRGeometryH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -470,7 +470,7 @@ Convert a geometry into well known text format.
 Currently OGRERR_NONE is always returned.
 """
 function ogr_g_exporttowkt(arg1, arg2)
-    ccall((:OGR_G_ExportToWkt, libgdal), OGRErr, (OGRGeometryH, Ptr{Cstring}), arg1, arg2)
+    aftercare(ccall((:OGR_G_ExportToWkt, libgdal), OGRErr, (OGRGeometryH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -487,7 +487,7 @@ Convert a geometry into SFSQL 1.2 / ISO SQL/MM Part 3 well known text format.
 Currently OGRERR_NONE is always returned.
 """
 function ogr_g_exporttoisowkt(arg1, arg2)
-    ccall((:OGR_G_ExportToIsoWkt, libgdal), OGRErr, (OGRGeometryH, Ptr{Cstring}), arg1, arg2)
+    aftercare(ccall((:OGR_G_ExportToIsoWkt, libgdal), OGRErr, (OGRGeometryH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -502,7 +502,7 @@ Fetch geometry type.
 the geometry type code.
 """
 function ogr_g_getgeometrytype(arg1)
-    ccall((:OGR_G_GetGeometryType, libgdal), OGRwkbGeometryType, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_GetGeometryType, libgdal), OGRwkbGeometryType, (OGRGeometryH,), arg1))
 end
 
 """
@@ -517,7 +517,7 @@ Fetch WKT name for geometry type.
 name used for this geometry type in well known text format.
 """
 function ogr_g_getgeometryname(arg1)
-    unsafe_string(ccall((:OGR_G_GetGeometryName, libgdal), Cstring, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_GetGeometryName, libgdal), Cstring, (OGRGeometryH,), arg1), false)
 end
 
 """
@@ -533,7 +533,7 @@ Dump geometry in well known text format to indicated output file.
 * **pszPrefix**: the prefix to put on each line of output.
 """
 function ogr_g_dumpreadable(arg1, arg2, arg3)
-    ccall((:OGR_G_DumpReadable, libgdal), Cvoid, (OGRGeometryH, Ptr{Cint}, Cstring), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_G_DumpReadable, libgdal), Cvoid, (OGRGeometryH, Ptr{Cint}, Cstring), arg1, arg2, arg3))
 end
 
 """
@@ -545,7 +545,7 @@ Convert geometry to strictly 2D.
 * **hGeom**: handle on the geometry to convert.
 """
 function ogr_g_flattento2d(arg1)
-    ccall((:OGR_G_FlattenTo2D, libgdal), Cvoid, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_FlattenTo2D, libgdal), Cvoid, (OGRGeometryH,), arg1))
 end
 
 """
@@ -557,7 +557,7 @@ Force rings to be closed.
 * **hGeom**: handle to the geometry.
 """
 function ogr_g_closerings(arg1)
-    ccall((:OGR_G_CloseRings, libgdal), Cvoid, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_CloseRings, libgdal), Cvoid, (OGRGeometryH,), arg1))
 end
 
 """
@@ -572,7 +572,7 @@ Create geometry from GML.
 a geometry on success, or NULL on error.
 """
 function ogr_g_createfromgml(arg1)
-    failsafe(ccall((:OGR_G_CreateFromGML, libgdal), OGRGeometryH, (Cstring,), arg1))
+    aftercare(ccall((:OGR_G_CreateFromGML, libgdal), OGRGeometryH, (Cstring,), arg1))
 end
 
 """
@@ -587,7 +587,7 @@ Convert a geometry into GML format.
 A GML fragment or NULL in case of error.
 """
 function ogr_g_exporttogml(arg1)
-    unsafe_string(ccall((:OGR_G_ExportToGML, libgdal), Cstring, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_ExportToGML, libgdal), Cstring, (OGRGeometryH,), arg1), false)
 end
 
 """
@@ -604,7 +604,7 @@ Convert a geometry into GML format.
 A GML fragment or NULL in case of error.
 """
 function ogr_g_exporttogmlex(arg1, papszOptions)
-    unsafe_string(ccall((:OGR_G_ExportToGMLEx, libgdal), Cstring, (OGRGeometryH, Ptr{Cstring}), arg1, papszOptions))
+    aftercare(ccall((:OGR_G_ExportToGMLEx, libgdal), Cstring, (OGRGeometryH, Ptr{Cstring}), arg1, papszOptions), false)
 end
 
 """
@@ -613,7 +613,7 @@ end
 Create geometry from GML.
 """
 function ogr_g_createfromgmltree(arg1)
-    failsafe(ccall((:OGR_G_CreateFromGMLTree, libgdal), OGRGeometryH, (Ptr{CPLXMLNode},), arg1))
+    aftercare(ccall((:OGR_G_CreateFromGMLTree, libgdal), OGRGeometryH, (Ptr{CPLXMLNode},), arg1))
 end
 
 """
@@ -622,7 +622,7 @@ end
 Convert a geometry into GML format.
 """
 function ogr_g_exporttogmltree(arg1)
-    ccall((:OGR_G_ExportToGMLTree, libgdal), Ptr{CPLXMLNode}, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_ExportToGMLTree, libgdal), Ptr{CPLXMLNode}, (OGRGeometryH,), arg1))
 end
 
 """
@@ -631,7 +631,7 @@ end
 Export the envelope of a geometry as a gml:Box.
 """
 function ogr_g_exportenvelopetogmltree(arg1)
-    ccall((:OGR_G_ExportEnvelopeToGMLTree, libgdal), Ptr{CPLXMLNode}, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_ExportEnvelopeToGMLTree, libgdal), Ptr{CPLXMLNode}, (OGRGeometryH,), arg1))
 end
 
 """
@@ -648,7 +648,7 @@ Convert a geometry into KML format.
 A KML fragment or NULL in case of error.
 """
 function ogr_g_exporttokml(arg1, pszAltitudeMode)
-    unsafe_string(ccall((:OGR_G_ExportToKML, libgdal), Cstring, (OGRGeometryH, Cstring), arg1, pszAltitudeMode))
+    aftercare(ccall((:OGR_G_ExportToKML, libgdal), Cstring, (OGRGeometryH, Cstring), arg1, pszAltitudeMode), false)
 end
 
 """
@@ -663,7 +663,7 @@ Convert a geometry into GeoJSON format.
 A GeoJSON fragment or NULL in case of error.
 """
 function ogr_g_exporttojson(arg1)
-    unsafe_string(ccall((:OGR_G_ExportToJson, libgdal), Cstring, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_ExportToJson, libgdal), Cstring, (OGRGeometryH,), arg1), false)
 end
 
 """
@@ -680,7 +680,7 @@ Convert a geometry into GeoJSON format.
 A GeoJSON fragment or NULL in case of error.
 """
 function ogr_g_exporttojsonex(arg1, papszOptions)
-    unsafe_string(ccall((:OGR_G_ExportToJsonEx, libgdal), Cstring, (OGRGeometryH, Ptr{Cstring}), arg1, papszOptions))
+    aftercare(ccall((:OGR_G_ExportToJsonEx, libgdal), Cstring, (OGRGeometryH, Ptr{Cstring}), arg1, papszOptions), false)
 end
 
 """
@@ -689,7 +689,7 @@ end
 Create a OGR geometry from a GeoJSON geometry object.
 """
 function ogr_g_creategeometryfromjson(arg1)
-    failsafe(ccall((:OGR_G_CreateGeometryFromJson, libgdal), OGRGeometryH, (Cstring,), arg1))
+    aftercare(ccall((:OGR_G_CreateGeometryFromJson, libgdal), OGRGeometryH, (Cstring,), arg1))
 end
 
 """
@@ -703,7 +703,7 @@ Assign spatial reference to this object.
 * **hSRS**: handle on the new spatial reference system to apply.
 """
 function ogr_g_assignspatialreference(arg1, arg2)
-    ccall((:OGR_G_AssignSpatialReference, libgdal), Cvoid, (OGRGeometryH, OGRSpatialReferenceH), arg1, arg2)
+    aftercare(ccall((:OGR_G_AssignSpatialReference, libgdal), Cvoid, (OGRGeometryH, OGRSpatialReferenceH), arg1, arg2))
 end
 
 """
@@ -718,7 +718,7 @@ Returns spatial reference system for geometry.
 a reference to the spatial reference geometry.
 """
 function ogr_g_getspatialreference(arg1)
-    failsafe(ccall((:OGR_G_GetSpatialReference, libgdal), OGRSpatialReferenceH, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_GetSpatialReference, libgdal), OGRSpatialReferenceH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -735,7 +735,7 @@ Apply arbitrary coordinate transformation to geometry.
 OGRERR_NONE on success or an error code.
 """
 function ogr_g_transform(arg1, arg2)
-    ccall((:OGR_G_Transform, libgdal), OGRErr, (OGRGeometryH, OGRCoordinateTransformationH), arg1, arg2)
+    aftercare(ccall((:OGR_G_Transform, libgdal), OGRErr, (OGRGeometryH, OGRCoordinateTransformationH), arg1, arg2))
 end
 
 """
@@ -752,7 +752,7 @@ Transform geometry to new spatial reference system.
 OGRERR_NONE on success, or an error code.
 """
 function ogr_g_transformto(arg1, arg2)
-    ccall((:OGR_G_TransformTo, libgdal), OGRErr, (OGRGeometryH, OGRSpatialReferenceH), arg1, arg2)
+    aftercare(ccall((:OGR_G_TransformTo, libgdal), OGRErr, (OGRGeometryH, OGRSpatialReferenceH), arg1, arg2))
 end
 
 """
@@ -769,7 +769,7 @@ Compute a simplified geometry.
 the simplified geometry or NULL if an error occurs.
 """
 function ogr_g_simplify(hThis, tolerance)
-    failsafe(ccall((:OGR_G_Simplify, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble), hThis, tolerance))
+    aftercare(ccall((:OGR_G_Simplify, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble), hThis, tolerance))
 end
 
 """
@@ -786,7 +786,7 @@ Simplify the geometry while preserving topology.
 the simplified geometry or NULL if an error occurs.
 """
 function ogr_g_simplifypreservetopology(hThis, tolerance)
-    failsafe(ccall((:OGR_G_SimplifyPreserveTopology, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble), hThis, tolerance))
+    aftercare(ccall((:OGR_G_SimplifyPreserveTopology, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble), hThis, tolerance))
 end
 
 """
@@ -805,7 +805,7 @@ Return a Delaunay triangulation of the vertices of the geometry.
 the geometry resulting from the Delaunay triangulation or NULL if an error occurs.
 """
 function ogr_g_delaunaytriangulation(hThis, dfTolerance, bOnlyEdges)
-    failsafe(ccall((:OGR_G_DelaunayTriangulation, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble, Cint), hThis, dfTolerance, bOnlyEdges))
+    aftercare(ccall((:OGR_G_DelaunayTriangulation, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble, Cint), hThis, dfTolerance, bOnlyEdges))
 end
 
 """
@@ -819,7 +819,7 @@ Modify the geometry such it has no segment longer then the given distance.
 * **dfMaxLength**: the maximum distance between 2 points after segmentization
 """
 function ogr_g_segmentize(hGeom, dfMaxLength)
-    ccall((:OGR_G_Segmentize, libgdal), Cvoid, (OGRGeometryH, Cdouble), hGeom, dfMaxLength)
+    aftercare(ccall((:OGR_G_Segmentize, libgdal), Cvoid, (OGRGeometryH, Cdouble), hGeom, dfMaxLength))
 end
 
 """
@@ -836,7 +836,7 @@ Do these features intersect?
 TRUE if the geometries intersect, otherwise FALSE.
 """
 function ogr_g_intersects(arg1, arg2)
-    ccall((:OGR_G_Intersects, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_G_Intersects, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -853,7 +853,7 @@ Returns TRUE if two geometries are equivalent.
 TRUE if equivalent or FALSE otherwise.
 """
 function ogr_g_equals(arg1, arg2)
-    ccall((:OGR_G_Equals, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_G_Equals, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -870,7 +870,7 @@ Test for disjointness.
 TRUE if they are disjoint, otherwise FALSE.
 """
 function ogr_g_disjoint(arg1, arg2)
-    ccall((:OGR_G_Disjoint, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_G_Disjoint, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -887,7 +887,7 @@ Test for touching.
 TRUE if they are touching, otherwise FALSE.
 """
 function ogr_g_touches(arg1, arg2)
-    ccall((:OGR_G_Touches, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_G_Touches, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -904,7 +904,7 @@ Test for crossing.
 TRUE if they are crossing, otherwise FALSE.
 """
 function ogr_g_crosses(arg1, arg2)
-    ccall((:OGR_G_Crosses, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_G_Crosses, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -921,7 +921,7 @@ Test for containment.
 TRUE if hThis is within hOther, otherwise FALSE.
 """
 function ogr_g_within(arg1, arg2)
-    ccall((:OGR_G_Within, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_G_Within, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -938,7 +938,7 @@ Test for containment.
 TRUE if hThis contains hOther geometry, otherwise FALSE.
 """
 function ogr_g_contains(arg1, arg2)
-    ccall((:OGR_G_Contains, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_G_Contains, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -955,7 +955,7 @@ Test for overlap.
 TRUE if they are overlapping, otherwise FALSE.
 """
 function ogr_g_overlaps(arg1, arg2)
-    ccall((:OGR_G_Overlaps, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_G_Overlaps, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -970,7 +970,7 @@ Compute boundary.
 a handle to a newly allocated geometry now owned by the caller, or NULL on failure.
 """
 function ogr_g_boundary(arg1)
-    failsafe(ccall((:OGR_G_Boundary, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_Boundary, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -985,7 +985,7 @@ Compute convex hull.
 a handle to a newly allocated geometry now owned by the caller, or NULL on failure.
 """
 function ogr_g_convexhull(arg1)
-    failsafe(ccall((:OGR_G_ConvexHull, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_ConvexHull, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -1004,7 +1004,7 @@ Compute buffer of geometry.
 the newly created geometry, or NULL if an error occurs.
 """
 function ogr_g_buffer(arg1, arg2, arg3)
-    failsafe(ccall((:OGR_G_Buffer, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble, Cint), arg1, arg2, arg3))
+    aftercare(ccall((:OGR_G_Buffer, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -1021,7 +1021,7 @@ Compute intersection.
 a new geometry representing the intersection or NULL if there is no intersection or an error occurs.
 """
 function ogr_g_intersection(arg1, arg2)
-    failsafe(ccall((:OGR_G_Intersection, libgdal), OGRGeometryH, (OGRGeometryH, OGRGeometryH), arg1, arg2))
+    aftercare(ccall((:OGR_G_Intersection, libgdal), OGRGeometryH, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -1038,7 +1038,7 @@ Compute union.
 a new geometry representing the union or NULL if an error occurs.
 """
 function ogr_g_union(arg1, arg2)
-    failsafe(ccall((:OGR_G_Union, libgdal), OGRGeometryH, (OGRGeometryH, OGRGeometryH), arg1, arg2))
+    aftercare(ccall((:OGR_G_Union, libgdal), OGRGeometryH, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -1053,7 +1053,7 @@ Compute union using cascading.
 a new geometry representing the union or NULL if an error occurs.
 """
 function ogr_g_unioncascaded(arg1)
-    failsafe(ccall((:OGR_G_UnionCascaded, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_UnionCascaded, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -1068,7 +1068,7 @@ Returns a point guaranteed to lie on the surface.
 a point guaranteed to lie on the surface or NULL if an error occurred.
 """
 function ogr_g_pointonsurface(arg1)
-    failsafe(ccall((:OGR_G_PointOnSurface, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_PointOnSurface, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -1085,7 +1085,7 @@ Compute difference.
 a new geometry representing the difference or NULL if the difference is empty or an error occurs.
 """
 function ogr_g_difference(arg1, arg2)
-    failsafe(ccall((:OGR_G_Difference, libgdal), OGRGeometryH, (OGRGeometryH, OGRGeometryH), arg1, arg2))
+    aftercare(ccall((:OGR_G_Difference, libgdal), OGRGeometryH, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -1102,7 +1102,7 @@ Compute symmetric difference.
 a new geometry representing the symmetric difference or NULL if the difference is empty or an error occurs.
 """
 function ogr_g_symdifference(arg1, arg2)
-    failsafe(ccall((:OGR_G_SymDifference, libgdal), OGRGeometryH, (OGRGeometryH, OGRGeometryH), arg1, arg2))
+    aftercare(ccall((:OGR_G_SymDifference, libgdal), OGRGeometryH, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -1119,7 +1119,7 @@ Compute distance between two geometries.
 the distance between the geometries or -1 if an error occurs.
 """
 function ogr_g_distance(arg1, arg2)
-    ccall((:OGR_G_Distance, libgdal), Cdouble, (OGRGeometryH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_G_Distance, libgdal), Cdouble, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -1136,7 +1136,7 @@ Returns the 3D distance between two geometries.
 distance between the two geometries
 """
 function ogr_g_distance3d(arg1, arg2)
-    ccall((:OGR_G_Distance3D, libgdal), Cdouble, (OGRGeometryH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_G_Distance3D, libgdal), Cdouble, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -1151,7 +1151,7 @@ Compute length of a geometry.
 the length or 0.0 for unsupported geometry types.
 """
 function ogr_g_length(arg1)
-    ccall((:OGR_G_Length, libgdal), Cdouble, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_Length, libgdal), Cdouble, (OGRGeometryH,), arg1))
 end
 
 """
@@ -1166,7 +1166,7 @@ Compute geometry area.
 the area or 0.0 for unsupported geometry types.
 """
 function ogr_g_area(arg1)
-    ccall((:OGR_G_Area, libgdal), Cdouble, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_Area, libgdal), Cdouble, (OGRGeometryH,), arg1))
 end
 
 """
@@ -1179,7 +1179,7 @@ Compute the geometry centroid.
 OGRERR_NONE on success or OGRERR_FAILURE on error.
 """
 function ogr_g_centroid(arg1, arg2)
-    ccall((:OGR_G_Centroid, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_G_Centroid, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -1196,7 +1196,7 @@ Fetch point at given distance along curve.
 a point or NULL.
 """
 function ogr_g_value(arg1, dfDistance)
-    failsafe(ccall((:OGR_G_Value, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble), arg1, dfDistance))
+    aftercare(ccall((:OGR_G_Value, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble), arg1, dfDistance))
 end
 
 """
@@ -1208,7 +1208,7 @@ Clear geometry information.
 * **hGeom**: handle on the geometry to empty.
 """
 function ogr_g_empty(arg1)
-    ccall((:OGR_G_Empty, libgdal), Cvoid, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_Empty, libgdal), Cvoid, (OGRGeometryH,), arg1))
 end
 
 """
@@ -1223,7 +1223,7 @@ Test if the geometry is empty.
 TRUE if the geometry has no points, otherwise FALSE.
 """
 function ogr_g_isempty(arg1)
-    ccall((:OGR_G_IsEmpty, libgdal), Cint, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_IsEmpty, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -1238,7 +1238,7 @@ Test if the geometry is valid.
 TRUE if the geometry has no points, otherwise FALSE.
 """
 function ogr_g_isvalid(arg1)
-    ccall((:OGR_G_IsValid, libgdal), Cint, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_IsValid, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -1253,7 +1253,7 @@ Attempts to make an invalid geometry valid without losing vertices.
 a newly allocated geometry now owned by the caller, or NULL on failure.
 """
 function ogr_g_makevalid(arg1)
-    failsafe(ccall((:OGR_G_MakeValid, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_MakeValid, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -1268,7 +1268,7 @@ Returns TRUE if the geometry is simple.
 TRUE if object is simple, otherwise FALSE.
 """
 function ogr_g_issimple(arg1)
-    ccall((:OGR_G_IsSimple, libgdal), Cint, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_IsSimple, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -1283,7 +1283,7 @@ Test if the geometry is a ring.
 TRUE if the geometry has no points, otherwise FALSE.
 """
 function ogr_g_isring(arg1)
-    ccall((:OGR_G_IsRing, libgdal), Cint, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_IsRing, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -1298,15 +1298,15 @@ Polygonizes a set of sparse edges.
 a handle to a newly allocated geometry now owned by the caller, or NULL on failure.
 """
 function ogr_g_polygonize(arg1)
-    failsafe(ccall((:OGR_G_Polygonize, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_Polygonize, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 function ogr_g_intersect(arg1, arg2)
-    ccall((:OGR_G_Intersect, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_G_Intersect, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 function ogr_g_equal(arg1, arg2)
-    ccall((:OGR_G_Equal, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_G_Equal, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -1316,7 +1316,7 @@ end
 Compute symmetric difference (deprecated)
 """
 function ogr_g_symmetricdifference(arg1, arg2)
-    failsafe(ccall((:OGR_G_SymmetricDifference, libgdal), OGRGeometryH, (OGRGeometryH, OGRGeometryH), arg1, arg2))
+    aftercare(ccall((:OGR_G_SymmetricDifference, libgdal), OGRGeometryH, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -1325,7 +1325,7 @@ end
 Compute geometry area (deprecated)
 """
 function ogr_g_getarea(arg1)
-    ccall((:OGR_G_GetArea, libgdal), Cdouble, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_GetArea, libgdal), Cdouble, (OGRGeometryH,), arg1))
 end
 
 """
@@ -1334,7 +1334,7 @@ end
 Compute boundary (deprecated)
 """
 function ogr_g_getboundary(arg1)
-    failsafe(ccall((:OGR_G_GetBoundary, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    aftercare(ccall((:OGR_G_GetBoundary, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -1349,7 +1349,7 @@ Fetch number of points from a geometry.
 the number of points.
 """
 function ogr_g_getpointcount(arg1)
-    ccall((:OGR_G_GetPointCount, libgdal), Cint, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_GetPointCount, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -1376,7 +1376,7 @@ Returns all points of line string.
 the number of points
 """
 function ogr_g_getpoints(hGeom, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride)
-    ccall((:OGR_G_GetPoints, libgdal), Cint, (OGRGeometryH, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint), hGeom, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride)
+    aftercare(ccall((:OGR_G_GetPoints, libgdal), Cint, (OGRGeometryH, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint), hGeom, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride))
 end
 
 """
@@ -1407,7 +1407,7 @@ Returns all points of line string.
 the number of points
 """
 function ogr_g_getpointszm(hGeom, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride, pabyM, nMStride)
-    ccall((:OGR_G_GetPointsZM, libgdal), Cint, (OGRGeometryH, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint), hGeom, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride, pabyM, nMStride)
+    aftercare(ccall((:OGR_G_GetPointsZM, libgdal), Cint, (OGRGeometryH, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint), hGeom, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride, pabyM, nMStride))
 end
 
 """
@@ -1424,7 +1424,7 @@ Fetch the x coordinate of a point from a geometry.
 the X coordinate of this point.
 """
 function ogr_g_getx(arg1, arg2)
-    ccall((:OGR_G_GetX, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_G_GetX, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -1441,7 +1441,7 @@ Fetch the x coordinate of a point from a geometry.
 the Y coordinate of this point.
 """
 function ogr_g_gety(arg1, arg2)
-    ccall((:OGR_G_GetY, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_G_GetY, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -1458,7 +1458,7 @@ Fetch the z coordinate of a point from a geometry.
 the Z coordinate of this point.
 """
 function ogr_g_getz(arg1, arg2)
-    ccall((:OGR_G_GetZ, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_G_GetZ, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -1475,7 +1475,7 @@ Fetch the m coordinate of a point from a geometry.
 the M coordinate of this point.
 """
 function ogr_g_getm(arg1, arg2)
-    ccall((:OGR_G_GetM, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_G_GetM, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -1495,7 +1495,7 @@ Fetch a point in line string or a point geometry.
 * **pdfZ**: value of z coordinate.
 """
 function ogr_g_getpoint(arg1, iPoint, arg2, arg3, arg4)
-    ccall((:OGR_G_GetPoint, libgdal), Cvoid, (OGRGeometryH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}), arg1, iPoint, arg2, arg3, arg4)
+    aftercare(ccall((:OGR_G_GetPoint, libgdal), Cvoid, (OGRGeometryH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}), arg1, iPoint, arg2, arg3, arg4))
 end
 
 """
@@ -1517,7 +1517,7 @@ Fetch a point in line string or a point geometry.
 * **pdfM**: value of m coordinate.
 """
 function ogr_g_getpointzm(arg1, iPoint, arg2, arg3, arg4, arg5)
-    ccall((:OGR_G_GetPointZM, libgdal), Cvoid, (OGRGeometryH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}), arg1, iPoint, arg2, arg3, arg4, arg5)
+    aftercare(ccall((:OGR_G_GetPointZM, libgdal), Cvoid, (OGRGeometryH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}), arg1, iPoint, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -1531,7 +1531,7 @@ Set number of points in a geometry.
 * **nNewPointCount**: the new number of points for geometry.
 """
 function ogr_g_setpointcount(hGeom, nNewPointCount)
-    ccall((:OGR_G_SetPointCount, libgdal), Cvoid, (OGRGeometryH, Cint), hGeom, nNewPointCount)
+    aftercare(ccall((:OGR_G_SetPointCount, libgdal), Cvoid, (OGRGeometryH, Cint), hGeom, nNewPointCount))
 end
 
 """
@@ -1551,7 +1551,7 @@ Set the location of a vertex in a point or linestring geometry.
 * **dfZ**: input Z coordinate to assign (defaults to zero).
 """
 function ogr_g_setpoint(arg1, iPoint, arg2, arg3, arg4)
-    ccall((:OGR_G_SetPoint, libgdal), Cvoid, (OGRGeometryH, Cint, Cdouble, Cdouble, Cdouble), arg1, iPoint, arg2, arg3, arg4)
+    aftercare(ccall((:OGR_G_SetPoint, libgdal), Cvoid, (OGRGeometryH, Cint, Cdouble, Cdouble, Cdouble), arg1, iPoint, arg2, arg3, arg4))
 end
 
 """
@@ -1569,7 +1569,7 @@ Set the location of a vertex in a point or linestring geometry.
 * **dfY**: input Y coordinate to assign.
 """
 function ogr_g_setpoint_2d(arg1, iPoint, arg2, arg3)
-    ccall((:OGR_G_SetPoint_2D, libgdal), Cvoid, (OGRGeometryH, Cint, Cdouble, Cdouble), arg1, iPoint, arg2, arg3)
+    aftercare(ccall((:OGR_G_SetPoint_2D, libgdal), Cvoid, (OGRGeometryH, Cint, Cdouble, Cdouble), arg1, iPoint, arg2, arg3))
 end
 
 """
@@ -1589,7 +1589,7 @@ Set the location of a vertex in a point or linestring geometry.
 * **dfM**: input M coordinate to assign.
 """
 function ogr_g_setpointm(arg1, iPoint, arg2, arg3, arg4)
-    ccall((:OGR_G_SetPointM, libgdal), Cvoid, (OGRGeometryH, Cint, Cdouble, Cdouble, Cdouble), arg1, iPoint, arg2, arg3, arg4)
+    aftercare(ccall((:OGR_G_SetPointM, libgdal), Cvoid, (OGRGeometryH, Cint, Cdouble, Cdouble, Cdouble), arg1, iPoint, arg2, arg3, arg4))
 end
 
 """
@@ -1611,7 +1611,7 @@ Set the location of a vertex in a point or linestring geometry.
 * **dfM**: input M coordinate to assign.
 """
 function ogr_g_setpointzm(arg1, iPoint, arg2, arg3, arg4, arg5)
-    ccall((:OGR_G_SetPointZM, libgdal), Cvoid, (OGRGeometryH, Cint, Cdouble, Cdouble, Cdouble, Cdouble), arg1, iPoint, arg2, arg3, arg4, arg5)
+    aftercare(ccall((:OGR_G_SetPointZM, libgdal), Cvoid, (OGRGeometryH, Cint, Cdouble, Cdouble, Cdouble, Cdouble), arg1, iPoint, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -1629,7 +1629,7 @@ Add a point to a geometry (line string or point).
 * **dfZ**: z coordinate of point to add.
 """
 function ogr_g_addpoint(arg1, arg2, arg3, arg4)
-    ccall((:OGR_G_AddPoint, libgdal), Cvoid, (OGRGeometryH, Cdouble, Cdouble, Cdouble), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:OGR_G_AddPoint, libgdal), Cvoid, (OGRGeometryH, Cdouble, Cdouble, Cdouble), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -1645,7 +1645,7 @@ Add a point to a geometry (line string or point).
 * **dfY**: y coordinate of point to add.
 """
 function ogr_g_addpoint_2d(arg1, arg2, arg3)
-    ccall((:OGR_G_AddPoint_2D, libgdal), Cvoid, (OGRGeometryH, Cdouble, Cdouble), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_G_AddPoint_2D, libgdal), Cvoid, (OGRGeometryH, Cdouble, Cdouble), arg1, arg2, arg3))
 end
 
 """
@@ -1663,7 +1663,7 @@ Add a point to a geometry (line string or point).
 * **dfM**: m coordinate of point to add.
 """
 function ogr_g_addpointm(arg1, arg2, arg3, arg4)
-    ccall((:OGR_G_AddPointM, libgdal), Cvoid, (OGRGeometryH, Cdouble, Cdouble, Cdouble), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:OGR_G_AddPointM, libgdal), Cvoid, (OGRGeometryH, Cdouble, Cdouble, Cdouble), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -1683,7 +1683,7 @@ Add a point to a geometry (line string or point).
 * **dfM**: m coordinate of point to add.
 """
 function ogr_g_addpointzm(arg1, arg2, arg3, arg4, arg5)
-    ccall((:OGR_G_AddPointZM, libgdal), Cvoid, (OGRGeometryH, Cdouble, Cdouble, Cdouble, Cdouble), arg1, arg2, arg3, arg4, arg5)
+    aftercare(ccall((:OGR_G_AddPointZM, libgdal), Cvoid, (OGRGeometryH, Cdouble, Cdouble, Cdouble, Cdouble), arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -1709,7 +1709,7 @@ Assign all points in a point or a line string geometry.
 * **nZStride**: the number of bytes between 2 elements of pabyZ.
 """
 function ogr_g_setpoints(hGeom, nPointsIn, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride)
-    ccall((:OGR_G_SetPoints, libgdal), Cvoid, (OGRGeometryH, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint), hGeom, nPointsIn, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride)
+    aftercare(ccall((:OGR_G_SetPoints, libgdal), Cvoid, (OGRGeometryH, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint), hGeom, nPointsIn, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride))
 end
 
 """
@@ -1739,7 +1739,7 @@ Assign all points in a point or a line string geometry.
 * **nMStride**: the number of bytes between 2 elements of pM.
 """
 function ogr_g_setpointszm(hGeom, nPointsIn, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride, pabyM, nMStride)
-    ccall((:OGR_G_SetPointsZM, libgdal), Cvoid, (OGRGeometryH, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint), hGeom, nPointsIn, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride, pabyM, nMStride)
+    aftercare(ccall((:OGR_G_SetPointsZM, libgdal), Cvoid, (OGRGeometryH, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint), hGeom, nPointsIn, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride, pabyM, nMStride))
 end
 
 """
@@ -1751,7 +1751,7 @@ Swap x and y coordinates.
 * **hGeom**: geometry.
 """
 function ogr_g_swapxy(hGeom)
-    ccall((:OGR_G_SwapXY, libgdal), Cvoid, (OGRGeometryH,), hGeom)
+    aftercare(ccall((:OGR_G_SwapXY, libgdal), Cvoid, (OGRGeometryH,), hGeom))
 end
 
 """
@@ -1766,7 +1766,7 @@ Fetch the number of elements in a geometry or number of geometries in container.
 the number of elements.
 """
 function ogr_g_getgeometrycount(arg1)
-    ccall((:OGR_G_GetGeometryCount, libgdal), Cint, (OGRGeometryH,), arg1)
+    aftercare(ccall((:OGR_G_GetGeometryCount, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -1783,7 +1783,7 @@ Fetch geometry from a geometry container.
 handle to the requested geometry.
 """
 function ogr_g_getgeometryref(arg1, arg2)
-    failsafe(ccall((:OGR_G_GetGeometryRef, libgdal), OGRGeometryH, (OGRGeometryH, Cint), arg1, arg2))
+    aftercare(ccall((:OGR_G_GetGeometryRef, libgdal), OGRGeometryH, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -1800,7 +1800,7 @@ Add a geometry to a geometry container.
 OGRERR_NONE if successful, or OGRERR_UNSUPPORTED_GEOMETRY_TYPE if the geometry type is illegal for the type of existing geometry.
 """
 function ogr_g_addgeometry(arg1, arg2)
-    ccall((:OGR_G_AddGeometry, libgdal), OGRErr, (OGRGeometryH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_G_AddGeometry, libgdal), OGRErr, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -1817,7 +1817,7 @@ Add a geometry directly to an existing geometry container.
 OGRERR_NONE if successful, or OGRERR_UNSUPPORTED_GEOMETRY_TYPE if the geometry type is illegal for the type of geometry container.
 """
 function ogr_g_addgeometrydirectly(arg1, arg2)
-    ccall((:OGR_G_AddGeometryDirectly, libgdal), OGRErr, (OGRGeometryH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_G_AddGeometryDirectly, libgdal), OGRErr, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -1836,7 +1836,7 @@ Remove a geometry from an exiting geometry container.
 OGRERR_NONE if successful, or OGRERR_FAILURE if the index is out of range.
 """
 function ogr_g_removegeometry(arg1, arg2, arg3)
-    ccall((:OGR_G_RemoveGeometry, libgdal), OGRErr, (OGRGeometryH, Cint, Cint), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_G_RemoveGeometry, libgdal), OGRErr, (OGRGeometryH, Cint, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -1853,7 +1853,7 @@ Returns if this geometry is or has curve geometry.
 TRUE if this geometry is or has curve geometry.
 """
 function ogr_g_hascurvegeometry(arg1, bLookForNonLinear)
-    ccall((:OGR_G_HasCurveGeometry, libgdal), Cint, (OGRGeometryH, Cint), arg1, bLookForNonLinear)
+    aftercare(ccall((:OGR_G_HasCurveGeometry, libgdal), Cint, (OGRGeometryH, Cint), arg1, bLookForNonLinear))
 end
 
 """
@@ -1872,7 +1872,7 @@ Return, possibly approximate, linear version of this geometry.
 a new geometry.
 """
 function ogr_g_getlineargeometry(hGeom, dfMaxAngleStepSizeDegrees, papszOptions)
-    failsafe(ccall((:OGR_G_GetLinearGeometry, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble, Ptr{Cstring}), hGeom, dfMaxAngleStepSizeDegrees, papszOptions))
+    aftercare(ccall((:OGR_G_GetLinearGeometry, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble, Ptr{Cstring}), hGeom, dfMaxAngleStepSizeDegrees, papszOptions))
 end
 
 """
@@ -1889,7 +1889,7 @@ Return curve version of this geometry.
 a new geometry.
 """
 function ogr_g_getcurvegeometry(hGeom, papszOptions)
-    failsafe(ccall((:OGR_G_GetCurveGeometry, libgdal), OGRGeometryH, (OGRGeometryH, Ptr{Cstring}), hGeom, papszOptions))
+    aftercare(ccall((:OGR_G_GetCurveGeometry, libgdal), OGRGeometryH, (OGRGeometryH, Ptr{Cstring}), hGeom, papszOptions))
 end
 
 """
@@ -1912,7 +1912,7 @@ Build a ring from a bunch of arcs.
 an handle to the new geometry, a polygon.
 """
 function ogrbuildpolygonfromedges(hLinesAsCollection, bBestEffort, bAutoClose, dfTolerance, peErr)
-    failsafe(ccall((:OGRBuildPolygonFromEdges, libgdal), OGRGeometryH, (OGRGeometryH, Cint, Cint, Cdouble, Ptr{OGRErr}), hLinesAsCollection, bBestEffort, bAutoClose, dfTolerance, peErr))
+    aftercare(ccall((:OGRBuildPolygonFromEdges, libgdal), OGRGeometryH, (OGRGeometryH, Cint, Cint, Cdouble, Ptr{OGRErr}), hLinesAsCollection, bBestEffort, bAutoClose, dfTolerance, peErr))
 end
 
 """
@@ -1921,14 +1921,14 @@ end
 Special entry point to enable the hack for generating DB2 V7.2 style WKB.
 """
 function ogrsetgenerate_db2_v72_byte_order(bGenerate_DB2_V72_BYTE_ORDER)
-    ccall((:OGRSetGenerate_DB2_V72_BYTE_ORDER, libgdal), OGRErr, (Cint,), bGenerate_DB2_V72_BYTE_ORDER)
+    aftercare(ccall((:OGRSetGenerate_DB2_V72_BYTE_ORDER, libgdal), OGRErr, (Cint,), bGenerate_DB2_V72_BYTE_ORDER))
 end
 
 """
     OGRGetGenerate_DB2_V72_BYTE_ORDER() -> int
 """
 function ogrgetgenerate_db2_v72_byte_order()
-    ccall((:OGRGetGenerate_DB2_V72_BYTE_ORDER, libgdal), Cint, ())
+    aftercare(ccall((:OGRGetGenerate_DB2_V72_BYTE_ORDER, libgdal), Cint, ()))
 end
 
 """
@@ -1940,7 +1940,7 @@ Set flag to enable/disable returning non-linear geometries in the C API.
 * **bFlag**: TRUE if non-linear geometries might be returned (default value). FALSE to ask for non-linear geometries to be approximated as linear geometries.
 """
 function ogrsetnonlineargeometriesenabledflag(bFlag)
-    ccall((:OGRSetNonLinearGeometriesEnabledFlag, libgdal), Cvoid, (Cint,), bFlag)
+    aftercare(ccall((:OGRSetNonLinearGeometriesEnabledFlag, libgdal), Cvoid, (Cint,), bFlag))
 end
 
 """
@@ -1949,7 +1949,7 @@ end
 Get flag to enable/disable returning non-linear geometries in the C API.
 """
 function ogrgetnonlineargeometriesenabledflag()
-    ccall((:OGRGetNonLinearGeometriesEnabledFlag, libgdal), Cint, ())
+    aftercare(ccall((:OGRGetNonLinearGeometriesEnabledFlag, libgdal), Cint, ()))
 end
 
 """
@@ -1966,7 +1966,7 @@ Create a new field definition.
 handle to the new field definition.
 """
 function ogr_fld_create(arg1, arg2)
-    failsafe(ccall((:OGR_Fld_Create, libgdal), OGRFieldDefnH, (Cstring, OGRFieldType), arg1, arg2))
+    aftercare(ccall((:OGR_Fld_Create, libgdal), OGRFieldDefnH, (Cstring, OGRFieldType), arg1, arg2))
 end
 
 """
@@ -1978,7 +1978,7 @@ Destroy a field definition.
 * **hDefn**: handle to the field definition to destroy.
 """
 function ogr_fld_destroy(arg1)
-    ccall((:OGR_Fld_Destroy, libgdal), Cvoid, (OGRFieldDefnH,), arg1)
+    aftercare(ccall((:OGR_Fld_Destroy, libgdal), Cvoid, (OGRFieldDefnH,), arg1))
 end
 
 """
@@ -1992,7 +1992,7 @@ Reset the name of this field.
 * **pszName**: the new name to apply.
 """
 function ogr_fld_setname(arg1, arg2)
-    ccall((:OGR_Fld_SetName, libgdal), Cvoid, (OGRFieldDefnH, Cstring), arg1, arg2)
+    aftercare(ccall((:OGR_Fld_SetName, libgdal), Cvoid, (OGRFieldDefnH, Cstring), arg1, arg2))
 end
 
 """
@@ -2007,7 +2007,7 @@ Fetch name of this field.
 the name of the field definition.
 """
 function ogr_fld_getnameref(arg1)
-    unsafe_string(ccall((:OGR_Fld_GetNameRef, libgdal), Cstring, (OGRFieldDefnH,), arg1))
+    aftercare(ccall((:OGR_Fld_GetNameRef, libgdal), Cstring, (OGRFieldDefnH,), arg1), false)
 end
 
 """
@@ -2022,7 +2022,7 @@ Fetch type of this field.
 field type.
 """
 function ogr_fld_gettype(arg1)
-    ccall((:OGR_Fld_GetType, libgdal), OGRFieldType, (OGRFieldDefnH,), arg1)
+    aftercare(ccall((:OGR_Fld_GetType, libgdal), OGRFieldType, (OGRFieldDefnH,), arg1))
 end
 
 """
@@ -2036,7 +2036,7 @@ Set the type of this field.
 * **eType**: the new field type.
 """
 function ogr_fld_settype(arg1, arg2)
-    ccall((:OGR_Fld_SetType, libgdal), Cvoid, (OGRFieldDefnH, OGRFieldType), arg1, arg2)
+    aftercare(ccall((:OGR_Fld_SetType, libgdal), Cvoid, (OGRFieldDefnH, OGRFieldType), arg1, arg2))
 end
 
 """
@@ -2051,7 +2051,7 @@ Fetch subtype of this field.
 field subtype.
 """
 function ogr_fld_getsubtype(arg1)
-    ccall((:OGR_Fld_GetSubType, libgdal), OGRFieldSubType, (OGRFieldDefnH,), arg1)
+    aftercare(ccall((:OGR_Fld_GetSubType, libgdal), OGRFieldSubType, (OGRFieldDefnH,), arg1))
 end
 
 """
@@ -2065,7 +2065,7 @@ Set the subtype of this field.
 * **eSubType**: the new field subtype.
 """
 function ogr_fld_setsubtype(arg1, arg2)
-    ccall((:OGR_Fld_SetSubType, libgdal), Cvoid, (OGRFieldDefnH, OGRFieldSubType), arg1, arg2)
+    aftercare(ccall((:OGR_Fld_SetSubType, libgdal), Cvoid, (OGRFieldDefnH, OGRFieldSubType), arg1, arg2))
 end
 
 """
@@ -2080,7 +2080,7 @@ Get the justification for this field.
 the justification.
 """
 function ogr_fld_getjustify(arg1)
-    ccall((:OGR_Fld_GetJustify, libgdal), OGRJustification, (OGRFieldDefnH,), arg1)
+    aftercare(ccall((:OGR_Fld_GetJustify, libgdal), OGRJustification, (OGRFieldDefnH,), arg1))
 end
 
 """
@@ -2094,7 +2094,7 @@ Set the justification for this field.
 * **eJustify**: the new justification.
 """
 function ogr_fld_setjustify(arg1, arg2)
-    ccall((:OGR_Fld_SetJustify, libgdal), Cvoid, (OGRFieldDefnH, OGRJustification), arg1, arg2)
+    aftercare(ccall((:OGR_Fld_SetJustify, libgdal), Cvoid, (OGRFieldDefnH, OGRJustification), arg1, arg2))
 end
 
 """
@@ -2109,7 +2109,7 @@ Get the formatting width for this field.
 the width, zero means no specified width.
 """
 function ogr_fld_getwidth(arg1)
-    ccall((:OGR_Fld_GetWidth, libgdal), Cint, (OGRFieldDefnH,), arg1)
+    aftercare(ccall((:OGR_Fld_GetWidth, libgdal), Cint, (OGRFieldDefnH,), arg1))
 end
 
 """
@@ -2123,7 +2123,7 @@ Set the formatting width for this field in characters.
 * **nNewWidth**: the new width.
 """
 function ogr_fld_setwidth(arg1, arg2)
-    ccall((:OGR_Fld_SetWidth, libgdal), Cvoid, (OGRFieldDefnH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_Fld_SetWidth, libgdal), Cvoid, (OGRFieldDefnH, Cint), arg1, arg2))
 end
 
 """
@@ -2138,7 +2138,7 @@ Get the formatting precision for this field.
 the precision.
 """
 function ogr_fld_getprecision(arg1)
-    ccall((:OGR_Fld_GetPrecision, libgdal), Cint, (OGRFieldDefnH,), arg1)
+    aftercare(ccall((:OGR_Fld_GetPrecision, libgdal), Cint, (OGRFieldDefnH,), arg1))
 end
 
 """
@@ -2152,7 +2152,7 @@ Set the formatting precision for this field in characters.
 * **nPrecision**: the new precision.
 """
 function ogr_fld_setprecision(arg1, arg2)
-    ccall((:OGR_Fld_SetPrecision, libgdal), Cvoid, (OGRFieldDefnH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_Fld_SetPrecision, libgdal), Cvoid, (OGRFieldDefnH, Cint), arg1, arg2))
 end
 
 """
@@ -2174,7 +2174,7 @@ Set defining parameters for a field in one call.
 * **eJustifyIn**: the formatting justification (OJLeft or OJRight), defaults to OJUndefined.
 """
 function ogr_fld_set(arg1, arg2, arg3, arg4, arg5, arg6)
-    ccall((:OGR_Fld_Set, libgdal), Cvoid, (OGRFieldDefnH, Cstring, OGRFieldType, Cint, Cint, OGRJustification), arg1, arg2, arg3, arg4, arg5, arg6)
+    aftercare(ccall((:OGR_Fld_Set, libgdal), Cvoid, (OGRFieldDefnH, Cstring, OGRFieldType, Cint, Cint, OGRJustification), arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 """
@@ -2189,7 +2189,7 @@ Return whether this field should be omitted when fetching features.
 ignore state
 """
 function ogr_fld_isignored(hDefn)
-    ccall((:OGR_Fld_IsIgnored, libgdal), Cint, (OGRFieldDefnH,), hDefn)
+    aftercare(ccall((:OGR_Fld_IsIgnored, libgdal), Cint, (OGRFieldDefnH,), hDefn))
 end
 
 """
@@ -2203,7 +2203,7 @@ Set whether this field should be omitted when fetching features.
 * **ignore**: ignore state
 """
 function ogr_fld_setignored(hDefn, arg1)
-    ccall((:OGR_Fld_SetIgnored, libgdal), Cvoid, (OGRFieldDefnH, Cint), hDefn, arg1)
+    aftercare(ccall((:OGR_Fld_SetIgnored, libgdal), Cvoid, (OGRFieldDefnH, Cint), hDefn, arg1))
 end
 
 """
@@ -2218,7 +2218,7 @@ Return whether this field can receive null values.
 TRUE if the field is authorized to be null.
 """
 function ogr_fld_isnullable(hDefn)
-    ccall((:OGR_Fld_IsNullable, libgdal), Cint, (OGRFieldDefnH,), hDefn)
+    aftercare(ccall((:OGR_Fld_IsNullable, libgdal), Cint, (OGRFieldDefnH,), hDefn))
 end
 
 """
@@ -2232,7 +2232,7 @@ Set whether this field can receive null values.
 * **bNullableIn**: FALSE if the field must have a not-null constraint.
 """
 function ogr_fld_setnullable(hDefn, arg1)
-    ccall((:OGR_Fld_SetNullable, libgdal), Cvoid, (OGRFieldDefnH, Cint), hDefn, arg1)
+    aftercare(ccall((:OGR_Fld_SetNullable, libgdal), Cvoid, (OGRFieldDefnH, Cint), hDefn, arg1))
 end
 
 """
@@ -2247,7 +2247,7 @@ Get default field value.
 default field value or NULL.
 """
 function ogr_fld_getdefault(hDefn)
-    unsafe_string(ccall((:OGR_Fld_GetDefault, libgdal), Cstring, (OGRFieldDefnH,), hDefn))
+    aftercare(ccall((:OGR_Fld_GetDefault, libgdal), Cstring, (OGRFieldDefnH,), hDefn), false)
 end
 
 """
@@ -2261,7 +2261,7 @@ Set default field value.
 * **pszDefault**: new default field value or NULL pointer.
 """
 function ogr_fld_setdefault(hDefn, arg1)
-    ccall((:OGR_Fld_SetDefault, libgdal), Cvoid, (OGRFieldDefnH, Cstring), hDefn, arg1)
+    aftercare(ccall((:OGR_Fld_SetDefault, libgdal), Cvoid, (OGRFieldDefnH, Cstring), hDefn, arg1))
 end
 
 """
@@ -2276,7 +2276,7 @@ Returns whether the default value is driver specific.
 TRUE if the default value is driver specific.
 """
 function ogr_fld_isdefaultdriverspecific(hDefn)
-    ccall((:OGR_Fld_IsDefaultDriverSpecific, libgdal), Cint, (OGRFieldDefnH,), hDefn)
+    aftercare(ccall((:OGR_Fld_IsDefaultDriverSpecific, libgdal), Cint, (OGRFieldDefnH,), hDefn))
 end
 
 """
@@ -2291,7 +2291,7 @@ Fetch human readable name for a field type.
 the name.
 """
 function ogr_getfieldtypename(arg1)
-    unsafe_string(ccall((:OGR_GetFieldTypeName, libgdal), Cstring, (OGRFieldType,), arg1))
+    aftercare(ccall((:OGR_GetFieldTypeName, libgdal), Cstring, (OGRFieldType,), arg1), false)
 end
 
 """
@@ -2306,7 +2306,7 @@ Fetch human readable name for a field subtype.
 the name.
 """
 function ogr_getfieldsubtypename(arg1)
-    unsafe_string(ccall((:OGR_GetFieldSubTypeName, libgdal), Cstring, (OGRFieldSubType,), arg1))
+    aftercare(ccall((:OGR_GetFieldSubTypeName, libgdal), Cstring, (OGRFieldSubType,), arg1), false)
 end
 
 """
@@ -2323,7 +2323,7 @@ Return if type and subtype are compatible.
 TRUE if type and subtype are compatible
 """
 function ogr_aretypesubtypecompatible(eType, eSubType)
-    ccall((:OGR_AreTypeSubTypeCompatible, libgdal), Cint, (OGRFieldType, OGRFieldSubType), eType, eSubType)
+    aftercare(ccall((:OGR_AreTypeSubTypeCompatible, libgdal), Cint, (OGRFieldType, OGRFieldSubType), eType, eSubType))
 end
 
 """
@@ -2340,7 +2340,7 @@ Create a new field geometry definition.
 handle to the new field definition.
 """
 function ogr_gfld_create(arg1, arg2)
-    failsafe(ccall((:OGR_GFld_Create, libgdal), OGRGeomFieldDefnH, (Cstring, OGRwkbGeometryType), arg1, arg2))
+    aftercare(ccall((:OGR_GFld_Create, libgdal), OGRGeomFieldDefnH, (Cstring, OGRwkbGeometryType), arg1, arg2))
 end
 
 """
@@ -2352,7 +2352,7 @@ Destroy a geometry field definition.
 * **hDefn**: handle to the geometry field definition to destroy.
 """
 function ogr_gfld_destroy(arg1)
-    ccall((:OGR_GFld_Destroy, libgdal), Cvoid, (OGRGeomFieldDefnH,), arg1)
+    aftercare(ccall((:OGR_GFld_Destroy, libgdal), Cvoid, (OGRGeomFieldDefnH,), arg1))
 end
 
 """
@@ -2366,7 +2366,7 @@ Reset the name of this field.
 * **pszName**: the new name to apply.
 """
 function ogr_gfld_setname(arg1, arg2)
-    ccall((:OGR_GFld_SetName, libgdal), Cvoid, (OGRGeomFieldDefnH, Cstring), arg1, arg2)
+    aftercare(ccall((:OGR_GFld_SetName, libgdal), Cvoid, (OGRGeomFieldDefnH, Cstring), arg1, arg2))
 end
 
 """
@@ -2381,7 +2381,7 @@ Fetch name of this field.
 the name of the geometry field definition.
 """
 function ogr_gfld_getnameref(arg1)
-    unsafe_string(ccall((:OGR_GFld_GetNameRef, libgdal), Cstring, (OGRGeomFieldDefnH,), arg1))
+    aftercare(ccall((:OGR_GFld_GetNameRef, libgdal), Cstring, (OGRGeomFieldDefnH,), arg1), false)
 end
 
 """
@@ -2396,7 +2396,7 @@ Fetch geometry type of this field.
 field geometry type.
 """
 function ogr_gfld_gettype(arg1)
-    ccall((:OGR_GFld_GetType, libgdal), OGRwkbGeometryType, (OGRGeomFieldDefnH,), arg1)
+    aftercare(ccall((:OGR_GFld_GetType, libgdal), OGRwkbGeometryType, (OGRGeomFieldDefnH,), arg1))
 end
 
 """
@@ -2410,7 +2410,7 @@ Set the geometry type of this field.
 * **eType**: the new field geometry type.
 """
 function ogr_gfld_settype(arg1, arg2)
-    ccall((:OGR_GFld_SetType, libgdal), Cvoid, (OGRGeomFieldDefnH, OGRwkbGeometryType), arg1, arg2)
+    aftercare(ccall((:OGR_GFld_SetType, libgdal), Cvoid, (OGRGeomFieldDefnH, OGRwkbGeometryType), arg1, arg2))
 end
 
 """
@@ -2425,7 +2425,7 @@ Fetch spatial reference system of this field.
 field spatial reference system.
 """
 function ogr_gfld_getspatialref(arg1)
-    failsafe(ccall((:OGR_GFld_GetSpatialRef, libgdal), OGRSpatialReferenceH, (OGRGeomFieldDefnH,), arg1))
+    aftercare(ccall((:OGR_GFld_GetSpatialRef, libgdal), OGRSpatialReferenceH, (OGRGeomFieldDefnH,), arg1))
 end
 
 """
@@ -2439,7 +2439,7 @@ Set the spatial reference of this field.
 * **hSRS**: the new SRS to apply.
 """
 function ogr_gfld_setspatialref(arg1, hSRS)
-    ccall((:OGR_GFld_SetSpatialRef, libgdal), Cvoid, (OGRGeomFieldDefnH, OGRSpatialReferenceH), arg1, hSRS)
+    aftercare(ccall((:OGR_GFld_SetSpatialRef, libgdal), Cvoid, (OGRGeomFieldDefnH, OGRSpatialReferenceH), arg1, hSRS))
 end
 
 """
@@ -2454,7 +2454,7 @@ Return whether this geometry field can receive null values.
 TRUE if the field is authorized to be null.
 """
 function ogr_gfld_isnullable(hDefn)
-    ccall((:OGR_GFld_IsNullable, libgdal), Cint, (OGRGeomFieldDefnH,), hDefn)
+    aftercare(ccall((:OGR_GFld_IsNullable, libgdal), Cint, (OGRGeomFieldDefnH,), hDefn))
 end
 
 """
@@ -2468,7 +2468,7 @@ Set whether this geometry field can receive null values.
 * **bNullableIn**: FALSE if the field must have a not-null constraint.
 """
 function ogr_gfld_setnullable(hDefn, arg1)
-    ccall((:OGR_GFld_SetNullable, libgdal), Cvoid, (OGRGeomFieldDefnH, Cint), hDefn, arg1)
+    aftercare(ccall((:OGR_GFld_SetNullable, libgdal), Cvoid, (OGRGeomFieldDefnH, Cint), hDefn, arg1))
 end
 
 """
@@ -2483,7 +2483,7 @@ Return whether this field should be omitted when fetching features.
 ignore state
 """
 function ogr_gfld_isignored(hDefn)
-    ccall((:OGR_GFld_IsIgnored, libgdal), Cint, (OGRGeomFieldDefnH,), hDefn)
+    aftercare(ccall((:OGR_GFld_IsIgnored, libgdal), Cint, (OGRGeomFieldDefnH,), hDefn))
 end
 
 """
@@ -2497,7 +2497,7 @@ Set whether this field should be omitted when fetching features.
 * **ignore**: ignore state
 """
 function ogr_gfld_setignored(hDefn, arg1)
-    ccall((:OGR_GFld_SetIgnored, libgdal), Cvoid, (OGRGeomFieldDefnH, Cint), hDefn, arg1)
+    aftercare(ccall((:OGR_GFld_SetIgnored, libgdal), Cvoid, (OGRGeomFieldDefnH, Cint), hDefn, arg1))
 end
 
 """
@@ -2512,7 +2512,7 @@ Create a new feature definition object to hold the field definitions.
 handle to the newly created feature definition.
 """
 function ogr_fd_create(arg1)
-    failsafe(ccall((:OGR_FD_Create, libgdal), OGRFeatureDefnH, (Cstring,), arg1))
+    aftercare(ccall((:OGR_FD_Create, libgdal), OGRFeatureDefnH, (Cstring,), arg1))
 end
 
 """
@@ -2524,7 +2524,7 @@ Destroy a feature definition object and release all memory associated with it.
 * **hDefn**: handle to the feature definition to be destroyed.
 """
 function ogr_fd_destroy(arg1)
-    ccall((:OGR_FD_Destroy, libgdal), Cvoid, (OGRFeatureDefnH,), arg1)
+    aftercare(ccall((:OGR_FD_Destroy, libgdal), Cvoid, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -2536,7 +2536,7 @@ Drop a reference, and destroy if unreferenced.
 * **hDefn**: handle to the feature definition to be released.
 """
 function ogr_fd_release(arg1)
-    ccall((:OGR_FD_Release, libgdal), Cvoid, (OGRFeatureDefnH,), arg1)
+    aftercare(ccall((:OGR_FD_Release, libgdal), Cvoid, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -2551,7 +2551,7 @@ Get name of the OGRFeatureDefn passed as an argument.
 the name. This name is internal and should not be modified, or freed.
 """
 function ogr_fd_getname(arg1)
-    unsafe_string(ccall((:OGR_FD_GetName, libgdal), Cstring, (OGRFeatureDefnH,), arg1))
+    aftercare(ccall((:OGR_FD_GetName, libgdal), Cstring, (OGRFeatureDefnH,), arg1), false)
 end
 
 """
@@ -2566,7 +2566,7 @@ Fetch number of fields on the passed feature definition.
 count of fields.
 """
 function ogr_fd_getfieldcount(arg1)
-    ccall((:OGR_FD_GetFieldCount, libgdal), Cint, (OGRFeatureDefnH,), arg1)
+    aftercare(ccall((:OGR_FD_GetFieldCount, libgdal), Cint, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -2583,7 +2583,7 @@ Fetch field definition of the passed feature definition.
 an handle to an internal field definition object or NULL if invalid index. This object should not be modified or freed by the application.
 """
 function ogr_fd_getfielddefn(arg1, arg2)
-    failsafe(ccall((:OGR_FD_GetFieldDefn, libgdal), OGRFieldDefnH, (OGRFeatureDefnH, Cint), arg1, arg2))
+    aftercare(ccall((:OGR_FD_GetFieldDefn, libgdal), OGRFieldDefnH, (OGRFeatureDefnH, Cint), arg1, arg2))
 end
 
 """
@@ -2600,7 +2600,7 @@ Find field by name.
 the field index, or -1 if no match found.
 """
 function ogr_fd_getfieldindex(arg1, arg2)
-    ccall((:OGR_FD_GetFieldIndex, libgdal), Cint, (OGRFeatureDefnH, Cstring), arg1, arg2)
+    aftercare(ccall((:OGR_FD_GetFieldIndex, libgdal), Cint, (OGRFeatureDefnH, Cstring), arg1, arg2))
 end
 
 """
@@ -2614,7 +2614,7 @@ Add a new field definition to the passed feature definition.
 * **hNewField**: handle to the new field definition.
 """
 function ogr_fd_addfielddefn(arg1, arg2)
-    ccall((:OGR_FD_AddFieldDefn, libgdal), Cvoid, (OGRFeatureDefnH, OGRFieldDefnH), arg1, arg2)
+    aftercare(ccall((:OGR_FD_AddFieldDefn, libgdal), Cvoid, (OGRFeatureDefnH, OGRFieldDefnH), arg1, arg2))
 end
 
 """
@@ -2631,7 +2631,7 @@ Delete an existing field definition.
 OGRERR_NONE in case of success.
 """
 function ogr_fd_deletefielddefn(hDefn, iField)
-    ccall((:OGR_FD_DeleteFieldDefn, libgdal), OGRErr, (OGRFeatureDefnH, Cint), hDefn, iField)
+    aftercare(ccall((:OGR_FD_DeleteFieldDefn, libgdal), OGRErr, (OGRFeatureDefnH, Cint), hDefn, iField))
 end
 
 """
@@ -2648,7 +2648,7 @@ Reorder the field definitions in the array of the feature definition.
 OGRERR_NONE in case of success.
 """
 function ogr_fd_reorderfielddefns(hDefn, panMap)
-    ccall((:OGR_FD_ReorderFieldDefns, libgdal), OGRErr, (OGRFeatureDefnH, Ptr{Cint}), hDefn, panMap)
+    aftercare(ccall((:OGR_FD_ReorderFieldDefns, libgdal), OGRErr, (OGRFeatureDefnH, Ptr{Cint}), hDefn, panMap))
 end
 
 """
@@ -2663,7 +2663,7 @@ Fetch the geometry base type of the passed feature definition.
 the base type for all geometry related to this definition.
 """
 function ogr_fd_getgeomtype(arg1)
-    ccall((:OGR_FD_GetGeomType, libgdal), OGRwkbGeometryType, (OGRFeatureDefnH,), arg1)
+    aftercare(ccall((:OGR_FD_GetGeomType, libgdal), OGRwkbGeometryType, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -2677,7 +2677,7 @@ Assign the base geometry type for the passed layer (the same as the feature defi
 * **eType**: the new type to assign.
 """
 function ogr_fd_setgeomtype(arg1, arg2)
-    ccall((:OGR_FD_SetGeomType, libgdal), Cvoid, (OGRFeatureDefnH, OGRwkbGeometryType), arg1, arg2)
+    aftercare(ccall((:OGR_FD_SetGeomType, libgdal), Cvoid, (OGRFeatureDefnH, OGRwkbGeometryType), arg1, arg2))
 end
 
 """
@@ -2692,7 +2692,7 @@ Determine whether the geometry can be omitted when fetching features.
 ignore state
 """
 function ogr_fd_isgeometryignored(arg1)
-    ccall((:OGR_FD_IsGeometryIgnored, libgdal), Cint, (OGRFeatureDefnH,), arg1)
+    aftercare(ccall((:OGR_FD_IsGeometryIgnored, libgdal), Cint, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -2706,7 +2706,7 @@ Set whether the geometry can be omitted when fetching features.
 * **bIgnore**: ignore state
 """
 function ogr_fd_setgeometryignored(arg1, arg2)
-    ccall((:OGR_FD_SetGeometryIgnored, libgdal), Cvoid, (OGRFeatureDefnH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_FD_SetGeometryIgnored, libgdal), Cvoid, (OGRFeatureDefnH, Cint), arg1, arg2))
 end
 
 """
@@ -2721,7 +2721,7 @@ Determine whether the style can be omitted when fetching features.
 ignore state
 """
 function ogr_fd_isstyleignored(arg1)
-    ccall((:OGR_FD_IsStyleIgnored, libgdal), Cint, (OGRFeatureDefnH,), arg1)
+    aftercare(ccall((:OGR_FD_IsStyleIgnored, libgdal), Cint, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -2735,7 +2735,7 @@ Set whether the style can be omitted when fetching features.
 * **bIgnore**: ignore state
 """
 function ogr_fd_setstyleignored(arg1, arg2)
-    ccall((:OGR_FD_SetStyleIgnored, libgdal), Cvoid, (OGRFeatureDefnH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_FD_SetStyleIgnored, libgdal), Cvoid, (OGRFeatureDefnH, Cint), arg1, arg2))
 end
 
 """
@@ -2750,7 +2750,7 @@ Increments the reference count by one.
 the updated reference count.
 """
 function ogr_fd_reference(arg1)
-    ccall((:OGR_FD_Reference, libgdal), Cint, (OGRFeatureDefnH,), arg1)
+    aftercare(ccall((:OGR_FD_Reference, libgdal), Cint, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -2765,7 +2765,7 @@ Decrements the reference count by one.
 the updated reference count.
 """
 function ogr_fd_dereference(arg1)
-    ccall((:OGR_FD_Dereference, libgdal), Cint, (OGRFeatureDefnH,), arg1)
+    aftercare(ccall((:OGR_FD_Dereference, libgdal), Cint, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -2780,7 +2780,7 @@ Fetch current reference count.
 the current reference count.
 """
 function ogr_fd_getreferencecount(arg1)
-    ccall((:OGR_FD_GetReferenceCount, libgdal), Cint, (OGRFeatureDefnH,), arg1)
+    aftercare(ccall((:OGR_FD_GetReferenceCount, libgdal), Cint, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -2795,7 +2795,7 @@ Fetch number of geometry fields on the passed feature definition.
 count of geometry fields.
 """
 function ogr_fd_getgeomfieldcount(hFDefn)
-    ccall((:OGR_FD_GetGeomFieldCount, libgdal), Cint, (OGRFeatureDefnH,), hFDefn)
+    aftercare(ccall((:OGR_FD_GetGeomFieldCount, libgdal), Cint, (OGRFeatureDefnH,), hFDefn))
 end
 
 """
@@ -2812,7 +2812,7 @@ Fetch geometry field definition of the passed feature definition.
 an handle to an internal field definition object or NULL if invalid index. This object should not be modified or freed by the application.
 """
 function ogr_fd_getgeomfielddefn(hFDefn, i)
-    failsafe(ccall((:OGR_FD_GetGeomFieldDefn, libgdal), OGRGeomFieldDefnH, (OGRFeatureDefnH, Cint), hFDefn, i))
+    aftercare(ccall((:OGR_FD_GetGeomFieldDefn, libgdal), OGRGeomFieldDefnH, (OGRFeatureDefnH, Cint), hFDefn, i))
 end
 
 """
@@ -2829,7 +2829,7 @@ Find geometry field by name.
 the geometry field index, or -1 if no match found.
 """
 function ogr_fd_getgeomfieldindex(hFDefn, pszName)
-    ccall((:OGR_FD_GetGeomFieldIndex, libgdal), Cint, (OGRFeatureDefnH, Cstring), hFDefn, pszName)
+    aftercare(ccall((:OGR_FD_GetGeomFieldIndex, libgdal), Cint, (OGRFeatureDefnH, Cstring), hFDefn, pszName))
 end
 
 """
@@ -2843,7 +2843,7 @@ Add a new field definition to the passed feature definition.
 * **hNewGeomField**: handle to the new field definition.
 """
 function ogr_fd_addgeomfielddefn(hFDefn, hGFldDefn)
-    ccall((:OGR_FD_AddGeomFieldDefn, libgdal), Cvoid, (OGRFeatureDefnH, OGRGeomFieldDefnH), hFDefn, hGFldDefn)
+    aftercare(ccall((:OGR_FD_AddGeomFieldDefn, libgdal), Cvoid, (OGRFeatureDefnH, OGRGeomFieldDefnH), hFDefn, hGFldDefn))
 end
 
 """
@@ -2860,7 +2860,7 @@ Delete an existing geometry field definition.
 OGRERR_NONE in case of success.
 """
 function ogr_fd_deletegeomfielddefn(hFDefn, iGeomField)
-    ccall((:OGR_FD_DeleteGeomFieldDefn, libgdal), OGRErr, (OGRFeatureDefnH, Cint), hFDefn, iGeomField)
+    aftercare(ccall((:OGR_FD_DeleteGeomFieldDefn, libgdal), OGRErr, (OGRFeatureDefnH, Cint), hFDefn, iGeomField))
 end
 
 """
@@ -2877,7 +2877,7 @@ Test if the feature definition is identical to the other one.
 TRUE if the feature definition is identical to the other one.
 """
 function ogr_fd_issame(hFDefn, hOtherFDefn)
-    ccall((:OGR_FD_IsSame, libgdal), Cint, (OGRFeatureDefnH, OGRFeatureDefnH), hFDefn, hOtherFDefn)
+    aftercare(ccall((:OGR_FD_IsSame, libgdal), Cint, (OGRFeatureDefnH, OGRFeatureDefnH), hFDefn, hOtherFDefn))
 end
 
 """
@@ -2892,7 +2892,7 @@ Feature factory.
 an handle to the new feature object with null fields and no geometry, or, starting with GDAL 2.1, NULL in case out of memory situation.
 """
 function ogr_f_create(arg1)
-    failsafe(ccall((:OGR_F_Create, libgdal), OGRFeatureH, (OGRFeatureDefnH,), arg1))
+    aftercare(ccall((:OGR_F_Create, libgdal), OGRFeatureH, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -2904,7 +2904,7 @@ Destroy feature.
 * **hFeat**: handle to the feature to destroy.
 """
 function ogr_f_destroy(arg1)
-    ccall((:OGR_F_Destroy, libgdal), Cvoid, (OGRFeatureH,), arg1)
+    aftercare(ccall((:OGR_F_Destroy, libgdal), Cvoid, (OGRFeatureH,), arg1))
 end
 
 """
@@ -2919,7 +2919,7 @@ Fetch feature definition.
 an handle to the feature definition object on which feature depends.
 """
 function ogr_f_getdefnref(arg1)
-    failsafe(ccall((:OGR_F_GetDefnRef, libgdal), OGRFeatureDefnH, (OGRFeatureH,), arg1))
+    aftercare(ccall((:OGR_F_GetDefnRef, libgdal), OGRFeatureDefnH, (OGRFeatureH,), arg1))
 end
 
 """
@@ -2936,7 +2936,7 @@ Set feature geometry.
 OGRERR_NONE if successful, or OGR_UNSUPPORTED_GEOMETRY_TYPE if the geometry type is illegal for the OGRFeatureDefn (checking not yet implemented).
 """
 function ogr_f_setgeometrydirectly(arg1, arg2)
-    ccall((:OGR_F_SetGeometryDirectly, libgdal), OGRErr, (OGRFeatureH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_F_SetGeometryDirectly, libgdal), OGRErr, (OGRFeatureH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -2953,7 +2953,7 @@ Set feature geometry.
 OGRERR_NONE if successful, or OGR_UNSUPPORTED_GEOMETRY_TYPE if the geometry type is illegal for the OGRFeatureDefn (checking not yet implemented).
 """
 function ogr_f_setgeometry(arg1, arg2)
-    ccall((:OGR_F_SetGeometry, libgdal), OGRErr, (OGRFeatureH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_F_SetGeometry, libgdal), OGRErr, (OGRFeatureH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -2968,7 +2968,7 @@ Fetch an handle to feature geometry.
 an handle to internal feature geometry. This object should not be modified.
 """
 function ogr_f_getgeometryref(arg1)
-    failsafe(ccall((:OGR_F_GetGeometryRef, libgdal), OGRGeometryH, (OGRFeatureH,), arg1))
+    aftercare(ccall((:OGR_F_GetGeometryRef, libgdal), OGRGeometryH, (OGRFeatureH,), arg1))
 end
 
 """
@@ -2980,7 +2980,7 @@ Take away ownership of geometry.
 the pointer to the geometry.
 """
 function ogr_f_stealgeometry(arg1)
-    failsafe(ccall((:OGR_F_StealGeometry, libgdal), OGRGeometryH, (OGRFeatureH,), arg1))
+    aftercare(ccall((:OGR_F_StealGeometry, libgdal), OGRGeometryH, (OGRFeatureH,), arg1))
 end
 
 """
@@ -2995,7 +2995,7 @@ Duplicate feature.
 an handle to the new feature, exactly matching this feature.
 """
 function ogr_f_clone(arg1)
-    failsafe(ccall((:OGR_F_Clone, libgdal), OGRFeatureH, (OGRFeatureH,), arg1))
+    aftercare(ccall((:OGR_F_Clone, libgdal), OGRFeatureH, (OGRFeatureH,), arg1))
 end
 
 """
@@ -3012,7 +3012,7 @@ Test if two features are the same.
 TRUE if they are equal, otherwise FALSE.
 """
 function ogr_f_equal(arg1, arg2)
-    ccall((:OGR_F_Equal, libgdal), Cint, (OGRFeatureH, OGRFeatureH), arg1, arg2)
+    aftercare(ccall((:OGR_F_Equal, libgdal), Cint, (OGRFeatureH, OGRFeatureH), arg1, arg2))
 end
 
 """
@@ -3027,7 +3027,7 @@ Fetch number of fields on this feature This will always be the same as the field
 count of fields.
 """
 function ogr_f_getfieldcount(arg1)
-    ccall((:OGR_F_GetFieldCount, libgdal), Cint, (OGRFeatureH,), arg1)
+    aftercare(ccall((:OGR_F_GetFieldCount, libgdal), Cint, (OGRFeatureH,), arg1))
 end
 
 """
@@ -3044,7 +3044,7 @@ Fetch definition for this field.
 an handle to the field definition (from the OGRFeatureDefn). This is an internal reference, and should not be deleted or modified.
 """
 function ogr_f_getfielddefnref(arg1, arg2)
-    failsafe(ccall((:OGR_F_GetFieldDefnRef, libgdal), OGRFieldDefnH, (OGRFeatureH, Cint), arg1, arg2))
+    aftercare(ccall((:OGR_F_GetFieldDefnRef, libgdal), OGRFieldDefnH, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -3061,7 +3061,7 @@ Fetch the field index given field name.
 the field index, or -1 if no matching field is found.
 """
 function ogr_f_getfieldindex(arg1, arg2)
-    ccall((:OGR_F_GetFieldIndex, libgdal), Cint, (OGRFeatureH, Cstring), arg1, arg2)
+    aftercare(ccall((:OGR_F_GetFieldIndex, libgdal), Cint, (OGRFeatureH, Cstring), arg1, arg2))
 end
 
 """
@@ -3078,7 +3078,7 @@ Test if a field has ever been assigned a value or not.
 TRUE if the field has been set, otherwise false.
 """
 function ogr_f_isfieldset(arg1, arg2)
-    ccall((:OGR_F_IsFieldSet, libgdal), Cint, (OGRFeatureH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_F_IsFieldSet, libgdal), Cint, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -3092,7 +3092,7 @@ Clear a field, marking it as unset.
 * **iField**: the field to unset.
 """
 function ogr_f_unsetfield(arg1, arg2)
-    ccall((:OGR_F_UnsetField, libgdal), Cvoid, (OGRFeatureH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_F_UnsetField, libgdal), Cvoid, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -3109,7 +3109,7 @@ Test if a field is null.
 TRUE if the field is null, otherwise false.
 """
 function ogr_f_isfieldnull(arg1, arg2)
-    ccall((:OGR_F_IsFieldNull, libgdal), Cint, (OGRFeatureH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_F_IsFieldNull, libgdal), Cint, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -3126,7 +3126,7 @@ Test if a field is set and not null.
 TRUE if the field is set and not null, otherwise false.
 """
 function ogr_f_isfieldsetandnotnull(arg1, arg2)
-    ccall((:OGR_F_IsFieldSetAndNotNull, libgdal), Cint, (OGRFeatureH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_F_IsFieldSetAndNotNull, libgdal), Cint, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -3140,7 +3140,7 @@ Clear a field, marking it as null.
 * **iField**: the field to set to null.
 """
 function ogr_f_setfieldnull(arg1, arg2)
-    ccall((:OGR_F_SetFieldNull, libgdal), Cvoid, (OGRFeatureH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_F_SetFieldNull, libgdal), Cvoid, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -3157,7 +3157,7 @@ Fetch an handle to the internal field value given the index.
 the returned handle is to an internal data structure, and should not be freed, or modified.
 """
 function ogr_f_getrawfieldref(arg1, arg2)
-    ccall((:OGR_F_GetRawFieldRef, libgdal), Ptr{OGRField}, (OGRFeatureH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_F_GetRawFieldRef, libgdal), Ptr{OGRField}, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -3169,7 +3169,7 @@ Returns whether a raw field is unset.
 * **puField**: pointer to raw field.
 """
 function ogr_rawfield_isunset(arg1)
-    ccall((:OGR_RawField_IsUnset, libgdal), Cint, (Ptr{OGRField},), arg1)
+    aftercare(ccall((:OGR_RawField_IsUnset, libgdal), Cint, (Ptr{OGRField},), arg1))
 end
 
 """
@@ -3181,7 +3181,7 @@ Returns whether a raw field is null.
 * **puField**: pointer to raw field.
 """
 function ogr_rawfield_isnull(arg1)
-    ccall((:OGR_RawField_IsNull, libgdal), Cint, (Ptr{OGRField},), arg1)
+    aftercare(ccall((:OGR_RawField_IsNull, libgdal), Cint, (Ptr{OGRField},), arg1))
 end
 
 """
@@ -3193,7 +3193,7 @@ Mark a raw field as unset.
 * **puField**: pointer to raw field.
 """
 function ogr_rawfield_setunset(arg1)
-    ccall((:OGR_RawField_SetUnset, libgdal), Cvoid, (Ptr{OGRField},), arg1)
+    aftercare(ccall((:OGR_RawField_SetUnset, libgdal), Cvoid, (Ptr{OGRField},), arg1))
 end
 
 """
@@ -3205,7 +3205,7 @@ Mark a raw field as null.
 * **puField**: pointer to raw field.
 """
 function ogr_rawfield_setnull(arg1)
-    ccall((:OGR_RawField_SetNull, libgdal), Cvoid, (Ptr{OGRField},), arg1)
+    aftercare(ccall((:OGR_RawField_SetNull, libgdal), Cvoid, (Ptr{OGRField},), arg1))
 end
 
 """
@@ -3222,7 +3222,7 @@ Fetch field value as integer.
 the field value.
 """
 function ogr_f_getfieldasinteger(arg1, arg2)
-    ccall((:OGR_F_GetFieldAsInteger, libgdal), Cint, (OGRFeatureH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_F_GetFieldAsInteger, libgdal), Cint, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -3239,7 +3239,7 @@ Fetch field value as integer 64 bit.
 the field value.
 """
 function ogr_f_getfieldasinteger64(arg1, arg2)
-    ccall((:OGR_F_GetFieldAsInteger64, libgdal), GIntBig, (OGRFeatureH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_F_GetFieldAsInteger64, libgdal), GIntBig, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -3256,7 +3256,7 @@ Fetch field value as a double.
 the field value.
 """
 function ogr_f_getfieldasdouble(arg1, arg2)
-    ccall((:OGR_F_GetFieldAsDouble, libgdal), Cdouble, (OGRFeatureH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_F_GetFieldAsDouble, libgdal), Cdouble, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -3273,7 +3273,7 @@ Fetch field value as a string.
 the field value. This string is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function ogr_f_getfieldasstring(arg1, arg2)
-    unsafe_string(ccall((:OGR_F_GetFieldAsString, libgdal), Cstring, (OGRFeatureH, Cint), arg1, arg2))
+    aftercare(ccall((:OGR_F_GetFieldAsString, libgdal), Cstring, (OGRFeatureH, Cint), arg1, arg2), false)
 end
 
 """
@@ -3292,7 +3292,7 @@ Fetch field value as a list of integers.
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief. If *pnCount is zero on return the returned pointer may be NULL or non-NULL.
 """
 function ogr_f_getfieldasintegerlist(arg1, arg2, arg3)
-    ccall((:OGR_F_GetFieldAsIntegerList, libgdal), Ptr{Cint}, (OGRFeatureH, Cint, Ptr{Cint}), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_F_GetFieldAsIntegerList, libgdal), Ptr{Cint}, (OGRFeatureH, Cint, Ptr{Cint}), arg1, arg2, arg3))
 end
 
 """
@@ -3311,7 +3311,7 @@ Fetch field value as a list of 64 bit integers.
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief. If *pnCount is zero on return the returned pointer may be NULL or non-NULL.
 """
 function ogr_f_getfieldasinteger64list(arg1, arg2, arg3)
-    ccall((:OGR_F_GetFieldAsInteger64List, libgdal), Ptr{GIntBig}, (OGRFeatureH, Cint, Ptr{Cint}), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_F_GetFieldAsInteger64List, libgdal), Ptr{GIntBig}, (OGRFeatureH, Cint, Ptr{Cint}), arg1, arg2, arg3))
 end
 
 """
@@ -3330,7 +3330,7 @@ Fetch field value as a list of doubles.
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief. If *pnCount is zero on return the returned pointer may be NULL or non-NULL.
 """
 function ogr_f_getfieldasdoublelist(arg1, arg2, arg3)
-    ccall((:OGR_F_GetFieldAsDoubleList, libgdal), Ptr{Cdouble}, (OGRFeatureH, Cint, Ptr{Cint}), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_F_GetFieldAsDoubleList, libgdal), Ptr{Cdouble}, (OGRFeatureH, Cint, Ptr{Cint}), arg1, arg2, arg3))
 end
 
 """
@@ -3347,7 +3347,7 @@ Fetch field value as a list of strings.
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function ogr_f_getfieldasstringlist(arg1, arg2)
-    unsafe_loadstringlist(ccall((:OGR_F_GetFieldAsStringList, libgdal), Ptr{Cstring}, (OGRFeatureH, Cint), arg1, arg2))
+    aftercare(ccall((:OGR_F_GetFieldAsStringList, libgdal), Ptr{Cstring}, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -3366,7 +3366,7 @@ Fetch field value as binary.
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function ogr_f_getfieldasbinary(arg1, arg2, arg3)
-    ccall((:OGR_F_GetFieldAsBinary, libgdal), Ptr{GByte}, (OGRFeatureH, Cint, Ptr{Cint}), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_F_GetFieldAsBinary, libgdal), Ptr{GByte}, (OGRFeatureH, Cint, Ptr{Cint}), arg1, arg2, arg3))
 end
 
 """
@@ -3397,7 +3397,7 @@ Fetch field value as date and time.
 TRUE on success or FALSE on failure.
 """
 function ogr_f_getfieldasdatetime(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
-    ccall((:OGR_F_GetFieldAsDateTime, libgdal), Cint, (OGRFeatureH, Cint, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
+    aftercare(ccall((:OGR_F_GetFieldAsDateTime, libgdal), Cint, (OGRFeatureH, Cint, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9))
 end
 
 """
@@ -3428,7 +3428,7 @@ Fetch field value as date and time.
 TRUE on success or FALSE on failure.
 """
 function ogr_f_getfieldasdatetimeex(hFeat, iField, pnYear, pnMonth, pnDay, pnHour, pnMinute, pfSecond, pnTZFlag)
-    ccall((:OGR_F_GetFieldAsDateTimeEx, libgdal), Cint, (OGRFeatureH, Cint, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cfloat}, Ptr{Cint}), hFeat, iField, pnYear, pnMonth, pnDay, pnHour, pnMinute, pfSecond, pnTZFlag)
+    aftercare(ccall((:OGR_F_GetFieldAsDateTimeEx, libgdal), Cint, (OGRFeatureH, Cint, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cfloat}, Ptr{Cint}), hFeat, iField, pnYear, pnMonth, pnDay, pnHour, pnMinute, pfSecond, pnTZFlag))
 end
 
 """
@@ -3444,7 +3444,7 @@ Set field to integer value.
 * **nValue**: the value to assign.
 """
 function ogr_f_setfieldinteger(arg1, arg2, arg3)
-    ccall((:OGR_F_SetFieldInteger, libgdal), Cvoid, (OGRFeatureH, Cint, Cint), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_F_SetFieldInteger, libgdal), Cvoid, (OGRFeatureH, Cint, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -3460,7 +3460,7 @@ Set field to 64 bit integer value.
 * **nValue**: the value to assign.
 """
 function ogr_f_setfieldinteger64(arg1, arg2, arg3)
-    ccall((:OGR_F_SetFieldInteger64, libgdal), Cvoid, (OGRFeatureH, Cint, GIntBig), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_F_SetFieldInteger64, libgdal), Cvoid, (OGRFeatureH, Cint, GIntBig), arg1, arg2, arg3))
 end
 
 """
@@ -3476,7 +3476,7 @@ Set field to double value.
 * **dfValue**: the value to assign.
 """
 function ogr_f_setfielddouble(arg1, arg2, arg3)
-    ccall((:OGR_F_SetFieldDouble, libgdal), Cvoid, (OGRFeatureH, Cint, Cdouble), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_F_SetFieldDouble, libgdal), Cvoid, (OGRFeatureH, Cint, Cdouble), arg1, arg2, arg3))
 end
 
 """
@@ -3492,7 +3492,7 @@ Set field to string value.
 * **pszValue**: the value to assign.
 """
 function ogr_f_setfieldstring(arg1, arg2, arg3)
-    ccall((:OGR_F_SetFieldString, libgdal), Cvoid, (OGRFeatureH, Cint, Cstring), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_F_SetFieldString, libgdal), Cvoid, (OGRFeatureH, Cint, Cstring), arg1, arg2, arg3))
 end
 
 """
@@ -3510,7 +3510,7 @@ Set field to list of integers value.
 * **panValues**: the values to assign.
 """
 function ogr_f_setfieldintegerlist(arg1, arg2, arg3, arg4)
-    ccall((:OGR_F_SetFieldIntegerList, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Ptr{Cint}), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:OGR_F_SetFieldIntegerList, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Ptr{Cint}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -3528,7 +3528,7 @@ Set field to list of 64 bit integers value.
 * **panValues**: the values to assign.
 """
 function ogr_f_setfieldinteger64list(arg1, arg2, arg3, arg4)
-    ccall((:OGR_F_SetFieldInteger64List, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Ptr{GIntBig}), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:OGR_F_SetFieldInteger64List, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Ptr{GIntBig}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -3546,7 +3546,7 @@ Set field to list of doubles value.
 * **padfValues**: the values to assign.
 """
 function ogr_f_setfielddoublelist(arg1, arg2, arg3, arg4)
-    ccall((:OGR_F_SetFieldDoubleList, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Ptr{Cdouble}), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:OGR_F_SetFieldDoubleList, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Ptr{Cdouble}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -3562,7 +3562,7 @@ Set field to list of strings value.
 * **papszValues**: the values to assign. List of NUL-terminated string, ending with a NULL pointer.
 """
 function ogr_f_setfieldstringlist(arg1, arg2, arg3)
-    ccall((:OGR_F_SetFieldStringList, libgdal), Cvoid, (OGRFeatureH, Cint, CSLConstList), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_F_SetFieldStringList, libgdal), Cvoid, (OGRFeatureH, Cint, CSLConstList), arg1, arg2, arg3))
 end
 
 """
@@ -3578,7 +3578,7 @@ Set field.
 * **psValue**: handle on the value to assign.
 """
 function ogr_f_setfieldraw(arg1, arg2, arg3)
-    ccall((:OGR_F_SetFieldRaw, libgdal), Cvoid, (OGRFeatureH, Cint, Ptr{OGRField}), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_F_SetFieldRaw, libgdal), Cvoid, (OGRFeatureH, Cint, Ptr{OGRField}), arg1, arg2, arg3))
 end
 
 """
@@ -3596,7 +3596,7 @@ Set field to binary data.
 * **pabyData**: the data to apply.
 """
 function ogr_f_setfieldbinary(arg1, arg2, arg3, arg4)
-    ccall((:OGR_F_SetFieldBinary, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Ptr{Cvoid}), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:OGR_F_SetFieldBinary, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Ptr{Cvoid}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -3624,7 +3624,7 @@ Set field to datetime.
 * **nTZFlag**: (0=unknown, 1=localtime, 100=GMT, see data model for details)
 """
 function ogr_f_setfielddatetime(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
-    ccall((:OGR_F_SetFieldDateTime, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
+    aftercare(ccall((:OGR_F_SetFieldDateTime, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9))
 end
 
 """
@@ -3652,7 +3652,7 @@ Set field to datetime.
 * **nTZFlag**: (0=unknown, 1=localtime, 100=GMT, see data model for details)
 """
 function ogr_f_setfielddatetimeex(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
-    ccall((:OGR_F_SetFieldDateTimeEx, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Cint, Cint, Cint, Cint, Cfloat, Cint), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
+    aftercare(ccall((:OGR_F_SetFieldDateTimeEx, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Cint, Cint, Cint, Cint, Cfloat, Cint), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9))
 end
 
 """
@@ -3667,7 +3667,7 @@ Fetch number of geometry fields on this feature This will always be the same as 
 count of geometry fields.
 """
 function ogr_f_getgeomfieldcount(hFeat)
-    ccall((:OGR_F_GetGeomFieldCount, libgdal), Cint, (OGRFeatureH,), hFeat)
+    aftercare(ccall((:OGR_F_GetGeomFieldCount, libgdal), Cint, (OGRFeatureH,), hFeat))
 end
 
 """
@@ -3684,7 +3684,7 @@ Fetch definition for this geometry field.
 an handle to the field definition (from the OGRFeatureDefn). This is an internal reference, and should not be deleted or modified.
 """
 function ogr_f_getgeomfielddefnref(hFeat, iField)
-    failsafe(ccall((:OGR_F_GetGeomFieldDefnRef, libgdal), OGRGeomFieldDefnH, (OGRFeatureH, Cint), hFeat, iField))
+    aftercare(ccall((:OGR_F_GetGeomFieldDefnRef, libgdal), OGRGeomFieldDefnH, (OGRFeatureH, Cint), hFeat, iField))
 end
 
 """
@@ -3701,7 +3701,7 @@ Fetch the geometry field index given geometry field name.
 the geometry field index, or -1 if no matching geometry field is found.
 """
 function ogr_f_getgeomfieldindex(hFeat, pszName)
-    ccall((:OGR_F_GetGeomFieldIndex, libgdal), Cint, (OGRFeatureH, Cstring), hFeat, pszName)
+    aftercare(ccall((:OGR_F_GetGeomFieldIndex, libgdal), Cint, (OGRFeatureH, Cstring), hFeat, pszName))
 end
 
 """
@@ -3718,7 +3718,7 @@ Fetch an handle to feature geometry.
 an handle to internal feature geometry. This object should not be modified.
 """
 function ogr_f_getgeomfieldref(hFeat, iField)
-    failsafe(ccall((:OGR_F_GetGeomFieldRef, libgdal), OGRGeometryH, (OGRFeatureH, Cint), hFeat, iField))
+    aftercare(ccall((:OGR_F_GetGeomFieldRef, libgdal), OGRGeometryH, (OGRFeatureH, Cint), hFeat, iField))
 end
 
 """
@@ -3737,7 +3737,7 @@ Set feature geometry of a specified geometry field.
 OGRERR_NONE if successful, or OGRERR_FAILURE if the index is invalid, or OGR_UNSUPPORTED_GEOMETRY_TYPE if the geometry type is illegal for the OGRFeatureDefn (checking not yet implemented).
 """
 function ogr_f_setgeomfielddirectly(hFeat, iField, hGeom)
-    ccall((:OGR_F_SetGeomFieldDirectly, libgdal), OGRErr, (OGRFeatureH, Cint, OGRGeometryH), hFeat, iField, hGeom)
+    aftercare(ccall((:OGR_F_SetGeomFieldDirectly, libgdal), OGRErr, (OGRFeatureH, Cint, OGRGeometryH), hFeat, iField, hGeom))
 end
 
 """
@@ -3756,7 +3756,7 @@ Set feature geometry of a specified geometry field.
 OGRERR_NONE if successful, or OGR_UNSUPPORTED_GEOMETRY_TYPE if the geometry type is illegal for the OGRFeatureDefn (checking not yet implemented).
 """
 function ogr_f_setgeomfield(hFeat, iField, hGeom)
-    ccall((:OGR_F_SetGeomField, libgdal), OGRErr, (OGRFeatureH, Cint, OGRGeometryH), hFeat, iField, hGeom)
+    aftercare(ccall((:OGR_F_SetGeomField, libgdal), OGRErr, (OGRFeatureH, Cint, OGRGeometryH), hFeat, iField, hGeom))
 end
 
 """
@@ -3771,7 +3771,7 @@ Get feature identifier.
 feature id or OGRNullFID if none has been assigned.
 """
 function ogr_f_getfid(arg1)
-    ccall((:OGR_F_GetFID, libgdal), GIntBig, (OGRFeatureH,), arg1)
+    aftercare(ccall((:OGR_F_GetFID, libgdal), GIntBig, (OGRFeatureH,), arg1))
 end
 
 """
@@ -3788,7 +3788,7 @@ Set the feature identifier.
 On success OGRERR_NONE, or on failure some other value.
 """
 function ogr_f_setfid(arg1, arg2)
-    ccall((:OGR_F_SetFID, libgdal), OGRErr, (OGRFeatureH, GIntBig), arg1, arg2)
+    aftercare(ccall((:OGR_F_SetFID, libgdal), OGRErr, (OGRFeatureH, GIntBig), arg1, arg2))
 end
 
 """
@@ -3802,7 +3802,7 @@ Dump this feature in a human readable form.
 * **fpOut**: the stream to write to, such as strout.
 """
 function ogr_f_dumpreadable(arg1, arg2)
-    ccall((:OGR_F_DumpReadable, libgdal), Cvoid, (OGRFeatureH, Ptr{Cint}), arg1, arg2)
+    aftercare(ccall((:OGR_F_DumpReadable, libgdal), Cvoid, (OGRFeatureH, Ptr{Cint}), arg1, arg2))
 end
 
 """
@@ -3821,7 +3821,7 @@ Set one feature from another.
 OGRERR_NONE if the operation succeeds, even if some values are not transferred, otherwise an error code.
 """
 function ogr_f_setfrom(arg1, arg2, arg3)
-    ccall((:OGR_F_SetFrom, libgdal), OGRErr, (OGRFeatureH, OGRFeatureH, Cint), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_F_SetFrom, libgdal), OGRErr, (OGRFeatureH, OGRFeatureH, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -3842,7 +3842,7 @@ Set one feature from another.
 OGRERR_NONE if the operation succeeds, even if some values are not transferred, otherwise an error code.
 """
 function ogr_f_setfromwithmap(arg1, arg2, arg3, arg4)
-    ccall((:OGR_F_SetFromWithMap, libgdal), OGRErr, (OGRFeatureH, OGRFeatureH, Cint, Ptr{Cint}), arg1, arg2, arg3, arg4)
+    aftercare(ccall((:OGR_F_SetFromWithMap, libgdal), OGRErr, (OGRFeatureH, OGRFeatureH, Cint, Ptr{Cint}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -3857,7 +3857,7 @@ Fetch style string for this feature.
 a reference to a representation in string format, or NULL if there isn't one.
 """
 function ogr_f_getstylestring(arg1)
-    unsafe_string(ccall((:OGR_F_GetStyleString, libgdal), Cstring, (OGRFeatureH,), arg1))
+    aftercare(ccall((:OGR_F_GetStyleString, libgdal), Cstring, (OGRFeatureH,), arg1), false)
 end
 
 """
@@ -3871,7 +3871,7 @@ Set feature style string.
 * **pszStyle**: the style string to apply to this feature, cannot be NULL.
 """
 function ogr_f_setstylestring(arg1, arg2)
-    ccall((:OGR_F_SetStyleString, libgdal), Cvoid, (OGRFeatureH, Cstring), arg1, arg2)
+    aftercare(ccall((:OGR_F_SetStyleString, libgdal), Cvoid, (OGRFeatureH, Cstring), arg1, arg2))
 end
 
 """
@@ -3885,7 +3885,7 @@ Set feature style string.
 * **pszStyle**: the style string to apply to this feature, cannot be NULL.
 """
 function ogr_f_setstylestringdirectly(arg1, arg2)
-    ccall((:OGR_F_SetStyleStringDirectly, libgdal), Cvoid, (OGRFeatureH, Cstring), arg1, arg2)
+    aftercare(ccall((:OGR_F_SetStyleStringDirectly, libgdal), Cvoid, (OGRFeatureH, Cstring), arg1, arg2))
 end
 
 """
@@ -3894,7 +3894,7 @@ end
 Return style table.
 """
 function ogr_f_getstyletable(arg1)
-    failsafe(ccall((:OGR_F_GetStyleTable, libgdal), OGRStyleTableH, (OGRFeatureH,), arg1))
+    aftercare(ccall((:OGR_F_GetStyleTable, libgdal), OGRStyleTableH, (OGRFeatureH,), arg1))
 end
 
 """
@@ -3904,7 +3904,7 @@ end
 Set style table and take ownership.
 """
 function ogr_f_setstyletabledirectly(arg1, arg2)
-    ccall((:OGR_F_SetStyleTableDirectly, libgdal), Cvoid, (OGRFeatureH, OGRStyleTableH), arg1, arg2)
+    aftercare(ccall((:OGR_F_SetStyleTableDirectly, libgdal), Cvoid, (OGRFeatureH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -3914,7 +3914,7 @@ end
 Set style table.
 """
 function ogr_f_setstyletable(arg1, arg2)
-    ccall((:OGR_F_SetStyleTable, libgdal), Cvoid, (OGRFeatureH, OGRStyleTableH), arg1, arg2)
+    aftercare(ccall((:OGR_F_SetStyleTable, libgdal), Cvoid, (OGRFeatureH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -3929,7 +3929,7 @@ Returns the native data for the feature.
 a string with the native data, or NULL if there is none.
 """
 function ogr_f_getnativedata(arg1)
-    unsafe_string(ccall((:OGR_F_GetNativeData, libgdal), Cstring, (OGRFeatureH,), arg1))
+    aftercare(ccall((:OGR_F_GetNativeData, libgdal), Cstring, (OGRFeatureH,), arg1), false)
 end
 
 """
@@ -3943,7 +3943,7 @@ Sets the native data for the feature.
 * **pszNativeData**: a string with the native data, or NULL if there is none.
 """
 function ogr_f_setnativedata(arg1, arg2)
-    ccall((:OGR_F_SetNativeData, libgdal), Cvoid, (OGRFeatureH, Cstring), arg1, arg2)
+    aftercare(ccall((:OGR_F_SetNativeData, libgdal), Cvoid, (OGRFeatureH, Cstring), arg1, arg2))
 end
 
 """
@@ -3958,7 +3958,7 @@ Returns the native media type for the feature.
 a string with the native media type, or NULL if there is none.
 """
 function ogr_f_getnativemediatype(arg1)
-    unsafe_string(ccall((:OGR_F_GetNativeMediaType, libgdal), Cstring, (OGRFeatureH,), arg1))
+    aftercare(ccall((:OGR_F_GetNativeMediaType, libgdal), Cstring, (OGRFeatureH,), arg1), false)
 end
 
 """
@@ -3972,7 +3972,7 @@ Sets the native media type for the feature.
 * **pszNativeMediaType**: a string with the native media type, or NULL if there is none.
 """
 function ogr_f_setnativemediatype(arg1, arg2)
-    ccall((:OGR_F_SetNativeMediaType, libgdal), Cvoid, (OGRFeatureH, Cstring), arg1, arg2)
+    aftercare(ccall((:OGR_F_SetNativeMediaType, libgdal), Cvoid, (OGRFeatureH, Cstring), arg1, arg2))
 end
 
 """
@@ -3988,7 +3988,7 @@ Fill unset fields with default values that might be defined.
 * **papszOptions**: unused currently. Must be set to NULL.
 """
 function ogr_f_fillunsetwithdefault(hFeat, bNotNullableOnly, papszOptions)
-    ccall((:OGR_F_FillUnsetWithDefault, libgdal), Cvoid, (OGRFeatureH, Cint, Ptr{Cstring}), hFeat, bNotNullableOnly, papszOptions)
+    aftercare(ccall((:OGR_F_FillUnsetWithDefault, libgdal), Cvoid, (OGRFeatureH, Cint, Ptr{Cstring}), hFeat, bNotNullableOnly, papszOptions))
 end
 
 """
@@ -4007,7 +4007,7 @@ Validate that a feature meets constraints of its schema.
 TRUE if all enabled validation tests pass.
 """
 function ogr_f_validate(arg1, nValidateFlags, bEmitError)
-    ccall((:OGR_F_Validate, libgdal), Cint, (OGRFeatureH, Cint, Cint), arg1, nValidateFlags, bEmitError)
+    aftercare(ccall((:OGR_F_Validate, libgdal), Cint, (OGRFeatureH, Cint, Cint), arg1, nValidateFlags, bEmitError))
 end
 
 """
@@ -4022,7 +4022,7 @@ Return the layer name.
 the layer name (must not been freed)
 """
 function ogr_l_getname(arg1)
-    unsafe_string(ccall((:OGR_L_GetName, libgdal), Cstring, (OGRLayerH,), arg1))
+    aftercare(ccall((:OGR_L_GetName, libgdal), Cstring, (OGRLayerH,), arg1), false)
 end
 
 """
@@ -4037,7 +4037,7 @@ Return the layer geometry type.
 the geometry type
 """
 function ogr_l_getgeomtype(arg1)
-    ccall((:OGR_L_GetGeomType, libgdal), OGRwkbGeometryType, (OGRLayerH,), arg1)
+    aftercare(ccall((:OGR_L_GetGeomType, libgdal), OGRwkbGeometryType, (OGRLayerH,), arg1))
 end
 
 """
@@ -4052,7 +4052,7 @@ This function returns the current spatial filter for this layer.
 an handle to the spatial filter geometry.
 """
 function ogr_l_getspatialfilter(arg1)
-    failsafe(ccall((:OGR_L_GetSpatialFilter, libgdal), OGRGeometryH, (OGRLayerH,), arg1))
+    aftercare(ccall((:OGR_L_GetSpatialFilter, libgdal), OGRGeometryH, (OGRLayerH,), arg1))
 end
 
 """
@@ -4066,7 +4066,7 @@ Set a new spatial filter.
 * **hGeom**: handle to the geometry to use as a filtering region. NULL may be passed indicating that the current spatial filter should be cleared, but no new one instituted.
 """
 function ogr_l_setspatialfilter(arg1, arg2)
-    ccall((:OGR_L_SetSpatialFilter, libgdal), Cvoid, (OGRLayerH, OGRGeometryH), arg1, arg2)
+    aftercare(ccall((:OGR_L_SetSpatialFilter, libgdal), Cvoid, (OGRLayerH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -4086,7 +4086,7 @@ Set a new rectangular spatial filter.
 * **dfMaxY**: the maximum Y coordinate for the rectangular region.
 """
 function ogr_l_setspatialfilterrect(arg1, arg2, arg3, arg4, arg5)
-    ccall((:OGR_L_SetSpatialFilterRect, libgdal), Cvoid, (OGRLayerH, Cdouble, Cdouble, Cdouble, Cdouble), arg1, arg2, arg3, arg4, arg5)
+    aftercare(ccall((:OGR_L_SetSpatialFilterRect, libgdal), Cvoid, (OGRLayerH, Cdouble, Cdouble, Cdouble, Cdouble), arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -4102,7 +4102,7 @@ Set a new spatial filter.
 * **hGeom**: handle to the geometry to use as a filtering region. NULL may be passed indicating that the current spatial filter should be cleared, but no new one instituted.
 """
 function ogr_l_setspatialfilterex(arg1, iGeomField, hGeom)
-    ccall((:OGR_L_SetSpatialFilterEx, libgdal), Cvoid, (OGRLayerH, Cint, OGRGeometryH), arg1, iGeomField, hGeom)
+    aftercare(ccall((:OGR_L_SetSpatialFilterEx, libgdal), Cvoid, (OGRLayerH, Cint, OGRGeometryH), arg1, iGeomField, hGeom))
 end
 
 """
@@ -4124,7 +4124,7 @@ Set a new rectangular spatial filter.
 * **dfMaxY**: the maximum Y coordinate for the rectangular region.
 """
 function ogr_l_setspatialfilterrectex(arg1, iGeomField, dfMinX, dfMinY, dfMaxX, dfMaxY)
-    ccall((:OGR_L_SetSpatialFilterRectEx, libgdal), Cvoid, (OGRLayerH, Cint, Cdouble, Cdouble, Cdouble, Cdouble), arg1, iGeomField, dfMinX, dfMinY, dfMaxX, dfMaxY)
+    aftercare(ccall((:OGR_L_SetSpatialFilterRectEx, libgdal), Cvoid, (OGRLayerH, Cint, Cdouble, Cdouble, Cdouble, Cdouble), arg1, iGeomField, dfMinX, dfMinY, dfMaxX, dfMaxY))
 end
 
 """
@@ -4141,7 +4141,7 @@ Set a new attribute query.
 OGRERR_NONE if successfully installed, or an error code if the query expression is in error, or some other failure occurs.
 """
 function ogr_l_setattributefilter(arg1, arg2)
-    ccall((:OGR_L_SetAttributeFilter, libgdal), OGRErr, (OGRLayerH, Cstring), arg1, arg2)
+    aftercare(ccall((:OGR_L_SetAttributeFilter, libgdal), OGRErr, (OGRLayerH, Cstring), arg1, arg2))
 end
 
 """
@@ -4153,7 +4153,7 @@ Reset feature reading to start on the first feature.
 * **hLayer**: handle to the layer on which features are read.
 """
 function ogr_l_resetreading(arg1)
-    ccall((:OGR_L_ResetReading, libgdal), Cvoid, (OGRLayerH,), arg1)
+    aftercare(ccall((:OGR_L_ResetReading, libgdal), Cvoid, (OGRLayerH,), arg1))
 end
 
 """
@@ -4168,7 +4168,7 @@ Fetch the next available feature from this layer.
 an handle to a feature, or NULL if no more features are available.
 """
 function ogr_l_getnextfeature(arg1)
-    failsafe(ccall((:OGR_L_GetNextFeature, libgdal), OGRFeatureH, (OGRLayerH,), arg1))
+    aftercare(ccall((:OGR_L_GetNextFeature, libgdal), OGRFeatureH, (OGRLayerH,), arg1))
 end
 
 """
@@ -4185,7 +4185,7 @@ Move read cursor to the nIndex'th feature in the current resultset.
 OGRERR_NONE on success or an error code.
 """
 function ogr_l_setnextbyindex(arg1, arg2)
-    ccall((:OGR_L_SetNextByIndex, libgdal), OGRErr, (OGRLayerH, GIntBig), arg1, arg2)
+    aftercare(ccall((:OGR_L_SetNextByIndex, libgdal), OGRErr, (OGRLayerH, GIntBig), arg1, arg2))
 end
 
 """
@@ -4202,7 +4202,7 @@ Fetch a feature by its identifier.
 an handle to a feature now owned by the caller, or NULL on failure.
 """
 function ogr_l_getfeature(arg1, arg2)
-    failsafe(ccall((:OGR_L_GetFeature, libgdal), OGRFeatureH, (OGRLayerH, GIntBig), arg1, arg2))
+    aftercare(ccall((:OGR_L_GetFeature, libgdal), OGRFeatureH, (OGRLayerH, GIntBig), arg1, arg2))
 end
 
 """
@@ -4219,7 +4219,7 @@ Rewrite an existing feature.
 OGRERR_NONE if the operation works, otherwise an appropriate error code (e.g OGRERR_NON_EXISTING_FEATURE if the feature does not exist).
 """
 function ogr_l_setfeature(arg1, arg2)
-    ccall((:OGR_L_SetFeature, libgdal), OGRErr, (OGRLayerH, OGRFeatureH), arg1, arg2)
+    aftercare(ccall((:OGR_L_SetFeature, libgdal), OGRErr, (OGRLayerH, OGRFeatureH), arg1, arg2))
 end
 
 """
@@ -4236,7 +4236,7 @@ Create and write a new feature within a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_createfeature(arg1, arg2)
-    ccall((:OGR_L_CreateFeature, libgdal), OGRErr, (OGRLayerH, OGRFeatureH), arg1, arg2)
+    aftercare(ccall((:OGR_L_CreateFeature, libgdal), OGRErr, (OGRLayerH, OGRFeatureH), arg1, arg2))
 end
 
 """
@@ -4253,7 +4253,7 @@ Delete feature from layer.
 OGRERR_NONE if the operation works, otherwise an appropriate error code (e.g OGRERR_NON_EXISTING_FEATURE if the feature does not exist).
 """
 function ogr_l_deletefeature(arg1, arg2)
-    ccall((:OGR_L_DeleteFeature, libgdal), OGRErr, (OGRLayerH, GIntBig), arg1, arg2)
+    aftercare(ccall((:OGR_L_DeleteFeature, libgdal), OGRErr, (OGRLayerH, GIntBig), arg1, arg2))
 end
 
 """
@@ -4268,7 +4268,7 @@ Fetch the schema information for this layer.
 an handle to the feature definition.
 """
 function ogr_l_getlayerdefn(arg1)
-    failsafe(ccall((:OGR_L_GetLayerDefn, libgdal), OGRFeatureDefnH, (OGRLayerH,), arg1))
+    aftercare(ccall((:OGR_L_GetLayerDefn, libgdal), OGRFeatureDefnH, (OGRLayerH,), arg1))
 end
 
 """
@@ -4283,7 +4283,7 @@ Fetch the spatial reference system for this layer.
 spatial reference, or NULL if there isn't one.
 """
 function ogr_l_getspatialref(arg1)
-    failsafe(ccall((:OGR_L_GetSpatialRef, libgdal), OGRSpatialReferenceH, (OGRLayerH,), arg1))
+    aftercare(ccall((:OGR_L_GetSpatialRef, libgdal), OGRSpatialReferenceH, (OGRLayerH,), arg1))
 end
 
 """
@@ -4297,7 +4297,7 @@ Find the index of field in a layer.
 field index, or -1 if the field doesn't exist
 """
 function ogr_l_findfieldindex(arg1, arg2, bExactMatch)
-    ccall((:OGR_L_FindFieldIndex, libgdal), Cint, (OGRLayerH, Cstring, Cint), arg1, arg2, bExactMatch)
+    aftercare(ccall((:OGR_L_FindFieldIndex, libgdal), Cint, (OGRLayerH, Cstring, Cint), arg1, arg2, bExactMatch))
 end
 
 """
@@ -4314,7 +4314,7 @@ Fetch the feature count in this layer.
 feature count, -1 if count not known.
 """
 function ogr_l_getfeaturecount(arg1, arg2)
-    ccall((:OGR_L_GetFeatureCount, libgdal), GIntBig, (OGRLayerH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_L_GetFeatureCount, libgdal), GIntBig, (OGRLayerH, Cint), arg1, arg2))
 end
 
 """
@@ -4333,7 +4333,7 @@ Fetch the extent of this layer.
 OGRERR_NONE on success, OGRERR_FAILURE if extent not known.
 """
 function ogr_l_getextent(arg1, arg2, arg3)
-    ccall((:OGR_L_GetExtent, libgdal), OGRErr, (OGRLayerH, Ptr{OGREnvelope}, Cint), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_L_GetExtent, libgdal), OGRErr, (OGRLayerH, Ptr{OGREnvelope}, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -4354,7 +4354,7 @@ Fetch the extent of this layer, on the specified geometry field.
 OGRERR_NONE on success, OGRERR_FAILURE if extent not known.
 """
 function ogr_l_getextentex(arg1, iGeomField, psExtent, bForce)
-    ccall((:OGR_L_GetExtentEx, libgdal), OGRErr, (OGRLayerH, Cint, Ptr{OGREnvelope}, Cint), arg1, iGeomField, psExtent, bForce)
+    aftercare(ccall((:OGR_L_GetExtentEx, libgdal), OGRErr, (OGRLayerH, Cint, Ptr{OGREnvelope}, Cint), arg1, iGeomField, psExtent, bForce))
 end
 
 """
@@ -4371,7 +4371,7 @@ Test if this layer supported the named capability.
 TRUE if the layer has the requested capability, or FALSE otherwise. OGRLayers will return FALSE for any unrecognized capabilities.
 """
 function ogr_l_testcapability(arg1, arg2)
-    ccall((:OGR_L_TestCapability, libgdal), Cint, (OGRLayerH, Cstring), arg1, arg2)
+    aftercare(ccall((:OGR_L_TestCapability, libgdal), Cint, (OGRLayerH, Cstring), arg1, arg2))
 end
 
 """
@@ -4390,7 +4390,7 @@ Create a new field on a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_createfield(arg1, arg2, arg3)
-    ccall((:OGR_L_CreateField, libgdal), OGRErr, (OGRLayerH, OGRFieldDefnH, Cint), arg1, arg2, arg3)
+    aftercare(ccall((:OGR_L_CreateField, libgdal), OGRErr, (OGRLayerH, OGRFieldDefnH, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -4409,7 +4409,7 @@ Create a new geometry field on a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_creategeomfield(hLayer, hFieldDefn, bForce)
-    ccall((:OGR_L_CreateGeomField, libgdal), OGRErr, (OGRLayerH, OGRGeomFieldDefnH, Cint), hLayer, hFieldDefn, bForce)
+    aftercare(ccall((:OGR_L_CreateGeomField, libgdal), OGRErr, (OGRLayerH, OGRGeomFieldDefnH, Cint), hLayer, hFieldDefn, bForce))
 end
 
 """
@@ -4426,7 +4426,7 @@ Delete an existing field on a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_deletefield(arg1, iField)
-    ccall((:OGR_L_DeleteField, libgdal), OGRErr, (OGRLayerH, Cint), arg1, iField)
+    aftercare(ccall((:OGR_L_DeleteField, libgdal), OGRErr, (OGRLayerH, Cint), arg1, iField))
 end
 
 """
@@ -4443,7 +4443,7 @@ Reorder all the fields of a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_reorderfields(arg1, panMap)
-    ccall((:OGR_L_ReorderFields, libgdal), OGRErr, (OGRLayerH, Ptr{Cint}), arg1, panMap)
+    aftercare(ccall((:OGR_L_ReorderFields, libgdal), OGRErr, (OGRLayerH, Ptr{Cint}), arg1, panMap))
 end
 
 """
@@ -4462,7 +4462,7 @@ Reorder an existing field on a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_reorderfield(arg1, iOldFieldPos, iNewFieldPos)
-    ccall((:OGR_L_ReorderField, libgdal), OGRErr, (OGRLayerH, Cint, Cint), arg1, iOldFieldPos, iNewFieldPos)
+    aftercare(ccall((:OGR_L_ReorderField, libgdal), OGRErr, (OGRLayerH, Cint, Cint), arg1, iOldFieldPos, iNewFieldPos))
 end
 
 """
@@ -4483,7 +4483,7 @@ Alter the definition of an existing field on a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_alterfielddefn(arg1, iField, hNewFieldDefn, nFlags)
-    ccall((:OGR_L_AlterFieldDefn, libgdal), OGRErr, (OGRLayerH, Cint, OGRFieldDefnH, Cint), arg1, iField, hNewFieldDefn, nFlags)
+    aftercare(ccall((:OGR_L_AlterFieldDefn, libgdal), OGRErr, (OGRLayerH, Cint, OGRFieldDefnH, Cint), arg1, iField, hNewFieldDefn, nFlags))
 end
 
 """
@@ -4498,7 +4498,7 @@ For datasources which support transactions, StartTransaction creates a transacti
 OGRERR_NONE on success.
 """
 function ogr_l_starttransaction(arg1)
-    ccall((:OGR_L_StartTransaction, libgdal), OGRErr, (OGRLayerH,), arg1)
+    aftercare(ccall((:OGR_L_StartTransaction, libgdal), OGRErr, (OGRLayerH,), arg1))
 end
 
 """
@@ -4513,7 +4513,7 @@ For datasources which support transactions, CommitTransaction commits a transact
 OGRERR_NONE on success.
 """
 function ogr_l_committransaction(arg1)
-    ccall((:OGR_L_CommitTransaction, libgdal), OGRErr, (OGRLayerH,), arg1)
+    aftercare(ccall((:OGR_L_CommitTransaction, libgdal), OGRErr, (OGRLayerH,), arg1))
 end
 
 """
@@ -4528,28 +4528,28 @@ For datasources which support transactions, RollbackTransaction will roll back a
 OGRERR_NONE on success.
 """
 function ogr_l_rollbacktransaction(arg1)
-    ccall((:OGR_L_RollbackTransaction, libgdal), OGRErr, (OGRLayerH,), arg1)
+    aftercare(ccall((:OGR_L_RollbackTransaction, libgdal), OGRErr, (OGRLayerH,), arg1))
 end
 
 """
     OGR_L_Reference(OGRLayerH hLayer) -> int
 """
 function ogr_l_reference(arg1)
-    ccall((:OGR_L_Reference, libgdal), Cint, (OGRLayerH,), arg1)
+    aftercare(ccall((:OGR_L_Reference, libgdal), Cint, (OGRLayerH,), arg1))
 end
 
 """
     OGR_L_Dereference(OGRLayerH hLayer) -> int
 """
 function ogr_l_dereference(arg1)
-    ccall((:OGR_L_Dereference, libgdal), Cint, (OGRLayerH,), arg1)
+    aftercare(ccall((:OGR_L_Dereference, libgdal), Cint, (OGRLayerH,), arg1))
 end
 
 """
     OGR_L_GetRefCount(OGRLayerH hLayer) -> int
 """
 function ogr_l_getrefcount(arg1)
-    ccall((:OGR_L_GetRefCount, libgdal), Cint, (OGRLayerH,), arg1)
+    aftercare(ccall((:OGR_L_GetRefCount, libgdal), Cint, (OGRLayerH,), arg1))
 end
 
 """
@@ -4564,14 +4564,14 @@ Flush pending changes to disk.
 OGRERR_NONE if no error occurs (even if nothing is done) or an error code.
 """
 function ogr_l_synctodisk(arg1)
-    ccall((:OGR_L_SyncToDisk, libgdal), OGRErr, (OGRLayerH,), arg1)
+    aftercare(ccall((:OGR_L_SyncToDisk, libgdal), OGRErr, (OGRLayerH,), arg1))
 end
 
 """
     OGR_L_GetFeaturesRead(OGRLayerH hLayer) -> GIntBig
 """
 function ogr_l_getfeaturesread(arg1)
-    ccall((:OGR_L_GetFeaturesRead, libgdal), GIntBig, (OGRLayerH,), arg1)
+    aftercare(ccall((:OGR_L_GetFeaturesRead, libgdal), GIntBig, (OGRLayerH,), arg1))
 end
 
 """
@@ -4586,7 +4586,7 @@ This method returns the name of the underlying database column being used as the
 fid column name.
 """
 function ogr_l_getfidcolumn(arg1)
-    unsafe_string(ccall((:OGR_L_GetFIDColumn, libgdal), Cstring, (OGRLayerH,), arg1))
+    aftercare(ccall((:OGR_L_GetFIDColumn, libgdal), Cstring, (OGRLayerH,), arg1), false)
 end
 
 """
@@ -4601,7 +4601,7 @@ This method returns the name of the underlying database column being used as the
 geometry column name.
 """
 function ogr_l_getgeometrycolumn(arg1)
-    unsafe_string(ccall((:OGR_L_GetGeometryColumn, libgdal), Cstring, (OGRLayerH,), arg1))
+    aftercare(ccall((:OGR_L_GetGeometryColumn, libgdal), Cstring, (OGRLayerH,), arg1), false)
 end
 
 """
@@ -4610,7 +4610,7 @@ end
 Get style table.
 """
 function ogr_l_getstyletable(arg1)
-    failsafe(ccall((:OGR_L_GetStyleTable, libgdal), OGRStyleTableH, (OGRLayerH,), arg1))
+    aftercare(ccall((:OGR_L_GetStyleTable, libgdal), OGRStyleTableH, (OGRLayerH,), arg1))
 end
 
 """
@@ -4620,7 +4620,7 @@ end
 Set style table (and take ownership)
 """
 function ogr_l_setstyletabledirectly(arg1, arg2)
-    ccall((:OGR_L_SetStyleTableDirectly, libgdal), Cvoid, (OGRLayerH, OGRStyleTableH), arg1, arg2)
+    aftercare(ccall((:OGR_L_SetStyleTableDirectly, libgdal), Cvoid, (OGRLayerH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -4630,7 +4630,7 @@ end
 Set style table.
 """
 function ogr_l_setstyletable(arg1, arg2)
-    ccall((:OGR_L_SetStyleTable, libgdal), Cvoid, (OGRLayerH, OGRStyleTableH), arg1, arg2)
+    aftercare(ccall((:OGR_L_SetStyleTable, libgdal), Cvoid, (OGRLayerH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -4646,7 +4646,7 @@ Set which fields can be omitted when retrieving features from the layer.
 OGRERR_NONE if all field names have been resolved (even if the driver does not support this method)
 """
 function ogr_l_setignoredfields(arg1, arg2)
-    ccall((:OGR_L_SetIgnoredFields, libgdal), OGRErr, (OGRLayerH, Ptr{Cstring}), arg1, arg2)
+    aftercare(ccall((:OGR_L_SetIgnoredFields, libgdal), OGRErr, (OGRLayerH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -4671,7 +4671,7 @@ Intersection of two layers.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function ogr_l_intersection(arg1, arg2, arg3, arg4, arg5, arg6)
-    ccall((:OGR_L_Intersection, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6)
+    aftercare(ccall((:OGR_L_Intersection, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 """
@@ -4696,7 +4696,7 @@ Union of two layers.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function ogr_l_union(arg1, arg2, arg3, arg4, arg5, arg6)
-    ccall((:OGR_L_Union, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6)
+    aftercare(ccall((:OGR_L_Union, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 """
@@ -4721,7 +4721,7 @@ Symmetrical difference of two layers.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function ogr_l_symdifference(arg1, arg2, arg3, arg4, arg5, arg6)
-    ccall((:OGR_L_SymDifference, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6)
+    aftercare(ccall((:OGR_L_SymDifference, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 """
@@ -4746,7 +4746,7 @@ Identify the features of this layer with the ones from the identity layer.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function ogr_l_identity(arg1, arg2, arg3, arg4, arg5, arg6)
-    ccall((:OGR_L_Identity, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6)
+    aftercare(ccall((:OGR_L_Identity, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 """
@@ -4771,7 +4771,7 @@ Update this layer with features from the update layer.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function ogr_l_update(arg1, arg2, arg3, arg4, arg5, arg6)
-    ccall((:OGR_L_Update, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6)
+    aftercare(ccall((:OGR_L_Update, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 """
@@ -4796,7 +4796,7 @@ Clip off areas that are not covered by the method layer.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function ogr_l_clip(arg1, arg2, arg3, arg4, arg5, arg6)
-    ccall((:OGR_L_Clip, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6)
+    aftercare(ccall((:OGR_L_Clip, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 """
@@ -4821,7 +4821,7 @@ Remove areas that are covered by the method layer.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function ogr_l_erase(arg1, arg2, arg3, arg4, arg5, arg6)
-    ccall((:OGR_L_Erase, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6)
+    aftercare(ccall((:OGR_L_Erase, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 """
@@ -4833,7 +4833,7 @@ Closes opened datasource and releases allocated resources.
 * **hDataSource**: handle to allocated datasource object.
 """
 function ogr_ds_destroy(arg1)
-    ccall((:OGR_DS_Destroy, libgdal), Cvoid, (OGRDataSourceH,), arg1)
+    aftercare(ccall((:OGR_DS_Destroy, libgdal), Cvoid, (OGRDataSourceH,), arg1))
 end
 
 """
@@ -4848,7 +4848,7 @@ Returns the name of the data source.
 pointer to an internal name string which should not be modified or freed by the caller.
 """
 function ogr_ds_getname(arg1)
-    unsafe_string(ccall((:OGR_DS_GetName, libgdal), Cstring, (OGRDataSourceH,), arg1))
+    aftercare(ccall((:OGR_DS_GetName, libgdal), Cstring, (OGRDataSourceH,), arg1), false)
 end
 
 """
@@ -4863,7 +4863,7 @@ Get the number of layers in this data source.
 layer count.
 """
 function ogr_ds_getlayercount(arg1)
-    ccall((:OGR_DS_GetLayerCount, libgdal), Cint, (OGRDataSourceH,), arg1)
+    aftercare(ccall((:OGR_DS_GetLayerCount, libgdal), Cint, (OGRDataSourceH,), arg1))
 end
 
 """
@@ -4880,7 +4880,7 @@ Fetch a layer by index.
 an handle to the layer, or NULL if iLayer is out of range or an error occurs.
 """
 function ogr_ds_getlayer(arg1, arg2)
-    failsafe(ccall((:OGR_DS_GetLayer, libgdal), OGRLayerH, (OGRDataSourceH, Cint), arg1, arg2))
+    aftercare(ccall((:OGR_DS_GetLayer, libgdal), OGRLayerH, (OGRDataSourceH, Cint), arg1, arg2))
 end
 
 """
@@ -4897,7 +4897,7 @@ Fetch a layer by name.
 an handle to the layer, or NULL if the layer is not found or an error occurs.
 """
 function ogr_ds_getlayerbyname(arg1, arg2)
-    failsafe(ccall((:OGR_DS_GetLayerByName, libgdal), OGRLayerH, (OGRDataSourceH, Cstring), arg1, arg2))
+    aftercare(ccall((:OGR_DS_GetLayerByName, libgdal), OGRLayerH, (OGRDataSourceH, Cstring), arg1, arg2))
 end
 
 """
@@ -4914,7 +4914,7 @@ Delete the indicated layer from the datasource.
 OGRERR_NONE on success, or OGRERR_UNSUPPORTED_OPERATION if deleting layers is not supported for this datasource.
 """
 function ogr_ds_deletelayer(arg1, arg2)
-    ccall((:OGR_DS_DeleteLayer, libgdal), OGRErr, (OGRDataSourceH, Cint), arg1, arg2)
+    aftercare(ccall((:OGR_DS_DeleteLayer, libgdal), OGRErr, (OGRDataSourceH, Cint), arg1, arg2))
 end
 
 """
@@ -4929,7 +4929,7 @@ Returns the driver that the dataset was opened with.
 NULL if driver info is not available, or pointer to a driver owned by the OGRSFDriverManager.
 """
 function ogr_ds_getdriver(arg1)
-    failsafe(ccall((:OGR_DS_GetDriver, libgdal), OGRSFDriverH, (OGRDataSourceH,), arg1))
+    aftercare(ccall((:OGR_DS_GetDriver, libgdal), OGRSFDriverH, (OGRDataSourceH,), arg1))
 end
 
 """
@@ -4952,7 +4952,7 @@ This function attempts to create a new layer on the data source with the indicat
 NULL is returned on failure, or a new OGRLayer handle on success.
 """
 function ogr_ds_createlayer(arg1, arg2, arg3, arg4, arg5)
-    failsafe(ccall((:OGR_DS_CreateLayer, libgdal), OGRLayerH, (OGRDataSourceH, Cstring, OGRSpatialReferenceH, OGRwkbGeometryType, Ptr{Cstring}), arg1, arg2, arg3, arg4, arg5))
+    aftercare(ccall((:OGR_DS_CreateLayer, libgdal), OGRLayerH, (OGRDataSourceH, Cstring, OGRSpatialReferenceH, OGRwkbGeometryType, Ptr{Cstring}), arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -4973,7 +4973,7 @@ Duplicate an existing layer.
 an handle to the layer, or NULL if an error occurs.
 """
 function ogr_ds_copylayer(arg1, arg2, arg3, arg4)
-    failsafe(ccall((:OGR_DS_CopyLayer, libgdal), OGRLayerH, (OGRDataSourceH, OGRLayerH, Cstring, Ptr{Cstring}), arg1, arg2, arg3, arg4))
+    aftercare(ccall((:OGR_DS_CopyLayer, libgdal), OGRLayerH, (OGRDataSourceH, OGRLayerH, Cstring, Ptr{Cstring}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -4990,7 +4990,7 @@ Test if capability is available.
 TRUE if capability available otherwise FALSE.
 """
 function ogr_ds_testcapability(arg1, arg2)
-    ccall((:OGR_DS_TestCapability, libgdal), Cint, (OGRDataSourceH, Cstring), arg1, arg2)
+    aftercare(ccall((:OGR_DS_TestCapability, libgdal), Cint, (OGRDataSourceH, Cstring), arg1, arg2))
 end
 
 """
@@ -5011,7 +5011,7 @@ Execute an SQL statement against the data store.
 an handle to a OGRLayer containing the results of the query. Deallocate with OGR_DS_ReleaseResultSet().
 """
 function ogr_ds_executesql(arg1, arg2, arg3, arg4)
-    failsafe(ccall((:OGR_DS_ExecuteSQL, libgdal), OGRLayerH, (OGRDataSourceH, Cstring, OGRGeometryH, Cstring), arg1, arg2, arg3, arg4))
+    aftercare(ccall((:OGR_DS_ExecuteSQL, libgdal), OGRLayerH, (OGRDataSourceH, Cstring, OGRGeometryH, Cstring), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -5025,35 +5025,35 @@ Release results of OGR_DS_ExecuteSQL().
 * **hLayer**: handle to the result of a previous OGR_DS_ExecuteSQL() call.
 """
 function ogr_ds_releaseresultset(arg1, arg2)
-    ccall((:OGR_DS_ReleaseResultSet, libgdal), Cvoid, (OGRDataSourceH, OGRLayerH), arg1, arg2)
+    aftercare(ccall((:OGR_DS_ReleaseResultSet, libgdal), Cvoid, (OGRDataSourceH, OGRLayerH), arg1, arg2))
 end
 
 """
     OGR_DS_Reference(OGRDataSourceH hDataSource) -> int
 """
 function ogr_ds_reference(arg1)
-    ccall((:OGR_DS_Reference, libgdal), Cint, (OGRDataSourceH,), arg1)
+    aftercare(ccall((:OGR_DS_Reference, libgdal), Cint, (OGRDataSourceH,), arg1))
 end
 
 """
     OGR_DS_Dereference(OGRDataSourceH hDataSource) -> int
 """
 function ogr_ds_dereference(arg1)
-    ccall((:OGR_DS_Dereference, libgdal), Cint, (OGRDataSourceH,), arg1)
+    aftercare(ccall((:OGR_DS_Dereference, libgdal), Cint, (OGRDataSourceH,), arg1))
 end
 
 """
     OGR_DS_GetRefCount(OGRDataSourceH hDataSource) -> int
 """
 function ogr_ds_getrefcount(arg1)
-    ccall((:OGR_DS_GetRefCount, libgdal), Cint, (OGRDataSourceH,), arg1)
+    aftercare(ccall((:OGR_DS_GetRefCount, libgdal), Cint, (OGRDataSourceH,), arg1))
 end
 
 """
     OGR_DS_GetSummaryRefCount(OGRDataSourceH hDataSource) -> int
 """
 function ogr_ds_getsummaryrefcount(arg1)
-    ccall((:OGR_DS_GetSummaryRefCount, libgdal), Cint, (OGRDataSourceH,), arg1)
+    aftercare(ccall((:OGR_DS_GetSummaryRefCount, libgdal), Cint, (OGRDataSourceH,), arg1))
 end
 
 """
@@ -5062,7 +5062,7 @@ end
 Flush pending changes to disk.
 """
 function ogr_ds_synctodisk(arg1)
-    ccall((:OGR_DS_SyncToDisk, libgdal), OGRErr, (OGRDataSourceH,), arg1)
+    aftercare(ccall((:OGR_DS_SyncToDisk, libgdal), OGRErr, (OGRDataSourceH,), arg1))
 end
 
 """
@@ -5071,7 +5071,7 @@ end
 Get style table.
 """
 function ogr_ds_getstyletable(arg1)
-    failsafe(ccall((:OGR_DS_GetStyleTable, libgdal), OGRStyleTableH, (OGRDataSourceH,), arg1))
+    aftercare(ccall((:OGR_DS_GetStyleTable, libgdal), OGRStyleTableH, (OGRDataSourceH,), arg1))
 end
 
 """
@@ -5081,7 +5081,7 @@ end
 Set style table (and take ownership)
 """
 function ogr_ds_setstyletabledirectly(arg1, arg2)
-    ccall((:OGR_DS_SetStyleTableDirectly, libgdal), Cvoid, (OGRDataSourceH, OGRStyleTableH), arg1, arg2)
+    aftercare(ccall((:OGR_DS_SetStyleTableDirectly, libgdal), Cvoid, (OGRDataSourceH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -5091,7 +5091,7 @@ end
 Set style table.
 """
 function ogr_ds_setstyletable(arg1, arg2)
-    ccall((:OGR_DS_SetStyleTable, libgdal), Cvoid, (OGRDataSourceH, OGRStyleTableH), arg1, arg2)
+    aftercare(ccall((:OGR_DS_SetStyleTable, libgdal), Cvoid, (OGRDataSourceH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -5106,7 +5106,7 @@ Fetch name of driver (file format).
 driver name. This is an internal string and should not be modified or freed.
 """
 function ogr_dr_getname(arg1)
-    unsafe_string(ccall((:OGR_Dr_GetName, libgdal), Cstring, (OGRSFDriverH,), arg1))
+    aftercare(ccall((:OGR_Dr_GetName, libgdal), Cstring, (OGRSFDriverH,), arg1), false)
 end
 
 """
@@ -5125,7 +5125,7 @@ Attempt to open file with this driver.
 NULL on error or if the pass name is not supported by this driver, otherwise an handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
 """
 function ogr_dr_open(arg1, arg2, arg3)
-    failsafe(ccall((:OGR_Dr_Open, libgdal), OGRDataSourceH, (OGRSFDriverH, Cstring, Cint), arg1, arg2, arg3))
+    aftercare(ccall((:OGR_Dr_Open, libgdal), OGRDataSourceH, (OGRSFDriverH, Cstring, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -5142,7 +5142,7 @@ Test if capability is available.
 TRUE if capability available otherwise FALSE.
 """
 function ogr_dr_testcapability(arg1, arg2)
-    ccall((:OGR_Dr_TestCapability, libgdal), Cint, (OGRSFDriverH, Cstring), arg1, arg2)
+    aftercare(ccall((:OGR_Dr_TestCapability, libgdal), Cint, (OGRSFDriverH, Cstring), arg1, arg2))
 end
 
 """
@@ -5161,7 +5161,7 @@ This function attempts to create a new data source based on the passed driver.
 NULL is returned on failure, or a new OGRDataSource handle on success.
 """
 function ogr_dr_createdatasource(arg1, arg2, arg3)
-    failsafe(ccall((:OGR_Dr_CreateDataSource, libgdal), OGRDataSourceH, (OGRSFDriverH, Cstring, Ptr{Cstring}), arg1, arg2, arg3))
+    aftercare(ccall((:OGR_Dr_CreateDataSource, libgdal), OGRDataSourceH, (OGRSFDriverH, Cstring, Ptr{Cstring}), arg1, arg2, arg3))
 end
 
 """
@@ -5182,7 +5182,7 @@ This function creates a new datasource by copying all the layers from the source
 NULL is returned on failure, or a new OGRDataSource handle on success.
 """
 function ogr_dr_copydatasource(arg1, arg2, arg3, arg4)
-    failsafe(ccall((:OGR_Dr_CopyDataSource, libgdal), OGRDataSourceH, (OGRSFDriverH, OGRDataSourceH, Cstring, Ptr{Cstring}), arg1, arg2, arg3, arg4))
+    aftercare(ccall((:OGR_Dr_CopyDataSource, libgdal), OGRDataSourceH, (OGRSFDriverH, OGRDataSourceH, Cstring, Ptr{Cstring}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -5199,7 +5199,7 @@ Delete a datasource.
 OGRERR_NONE on success, and OGRERR_UNSUPPORTED_OPERATION if this is not supported by this driver.
 """
 function ogr_dr_deletedatasource(arg1, arg2)
-    ccall((:OGR_Dr_DeleteDataSource, libgdal), OGRErr, (OGRSFDriverH, Cstring), arg1, arg2)
+    aftercare(ccall((:OGR_Dr_DeleteDataSource, libgdal), OGRErr, (OGRSFDriverH, Cstring), arg1, arg2))
 end
 
 """
@@ -5218,7 +5218,7 @@ Open a file / data source with one of the registered drivers.
 NULL on error or if the pass name is not supported by this driver, otherwise an handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
 """
 function ogropen(arg1, arg2, arg3)
-    failsafe(ccall((:OGROpen, libgdal), OGRDataSourceH, (Cstring, Cint, Ptr{OGRSFDriverH}), arg1, arg2, arg3))
+    aftercare(ccall((:OGROpen, libgdal), OGRDataSourceH, (Cstring, Cint, Ptr{OGRSFDriverH}), arg1, arg2, arg3))
 end
 
 """
@@ -5237,7 +5237,7 @@ Open a file / data source with one of the registered drivers if not already open
 NULL on error or if the pass name is not supported by this driver, otherwise an handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
 """
 function ogropenshared(arg1, arg2, arg3)
-    failsafe(ccall((:OGROpenShared, libgdal), OGRDataSourceH, (Cstring, Cint, Ptr{OGRSFDriverH}), arg1, arg2, arg3))
+    aftercare(ccall((:OGROpenShared, libgdal), OGRDataSourceH, (Cstring, Cint, Ptr{OGRSFDriverH}), arg1, arg2, arg3))
 end
 
 """
@@ -5252,15 +5252,15 @@ Drop a reference to this datasource, and if the reference count drops to zero cl
 OGRERR_NONE on success or an error code.
 """
 function ogrreleasedatasource(arg1)
-    ccall((:OGRReleaseDataSource, libgdal), OGRErr, (OGRDataSourceH,), arg1)
+    aftercare(ccall((:OGRReleaseDataSource, libgdal), OGRErr, (OGRDataSourceH,), arg1))
 end
 
 function ogrregisterdriver(arg1)
-    ccall((:OGRRegisterDriver, libgdal), Cvoid, (OGRSFDriverH,), arg1)
+    aftercare(ccall((:OGRRegisterDriver, libgdal), Cvoid, (OGRSFDriverH,), arg1))
 end
 
 function ogrderegisterdriver(arg1)
-    ccall((:OGRDeregisterDriver, libgdal), Cvoid, (OGRSFDriverH,), arg1)
+    aftercare(ccall((:OGRDeregisterDriver, libgdal), Cvoid, (OGRSFDriverH,), arg1))
 end
 
 """
@@ -5272,7 +5272,7 @@ Fetch the number of registered drivers.
 the drivers count.
 """
 function ogrgetdrivercount()
-    ccall((:OGRGetDriverCount, libgdal), Cint, ())
+    aftercare(ccall((:OGRGetDriverCount, libgdal), Cint, ()))
 end
 
 """
@@ -5287,7 +5287,7 @@ Fetch the indicated driver.
 handle to the driver, or NULL if iDriver is out of range.
 """
 function ogrgetdriver(arg1)
-    failsafe(ccall((:OGRGetDriver, libgdal), OGRSFDriverH, (Cint,), arg1))
+    aftercare(ccall((:OGRGetDriver, libgdal), OGRSFDriverH, (Cint,), arg1))
 end
 
 """
@@ -5302,15 +5302,15 @@ Fetch the indicated driver.
 the driver, or NULL if no driver with that name is found
 """
 function ogrgetdriverbyname(arg1)
-    failsafe(ccall((:OGRGetDriverByName, libgdal), OGRSFDriverH, (Cstring,), arg1))
+    aftercare(ccall((:OGRGetDriverByName, libgdal), OGRSFDriverH, (Cstring,), arg1))
 end
 
 function ogrgetopendscount()
-    ccall((:OGRGetOpenDSCount, libgdal), Cint, ())
+    aftercare(ccall((:OGRGetOpenDSCount, libgdal), Cint, ()))
 end
 
 function ogrgetopends(iDS)
-    failsafe(ccall((:OGRGetOpenDS, libgdal), OGRDataSourceH, (Cint,), iDS))
+    aftercare(ccall((:OGRGetOpenDS, libgdal), OGRDataSourceH, (Cint,), iDS))
 end
 
 """
@@ -5319,7 +5319,7 @@ end
 Register all drivers.
 """
 function ogrregisterall()
-    ccall((:OGRRegisterAll, libgdal), Cvoid, ())
+    aftercare(ccall((:OGRRegisterAll, libgdal), Cvoid, ()))
 end
 
 """
@@ -5328,7 +5328,7 @@ end
 Clean-up all drivers (including raster ones starting with GDAL 2.0.
 """
 function ogrcleanupall()
-    ccall((:OGRCleanupAll, libgdal), Cvoid, ())
+    aftercare(ccall((:OGRCleanupAll, libgdal), Cvoid, ()))
 end
 
 """
@@ -5343,7 +5343,7 @@ OGRStyleMgr factory.
 an handle to the new style manager object.
 """
 function ogr_sm_create(hStyleTable)
-    failsafe(ccall((:OGR_SM_Create, libgdal), OGRStyleMgrH, (OGRStyleTableH,), hStyleTable))
+    aftercare(ccall((:OGR_SM_Create, libgdal), OGRStyleMgrH, (OGRStyleTableH,), hStyleTable))
 end
 
 """
@@ -5355,7 +5355,7 @@ Destroy Style Manager.
 * **hSM**: handle to the style manager to destroy.
 """
 function ogr_sm_destroy(hSM)
-    ccall((:OGR_SM_Destroy, libgdal), Cvoid, (OGRStyleMgrH,), hSM)
+    aftercare(ccall((:OGR_SM_Destroy, libgdal), Cvoid, (OGRStyleMgrH,), hSM))
 end
 
 """
@@ -5372,7 +5372,7 @@ Initialize style manager from the style string of a feature.
 a reference to the style string read from the feature, or NULL in case of error.
 """
 function ogr_sm_initfromfeature(hSM, hFeat)
-    unsafe_string(ccall((:OGR_SM_InitFromFeature, libgdal), Cstring, (OGRStyleMgrH, OGRFeatureH), hSM, hFeat))
+    aftercare(ccall((:OGR_SM_InitFromFeature, libgdal), Cstring, (OGRStyleMgrH, OGRFeatureH), hSM, hFeat), false)
 end
 
 """
@@ -5389,7 +5389,7 @@ Initialize style manager from the style string.
 TRUE on success, FALSE on errors.
 """
 function ogr_sm_initstylestring(hSM, pszStyleString)
-    ccall((:OGR_SM_InitStyleString, libgdal), Cint, (OGRStyleMgrH, Cstring), hSM, pszStyleString)
+    aftercare(ccall((:OGR_SM_InitStyleString, libgdal), Cint, (OGRStyleMgrH, Cstring), hSM, pszStyleString))
 end
 
 """
@@ -5406,7 +5406,7 @@ Get the number of parts in a style.
 the number of parts (style tools) in the style.
 """
 function ogr_sm_getpartcount(hSM, pszStyleString)
-    ccall((:OGR_SM_GetPartCount, libgdal), Cint, (OGRStyleMgrH, Cstring), hSM, pszStyleString)
+    aftercare(ccall((:OGR_SM_GetPartCount, libgdal), Cint, (OGRStyleMgrH, Cstring), hSM, pszStyleString))
 end
 
 """
@@ -5425,7 +5425,7 @@ Fetch a part (style tool) from the current style.
 OGRStyleToolH of the requested part (style tools) or NULL on error.
 """
 function ogr_sm_getpart(hSM, nPartId, pszStyleString)
-    failsafe(ccall((:OGR_SM_GetPart, libgdal), OGRStyleToolH, (OGRStyleMgrH, Cint, Cstring), hSM, nPartId, pszStyleString))
+    aftercare(ccall((:OGR_SM_GetPart, libgdal), OGRStyleToolH, (OGRStyleMgrH, Cint, Cstring), hSM, nPartId, pszStyleString))
 end
 
 """
@@ -5442,7 +5442,7 @@ Add a part (style tool) to the current style.
 TRUE on success, FALSE on errors.
 """
 function ogr_sm_addpart(hSM, hST)
-    ccall((:OGR_SM_AddPart, libgdal), Cint, (OGRStyleMgrH, OGRStyleToolH), hSM, hST)
+    aftercare(ccall((:OGR_SM_AddPart, libgdal), Cint, (OGRStyleMgrH, OGRStyleToolH), hSM, hST))
 end
 
 """
@@ -5461,7 +5461,7 @@ Add a style to the current style table.
 TRUE on success, FALSE on errors.
 """
 function ogr_sm_addstyle(hSM, pszStyleName, pszStyleString)
-    ccall((:OGR_SM_AddStyle, libgdal), Cint, (OGRStyleMgrH, Cstring, Cstring), hSM, pszStyleName, pszStyleString)
+    aftercare(ccall((:OGR_SM_AddStyle, libgdal), Cint, (OGRStyleMgrH, Cstring, Cstring), hSM, pszStyleName, pszStyleString))
 end
 
 """
@@ -5476,7 +5476,7 @@ OGRStyleTool factory.
 an handle to the new style tool object or NULL if the creation failed.
 """
 function ogr_st_create(eClassId)
-    failsafe(ccall((:OGR_ST_Create, libgdal), OGRStyleToolH, (OGRSTClassId,), eClassId))
+    aftercare(ccall((:OGR_ST_Create, libgdal), OGRStyleToolH, (OGRSTClassId,), eClassId))
 end
 
 """
@@ -5488,7 +5488,7 @@ Destroy Style Tool.
 * **hST**: handle to the style tool to destroy.
 """
 function ogr_st_destroy(hST)
-    ccall((:OGR_ST_Destroy, libgdal), Cvoid, (OGRStyleToolH,), hST)
+    aftercare(ccall((:OGR_ST_Destroy, libgdal), Cvoid, (OGRStyleToolH,), hST))
 end
 
 """
@@ -5503,7 +5503,7 @@ Determine type of Style Tool.
 the style tool type, one of OGRSTCPen (1), OGRSTCBrush (2), OGRSTCSymbol (3) or OGRSTCLabel (4). Returns OGRSTCNone (0) if the OGRStyleToolH is invalid.
 """
 function ogr_st_gettype(hST)
-    ccall((:OGR_ST_GetType, libgdal), OGRSTClassId, (OGRStyleToolH,), hST)
+    aftercare(ccall((:OGR_ST_GetType, libgdal), OGRSTClassId, (OGRStyleToolH,), hST))
 end
 
 """
@@ -5518,7 +5518,7 @@ Get Style Tool units.
 the style tool units.
 """
 function ogr_st_getunit(hST)
-    ccall((:OGR_ST_GetUnit, libgdal), OGRSTUnitId, (OGRStyleToolH,), hST)
+    aftercare(ccall((:OGR_ST_GetUnit, libgdal), OGRSTUnitId, (OGRStyleToolH,), hST))
 end
 
 """
@@ -5534,7 +5534,7 @@ Set Style Tool units.
 * **dfGroundPaperScale**: ground to paper scale factor.
 """
 function ogr_st_setunit(hST, eUnit, dfGroundPaperScale)
-    ccall((:OGR_ST_SetUnit, libgdal), Cvoid, (OGRStyleToolH, OGRSTUnitId, Cdouble), hST, eUnit, dfGroundPaperScale)
+    aftercare(ccall((:OGR_ST_SetUnit, libgdal), Cvoid, (OGRStyleToolH, OGRSTUnitId, Cdouble), hST, eUnit, dfGroundPaperScale))
 end
 
 """
@@ -5553,7 +5553,7 @@ Get Style Tool parameter value as string.
 the parameter value as string and sets bValueIsNull.
 """
 function ogr_st_getparamstr(hST, eParam, bValueIsNull)
-    unsafe_string(ccall((:OGR_ST_GetParamStr, libgdal), Cstring, (OGRStyleToolH, Cint, Ptr{Cint}), hST, eParam, bValueIsNull))
+    aftercare(ccall((:OGR_ST_GetParamStr, libgdal), Cstring, (OGRStyleToolH, Cint, Ptr{Cint}), hST, eParam, bValueIsNull), false)
 end
 
 """
@@ -5572,7 +5572,7 @@ Get Style Tool parameter value as an integer.
 the parameter value as integer and sets bValueIsNull.
 """
 function ogr_st_getparamnum(hST, eParam, bValueIsNull)
-    ccall((:OGR_ST_GetParamNum, libgdal), Cint, (OGRStyleToolH, Cint, Ptr{Cint}), hST, eParam, bValueIsNull)
+    aftercare(ccall((:OGR_ST_GetParamNum, libgdal), Cint, (OGRStyleToolH, Cint, Ptr{Cint}), hST, eParam, bValueIsNull))
 end
 
 """
@@ -5591,7 +5591,7 @@ Get Style Tool parameter value as a double.
 the parameter value as double and sets bValueIsNull.
 """
 function ogr_st_getparamdbl(hST, eParam, bValueIsNull)
-    ccall((:OGR_ST_GetParamDbl, libgdal), Cdouble, (OGRStyleToolH, Cint, Ptr{Cint}), hST, eParam, bValueIsNull)
+    aftercare(ccall((:OGR_ST_GetParamDbl, libgdal), Cdouble, (OGRStyleToolH, Cint, Ptr{Cint}), hST, eParam, bValueIsNull))
 end
 
 """
@@ -5607,7 +5607,7 @@ Set Style Tool parameter value from a string.
 * **pszValue**: the new parameter value
 """
 function ogr_st_setparamstr(hST, eParam, pszValue)
-    ccall((:OGR_ST_SetParamStr, libgdal), Cvoid, (OGRStyleToolH, Cint, Cstring), hST, eParam, pszValue)
+    aftercare(ccall((:OGR_ST_SetParamStr, libgdal), Cvoid, (OGRStyleToolH, Cint, Cstring), hST, eParam, pszValue))
 end
 
 """
@@ -5623,7 +5623,7 @@ Set Style Tool parameter value from an integer.
 * **nValue**: the new parameter value
 """
 function ogr_st_setparamnum(hST, eParam, nValue)
-    ccall((:OGR_ST_SetParamNum, libgdal), Cvoid, (OGRStyleToolH, Cint, Cint), hST, eParam, nValue)
+    aftercare(ccall((:OGR_ST_SetParamNum, libgdal), Cvoid, (OGRStyleToolH, Cint, Cint), hST, eParam, nValue))
 end
 
 """
@@ -5639,7 +5639,7 @@ Set Style Tool parameter value from a double.
 * **dfValue**: the new parameter value
 """
 function ogr_st_setparamdbl(hST, eParam, dfValue)
-    ccall((:OGR_ST_SetParamDbl, libgdal), Cvoid, (OGRStyleToolH, Cint, Cdouble), hST, eParam, dfValue)
+    aftercare(ccall((:OGR_ST_SetParamDbl, libgdal), Cvoid, (OGRStyleToolH, Cint, Cdouble), hST, eParam, dfValue))
 end
 
 """
@@ -5654,7 +5654,7 @@ Get the style string for this Style Tool.
 the style string for this style tool or "" if the hST is invalid.
 """
 function ogr_st_getstylestring(hST)
-    unsafe_string(ccall((:OGR_ST_GetStyleString, libgdal), Cstring, (OGRStyleToolH,), hST))
+    aftercare(ccall((:OGR_ST_GetStyleString, libgdal), Cstring, (OGRStyleToolH,), hST), false)
 end
 
 """
@@ -5679,7 +5679,7 @@ Return the r,g,b,a components of a color encoded in #RRGGBB[AA] format.
 TRUE if the color could be successfully parsed, or FALSE in case of errors.
 """
 function ogr_st_getrgbfromstring(hST, pszColor, pnRed, pnGreen, pnBlue, pnAlpha)
-    ccall((:OGR_ST_GetRGBFromString, libgdal), Cint, (OGRStyleToolH, Cstring, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}), hST, pszColor, pnRed, pnGreen, pnBlue, pnAlpha)
+    aftercare(ccall((:OGR_ST_GetRGBFromString, libgdal), Cint, (OGRStyleToolH, Cstring, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}), hST, pszColor, pnRed, pnGreen, pnBlue, pnAlpha))
 end
 
 """
@@ -5691,7 +5691,7 @@ OGRStyleTable factory.
 an handle to the new style table object.
 """
 function ogr_stbl_create()
-    failsafe(ccall((:OGR_STBL_Create, libgdal), OGRStyleTableH, ()))
+    aftercare(ccall((:OGR_STBL_Create, libgdal), OGRStyleTableH, ()))
 end
 
 """
@@ -5703,7 +5703,7 @@ Destroy Style Table.
 * **hSTBL**: handle to the style table to destroy.
 """
 function ogr_stbl_destroy(hSTBL)
-    ccall((:OGR_STBL_Destroy, libgdal), Cvoid, (OGRStyleTableH,), hSTBL)
+    aftercare(ccall((:OGR_STBL_Destroy, libgdal), Cvoid, (OGRStyleTableH,), hSTBL))
 end
 
 """
@@ -5722,7 +5722,7 @@ Add a new style in the table.
 TRUE on success, FALSE on error
 """
 function ogr_stbl_addstyle(hStyleTable, pszName, pszStyleString)
-    ccall((:OGR_STBL_AddStyle, libgdal), Cint, (OGRStyleTableH, Cstring, Cstring), hStyleTable, pszName, pszStyleString)
+    aftercare(ccall((:OGR_STBL_AddStyle, libgdal), Cint, (OGRStyleTableH, Cstring, Cstring), hStyleTable, pszName, pszStyleString))
 end
 
 """
@@ -5739,7 +5739,7 @@ Save a style table to a file.
 TRUE on success, FALSE on error
 """
 function ogr_stbl_savestyletable(hStyleTable, pszFilename)
-    ccall((:OGR_STBL_SaveStyleTable, libgdal), Cint, (OGRStyleTableH, Cstring), hStyleTable, pszFilename)
+    aftercare(ccall((:OGR_STBL_SaveStyleTable, libgdal), Cint, (OGRStyleTableH, Cstring), hStyleTable, pszFilename))
 end
 
 """
@@ -5756,7 +5756,7 @@ Load a style table from a file.
 TRUE on success, FALSE on error
 """
 function ogr_stbl_loadstyletable(hStyleTable, pszFilename)
-    ccall((:OGR_STBL_LoadStyleTable, libgdal), Cint, (OGRStyleTableH, Cstring), hStyleTable, pszFilename)
+    aftercare(ccall((:OGR_STBL_LoadStyleTable, libgdal), Cint, (OGRStyleTableH, Cstring), hStyleTable, pszFilename))
 end
 
 """
@@ -5773,7 +5773,7 @@ Get a style string by name.
 the style string matching the name or NULL if not found or error.
 """
 function ogr_stbl_find(hStyleTable, pszName)
-    unsafe_string(ccall((:OGR_STBL_Find, libgdal), Cstring, (OGRStyleTableH, Cstring), hStyleTable, pszName))
+    aftercare(ccall((:OGR_STBL_Find, libgdal), Cstring, (OGRStyleTableH, Cstring), hStyleTable, pszName), false)
 end
 
 """
@@ -5785,7 +5785,7 @@ Reset the next style pointer to 0.
 * **hStyleTable**: handle to the style table.
 """
 function ogr_stbl_resetstylestringreading(hStyleTable)
-    ccall((:OGR_STBL_ResetStyleStringReading, libgdal), Cvoid, (OGRStyleTableH,), hStyleTable)
+    aftercare(ccall((:OGR_STBL_ResetStyleStringReading, libgdal), Cvoid, (OGRStyleTableH,), hStyleTable))
 end
 
 """
@@ -5800,7 +5800,7 @@ Get the next style string from the table.
 the next style string or NULL on error.
 """
 function ogr_stbl_getnextstyle(hStyleTable)
-    unsafe_string(ccall((:OGR_STBL_GetNextStyle, libgdal), Cstring, (OGRStyleTableH,), hStyleTable))
+    aftercare(ccall((:OGR_STBL_GetNextStyle, libgdal), Cstring, (OGRStyleTableH,), hStyleTable), false)
 end
 
 """
@@ -5815,5 +5815,5 @@ Get the style name of the last style string fetched with OGR_STBL_GetNextStyle.
 the Name of the last style string or NULL on error.
 """
 function ogr_stbl_getlaststylename(hStyleTable)
-    unsafe_string(ccall((:OGR_STBL_GetLastStyleName, libgdal), Cstring, (OGRStyleTableH,), hStyleTable))
+    aftercare(ccall((:OGR_STBL_GetLastStyleName, libgdal), Cstring, (OGRStyleTableH,), hStyleTable), false)
 end

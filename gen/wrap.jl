@@ -78,6 +78,12 @@ const replace_exprs = Dict{Expr,Expr}(
     :(const VSIStatBufL = __stat64) => :(const VSIStatBufL = Cvoid),
 )
 
+# functions that return a Cstring, of which we know we must free them
+# because for instance the documentation says: "Free with CPLFree() or VSIFree()"
+# use the renamed (lowercased) function names here
+# if it is not in this list, it will not be freed, add function names to make it more complete
+const string_free_me = Symbol[:gdalinfo]
+
 """
 Custom rewriter for Clang.jl's C wrapper
 
@@ -136,14 +142,21 @@ function rewriter(x::Expr)
             false
         end
 
-        cc2 = if rettype == :Cstring
-            :(unsafe_string($cc))
-        elseif rettype == :(Ptr{Cstring})
-            :(unsafe_loadstringlist($cc))
-        elseif isptrvoid
-            :(failsafe($cc))
+        cc2 = if occursin(r"^cpl.*error", String(f2))
+            # We will take care of GDAL error states and memory freeing by
+            # calling `aftercare`, except for `cpl*error*` functions, as these
+            # will be called by `aftercare` itself, so we prevent a loop.
+            if rettype == :Cstring
+                :(unsafe_string($cc))
+            else
+                cc
+            end
+        elseif rettype == :Cstring
+            # boolean to let aftercare know if it should call vsifree
+            free = f2 in string_free_me
+            :(aftercare($cc, $free))
         else
-            cc
+            :(aftercare($cc))
         end
 
         # stitch the modified function expression back together
