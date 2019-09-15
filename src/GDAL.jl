@@ -26,7 +26,6 @@ include("ogr_core.jl")
 
 include("cpl_error.jl")
 include("cpl_conv.jl")
-include("cpl_error.jl")
 include("cpl_minixml.jl")
 include("cpl_progress.jl")
 include("cpl_virtualmem.jl")
