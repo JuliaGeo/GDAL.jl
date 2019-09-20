@@ -72,6 +72,8 @@ feature = GDAL.ogr_f_create(featuredefn)
 GDAL.ogr_f_setfieldstring(feature, GDAL.ogr_f_getfieldindex(feature, "Name"), "myname")
 point = GDAL.ogr_g_creategeometry(GDAL.wkbPoint)
 GDAL.ogr_g_setpoint_2d(point, 0, 100.123, 0.123)
+@test GDAL.ogr_g_isvalid(point) == 1
+@test GDAL.ogr_g_isring(point) == 0
 @test GDAL.ogr_f_setgeometry(feature, point) == GDAL.OGRERR_NONE
 GDAL.ogr_g_destroygeometry(point)
 GDAL.ogr_l_createfeature(layer, feature)
