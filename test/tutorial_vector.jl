@@ -72,8 +72,14 @@ feature = GDAL.ogr_f_create(featuredefn)
 GDAL.ogr_f_setfieldstring(feature, GDAL.ogr_f_getfieldindex(feature, "Name"), "myname")
 point = GDAL.ogr_g_creategeometry(GDAL.wkbPoint)
 GDAL.ogr_g_setpoint_2d(point, 0, 100.123, 0.123)
-@test GDAL.ogr_g_isvalid(point) == 1
-@test GDAL.ogr_g_isring(point) == 0
+# no GEOS support on Linux: https://github.com/JuliaGeo/GDALBuilder/issues/10
+if Sys.islinux()
+    @test_broken GDAL.ogr_g_isvalid(point) == 1
+    @test_broken GDAL.ogr_g_isring(point) == 0
+else
+    @test GDAL.ogr_g_isvalid(point) == 1
+    @test GDAL.ogr_g_isring(point) == 0
+end
 @test GDAL.ogr_f_setgeometry(feature, point) == GDAL.OGRERR_NONE
 GDAL.ogr_g_destroygeometry(point)
 GDAL.ogr_l_createfeature(layer, feature)
