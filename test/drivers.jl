@@ -9,6 +9,13 @@ available_drivers = [
     "GTiff",
     "MEM",
     "PCRaster",
+    # libcurl raster drivers
+    "EEDAI",
+    "PLMosaic",
+    "RDA",
+    "WCS",
+    "WMS",
+    "WMTS",
     # vector drivers
     "ARCGEN",
     "GeoJSON",
@@ -20,20 +27,6 @@ available_drivers = [
     "TopoJSON",
     "VRT",
     "SQLite",
-]
-
-for drivername in available_drivers
-    @test GDAL.gdalgetdriverbyname(drivername) != C_NULL
-end
-
-not_available_drivers = [
-    # libcurl raster drivers
-    "EEDAI",
-    "PLMosaic",
-    "RDA",
-    "WCS",
-    "WMS",
-    "WMTS",
     # libcurl vector drivers
     "AmigoCloud",
     "Carto",
@@ -47,7 +40,13 @@ not_available_drivers = [
     "PLScenes",
     "WFS",
     "WFS3",
-    "Carto",
+]
+
+for drivername in available_drivers
+    @test GDAL.gdalgetdriverbyname(drivername) != C_NULL
+end
+
+not_available_drivers = [
     "JP2OpenJPEG",  # up next, see #64
 ]
 
