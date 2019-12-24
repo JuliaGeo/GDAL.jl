@@ -60,7 +60,7 @@ download_info = Dict(
     Windows(:i686) => ("$bin_prefix/GDAL.v3.0.2.i686-w64-mingw32-gcc7.tar.gz", "fb00d948b9c81ae95e06b27ec45120a73cc0a0252863e6e2b2eabd236d3dc1bb"),
     Linux(:powerpc64le, libc=:glibc) => ("$bin_prefix/GDAL.v3.0.2.powerpc64le-linux-gnu.tar.gz", "234c0edbd5bb3c33592c2c306017a351918da59823247f063742c848b369cee7"),
     MacOS(:x86_64) => ("$bin_prefix/GDAL.v3.0.2.x86_64-apple-darwin14.tar.gz", "9bb07ff7b07e71aadf106f815b52193b8a1409f4eec0d63090d6d71c7d60d197"),
-    Linux(:x86_64, libc=:glibc) => ("$bin_prefix/GDAL.v3.0.2.x86_64-linux-gnu.tar.gz", "8d8f65f76f97f36a93905771f53f152d513dfa93556caa08cf2dab9fd9f62ced"),
+    Linux(:x86_64, libc=:glibc) => ("$bin_prefix/GDAL.v3.0.2.x86_64-linux-gnu-gcc8.tar.gz", "751d20a05c8fa2d4d9e4dee2bc73ecb4a3eed1367a0c151c943a9ce88f955254"),
     Linux(:x86_64, libc=:musl) => ("$bin_prefix/GDAL.v3.0.2.x86_64-linux-musl.tar.gz", "09e34a52bb4ac4d942a059a7f6642ddbd3d3e84e918e413acfec9a8ea13465d5"),
     FreeBSD(:x86_64) => ("$bin_prefix/GDAL.v3.0.2.x86_64-unknown-freebsd11.1.tar.gz", "c8e93eb5b64cb6bd42bdad789c84b559391e3b2ba336c8ed06fa12e8fb50b1fa"),
     # removed compiler_abi as suggested in https://github.com/JuliaPackaging/BinaryBuilder.jl/issues/407#issuecomment-473688254
