@@ -55,25 +55,17 @@ download_info = Dict(
     Linux(:armv7l, libc=:musl, call_abi=:eabihf) => ("$bin_prefix/GDAL.v3.0.2.arm-linux-musleabihf.tar.gz", "98d3e343ea2316d72ab84bda3ca532cbeacc795dcd89bd26e8f60620a30184f6"),
     Linux(:i686, libc=:glibc) => ("$bin_prefix/GDAL.v3.0.2.i686-linux-gnu.tar.gz", "fee85e2bddeb0199175791447473ad5ff7aed3905661baa0b6fdf3152fecf452"),
     Linux(:i686, libc=:musl) => ("$bin_prefix/GDAL.v3.0.2.i686-linux-musl.tar.gz", "76ed20142a50b0df7434c43130e0217b67625c8a2155a78301275528d79b281b"),
-<<<<<<< HEAD
-    Windows(:i686, compiler_abi=CompilerABI(:gcc7)) => ("$bin_prefix/GDAL.v3.0.2.i686-w64-mingw32-gcc7.tar.gz", "fb00d948b9c81ae95e06b27ec45120a73cc0a0252863e6e2b2eabd236d3dc1bb"),
-=======
     # removed compiler_abi as suggested in https://github.com/JuliaPackaging/BinaryBuilder.jl/issues/407#issuecomment-473688254
     # such that GCC4 platforms will also pick up this GCC7 build, ref https://github.com/JuliaPackaging/BinaryBuilder.jl/issues/407
     Windows(:i686) => ("$bin_prefix/GDAL.v3.0.2.i686-w64-mingw32-gcc7.tar.gz", "fb00d948b9c81ae95e06b27ec45120a73cc0a0252863e6e2b2eabd236d3dc1bb"),
->>>>>>> 52da20e2fd87a2156d6922d22af9149efb067d05
     Linux(:powerpc64le, libc=:glibc) => ("$bin_prefix/GDAL.v3.0.2.powerpc64le-linux-gnu.tar.gz", "234c0edbd5bb3c33592c2c306017a351918da59823247f063742c848b369cee7"),
     MacOS(:x86_64) => ("$bin_prefix/GDAL.v3.0.2.x86_64-apple-darwin14.tar.gz", "9bb07ff7b07e71aadf106f815b52193b8a1409f4eec0d63090d6d71c7d60d197"),
     Linux(:x86_64, libc=:glibc) => ("$bin_prefix/GDAL.v3.0.2.x86_64-linux-gnu.tar.gz", "8d8f65f76f97f36a93905771f53f152d513dfa93556caa08cf2dab9fd9f62ced"),
     Linux(:x86_64, libc=:musl) => ("$bin_prefix/GDAL.v3.0.2.x86_64-linux-musl.tar.gz", "09e34a52bb4ac4d942a059a7f6642ddbd3d3e84e918e413acfec9a8ea13465d5"),
     FreeBSD(:x86_64) => ("$bin_prefix/GDAL.v3.0.2.x86_64-unknown-freebsd11.1.tar.gz", "c8e93eb5b64cb6bd42bdad789c84b559391e3b2ba336c8ed06fa12e8fb50b1fa"),
-<<<<<<< HEAD
-    Windows(:x86_64, compiler_abi=CompilerABI(:gcc7)) => ("$bin_prefix/GDAL.v3.0.2.x86_64-w64-mingw32-gcc7.tar.gz", "6f26752b99811f359ff9494509c51e8f8e5aaf70091f1be1d9988d41cc573995"),
-=======
     # removed compiler_abi as suggested in https://github.com/JuliaPackaging/BinaryBuilder.jl/issues/407#issuecomment-473688254
     # such that GCC4 platforms will also pick up this GCC7 build, ref https://github.com/JuliaPackaging/BinaryBuilder.jl/issues/407
     Windows(:x86_64) => ("$bin_prefix/GDAL.v3.0.2.x86_64-w64-mingw32-gcc7.tar.gz", "6f26752b99811f359ff9494509c51e8f8e5aaf70091f1be1d9988d41cc573995"),
->>>>>>> 52da20e2fd87a2156d6922d22af9149efb067d05
 )
 
 # Install unsatisfied or updated dependencies:
@@ -90,7 +82,7 @@ end
 # trying to install is not itself installed) then load it up!
 if unsatisfied || !isinstalled(dl_info...; prefix=prefix)
     # Download and install binaries
-    install(dl_info...; prefix=prefix, force=true, verbose=verbose)
+    install(dl_info...; prefix=prefix, ignore_platform=true, force=true, verbose=verbose)
 end
 
 # Write out a deps.jl file that will contain mappings for our products
