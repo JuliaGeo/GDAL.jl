@@ -3,17 +3,16 @@ uuid = "add2ef01-049f-52c4-9ee2-e494f65e021a"
 keywords = ["GDAL", "IO"]
 license = "MIT"
 desc = "Wrapper for GDAL - Geospatial Data Abstraction Library"
-version = "1.0.2"
+version = "2.0.0"
 
 [deps]
-BinaryProvider = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
 CEnum = "fa961155-64e5-5f13-b03f-caf6b980ea82"
-Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+GDAL_jll = "a7073274-a066-55f0-b90d-d619367d196c"
+PROJ_jll = "58948b4f-47e0-5654-a9ad-f609743f8632"
 
 [compat]
-BinaryProvider = "0.5"
 CEnum = "0.2"
-julia = "1"
+julia = "1.3"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

@@ -1,14 +1,8 @@
 module GDAL
 
-using Libdl
+using PROJ_jll
+using GDAL_jll
 using CEnum
-
-# Load in `deps.jl`, complaining if it does not exist
-const depsjl_path = joinpath(@__DIR__, "..", "deps", "deps.jl")
-if !isfile(depsjl_path)
-    error("GDAL not installed properly, run Pkg.build(\"GDAL\"), restart Julia and try again")
-end
-include(depsjl_path)
 
 const Ctm = Base.Libc.TmStruct
 
@@ -38,9 +32,6 @@ const GDAL_DATA = Ref{String}()
 const PROJ_LIB = Ref{String}()
 
 function __init__()
-    # Always check your dependencies from `deps.jl`
-    check_deps()
-
     # register custom error handler
     funcptr = @cfunction(gdaljl_errorhandler, Ptr{Cvoid}, (CPLErr, Cint, Cstring))
     cplseterrorhandler(funcptr)
@@ -50,11 +41,11 @@ function __init__()
     GDALVERSION[] = VersionNumber(versionstring)
 
     # set GDAL_DATA location, this overrides setting the environment variable
-    GDAL_DATA[] = abspath(@__DIR__, "..", "deps", "usr", "share", "gdal")
+    GDAL_DATA[] = joinpath(GDAL_jll.artifact_dir, "share", "gdal")
     cplsetconfigoption("GDAL_DATA", GDAL_DATA[])
 
     # set PROJ_LIB location, this overrides setting the environment variable
-    PROJ_LIB[] = abspath(@__DIR__, "..", "deps", "usr", "share", "proj")
+    PROJ_LIB[] = joinpath(PROJ_jll.artifact_dir, "share", "proj")
     osrsetprojsearchpaths([PROJ_LIB[]])
 end
 
