@@ -8,7 +8,7 @@ This package is a binding to the C API of GDAL/OGR. It provides only a C style u
 Other packages can build on top of this to provide a more Julian user experience. See for example [ArchGDAL.jl](https://github.com/yeesian/ArchGDAL.jl).
 
 ## Installation
-This package is registered, so add it using `Pkg`. This will also download GDAL binaries created by [GDALBuilder](https://github.com/JuliaGeo/GDALBuilder).
+This package is registered, so add it using `Pkg`. This will also download GDAL binaries created by  [Yggdrasil](https://github.com/JuliaPackaging/Yggdrasil/tree/master/G/GDAL).
 ```
 pkg> add GDAL
 ```
