@@ -14,6 +14,9 @@ matrix:
   - platform: x86
   - julia_version: nightly
 
+cache:
+  - '%USERPROFILE%\.julia\artifacts'
+
 branches:
   only:
     - master

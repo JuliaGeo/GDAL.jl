@@ -27,7 +27,9 @@ matrix:
       arch: arm64
 notifications:
   email: false
-
+cache:
+  directories:
+  - $HOME/.julia/artifacts
 jobs:
  allow_failures:
    - julia: nightly
