@@ -27,3 +27,12 @@ matrix:
       arch: arm64
 notifications:
   email: false
+
+jobs:
+ allow_failures:
+   - julia: nightly
+ include:
+   - stage: downstream packages
+     script:
+       - julia --project=. --color=yes -e 'using Pkg; Pkg.instantiate()'
+       - julia --project=. --color=yes -e 'using Pkg; Pkg.add("ArchGDAL"); Pkg.test("ArchGDAL")'
