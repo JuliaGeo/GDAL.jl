@@ -11,7 +11,7 @@ GDAL_jll = "a7073274-a066-55f0-b90d-d619367d196c"
 PROJ_jll = "58948b4f-47e0-5654-a9ad-f609743f8632"
 
 [compat]
-CEnum = "0.2, 0.3"
+CEnum = "0.2, 0.3, 0.4"
 GDAL_jll = "3.0.4"
 PROJ_jll = "6.3.0"
 julia = "1.3"
