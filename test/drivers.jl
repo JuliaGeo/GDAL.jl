@@ -7,6 +7,7 @@ available_drivers = [
     "AAIGrid",
     "GPKG",
     "GTiff",
+    "JP2OpenJPEG",
     "MEM",
     "PCRaster",
     # libcurl raster drivers
@@ -44,12 +45,4 @@ available_drivers = [
 
 for drivername in available_drivers
     @test GDAL.gdalgetdriverbyname(drivername) != C_NULL
-end
-
-not_available_drivers = [
-    "JP2OpenJPEG",  # up next, see #64
-]
-
-for drivername in not_available_drivers
-    @test_broken GDAL.gdalgetdriverbyname(drivername) != C_NULL
 end
