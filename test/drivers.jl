@@ -46,3 +46,10 @@ available_drivers = [
 for drivername in available_drivers
     @test GDAL.gdalgetdriverbyname(drivername) != C_NULL
 end
+
+# errors with BADCERT_NOT_TRUSTED if the CA certificate paths is not properly configured
+landsat = "https://landsat-pds.s3.amazonaws.com/L8/139/045/LC81390452014295LGN00/LC81390452014295LGN00_B1.TIF"
+ds_landsat = GDAL.gdalopen(string("/vsicurl/", landsat), GDAL.GA_ReadOnly)
+GDAL.gdalclose(ds_landsat)
+# actually also works without the /vsicurl/ prefix, but takes 50s versus 1s, so let's
+# not waste CI time. (it's probably downloading the whole file)
