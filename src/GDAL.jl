@@ -2,6 +2,7 @@ module GDAL
 
 using PROJ_jll
 using GDAL_jll
+using MozillaCACerts_jll
 using CEnum
 
 const Ctm = Base.Libc.TmStruct
@@ -43,6 +44,9 @@ function __init__()
     # set GDAL_DATA location, this overrides setting the environment variable
     GDAL_DATA[] = joinpath(GDAL_jll.artifact_dir, "share", "gdal")
     cplsetconfigoption("GDAL_DATA", GDAL_DATA[])
+
+    # set path to CA certificates
+    cplsetconfigoption("CURL_CA_BUNDLE", cacert)
 
     # set PROJ_LIB location, this overrides setting the environment variable
     PROJ_LIB[] = joinpath(PROJ_jll.artifact_dir, "share", "proj")
