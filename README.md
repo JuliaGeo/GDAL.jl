@@ -61,25 +61,3 @@ GDALError (CE_Failure, code 6):
 ```
 
 This means that the GDAL binaries you are using, which normally come from the [GDALBuilder](https://github.com/JuliaGeo/GDALBuilder), are not compiled with support for the format or feature you need. GDAL is a large library with many optional dependencies which allow support for more formats. Currently the amount of formats supported is still limited, but will grow over time. Lists of available formats can be found [here](https://gdal.org/drivers/raster/index.html) for rasters and [here](https://gdal.org/drivers/vector/index.html) for vectors. If you need support for another format, consider making an issue or PR at the GDALBuilder repository. Many formats need external libraries as added dependencies. This means a BinaryBuilder repository also needs to be available for that library, and added as a dependency.
-
-### Using the GDAL and OGR utilities
-
-The provided GDAL installation also contains the commonly used utilities such as `gdal_translate` and `ogr2ogr`. They can be called from Julia like so:
-```julia
-using GDAL
-run(`$(GDAL.gdalinfo_path) dem.tif`)
-```
-The `GDAL.<util>_path` are defined in the `deps.jl` file after installation.
-
-Since GDAL 2.1's [RFC59.1](https://trac.osgeo.org/gdal/wiki/rfc59.1_utilities_as_a_library) most utilities are also available as functions in the library, they are implemented [here](https://github.com/JuliaGeo/GDAL.jl/blob/master/src/gdal_utils.jl) and tested [here](https://github.com/JuliaGeo/GDAL.jl/blob/master/test/gdal_utils.jl). If these are used you can avoid the need for calling the binaries.
-
-All executables listed below are included, except for the Python scripts. The Python scripts are a bit more complicated because it would require Python as a dependency. If we can optionally support them however that would be great.
-
-- https://www.gdal.org/gdal_utilities.html
-- https://www.gdal.org/ogr_utilities.html
-
-If you want to use these utilities from outside julia, note that this will not work unless you set two things:
-1. The environment variable `GDAL_DATA` must be set to the value returned in julia by `GDAL.GDAL_DATA[]`.
-2. Julia's `Sys.BINDIR` must be in your path.
-
-Inside of julia (2) is always the case, and (1) happens on loading the `GDAL` module, in its `__init__` function.
