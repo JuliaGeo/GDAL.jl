@@ -2,7 +2,7 @@ module GDAL
 
 using PROJ_jll
 using GDAL_jll
-using MozillaCACerts_jll
+using MozillaCACerts_jll: cacert
 using CEnum
 
 const Ctm = Base.Libc.TmStruct
