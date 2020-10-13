@@ -1,3 +1,7 @@
+# This is testing GDAL/OGR utilities as a library, as has been added with
+# https://gdal.org/development/rfc/rfc59.1_utilities_as_a_library.html
+# In `gdal_jll_utils.jl` we test the utility executables.
+
 ds_small = GDAL.gdalopen("data/utmsmall.tif", GDAL.GA_ReadOnly)
 ds_point = GDAL.gdalopenex("data/point.geojson", GDAL.GDAL_OF_VECTOR, C_NULL, C_NULL, C_NULL)
 
@@ -48,13 +52,7 @@ GDAL.gdalrasterio(band, GDAL.GF_Read, 0, 0, 5, 5,
 
 # GDALWarp
 
-# cannot reproject file
-# ERROR: LoadError: LoadError: GDALError (Failure, code 6):
-#        Unable to load PROJ.4 library (libproj.so), creation of OGRCoordinateTransformation failed.
-# when using
-# options = GDAL.warpappoptionsnew(["-t_srs","EPSG:4326"], C_NULL)
-# should we require PROJ.4 or not?
-options = GDAL.gdalwarpappoptionsnew(["-of","MEM"], C_NULL)  # in memory
+options = GDAL.gdalwarpappoptionsnew(["-t_srs","EPSG:4326", "-of","MEM"], C_NULL)  # in memory
 ds_warped = GDAL.gdalwarp("data/utmsmall.mem", Ptr{GDAL.GDALDatasetH}(C_NULL), 1, [ds_small], options, C_NULL)
 GDAL.gdalwarpappoptionsfree(options)
 GDAL.gdalclose(ds_warped)

@@ -46,6 +46,7 @@ using Test
         include("tutorial_vector.jl")
         include("tutorial_vrt.jl")
         include("gdal_utils.jl")
+        include("gdal_jll_utils.jl")
         include("drivers.jl")
         include("error.jl")
     end
