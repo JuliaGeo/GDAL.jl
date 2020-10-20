@@ -17,6 +17,8 @@ available_drivers = [
     "WCS",
     "WMS",
     "WMTS",
+    # webp raster drivers
+    "WEBP",
     # vector drivers
     "ARCGEN",
     "GeoJSON",
@@ -28,6 +30,14 @@ available_drivers = [
     "TopoJSON",
     "VRT",
     "SQLite",
+    # libexpat vector drivers
+    "JML",
+    "GML",
+    "GPX",
+    "GeoRSS",
+    "LVBAG",
+    "ODS",
+    "OSM",
     # libcurl vector drivers
     "AmigoCloud",
     "Carto",
@@ -43,8 +53,12 @@ available_drivers = [
     "WFS3",
 ]
 
-for drivername in available_drivers
-    @test GDAL.gdalgetdriverbyname(drivername) != C_NULL
+@testset "Drivers" begin
+    for drivername in available_drivers
+        @testset "$drivername" begin
+            @test GDAL.gdalgetdriverbyname(drivername) != C_NULL
+        end
+    end
 end
 
 # errors with BADCERT_NOT_TRUSTED if the CA certificate paths is not properly configured
