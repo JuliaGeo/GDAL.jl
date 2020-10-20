@@ -35,7 +35,6 @@ available_drivers = [
     "GML",
     "GPX",
     "GeoRSS",
-    "LVBAG",
     "ODS",
     "OSM",
     # libcurl vector drivers
