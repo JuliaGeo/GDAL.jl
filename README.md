@@ -1,5 +1,5 @@
 # GDAL.jl
-[![Build Status](https://travis-ci.org/JuliaGeo/GDAL.jl.svg?branch=master)](https://travis-ci.org/JuliaGeo/GDAL.jl)
+[![Build Status](https://travis-ci.com/JuliaGeo/GDAL.jl.svg?branch=master)](https://travis-ci.com/JuliaGeo/GDAL.jl)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/JuliaGeo/GDAL.jl?svg=true&branch=master)](https://ci.appveyor.com/project/JuliaGeo/gdal-jl/branch/master)
 
 Julia wrapper for [GDAL - Geospatial Data Abstraction Library](http://gdal.org/).
