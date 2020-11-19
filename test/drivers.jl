@@ -18,7 +18,7 @@ available_drivers = [
     "WMS",
     "WMTS",
     # webp raster drivers
-    "WEBP",
+    # "WEBP",
     # vector drivers
     "ARCGEN",
     "GeoJSON",
