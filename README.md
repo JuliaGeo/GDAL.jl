@@ -9,7 +9,7 @@ Other packages can build on top of this to provide a more Julian user experience
 *Most users will want to use [ArchGDAL.jl](https://github.com/yeesian/ArchGDAL.jl) instead of using GDAL.jl directly.*
 
 ## Installation
-This package is registered, so add it using `Pkg`. This will also download GDAL binaries created by  [Yggdrasil](https://github.com/JuliaPackaging/Yggdrasil/tree/master/G/GDAL).
+This package is registered, so add it using `Pkg`. This will also download GDAL binaries created by [Yggdrasil](https://github.com/JuliaPackaging/Yggdrasil/tree/master/G/GDAL).
 ```
 pkg> add GDAL
 ```
