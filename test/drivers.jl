@@ -5,10 +5,12 @@
 available_drivers = [
     # raster drivers
     "AAIGrid",
+    "COG",
     "GPKG",
     "GTiff",
     "JP2OpenJPEG",
     "MEM",
+    "OGCAPI",
     "PCRaster",
     # libcurl raster drivers
     "EEDAI",
@@ -21,10 +23,12 @@ available_drivers = [
     # "WEBP",
     # vector drivers
     "ARCGEN",
+    "FlatGeoBuf",
     "GeoJSON",
     "GML",
     "GPKG",
     "KML",
+    "LVBAG",
     "OpenFileGDB",
     "ESRI Shapefile",
     "TopoJSON",
@@ -45,11 +49,10 @@ available_drivers = [
     "CSW",
     "EEDA",
     "ElasticSearch",
-    "GFT",
     "NGW",
+    "OAPIF",
     "PLScenes",
     "WFS",
-    "WFS3",
 ]
 
 @testset "Drivers" begin
