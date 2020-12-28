@@ -391,6 +391,23 @@ function vsiingestfile(fp, pszFilename, ppabyRet, pnSize, nMaxSize)
 end
 
 """
+    VSIOverwriteFile(VSILFILE * fpTarget,
+                     const char * pszSourceFilename) -> int
+
+Overwrite an existing file with content from another one.
+
+### Parameters
+* **fpTarget**: file handle opened with VSIFOpenL() with "rb+" flag.
+* **pszSourceFilename**: source filename
+
+### Returns
+TRUE in case of success.
+"""
+function vsioverwritefile(fpTarget, pszSourceFilename)
+    aftercare(ccall((:VSIOverwriteFile, libgdal), Cint, (Ptr{VSILFILE}, Cstring), fpTarget, pszSourceFilename))
+end
+
+"""
     VSIStatL(const char * pszFilename,
              VSIStatBufL * psStatBuf) -> int
 
@@ -551,6 +568,56 @@ the native file descriptor, or NULL.
 """
 function vsifgetnativefiledescriptorl(arg1)
     aftercare(ccall((:VSIFGetNativeFileDescriptorL, libgdal), Ptr{Cvoid}, (Ptr{VSILFILE},), arg1))
+end
+
+"""
+    VSIGetFileMetadata(const char * pszFilename,
+                       const char * pszDomain,
+                       CSLConstList papszOptions) -> char **
+
+Get metadata on files.
+
+### Parameters
+* **pszFilename**: the path of the filesystem object to be queried. UTF-8 encoded.
+* **pszDomain**: Metadata domain to query. Depends on the file system. The following are supported: 
+
+HEADERS: to get HTTP headers for network-like filesystems (/vsicurl/, /vsis3/, etc) 
+
+
+TAGS: specific to /vsis3/: to get S3 Object tagging information
+* **papszOptions**: Unused. Should be set to NULL.
+
+### Returns
+a NULL-terminated list of key=value strings, to be freed with CSLDestroy() or NULL in case of error / empty list.
+"""
+function vsigetfilemetadata(pszFilename, pszDomain, papszOptions)
+    aftercare(ccall((:VSIGetFileMetadata, libgdal), Ptr{Cstring}, (Cstring, Cstring, CSLConstList), pszFilename, pszDomain, papszOptions))
+end
+
+"""
+    VSISetFileMetadata(const char * pszFilename,
+                       CSLConstList papszMetadata,
+                       const char * pszDomain,
+                       CSLConstList papszOptions) -> int
+
+Set metadata on files.
+
+### Parameters
+* **pszFilename**: the path of the filesystem object to be queried. UTF-8 encoded.
+* **papszMetadata**: NULL-terminated list of key=value strings.
+* **pszDomain**: Metadata domain to set. Depends on the file system. The following are supported: 
+
+HEADERS: to set HTTP header 
+
+
+TAGS: to set S3 Object tagging information
+* **papszOptions**: Unused. Should be set to NULL.
+
+### Returns
+TRUE in case of success.
+"""
+function vsisetfilemetadata(pszFilename, papszMetadata, pszDomain, papszOptions)
+    aftercare(ccall((:VSISetFileMetadata, libgdal), Cint, (Cstring, CSLConstList, Cstring, CSLConstList), pszFilename, papszMetadata, pszDomain, papszOptions))
 end
 
 """
@@ -819,6 +886,21 @@ function vsireaddirex(pszPath, nMaxFiles)
 end
 
 """
+    VSISiblingFiles(const char * pszFilename) -> char **
+
+Return related filenames.
+
+### Parameters
+* **pszFilename**: the path of a filename to inspect UTF-8 encoded.
+
+### Returns
+The list of entries, relative to the directory, of all sidecar files available or NULL if the list is not known. Filenames are returned in UTF-8 encoding. Most implementations will return NULL, and a subsequent ReadDir will list all files available in the file's directory. This function will be overridden by VSI FilesystemHandlers that wish to force e.g. an empty list to avoid opening non-existant files on slow filesystems. The return value shall be destroyed with CSLDestroy()
+"""
+function vsisiblingfiles(pszPath)
+    aftercare(ccall((:VSISiblingFiles, libgdal), Ptr{Cstring}, (Cstring,), pszPath))
+end
+
+"""
     VSIOpenDir(const char * pszPath,
                int nRecurseDepth,
                const char *const * papszOptions) -> VSIDIR *
@@ -941,6 +1023,21 @@ function vsiunlink(pszFilename)
 end
 
 """
+    VSIUnlinkBatch(CSLConstList papszFiles) -> int *
+
+Delete several files, possibly in a batch.
+
+### Parameters
+* **papszFiles**: NULL terminated list of files. UTF-8 encoded.
+
+### Returns
+an array of size CSLCount(papszFiles), whose values are TRUE or FALSE depending on the success of deletion of the corresponding file. The array should be freed with VSIFree(). NULL might be return in case of a more general error (for example, files belonging to different file system handlers)
+"""
+function vsiunlinkbatch(papszFiles)
+    aftercare(ccall((:VSIUnlinkBatch, libgdal), Ptr{Cint}, (CSLConstList,), papszFiles))
+end
+
+"""
     VSIRename(const char * oldpath,
               const char * newpath) -> int
 
@@ -969,15 +1066,22 @@ Synchronize a source file/directory with a target file/directory.
 
 ### Parameters
 * **pszSource**: Source file or directory. UTF-8 encoded.
-* **pszTarget**: Target file or direcotry. UTF-8 encoded.
+* **pszTarget**: Target file or directory. UTF-8 encoded.
 * **papszOptions**: Null terminated list of options, or NULL. Currently accepted options are: 
 
 RECURSIVE=NO (the default is YES) 
 
 
-SYNC_STRATEGY=TIMESTAMP/ETAG. Determines which criterion is used to determine if a target file must be replaced when it already exists and has the same file size as the source. Only applies for a source or target being a network filesystem.
+SYNC_STRATEGY=TIMESTAMP/ETAG/OVERWRITE. Determines which criterion is used to determine if a target file must be replaced when it already exists and has the same file size as the source. Only applies for a source or target being a network filesystem.
 The default is TIMESTAMP (similarly to how 'aws s3 sync' works), that is to say that for an upload operation, a remote file is replaced if it has a different size or if it is older than the source. For a download operation, a local file is replaced if it has a different size or if it is newer than the remote file.
 The ETAG strategy assumes that the ETag metadata of the remote file is the MD5Sum of the file content, which is only true in the case of /vsis3/ for files not using KMS server side encryption and uploaded in a single PUT operation (so smaller than 50 MB given the default used by GDAL). Only to be used for /vsis3/, /vsigs/ or other filesystems using a MD5Sum as ETAG.
+The OVERWRITE strategy (GDAL >= 3.2) will always overwrite the target file with the source one.  
+
+
+NUM_THREADS=integer. Number of threads to use for parallel file copying. Only use for when /vsis3/, /vsigs/ or /vsiaz/ is in source or target. Since GDAL 3.1 
+
+
+CHUNK_SIZE=integer. Maximum size of chunk (in bytes) to use to split large objects when downloading them from /vsis3/, /vsigs/ or /vsiaz/ to local file system, or for upload to /vsis3/ or /vsiaz/ from local file system. Only used if NUM_THREADS > 1. For upload to /vsis3/, this chunk size must be set at least to 5 MB. Since GDAL 3.1
 * **pProgressFunc**: Progress callback, or NULL.
 * **pProgressData**: User data of progress callback, or NULL.
 * **ppapszOutputs**: Unused. Should be set to NULL for now.
@@ -1011,6 +1115,30 @@ The free space in bytes. Or -1 in case of error.
 """
 function vsigetdiskfreespace(pszDirname)
     aftercare(ccall((:VSIGetDiskFreeSpace, libgdal), GIntBig, (Cstring,), pszDirname))
+end
+
+"""
+    VSINetworkStatsReset(void) -> void
+
+Clear network related statistics.
+"""
+function vsinetworkstatsreset()
+    aftercare(ccall((:VSINetworkStatsReset, libgdal), Cvoid, ()))
+end
+
+"""
+    VSINetworkStatsGetAsSerializedJSON(char ** papszOptions) -> char *
+
+Return network related statistics, as a JSON serialized object.
+
+### Parameters
+* **papszOptions**: Unused.
+
+### Returns
+a JSON serialized string to free with VSIFree(), or nullptr
+"""
+function vsinetworkstatsgetasserializedjson(papszOptions)
+    aftercare(ccall((:VSINetworkStatsGetAsSerializedJSON, libgdal), Cstring, (Ptr{Cstring},), papszOptions), false)
 end
 
 """
@@ -1067,6 +1195,8 @@ end
 
 """
     VSIInstallCurlStreamingFileHandler(void) -> void
+
+Install /vsicurl_streaming/ HTTP/FTP file system handler (requires libcurl).
 """
 function vsiinstallcurlstreamingfilehandler()
     aftercare(ccall((:VSIInstallCurlStreamingFileHandler, libgdal), Cvoid, ()))
@@ -1083,6 +1213,8 @@ end
 
 """
     VSIInstallS3StreamingFileHandler(void) -> void
+
+Install /vsis3_streaming/ Amazon S3 file system handler (requires libcurl).
 """
 function vsiinstalls3streamingfilehandler()
     aftercare(ccall((:VSIInstallS3StreamingFileHandler, libgdal), Cvoid, ()))
@@ -1099,6 +1231,8 @@ end
 
 """
     VSIInstallGSStreamingFileHandler(void) -> void
+
+Install /vsigs_streaming/ Google Cloud Storage file system handler (requires libcurl)
 """
 function vsiinstallgsstreamingfilehandler()
     aftercare(ccall((:VSIInstallGSStreamingFileHandler, libgdal), Cvoid, ()))
@@ -1115,6 +1249,8 @@ end
 
 """
     VSIInstallAzureStreamingFileHandler(void) -> void
+
+Install /vsiaz_streaming/ Microsoft Azure Blob file system handler (requires libcurl)
 """
 function vsiinstallazurestreamingfilehandler()
     aftercare(ccall((:VSIInstallAzureStreamingFileHandler, libgdal), Cvoid, ()))
@@ -1131,6 +1267,8 @@ end
 
 """
     VSIInstallOSSStreamingFileHandler(void) -> void
+
+Install /vsioss_streaming/ Alibaba Cloud Object Storage Service (OSS) file system handler (requires libcurl)
 """
 function vsiinstallossstreamingfilehandler()
     aftercare(ccall((:VSIInstallOSSStreamingFileHandler, libgdal), Cvoid, ()))
@@ -1147,6 +1285,8 @@ end
 
 """
     VSIInstallSwiftStreamingFileHandler(void) -> void
+
+Install /vsiswift_streamin/ OpenStack Swif Object Storage (Swift) file system handler (requires libcurl)
 """
 function vsiinstallswiftstreamingfilehandler()
     aftercare(ccall((:VSIInstallSwiftStreamingFileHandler, libgdal), Cvoid, ()))

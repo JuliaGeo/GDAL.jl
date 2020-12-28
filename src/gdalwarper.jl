@@ -300,6 +300,21 @@ function gdalautocreatewarpedvrt(hSrcDS, pszSrcWKT, pszDstWKT, eResampleAlg, dfM
 end
 
 """
+    GDALAutoCreateWarpedVRTEx(GDALDatasetH hSrcDS,
+                              const char * pszSrcWKT,
+                              const char * pszDstWKT,
+                              GDALResampleAlg eResampleAlg,
+                              double dfMaxError,
+                              const GDALWarpOptions * psOptionsIn,
+                              CSLConstList papszTransformerOptions) -> GDALDatasetH
+
+Create virtual warped dataset automatically.
+"""
+function gdalautocreatewarpedvrtex(hSrcDS, pszSrcWKT, pszDstWKT, eResampleAlg, dfMaxError, psOptions, papszTransformerOptions)
+    aftercare(ccall((:GDALAutoCreateWarpedVRTEx, libgdal), GDALDatasetH, (GDALDatasetH, Cstring, Cstring, GDALResampleAlg, Cdouble, Ptr{GDALWarpOptions}, CSLConstList), hSrcDS, pszSrcWKT, pszDstWKT, eResampleAlg, dfMaxError, psOptions, papszTransformerOptions))
+end
+
+"""
     GDALCreateWarpedVRT(GDALDatasetH hSrcDS,
                         int nPixels,
                         int nLines,

@@ -27,6 +27,34 @@ function osrsetprojsearchpaths(papszPaths)
 end
 
 """
+    OSRGetPROJSearchPaths() -> char **
+
+Get the search path(s) for PROJ resource files.
+
+### Returns
+NULL terminated list of directory paths. To be freed with CSLDestroy()
+"""
+function osrgetprojsearchpaths()
+    aftercare(ccall((:OSRGetPROJSearchPaths, libgdal), Ptr{Cstring}, ()))
+end
+
+"""
+    OSRGetPROJVersion(int * pnMajor,
+                      int * pnMinor,
+                      int * pnPatch) -> void
+
+Get the PROJ version.
+
+### Parameters
+* **pnMajor**: Pointer to major version number, or NULL
+* **pnMinor**: Pointer to minor version number, or NULL
+* **pnPatch**: Pointer to patch version number, or NULL
+"""
+function osrgetprojversion(pnMajor, pnMinor, pnPatch)
+    aftercare(ccall((:OSRGetPROJVersion, libgdal), Cvoid, (Ptr{Cint}, Ptr{Cint}, Ptr{Cint}), pnMajor, pnMinor, pnPatch))
+end
+
+"""
     OSRNewSpatialReference(const char * pszWKT) -> OGRSpatialReferenceH
 
 Constructor.
@@ -105,7 +133,7 @@ end
     OSRImportFromEPSG(OGRSpatialReferenceH hSRS,
                       int nCode) -> OGRErr
 
-Initialize SRS based on EPSG GCS or PCS code.
+Initialize SRS based on EPSG geographic, projected or vertical CRS code.
 """
 function osrimportfromepsg(arg1, arg2)
     aftercare(ccall((:OSRImportFromEPSG, libgdal), OGRErr, (OGRSpatialReferenceH, Cint), arg1, arg2))
@@ -115,7 +143,7 @@ end
     OSRImportFromEPSGA(OGRSpatialReferenceH hSRS,
                        int nCode) -> OGRErr
 
-Initialize SRS based on EPSG CRS code.
+Initialize SRS based on EPSG geographic, projected or vertical CRS code.
 """
 function osrimportfromepsga(arg1, arg2)
     aftercare(ccall((:OSRImportFromEPSGA, libgdal), OGRErr, (OGRSpatialReferenceH, Cint), arg1, arg2))
@@ -300,10 +328,21 @@ function osrexporttoprettywkt(arg1, arg2, arg3)
 end
 
 """
+    OSRExportToPROJJSON(OGRSpatialReferenceH hSRS,
+                        char ** ppszReturn,
+                        const char *const * papszOptions) -> OGRErr
+
+Convert this SRS into PROJJSON format.
+"""
+function osrexporttoprojjson(hSRS, ppszReturn, papszOptions)
+    aftercare(ccall((:OSRExportToPROJJSON, libgdal), OGRErr, (OGRSpatialReferenceH, Ptr{Cstring}, Ptr{Cstring}), hSRS, ppszReturn, papszOptions))
+end
+
+"""
     OSRExportToProj4(OGRSpatialReferenceH hSRS,
                      char ** ppszReturn) -> OGRErr
 
-Export coordinate system in PROJ format.
+Export coordinate system in PROJ.4 legacy format.
 """
 function osrexporttoproj4(arg1, arg2)
     aftercare(ccall((:OSRExportToProj4, libgdal), OGRErr, (OGRSpatialReferenceH, Ptr{Cstring}), arg1, arg2))
@@ -545,6 +584,15 @@ function osrisgeographic(arg1)
 end
 
 """
+    OSRIsDerivedGeographic(OGRSpatialReferenceH hSRS) -> int
+
+Check if derived geographic coordinate system.
+"""
+function osrisderivedgeographic(arg1)
+    aftercare(ccall((:OSRIsDerivedGeographic, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
+end
+
+"""
     OSRIsLocal(OGRSpatialReferenceH hSRS) -> int
 
 Check if local coordinate system.
@@ -718,6 +766,15 @@ function osrgettowgs84(hSRS, arg1, arg2)
 end
 
 """
+    OSRAddGuessedTOWGS84(OGRSpatialReferenceH hSRS) -> OGRErr
+
+Try to add a a 3-parameter or 7-parameter Helmert transformation to WGS84.
+"""
+function osraddguessedtowgs84(hSRS)
+    aftercare(ccall((:OSRAddGuessedTOWGS84, libgdal), OGRErr, (OGRSpatialReferenceH,), hSRS))
+end
+
+"""
     OSRSetCompoundCS(OGRSpatialReferenceH hSRS,
                      const char * pszName,
                      OGRSpatialReferenceH hHorizSRS,
@@ -727,6 +784,26 @@ Setup a compound coordinate system.
 """
 function osrsetcompoundcs(hSRS, pszName, hHorizSRS, hVertSRS)
     aftercare(ccall((:OSRSetCompoundCS, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring, OGRSpatialReferenceH, OGRSpatialReferenceH), hSRS, pszName, hHorizSRS, hVertSRS))
+end
+
+"""
+    OSRPromoteTo3D(OGRSpatialReferenceH hSRS,
+                   const char * pszName) -> OGRErr
+
+"Promotes" a 2D CRS to a 3D CRS one.
+"""
+function osrpromoteto3d(hSRS, pszName)
+    aftercare(ccall((:OSRPromoteTo3D, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring), hSRS, pszName))
+end
+
+"""
+    OSRDemoteTo2D(OGRSpatialReferenceH hSRS,
+                  const char * pszName) -> OGRErr
+
+"Demote" a 3D CRS to a 2D CRS one.
+"""
+function osrdemoteto2d(hSRS, pszName)
+    aftercare(ccall((:OSRDemoteTo2D, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring), hSRS, pszName))
 end
 
 """
@@ -951,7 +1028,7 @@ end
                    int * pnEntries,
                    int ** ppanMatchConfidence) -> OGRSpatialReferenceH *
 
-Try to identify a match between the passed SRS and a related SRS in a catalog (currently EPSG only)
+Try to identify a match between the passed SRS and a related SRS in a catalog.
 
 ### Parameters
 * **hSRS**: SRS to match
@@ -990,7 +1067,7 @@ end
 """
     OSREPSGTreatsAsNorthingEasting(OGRSpatialReferenceH hSRS) -> int
 
-This function returns TRUE if EPSG feels this geographic coordinate system should be treated as having northing/easting coordinate ordering.
+This function returns TRUE if EPSG feels this projected coordinate system should be treated as having northing/easting coordinate ordering.
 """
 function osrepsgtreatsasnorthingeasting(hSRS)
     aftercare(ccall((:OSREPSGTreatsAsNorthingEasting, libgdal), Cint, (OGRSpatialReferenceH,), hSRS))
@@ -1006,6 +1083,15 @@ Fetch the orientation of one axis.
 """
 function osrgetaxis(hSRS, pszTargetKey, iAxis, peOrientation)
     aftercare(ccall((:OSRGetAxis, libgdal), Cstring, (OGRSpatialReferenceH, Cstring, Cint, Ptr{OGRAxisOrientation}), hSRS, pszTargetKey, iAxis, peOrientation), false)
+end
+
+"""
+    OSRGetAxesCount(OGRSpatialReferenceH hSRS) -> int
+
+Return the number of axis of the coordinate system of the CRS.
+"""
+function osrgetaxescount(hSRS)
+    aftercare(ccall((:OSRGetAxesCount, libgdal), Cint, (OGRSpatialReferenceH,), hSRS))
 end
 
 """
@@ -1025,7 +1111,7 @@ end
 """
     OSRGetAxisMappingStrategy(OGRSpatialReferenceH hSRS) -> OSRAxisMappingStrategy
 
-Retun the data axis to CRS axis mapping strategy.
+Return the data axis to CRS axis mapping strategy.
 """
 function osrgetaxismappingstrategy(hSRS)
     aftercare(ccall((:OSRGetAxisMappingStrategy, libgdal), OSRAxisMappingStrategy, (OGRSpatialReferenceH,), hSRS))
@@ -1049,6 +1135,17 @@ Return the data axis to SRS axis mapping.
 """
 function osrgetdataaxistosrsaxismapping(hSRS, pnCount)
     aftercare(ccall((:OSRGetDataAxisToSRSAxisMapping, libgdal), Ptr{Cint}, (OGRSpatialReferenceH, Ptr{Cint}), hSRS, pnCount))
+end
+
+"""
+    OSRSetDataAxisToSRSAxisMapping(OGRSpatialReferenceH hSRS,
+                                   int nMappingSize,
+                                   const int * panMapping) -> OGRErr
+
+Set a custom data axis to CRS axis mapping.
+"""
+function osrsetdataaxistosrsaxismapping(hSRS, nMappingSize, panMapping)
+    aftercare(ccall((:OSRSetDataAxisToSRSAxisMapping, libgdal), OGRErr, (OGRSpatialReferenceH, Cint, Ptr{Cint}), hSRS, nMappingSize, panMapping))
 end
 
 """
@@ -1695,6 +1792,21 @@ Spherical, Cross-track, Height.
 """
 function osrsetsch(hSRS, dfPegLat, dfPegLong, dfPegHeading, dfPegHgt)
     aftercare(ccall((:OSRSetSCH, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfPegLat, dfPegLong, dfPegHeading, dfPegHgt))
+end
+
+"""
+    OSRSetVerticalPerspective(OGRSpatialReferenceH hSRS,
+                              double dfTopoOriginLat,
+                              double dfTopoOriginLon,
+                              double dfTopoOriginHeight,
+                              double dfViewPointHeight,
+                              double dfFalseEasting,
+                              double dfFalseNorthing) -> OGRErr
+
+Vertical Perspective / Near-sided Perspective.
+"""
+function osrsetverticalperspective(hSRS, dfTopoOriginLat, dfTopoOriginLon, dfTopoOriginHeight, dfViewPointHeight, dfFalseEasting, dfFalseNorthing)
+    aftercare(ccall((:OSRSetVerticalPerspective, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfTopoOriginLat, dfTopoOriginLon, dfTopoOriginHeight, dfViewPointHeight, dfFalseEasting, dfFalseNorthing))
 end
 
 """
