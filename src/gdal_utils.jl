@@ -105,7 +105,7 @@ Converts raster data between different formats.
 * **pszDest**: the destination dataset path.
 * **hSrcDataset**: the source dataset handle.
 * **psOptionsIn**: the options struct returned by GDALTranslateOptionsNew() or NULL.
-* **pbUsageError**: the pointer to int variable to determine any usage error has occurred or NULL.
+* **pbUsageError**: pointer to a integer output variable to store if any usage error has occurred or NULL.
 
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
@@ -205,7 +205,7 @@ Image reprojection and warping function.
 * **nSrcCount**: the number of input datasets.
 * **pahSrcDS**: the list of input datasets.
 * **psOptionsIn**: the options struct returned by GDALWarpAppOptionsNew() or NULL.
-* **pbUsageError**: the pointer to int variable to determine any usage error has occurred.
+* **pbUsageError**: pointer to a integer output variable to store if any usage error has occurred, or NULL.
 
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS if not NULL) or NULL in case of error.
@@ -275,7 +275,7 @@ Converts vector data between file formats.
 * **nSrcCount**: the number of input datasets (only 1 supported currently)
 * **pahSrcDS**: the list of input datasets.
 * **psOptionsIn**: the options struct returned by GDALVectorTranslateOptionsNew() or NULL.
-* **pbUsageError**: the pointer to int variable to determine any usage error has occurred
+* **pbUsageError**: pointer to a integer output variable to store if any usage error has occurred, or NULL.
 
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
@@ -345,7 +345,7 @@ Apply a DEM processing.
 * **pszProcessing**: the processing to apply (one of "hillshade", "slope", "aspect", "color-relief", "TRI", "TPI", "Roughness")
 * **pszColorFilename**: color file (mandatory for "color-relief" processing, should be NULL otherwise)
 * **psOptionsIn**: the options struct returned by GDALDEMProcessingOptionsNew() or NULL.
-* **pbUsageError**: the pointer to int variable to determine any usage error has occurred or NULL.
+* **pbUsageError**: pointer to a integer output variable to store if any usage error has occurred or NULL.
 
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
@@ -413,7 +413,7 @@ Convert nearly black/white borders to exact value.
 * **hDstDS**: the destination dataset or NULL. Might be equal to hSrcDataset.
 * **hSrcDataset**: the source dataset handle.
 * **psOptionsIn**: the options struct returned by GDALNearblackOptionsNew() or NULL.
-* **pbUsageError**: the pointer to int variable to determine any usage error has occurred or NULL.
+* **pbUsageError**: pointer to a integer output variable to store if any usage error has occurred or NULL.
 
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
@@ -479,7 +479,7 @@ Create raster from the scattered data.
 * **pszDest**: the destination dataset path.
 * **hSrcDataset**: the source dataset handle.
 * **psOptionsIn**: the options struct returned by GDALGridOptionsNew() or NULL.
-* **pbUsageError**: the pointer to int variable to determine any usage error has occurred or NULL.
+* **pbUsageError**: pointer to a integer output variable to store if any usage error has occurred or NULL.
 
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
@@ -547,7 +547,7 @@ Burns vector geometries into a raster.
 * **hDstDS**: the destination dataset or NULL.
 * **hSrcDataset**: the source dataset handle.
 * **psOptionsIn**: the options struct returned by GDALRasterizeOptionsNew() or NULL.
-* **pbUsageError**: the pointer to int variable to determine any usage error has occurred or NULL.
+* **pbUsageError**: pointer to a integer output variable to store if any usage error has occurred or NULL.
 
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
@@ -617,11 +617,127 @@ Build a VRT from a list of datasets.
 * **pahSrcDS**: the list of input datasets (or NULL, exclusive with papszSrcDSNames)
 * **papszSrcDSNames**: the list of input dataset names (or NULL, exclusive with pahSrcDS)
 * **psOptionsIn**: the options struct returned by GDALBuildVRTOptionsNew() or NULL.
-* **pbUsageError**: the pointer to int variable to determine any usage error has occurred.
+* **pbUsageError**: pointer to a integer output variable to store if any usage error has occurred.
 
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
 """
 function gdalbuildvrt(pszDest, nSrcCount, pahSrcDS, papszSrcDSNames, psOptions, pbUsageError)
     aftercare(ccall((:GDALBuildVRT, libgdal), GDALDatasetH, (Cstring, Cint, Ptr{GDALDatasetH}, Ptr{Cstring}, Ptr{GDALBuildVRTOptions}, Ptr{Cint}), pszDest, nSrcCount, pahSrcDS, papszSrcDSNames, psOptions, pbUsageError))
+end
+
+"""
+    GDALMultiDimInfoOptionsNew(char ** papszArgv,
+                               GDALMultiDimInfoOptionsForBinary * psOptionsForBinary) -> GDALMultiDimInfoOptions *
+
+Allocates a GDALMultiDimInfo struct.
+
+### Parameters
+* **papszArgv**: NULL terminated list of options (potentially including filename and open options too), or NULL. The accepted options are the ones of the gdalmdiminfo utility.
+* **psOptionsForBinary**: (output) may be NULL (and should generally be NULL), otherwise (gdalmultidiminfo_bin.cpp use case) must be allocated with GDALMultiDimInfoOptionsForBinaryNew() prior to this function. Will be filled with potentially present filename, open options, subdataset number...
+
+### Returns
+pointer to the allocated GDALMultiDimInfoOptions struct. Must be freed with GDALMultiDimInfoOptionsFree().
+"""
+function gdalmultidiminfooptionsnew(papszArgv, psOptionsForBinary)
+    aftercare(ccall((:GDALMultiDimInfoOptionsNew, libgdal), Ptr{GDALMultiDimInfoOptions}, (Ptr{Cstring}, Ptr{GDALMultiDimInfoOptionsForBinary}), papszArgv, psOptionsForBinary))
+end
+
+"""
+    GDALMultiDimInfoOptionsFree(GDALMultiDimInfoOptions * psOptions) -> void
+
+Frees the GDALMultiDimInfoOptions struct.
+
+### Parameters
+* **psOptions**: the options struct for GDALMultiDimInfo().
+"""
+function gdalmultidiminfooptionsfree(psOptions)
+    aftercare(ccall((:GDALMultiDimInfoOptionsFree, libgdal), Cvoid, (Ptr{GDALMultiDimInfoOptions},), psOptions))
+end
+
+"""
+    GDALMultiDimInfo(GDALDatasetH hDataset,
+                     const GDALMultiDimInfoOptions * psOptionsIn) -> char *
+
+Lists various information about a GDAL multidimensional dataset.
+
+### Parameters
+* **hDataset**: the dataset handle.
+* **psOptionsIn**: the options structure returned by GDALMultiDimInfoOptionsNew() or NULL.
+
+### Returns
+string corresponding to the information about the raster dataset (must be freed with CPLFree()), or NULL in case of error.
+"""
+function gdalmultidiminfo(hDataset, psOptions)
+    aftercare(ccall((:GDALMultiDimInfo, libgdal), Cstring, (GDALDatasetH, Ptr{GDALMultiDimInfoOptions}), hDataset, psOptions), false)
+end
+
+"""
+    GDALMultiDimTranslateOptionsNew(char ** papszArgv,
+                                    GDALMultiDimTranslateOptionsForBinary * psOptionsForBinary) -> GDALMultiDimTranslateOptions *
+
+Allocates a GDALMultiDimTranslateOptions struct.
+
+### Parameters
+* **papszArgv**: NULL terminated list of options (potentially including filename and open options too), or NULL. The accepted options are the ones of the gdalmdimtranslate utility.
+* **psOptionsForBinary**: (output) may be NULL (and should generally be NULL), otherwise (gdalmultidimtranslate_bin.cpp use case) must be allocated with GDALTranslateOptionsForBinaryNew() prior to this function. Will be filled with potentially present filename, open options,...
+
+### Returns
+pointer to the allocated GDALMultiDimTranslateOptions struct. Must be freed with GDALMultiDimTranslateOptionsFree().
+"""
+function gdalmultidimtranslateoptionsnew(papszArgv, psOptionsForBinary)
+    aftercare(ccall((:GDALMultiDimTranslateOptionsNew, libgdal), Ptr{GDALMultiDimTranslateOptions}, (Ptr{Cstring}, Ptr{GDALMultiDimTranslateOptionsForBinary}), papszArgv, psOptionsForBinary))
+end
+
+"""
+    GDALMultiDimTranslateOptionsFree(GDALMultiDimTranslateOptions * psOptions) -> void
+
+Frees the GDALMultiDimTranslateOptions struct.
+
+### Parameters
+* **psOptions**: the options struct for GDALMultiDimTranslate().
+"""
+function gdalmultidimtranslateoptionsfree(psOptions)
+    aftercare(ccall((:GDALMultiDimTranslateOptionsFree, libgdal), Cvoid, (Ptr{GDALMultiDimTranslateOptions},), psOptions))
+end
+
+"""
+    GDALMultiDimTranslateOptionsSetProgress(GDALMultiDimTranslateOptions * psOptions,
+                                            GDALProgressFunc pfnProgress,
+                                            void * pProgressData) -> void
+
+Set a progress function.
+
+### Parameters
+* **psOptions**: the options struct for GDALMultiDimTranslate().
+* **pfnProgress**: the progress callback.
+* **pProgressData**: the user data for the progress callback.
+"""
+function gdalmultidimtranslateoptionssetprogress(psOptions, pfnProgress, pProgressData)
+    aftercare(ccall((:GDALMultiDimTranslateOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALMultiDimTranslateOptions}, GDALProgressFunc, Ptr{Cvoid}), psOptions, pfnProgress, pProgressData))
+end
+
+"""
+    GDALMultiDimTranslate(const char * pszDest,
+                          GDALDatasetH hDstDS,
+                          int nSrcCount,
+                          GDALDatasetH * pahSrcDS,
+                          const GDALMultiDimTranslateOptions * psOptions,
+                          int * pbUsageError) -> GDALDatasetH
+
+Converts raster data between different formats.
+
+### Parameters
+* **pszDest**: the destination dataset path or NULL.
+* **hDstDS**: the destination dataset or NULL.
+* **nSrcCount**: the number of input datasets.
+* **pahSrcDS**: the list of input datasets.
+* **psOptions**: the options struct returned by GDALMultiDimTranslateOptionsNew() or NULL.
+* **pbUsageError**: pointer to a integer output variable to store if any usage error has occurred or NULL.
+
+### Returns
+the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
+"""
+function gdalmultidimtranslate(pszDest, hDstDataset, nSrcCount, pahSrcDS, psOptions, pbUsageError)
+    aftercare(ccall((:GDALMultiDimTranslate, libgdal), GDALDatasetH, (Cstring, GDALDatasetH, Cint, Ptr{GDALDatasetH}, Ptr{GDALMultiDimTranslateOptions}, Ptr{Cint}), pszDest, hDstDataset, nSrcCount, pahSrcDS, psOptions, pbUsageError))
 end

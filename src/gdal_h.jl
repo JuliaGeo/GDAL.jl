@@ -328,7 +328,7 @@ function gdalgetpaletteinterpretationname(arg1)
 end
 
 """
-    GDALAllRegister(void) -> void
+    GDALAllRegister() -> void
 
 Register all known configured GDAL drivers.
 """
@@ -1073,7 +1073,7 @@ end
 """
     GDALGetSpatialRef(GDALDatasetH hDS) -> OGRSpatialReferenceH
 
-Fetch the projection definition string for this dataset.
+Fetch the spatial reference for this dataset.
 """
 function gdalgetspatialref(arg1)
     aftercare(ccall((:GDALGetSpatialRef, libgdal), OGRSpatialReferenceH, (GDALDatasetH,), arg1))
@@ -1445,7 +1445,7 @@ Duplicate an existing layer.
 * **papszOptions**: a StringList of name=value options. Options are driver specific.
 
 ### Returns
-an handle to the layer, or NULL if an error occurs.
+a handle to the layer, or NULL if an error occurs.
 """
 function gdaldatasetcopylayer(arg1, arg2, arg3, arg4)
     aftercare(ccall((:GDALDatasetCopyLayer, libgdal), OGRLayerH, (GDALDatasetH, OGRLayerH, Cstring, CSLConstList), arg1, arg2, arg3, arg4))
@@ -1518,10 +1518,25 @@ Execute an SQL statement against the data store.
 * **pszDialect**: allows control of the statement dialect. If set to NULL, the OGR SQL engine will be used, except for RDBMS drivers that will use their dedicated SQL engine, unless OGRSQL is explicitly passed as the dialect. Starting with OGR 1.10, the SQLITE dialect can also be used.
 
 ### Returns
-an OGRLayer containing the results of the query. Deallocate with ReleaseResultSet().
+an OGRLayer containing the results of the query. Deallocate with GDALDatasetReleaseResultSet().
 """
 function gdaldatasetexecutesql(arg1, arg2, arg3, arg4)
     aftercare(ccall((:GDALDatasetExecuteSQL, libgdal), OGRLayerH, (GDALDatasetH, Cstring, OGRGeometryH, Cstring), arg1, arg2, arg3, arg4))
+end
+
+"""
+    GDALDatasetAbortSQL(GDALDatasetH hDS) -> OGRErr
+
+Abort any SQL statement running in the data store.
+
+### Parameters
+* **hDS**: the dataset handle.
+
+### Returns
+OGRERR_NONE on success, or OGRERR_UNSUPPORTED_OPERATION if AbortSQL is not supported for this datasource. .
+"""
+function gdaldatasetabortsql(arg1)
+    aftercare(ccall((:GDALDatasetAbortSQL, libgdal), OGRErr, (GDALDatasetH,), arg1))
 end
 
 """
@@ -1620,6 +1635,15 @@ OGRERR_NONE on success.
 """
 function gdaldatasetrollbacktransaction(hDS)
     aftercare(ccall((:GDALDatasetRollbackTransaction, libgdal), OGRErr, (GDALDatasetH,), hDS))
+end
+
+"""
+    GDALDatasetClearStatistics(GDALDatasetH hDS) -> void
+
+Clear statistics.
+"""
+function gdaldatasetclearstatistics(hDS)
+    aftercare(ccall((:GDALDatasetClearStatistics, libgdal), Cvoid, (GDALDatasetH,), hDS))
 end
 
 """
@@ -1958,6 +1982,18 @@ Set statistics on band.
 """
 function gdalsetrasterstatistics(hBand, dfMin, dfMax, dfMean, dfStdDev)
     aftercare(ccall((:GDALSetRasterStatistics, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble, Cdouble, Cdouble), hBand, dfMin, dfMax, dfMean, dfStdDev))
+end
+
+"""
+    GDALRasterBandAsMDArray(GDALRasterBandH hBand) -> GDALMDArrayH
+
+Return a view of this raster band as a 2D multidimensional GDALMDArray.
+
+### Returns
+a new array, or NULL.
+"""
+function gdalrasterbandasmdarray(arg1)
+    aftercare(ccall((:GDALRasterBandAsMDArray, libgdal), GDALMDArrayH, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -2430,10 +2466,10 @@ function gdalswapwordsex(pData, nWordSize, nWordCount, nWordSkip)
 end
 
 """
-    GDALCopyWords(const void *CPL_RESTRICT pSrcData,
+    GDALCopyWords(const void * pSrcData,
                   GDALDataType eSrcType,
                   int nSrcPixelStride,
-                  void *CPL_RESTRICT pDstData,
+                  void * pDstData,
                   GDALDataType eDstType,
                   int nDstPixelStride,
                   int nWordCount) -> void
@@ -2445,10 +2481,10 @@ function gdalcopywords(pSrcData, eSrcType, nSrcPixelOffset, pDstData, eDstType, 
 end
 
 """
-    GDALCopyWords64(const void *CPL_RESTRICT pSrcData,
+    GDALCopyWords64(const void * pSrcData,
                     GDALDataType eSrcType,
                     int nSrcPixelStride,
-                    void *CPL_RESTRICT pDstData,
+                    void * pDstData,
                     GDALDataType eDstType,
                     int nDstPixelStride,
                     GPtrDiff_t nWordCount) -> void
@@ -2520,7 +2556,7 @@ Read ESRI world file.
 
 ### Parameters
 * **pszBaseFilename**: the target raster file.
-* **pszExtension**: the extension to use (i.e. ".wld") or NULL to derive it from the pszBaseFilename
+* **pszExtension**: the extension to use (i.e. "wld") or NULL to derive it from the pszBaseFilename
 * **padfGeoTransform**: the six double array into which the geotransformation should be placed.
 
 ### Returns
@@ -2539,7 +2575,7 @@ Write ESRI world file.
 
 ### Parameters
 * **pszBaseFilename**: the target raster file.
-* **pszExtension**: the extension to use (i.e. ".wld"). Must not be NULL
+* **pszExtension**: the extension to use (i.e. "wld"). Must not be NULL
 * **padfGeoTransform**: the six double array from which the geotransformation should be read.
 
 ### Returns
@@ -3439,4 +3475,1333 @@ XML tree (to be freed with CPLDestroyXMLNode()) or NULL in case of error
 """
 function gdalgetjpeg2000structure(pszFilename, papszOptions)
     aftercare(ccall((:GDALGetJPEG2000Structure, libgdal), Ptr{CPLXMLNode}, (Cstring, CSLConstList), pszFilename, papszOptions))
+end
+
+"""
+    GDALCreateMultiDimensional(GDALDriverH hDriver,
+                               const char * pszName,
+                               CSLConstList papszRootGroupOptions,
+                               CSLConstList papszOptions) -> GDALDatasetH
+
+Create a new multidimensioanl dataset with this driver.
+"""
+function gdalcreatemultidimensional(hDriver, pszName, papszRootGroupOptions, papszOptions)
+    aftercare(ccall((:GDALCreateMultiDimensional, libgdal), GDALDatasetH, (GDALDriverH, Cstring, CSLConstList, CSLConstList), hDriver, pszName, papszRootGroupOptions, papszOptions))
+end
+
+"""
+    GDALExtendedDataTypeCreate(GDALDataType eType) -> GDALExtendedDataTypeH
+
+Return a new GDALExtendedDataType of class GEDTC_NUMERIC.
+
+### Parameters
+* **eType**: Numeric data type.
+
+### Returns
+a new GDALExtendedDataTypeH handle, or nullptr.
+"""
+function gdalextendeddatatypecreate(eType)
+    aftercare(ccall((:GDALExtendedDataTypeCreate, libgdal), GDALExtendedDataTypeH, (GDALDataType,), eType))
+end
+
+"""
+    GDALExtendedDataTypeCreateString(size_t nMaxStringLength) -> GDALExtendedDataTypeH
+
+Return a new GDALExtendedDataType of class GEDTC_STRING.
+
+### Returns
+a new GDALExtendedDataTypeH handle, or nullptr.
+"""
+function gdalextendeddatatypecreatestring(nMaxStringLength)
+    aftercare(ccall((:GDALExtendedDataTypeCreateString, libgdal), GDALExtendedDataTypeH, (Csize_t,), nMaxStringLength))
+end
+
+"""
+    GDALExtendedDataTypeCreateCompound(const char * pszName,
+                                       size_t nTotalSize,
+                                       size_t nComponents,
+                                       const GDALEDTComponentH * comps) -> GDALExtendedDataTypeH
+
+Return a new GDALExtendedDataType of class GEDTC_COMPOUND.
+
+### Parameters
+* **pszName**: Type name.
+* **nTotalSize**: Total size of the type in bytes. Should be large enough to store all components.
+* **nComponents**: Number of components in comps array.
+* **comps**: Components.
+
+### Returns
+a new GDALExtendedDataTypeH handle, or nullptr.
+"""
+function gdalextendeddatatypecreatecompound(pszName, nTotalSize, nComponents, comps)
+    aftercare(ccall((:GDALExtendedDataTypeCreateCompound, libgdal), GDALExtendedDataTypeH, (Cstring, Csize_t, Csize_t, Ptr{GDALEDTComponentH}), pszName, nTotalSize, nComponents, comps))
+end
+
+"""
+    GDALExtendedDataTypeRelease(GDALExtendedDataTypeH hEDT) -> void
+
+Release the GDAL in-memory object associated with a GDALExtendedDataTypeH.
+"""
+function gdalextendeddatatyperelease(hEDT)
+    aftercare(ccall((:GDALExtendedDataTypeRelease, libgdal), Cvoid, (GDALExtendedDataTypeH,), hEDT))
+end
+
+"""
+    GDALExtendedDataTypeGetName(GDALExtendedDataTypeH hEDT) -> const char *
+
+Return type name.
+"""
+function gdalextendeddatatypegetname(hEDT)
+    aftercare(ccall((:GDALExtendedDataTypeGetName, libgdal), Cstring, (GDALExtendedDataTypeH,), hEDT), false)
+end
+
+"""
+    GDALExtendedDataTypeGetClass(GDALExtendedDataTypeH hEDT) -> GDALExtendedDataTypeClass
+
+Return type class.
+"""
+function gdalextendeddatatypegetclass(hEDT)
+    aftercare(ccall((:GDALExtendedDataTypeGetClass, libgdal), GDALExtendedDataTypeClass, (GDALExtendedDataTypeH,), hEDT))
+end
+
+"""
+    GDALExtendedDataTypeGetNumericDataType(GDALExtendedDataTypeH hEDT) -> GDALDataType
+
+Return numeric data type (only valid when GetClass() == GEDTC_NUMERIC)
+"""
+function gdalextendeddatatypegetnumericdatatype(hEDT)
+    aftercare(ccall((:GDALExtendedDataTypeGetNumericDataType, libgdal), GDALDataType, (GDALExtendedDataTypeH,), hEDT))
+end
+
+"""
+    GDALExtendedDataTypeGetSize(GDALExtendedDataTypeH hEDT) -> size_t
+
+Return data type size in bytes.
+"""
+function gdalextendeddatatypegetsize(hEDT)
+    aftercare(ccall((:GDALExtendedDataTypeGetSize, libgdal), Csize_t, (GDALExtendedDataTypeH,), hEDT))
+end
+
+"""
+    GDALExtendedDataTypeGetMaxStringLength(GDALExtendedDataTypeH hEDT) -> size_t
+
+Return the maximum length of a string in bytes.
+"""
+function gdalextendeddatatypegetmaxstringlength(hEDT)
+    aftercare(ccall((:GDALExtendedDataTypeGetMaxStringLength, libgdal), Csize_t, (GDALExtendedDataTypeH,), hEDT))
+end
+
+"""
+    GDALExtendedDataTypeGetComponents(GDALExtendedDataTypeH hEDT,
+                                      size_t * pnCount) -> GDALEDTComponentH *
+
+Return the components of the data type (only valid when GetClass() == GEDTC_COMPOUND)
+
+### Parameters
+* **hEDT**: Data type
+* **pnCount**: Pointer to the number of values returned. Must NOT be NULL.
+
+### Returns
+an array of *pnCount components.
+"""
+function gdalextendeddatatypegetcomponents(hEDT, pnCount)
+    aftercare(ccall((:GDALExtendedDataTypeGetComponents, libgdal), Ptr{GDALEDTComponentH}, (GDALExtendedDataTypeH, Ptr{Csize_t}), hEDT, pnCount))
+end
+
+"""
+    GDALExtendedDataTypeFreeComponents(GDALEDTComponentH * components,
+                                       size_t nCount) -> void
+
+Free the return of GDALExtendedDataTypeGetComponents().
+
+### Parameters
+* **components**: return value of GDALExtendedDataTypeGetComponents()
+* **nCount**: *pnCount value returned by GDALExtendedDataTypeGetComponents()
+"""
+function gdalextendeddatatypefreecomponents(components, nCount)
+    aftercare(ccall((:GDALExtendedDataTypeFreeComponents, libgdal), Cvoid, (Ptr{GDALEDTComponentH}, Csize_t), components, nCount))
+end
+
+"""
+    GDALExtendedDataTypeCanConvertTo(GDALExtendedDataTypeH hSourceEDT,
+                                     GDALExtendedDataTypeH hTargetEDT) -> int
+
+Return whether this data type can be converted to the other one.
+
+### Parameters
+* **hSourceEDT**: Source data type for the conversion being considered.
+* **hTargetEDT**: Target data type for the conversion being considered.
+
+### Returns
+TRUE if hSourceEDT can be convert to hTargetEDT. FALSE otherwise.
+"""
+function gdalextendeddatatypecanconvertto(hSourceEDT, hTargetEDT)
+    aftercare(ccall((:GDALExtendedDataTypeCanConvertTo, libgdal), Cint, (GDALExtendedDataTypeH, GDALExtendedDataTypeH), hSourceEDT, hTargetEDT))
+end
+
+"""
+    GDALExtendedDataTypeEquals(GDALExtendedDataTypeH hFirstEDT,
+                               GDALExtendedDataTypeH hSecondEDT) -> int
+
+Return whether this data type is equal to another one.
+
+### Parameters
+* **hFirstEDT**: First data type.
+* **hSecondEDT**: Second data type.
+
+### Returns
+TRUE if they are equal. FALSE otherwise.
+"""
+function gdalextendeddatatypeequals(hFirstEDT, hSecondEDT)
+    aftercare(ccall((:GDALExtendedDataTypeEquals, libgdal), Cint, (GDALExtendedDataTypeH, GDALExtendedDataTypeH), hFirstEDT, hSecondEDT))
+end
+
+"""
+    GDALEDTComponentCreate(const char * pszName,
+                           size_t nOffset,
+                           GDALExtendedDataTypeH hType) -> GDALEDTComponentH
+
+Create a new GDALEDTComponent.
+"""
+function gdaledtcomponentcreate(pszName, nOffset, hType)
+    aftercare(ccall((:GDALEDTComponentCreate, libgdal), GDALEDTComponentH, (Cstring, Csize_t, GDALExtendedDataTypeH), pszName, nOffset, hType))
+end
+
+"""
+    GDALEDTComponentRelease(GDALEDTComponentH hComp) -> void
+
+Release the GDAL in-memory object associated with a GDALEDTComponentH.
+"""
+function gdaledtcomponentrelease(hComp)
+    aftercare(ccall((:GDALEDTComponentRelease, libgdal), Cvoid, (GDALEDTComponentH,), hComp))
+end
+
+"""
+    GDALEDTComponentGetName(GDALEDTComponentH hComp) -> const char *
+
+Return the name.
+"""
+function gdaledtcomponentgetname(hComp)
+    aftercare(ccall((:GDALEDTComponentGetName, libgdal), Cstring, (GDALEDTComponentH,), hComp), false)
+end
+
+"""
+    GDALEDTComponentGetOffset(GDALEDTComponentH hComp) -> size_t
+
+Return the offset (in bytes) of the component in the compound data type.
+"""
+function gdaledtcomponentgetoffset(hComp)
+    aftercare(ccall((:GDALEDTComponentGetOffset, libgdal), Csize_t, (GDALEDTComponentH,), hComp))
+end
+
+"""
+    GDALEDTComponentGetType(GDALEDTComponentH hComp) -> GDALExtendedDataTypeH
+
+Return the data type of the component.
+"""
+function gdaledtcomponentgettype(hComp)
+    aftercare(ccall((:GDALEDTComponentGetType, libgdal), GDALExtendedDataTypeH, (GDALEDTComponentH,), hComp))
+end
+
+"""
+    GDALDatasetGetRootGroup(GDALDatasetH hDS) -> GDALGroupH
+
+Return the root GDALGroup of this dataset.
+"""
+function gdaldatasetgetrootgroup(hDS)
+    aftercare(ccall((:GDALDatasetGetRootGroup, libgdal), GDALGroupH, (GDALDatasetH,), hDS))
+end
+
+"""
+    GDALGroupRelease(GDALGroupH hGroup) -> void
+
+Release the GDAL in-memory object associated with a GDALGroupH.
+"""
+function gdalgrouprelease(hGroup)
+    aftercare(ccall((:GDALGroupRelease, libgdal), Cvoid, (GDALGroupH,), hGroup))
+end
+
+"""
+    GDALGroupGetName(GDALGroupH hGroup) -> const char *
+
+Return the name of the group.
+"""
+function gdalgroupgetname(hGroup)
+    aftercare(ccall((:GDALGroupGetName, libgdal), Cstring, (GDALGroupH,), hGroup), false)
+end
+
+"""
+    GDALGroupGetFullName(GDALGroupH hGroup) -> const char *
+
+Return the full name of the group.
+"""
+function gdalgroupgetfullname(hGroup)
+    aftercare(ccall((:GDALGroupGetFullName, libgdal), Cstring, (GDALGroupH,), hGroup), false)
+end
+
+"""
+    GDALGroupGetMDArrayNames(GDALGroupH hGroup,
+                             CSLConstList papszOptions) -> char **
+
+Return the list of multidimensional array names contained in this group.
+
+### Returns
+the array names, to be freed with CSLDestroy()
+"""
+function gdalgroupgetmdarraynames(hGroup, papszOptions)
+    aftercare(ccall((:GDALGroupGetMDArrayNames, libgdal), Ptr{Cstring}, (GDALGroupH, CSLConstList), hGroup, papszOptions))
+end
+
+"""
+    GDALGroupOpenMDArray(GDALGroupH hGroup,
+                         const char * pszMDArrayName,
+                         CSLConstList papszOptions) -> GDALMDArrayH
+
+Open and return a multidimensional array.
+
+### Returns
+the array, to be freed with GDALMDArrayRelease(), or nullptr.
+"""
+function gdalgroupopenmdarray(hGroup, pszMDArrayName, papszOptions)
+    aftercare(ccall((:GDALGroupOpenMDArray, libgdal), GDALMDArrayH, (GDALGroupH, Cstring, CSLConstList), hGroup, pszMDArrayName, papszOptions))
+end
+
+"""
+    GDALGroupOpenMDArrayFromFullname(GDALGroupH hGroup,
+                                     const char * pszFullname,
+                                     CSLConstList papszOptions) -> GDALMDArrayH
+
+Open and return a multidimensional array from its fully qualified name.
+
+### Returns
+the array, to be freed with GDALMDArrayRelease(), or nullptr.
+"""
+function gdalgroupopenmdarrayfromfullname(hGroup, pszMDArrayName, papszOptions)
+    aftercare(ccall((:GDALGroupOpenMDArrayFromFullname, libgdal), GDALMDArrayH, (GDALGroupH, Cstring, CSLConstList), hGroup, pszMDArrayName, papszOptions))
+end
+
+"""
+    GDALGroupResolveMDArray(GDALGroupH hGroup,
+                            const char * pszName,
+                            const char * pszStartingPoint,
+                            CSLConstList papszOptions) -> GDALMDArrayH
+
+Locate an array in a group and its subgroups by name.
+"""
+function gdalgroupresolvemdarray(hGroup, pszName, pszStartingPoint, papszOptions)
+    aftercare(ccall((:GDALGroupResolveMDArray, libgdal), GDALMDArrayH, (GDALGroupH, Cstring, Cstring, CSLConstList), hGroup, pszName, pszStartingPoint, papszOptions))
+end
+
+"""
+    GDALGroupGetGroupNames(GDALGroupH hGroup,
+                           CSLConstList papszOptions) -> char **
+
+Return the list of sub-groups contained in this group.
+
+### Returns
+the group names, to be freed with CSLDestroy()
+"""
+function gdalgroupgetgroupnames(hGroup, papszOptions)
+    aftercare(ccall((:GDALGroupGetGroupNames, libgdal), Ptr{Cstring}, (GDALGroupH, CSLConstList), hGroup, papszOptions))
+end
+
+"""
+    GDALGroupOpenGroup(GDALGroupH hGroup,
+                       const char * pszSubGroupName,
+                       CSLConstList papszOptions) -> GDALGroupH
+
+Open and return a sub-group.
+
+### Returns
+the sub-group, to be freed with GDALGroupRelease(), or nullptr.
+"""
+function gdalgroupopengroup(hGroup, pszSubGroupName, papszOptions)
+    aftercare(ccall((:GDALGroupOpenGroup, libgdal), GDALGroupH, (GDALGroupH, Cstring, CSLConstList), hGroup, pszSubGroupName, papszOptions))
+end
+
+"""
+    GDALGroupOpenGroupFromFullname(GDALGroupH hGroup,
+                                   const char * pszFullname,
+                                   CSLConstList papszOptions) -> GDALGroupH
+
+Open and return a sub-group from its fully qualified name.
+
+### Returns
+the sub-group, to be freed with GDALGroupRelease(), or nullptr.
+"""
+function gdalgroupopengroupfromfullname(hGroup, pszMDArrayName, papszOptions)
+    aftercare(ccall((:GDALGroupOpenGroupFromFullname, libgdal), GDALGroupH, (GDALGroupH, Cstring, CSLConstList), hGroup, pszMDArrayName, papszOptions))
+end
+
+"""
+    GDALGroupGetDimensions(GDALGroupH hGroup,
+                           size_t * pnCount,
+                           CSLConstList papszOptions) -> GDALDimensionH *
+
+Return the list of dimensions contained in this group and used by its arrays.
+
+### Parameters
+* **hGroup**: Group.
+* **pnCount**: Pointer to the number of values returned. Must NOT be NULL.
+* **papszOptions**: Driver specific options determining how dimensions should be retrieved. Pass nullptr for default behavior.
+
+### Returns
+an array of *pnCount dimensions.
+"""
+function gdalgroupgetdimensions(hGroup, pnCount, papszOptions)
+    aftercare(ccall((:GDALGroupGetDimensions, libgdal), Ptr{GDALDimensionH}, (GDALGroupH, Ptr{Csize_t}, CSLConstList), hGroup, pnCount, papszOptions))
+end
+
+"""
+    GDALGroupGetAttribute(GDALGroupH hGroup,
+                          const char * pszName) -> GDALAttributeH
+
+Return an attribute by its name.
+"""
+function gdalgroupgetattribute(hGroup, pszName)
+    aftercare(ccall((:GDALGroupGetAttribute, libgdal), GDALAttributeH, (GDALGroupH, Cstring), hGroup, pszName))
+end
+
+"""
+    GDALGroupGetAttributes(GDALGroupH hGroup,
+                           size_t * pnCount,
+                           CSLConstList papszOptions) -> GDALAttributeH *
+
+Return the list of attributes contained in this group.
+
+### Parameters
+* **hGroup**: Group.
+* **pnCount**: Pointer to the number of values returned. Must NOT be NULL.
+* **papszOptions**: Driver specific options determining how attributes should be retrieved. Pass nullptr for default behavior.
+
+### Returns
+an array of *pnCount attributes.
+"""
+function gdalgroupgetattributes(hGroup, pnCount, papszOptions)
+    aftercare(ccall((:GDALGroupGetAttributes, libgdal), Ptr{GDALAttributeH}, (GDALGroupH, Ptr{Csize_t}, CSLConstList), hGroup, pnCount, papszOptions))
+end
+
+"""
+    GDALGroupGetStructuralInfo(GDALGroupH hGroup) -> CSLConstList
+
+Return structural information on the group.
+"""
+function gdalgroupgetstructuralinfo(hGroup)
+    aftercare(ccall((:GDALGroupGetStructuralInfo, libgdal), CSLConstList, (GDALGroupH,), hGroup))
+end
+
+"""
+    GDALGroupCreateGroup(GDALGroupH hGroup,
+                         const char * pszSubGroupName,
+                         CSLConstList papszOptions) -> GDALGroupH
+
+Create a sub-group within a group.
+
+### Returns
+the sub-group, to be freed with GDALGroupRelease(), or nullptr.
+"""
+function gdalgroupcreategroup(hGroup, pszSubGroupName, papszOptions)
+    aftercare(ccall((:GDALGroupCreateGroup, libgdal), GDALGroupH, (GDALGroupH, Cstring, CSLConstList), hGroup, pszSubGroupName, papszOptions))
+end
+
+"""
+    GDALGroupCreateDimension(GDALGroupH hGroup,
+                             const char * pszName,
+                             const char * pszType,
+                             const char * pszDirection,
+                             GUInt64 nSize,
+                             CSLConstList papszOptions) -> GDALDimensionH
+
+Create a dimension within a group.
+
+### Returns
+the dimension, to be freed with GDALDimensionRelease(), or nullptr.
+"""
+function gdalgroupcreatedimension(hGroup, pszName, pszType, pszDirection, nSize, papszOptions)
+    aftercare(ccall((:GDALGroupCreateDimension, libgdal), GDALDimensionH, (GDALGroupH, Cstring, Cstring, Cstring, GUInt64, CSLConstList), hGroup, pszName, pszType, pszDirection, nSize, papszOptions))
+end
+
+"""
+    GDALGroupCreateMDArray(GDALGroupH hGroup,
+                           const char * pszName,
+                           size_t nDimensions,
+                           GDALDimensionH * pahDimensions,
+                           GDALExtendedDataTypeH hEDT,
+                           CSLConstList papszOptions) -> GDALMDArrayH
+
+Create a multidimensional array within a group.
+
+### Returns
+the array, to be freed with GDALMDArrayRelease(), or nullptr.
+"""
+function gdalgroupcreatemdarray(hGroup, pszName, nDimensions, pahDimensions, hEDT, papszOptions)
+    aftercare(ccall((:GDALGroupCreateMDArray, libgdal), GDALMDArrayH, (GDALGroupH, Cstring, Csize_t, Ptr{GDALDimensionH}, GDALExtendedDataTypeH, CSLConstList), hGroup, pszName, nDimensions, pahDimensions, hEDT, papszOptions))
+end
+
+"""
+    GDALGroupCreateAttribute(GDALGroupH hGroup,
+                             const char * pszName,
+                             size_t nDimensions,
+                             const GUInt64 * panDimensions,
+                             GDALExtendedDataTypeH hEDT,
+                             CSLConstList papszOptions) -> GDALAttributeH
+
+Create a attribute within a group.
+
+### Returns
+the attribute, to be freed with GDALAttributeRelease(), or nullptr.
+"""
+function gdalgroupcreateattribute(hGroup, pszName, nDimensions, panDimensions, hEDT, papszOptions)
+    aftercare(ccall((:GDALGroupCreateAttribute, libgdal), GDALAttributeH, (GDALGroupH, Cstring, Csize_t, Ptr{GUInt64}, GDALExtendedDataTypeH, CSLConstList), hGroup, pszName, nDimensions, panDimensions, hEDT, papszOptions))
+end
+
+"""
+    GDALMDArrayRelease(GDALMDArrayH hMDArray) -> void
+
+Release the GDAL in-memory object associated with a GDALMDArray.
+"""
+function gdalmdarrayrelease(hMDArray)
+    aftercare(ccall((:GDALMDArrayRelease, libgdal), Cvoid, (GDALMDArrayH,), hMDArray))
+end
+
+"""
+    GDALMDArrayGetName(GDALMDArrayH hArray) -> const char *
+
+Return array name.
+"""
+function gdalmdarraygetname(hArray)
+    aftercare(ccall((:GDALMDArrayGetName, libgdal), Cstring, (GDALMDArrayH,), hArray), false)
+end
+
+"""
+    GDALMDArrayGetFullName(GDALMDArrayH hArray) -> const char *
+
+Return array full name.
+"""
+function gdalmdarraygetfullname(hArray)
+    aftercare(ccall((:GDALMDArrayGetFullName, libgdal), Cstring, (GDALMDArrayH,), hArray), false)
+end
+
+"""
+    GDALMDArrayGetTotalElementsCount(GDALMDArrayH hArray) -> GUInt64
+
+Return the total number of values in the array.
+"""
+function gdalmdarraygettotalelementscount(hArray)
+    aftercare(ccall((:GDALMDArrayGetTotalElementsCount, libgdal), GUInt64, (GDALMDArrayH,), hArray))
+end
+
+"""
+    GDALMDArrayGetDimensionCount(GDALMDArrayH hArray) -> size_t
+
+Return the number of dimensions.
+"""
+function gdalmdarraygetdimensioncount(hArray)
+    aftercare(ccall((:GDALMDArrayGetDimensionCount, libgdal), Csize_t, (GDALMDArrayH,), hArray))
+end
+
+"""
+    GDALMDArrayGetDimensions(GDALMDArrayH hArray,
+                             size_t * pnCount) -> GDALDimensionH *
+
+Return the dimensions of the array.
+
+### Parameters
+* **hArray**: Array.
+* **pnCount**: Pointer to the number of values returned. Must NOT be NULL.
+
+### Returns
+an array of *pnCount dimensions.
+"""
+function gdalmdarraygetdimensions(hArray, pnCount)
+    aftercare(ccall((:GDALMDArrayGetDimensions, libgdal), Ptr{GDALDimensionH}, (GDALMDArrayH, Ptr{Csize_t}), hArray, pnCount))
+end
+
+"""
+    GDALMDArrayGetDataType(GDALMDArrayH hArray) -> GDALExtendedDataTypeH
+
+Return the data type.
+"""
+function gdalmdarraygetdatatype(hArray)
+    aftercare(ccall((:GDALMDArrayGetDataType, libgdal), GDALExtendedDataTypeH, (GDALMDArrayH,), hArray))
+end
+
+"""
+    GDALMDArrayRead(GDALMDArrayH hArray,
+                    const GUInt64 * arrayStartIdx,
+                    const size_t * count,
+                    const GInt64 * arrayStep,
+                    const GPtrDiff_t * bufferStride,
+                    GDALExtendedDataTypeH bufferDataType,
+                    void * pDstBuffer,
+                    const void * pDstBufferAllocStart,
+                    size_t nDstBufferAllocSize) -> int
+
+Read part or totality of a multidimensional array.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalmdarrayread(hArray, arrayStartIdx, count, arrayStep, bufferStride, bufferDatatype, pDstBuffer, pDstBufferAllocStart, nDstBufferllocSize)
+    aftercare(ccall((:GDALMDArrayRead, libgdal), Cint, (GDALMDArrayH, Ptr{GUInt64}, Ptr{Csize_t}, Ptr{GInt64}, Ptr{GPtrDiff_t}, GDALExtendedDataTypeH, Ptr{Cvoid}, Ptr{Cvoid}, Csize_t), hArray, arrayStartIdx, count, arrayStep, bufferStride, bufferDatatype, pDstBuffer, pDstBufferAllocStart, nDstBufferllocSize))
+end
+
+"""
+    GDALMDArrayWrite(GDALMDArrayH hArray,
+                     const GUInt64 * arrayStartIdx,
+                     const size_t * count,
+                     const GInt64 * arrayStep,
+                     const GPtrDiff_t * bufferStride,
+                     GDALExtendedDataTypeH bufferDataType,
+                     const void * pSrcBuffer,
+                     const void * pSrcBufferAllocStart,
+                     size_t nSrcBufferAllocSize) -> int
+
+Write part or totality of a multidimensional array.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalmdarraywrite(hArray, arrayStartIdx, count, arrayStep, bufferStride, bufferDatatype, pSrcBuffer, psrcBufferAllocStart, nSrcBufferllocSize)
+    aftercare(ccall((:GDALMDArrayWrite, libgdal), Cint, (GDALMDArrayH, Ptr{GUInt64}, Ptr{Csize_t}, Ptr{GInt64}, Ptr{GPtrDiff_t}, GDALExtendedDataTypeH, Ptr{Cvoid}, Ptr{Cvoid}, Csize_t), hArray, arrayStartIdx, count, arrayStep, bufferStride, bufferDatatype, pSrcBuffer, psrcBufferAllocStart, nSrcBufferllocSize))
+end
+
+"""
+    GDALMDArrayAdviseRead(GDALMDArrayH hArray,
+                          const GUInt64 * arrayStartIdx,
+                          const size_t * count) -> int
+
+Advise driver of upcoming read requests.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalmdarrayadviseread(hArray, arrayStartIdx, count)
+    aftercare(ccall((:GDALMDArrayAdviseRead, libgdal), Cint, (GDALMDArrayH, Ptr{GUInt64}, Ptr{Csize_t}), hArray, arrayStartIdx, count))
+end
+
+"""
+    GDALMDArrayGetAttribute(GDALMDArrayH hArray,
+                            const char * pszName) -> GDALAttributeH
+
+Return an attribute by its name.
+"""
+function gdalmdarraygetattribute(hArray, pszName)
+    aftercare(ccall((:GDALMDArrayGetAttribute, libgdal), GDALAttributeH, (GDALMDArrayH, Cstring), hArray, pszName))
+end
+
+"""
+    GDALMDArrayGetAttributes(GDALMDArrayH hArray,
+                             size_t * pnCount,
+                             CSLConstList papszOptions) -> GDALAttributeH *
+
+Return the list of attributes contained in this array.
+
+### Parameters
+* **hArray**: Array.
+* **pnCount**: Pointer to the number of values returned. Must NOT be NULL.
+* **papszOptions**: Driver specific options determining how attributes should be retrieved. Pass nullptr for default behavior.
+
+### Returns
+an array of *pnCount attributes.
+"""
+function gdalmdarraygetattributes(hArray, pnCount, papszOptions)
+    aftercare(ccall((:GDALMDArrayGetAttributes, libgdal), Ptr{GDALAttributeH}, (GDALMDArrayH, Ptr{Csize_t}, CSLConstList), hArray, pnCount, papszOptions))
+end
+
+"""
+    GDALMDArrayCreateAttribute(GDALMDArrayH hArray,
+                               const char * pszName,
+                               size_t nDimensions,
+                               const GUInt64 * panDimensions,
+                               GDALExtendedDataTypeH hEDT,
+                               CSLConstList papszOptions) -> GDALAttributeH
+
+Create a attribute within an array.
+
+### Returns
+the attribute, to be freed with GDALAttributeRelease(), or nullptr.
+"""
+function gdalmdarraycreateattribute(hArray, pszName, nDimensions, panDimensions, hEDT, papszOptions)
+    aftercare(ccall((:GDALMDArrayCreateAttribute, libgdal), GDALAttributeH, (GDALMDArrayH, Cstring, Csize_t, Ptr{GUInt64}, GDALExtendedDataTypeH, CSLConstList), hArray, pszName, nDimensions, panDimensions, hEDT, papszOptions))
+end
+
+"""
+    GDALMDArrayGetRawNoDataValue(GDALMDArrayH hArray) -> const void *
+
+Return the nodata value as a "raw" value.
+
+### Returns
+nullptr or a pointer to GetDataType().GetSize() bytes.
+"""
+function gdalmdarraygetrawnodatavalue(hArray)
+    aftercare(ccall((:GDALMDArrayGetRawNoDataValue, libgdal), Ptr{Cvoid}, (GDALMDArrayH,), hArray))
+end
+
+"""
+    GDALMDArrayGetNoDataValueAsDouble(GDALMDArrayH hArray,
+                                      int * pbHasNoDataValue) -> double
+
+Return the nodata value as a double.
+
+### Parameters
+* **hArray**: Array handle.
+* **pbHasNoDataValue**: Pointer to a output boolean that will be set to true if a nodata value exists and can be converted to double. Might be nullptr.
+
+### Returns
+the nodata value as a double. A 0.0 value might also indicate the absence of a nodata value or an error in the conversion (*pbHasNoDataValue will be set to false then).
+"""
+function gdalmdarraygetnodatavalueasdouble(hArray, pbHasNoDataValue)
+    aftercare(ccall((:GDALMDArrayGetNoDataValueAsDouble, libgdal), Cdouble, (GDALMDArrayH, Ptr{Cint}), hArray, pbHasNoDataValue))
+end
+
+"""
+    GDALMDArraySetRawNoDataValue(GDALMDArrayH hArray,
+                                 const void * pNoData) -> int
+
+Set the nodata value as a "raw" value.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalmdarraysetrawnodatavalue(hArray, arg1)
+    aftercare(ccall((:GDALMDArraySetRawNoDataValue, libgdal), Cint, (GDALMDArrayH, Ptr{Cvoid}), hArray, arg1))
+end
+
+"""
+    GDALMDArraySetNoDataValueAsDouble(GDALMDArrayH hArray,
+                                      double dfNoDataValue) -> int
+
+Set the nodata value as a double.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalmdarraysetnodatavalueasdouble(hArray, dfNoDataValue)
+    aftercare(ccall((:GDALMDArraySetNoDataValueAsDouble, libgdal), Cint, (GDALMDArrayH, Cdouble), hArray, dfNoDataValue))
+end
+
+"""
+    GDALMDArraySetScale(GDALMDArrayH hArray,
+                        double dfScale) -> int
+
+Set the scale value to apply to raw values.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalmdarraysetscale(hArray, dfScale)
+    aftercare(ccall((:GDALMDArraySetScale, libgdal), Cint, (GDALMDArrayH, Cdouble), hArray, dfScale))
+end
+
+"""
+    GDALMDArrayGetScale(GDALMDArrayH hArray,
+                        int * pbHasValue) -> double
+
+Get the scale value to apply to raw values.
+
+### Returns
+the scale value
+"""
+function gdalmdarraygetscale(hArray, pbHasValue)
+    aftercare(ccall((:GDALMDArrayGetScale, libgdal), Cdouble, (GDALMDArrayH, Ptr{Cint}), hArray, pbHasValue))
+end
+
+"""
+    GDALMDArraySetOffset(GDALMDArrayH hArray,
+                         double dfOffset) -> int
+
+Set the scale value to apply to raw values.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalmdarraysetoffset(hArray, dfOffset)
+    aftercare(ccall((:GDALMDArraySetOffset, libgdal), Cint, (GDALMDArrayH, Cdouble), hArray, dfOffset))
+end
+
+"""
+    GDALMDArrayGetOffset(GDALMDArrayH hArray,
+                         int * pbHasValue) -> double
+
+Get the scale value to apply to raw values.
+
+### Returns
+the scale value
+"""
+function gdalmdarraygetoffset(hArray, pbHasValue)
+    aftercare(ccall((:GDALMDArrayGetOffset, libgdal), Cdouble, (GDALMDArrayH, Ptr{Cint}), hArray, pbHasValue))
+end
+
+"""
+    GDALMDArrayGetBlockSize(GDALMDArrayH hArray,
+                            size_t * pnCount) -> GUInt64 *
+
+Return the "natural" block size of the array along all dimensions.
+
+### Returns
+the block size, in number of elemnts along each dimension.
+"""
+function gdalmdarraygetblocksize(hArray, pnCount)
+    aftercare(ccall((:GDALMDArrayGetBlockSize, libgdal), Ptr{GUInt64}, (GDALMDArrayH, Ptr{Csize_t}), hArray, pnCount))
+end
+
+"""
+    GDALMDArraySetUnit(GDALMDArrayH hArray,
+                       const char * pszUnit) -> int
+
+Set the variable unit.
+
+### Parameters
+* **hArray**: array.
+* **pszUnit**: unit name.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalmdarraysetunit(hArray, arg1)
+    aftercare(ccall((:GDALMDArraySetUnit, libgdal), Cint, (GDALMDArrayH, Cstring), hArray, arg1))
+end
+
+"""
+    GDALMDArrayGetUnit(GDALMDArrayH hArray) -> const char *
+
+Return the array unit.
+"""
+function gdalmdarraygetunit(hArray)
+    aftercare(ccall((:GDALMDArrayGetUnit, libgdal), Cstring, (GDALMDArrayH,), hArray), false)
+end
+
+"""
+    GDALMDArraySetSpatialRef(GDALMDArrayH hArray,
+                             OGRSpatialReferenceH hSRS) -> int
+
+Assign a spatial reference system object to the the array.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalmdarraysetspatialref(arg1, arg2)
+    aftercare(ccall((:GDALMDArraySetSpatialRef, libgdal), Cint, (GDALMDArrayH, OGRSpatialReferenceH), arg1, arg2))
+end
+
+"""
+    GDALMDArrayGetSpatialRef(GDALMDArrayH hArray) -> OGRSpatialReferenceH
+
+Return the spatial reference system object associated with the array.
+"""
+function gdalmdarraygetspatialref(hArray)
+    aftercare(ccall((:GDALMDArrayGetSpatialRef, libgdal), OGRSpatialReferenceH, (GDALMDArrayH,), hArray))
+end
+
+"""
+    GDALMDArrayGetProcessingChunkSize(GDALMDArrayH hArray,
+                                      size_t * pnCount,
+                                      size_t nMaxChunkMemory) -> size_t *
+
+Return an optimal chunk size for read/write oerations, given the natural block size and memory constraints specified.
+
+### Parameters
+* **hArray**: Array.
+* **pnCount**: Pointer to the number of values returned. Must NOT be NULL.
+* **nMaxChunkMemory**: Maximum amount of memory, in bytes, to use for the chunk.
+
+### Returns
+the chunk size, in number of elemnts along each dimension.
+"""
+function gdalmdarraygetprocessingchunksize(hArray, pnCount, nMaxChunkMemory)
+    aftercare(ccall((:GDALMDArrayGetProcessingChunkSize, libgdal), Ptr{Csize_t}, (GDALMDArrayH, Ptr{Csize_t}, Csize_t), hArray, pnCount, nMaxChunkMemory))
+end
+
+"""
+    GDALMDArrayGetStructuralInfo(GDALMDArrayH hArray) -> CSLConstList
+
+Return structural information on the array.
+"""
+function gdalmdarraygetstructuralinfo(hArray)
+    aftercare(ccall((:GDALMDArrayGetStructuralInfo, libgdal), CSLConstList, (GDALMDArrayH,), hArray))
+end
+
+"""
+    GDALMDArrayGetView(GDALMDArrayH hArray,
+                       const char * pszViewExpr) -> GDALMDArrayH
+
+Return a view of the array using slicing or field access.
+"""
+function gdalmdarraygetview(hArray, pszViewExpr)
+    aftercare(ccall((:GDALMDArrayGetView, libgdal), GDALMDArrayH, (GDALMDArrayH, Cstring), hArray, pszViewExpr))
+end
+
+"""
+    GDALMDArrayTranspose(GDALMDArrayH hArray,
+                         size_t nNewAxisCount,
+                         const int * panMapNewAxisToOldAxis) -> GDALMDArrayH
+
+Return a view of the array whose axis have been reordered.
+"""
+function gdalmdarraytranspose(hArray, nNewAxisCount, panMapNewAxisToOldAxis)
+    aftercare(ccall((:GDALMDArrayTranspose, libgdal), GDALMDArrayH, (GDALMDArrayH, Csize_t, Ptr{Cint}), hArray, nNewAxisCount, panMapNewAxisToOldAxis))
+end
+
+"""
+    GDALMDArrayGetUnscaled(GDALMDArrayH hArray) -> GDALMDArrayH
+
+Return an array that is the unscaled version of the current one.
+"""
+function gdalmdarraygetunscaled(hArray)
+    aftercare(ccall((:GDALMDArrayGetUnscaled, libgdal), GDALMDArrayH, (GDALMDArrayH,), hArray))
+end
+
+"""
+    GDALMDArrayGetMask(GDALMDArrayH hArray,
+                       CSLConstList papszOptions) -> GDALMDArrayH
+
+Return an array that is a mask for the current array.
+"""
+function gdalmdarraygetmask(hArray, papszOptions)
+    aftercare(ccall((:GDALMDArrayGetMask, libgdal), GDALMDArrayH, (GDALMDArrayH, CSLConstList), hArray, papszOptions))
+end
+
+"""
+    GDALMDArrayAsClassicDataset(GDALMDArrayH hArray,
+                                size_t iXDim,
+                                size_t iYDim) -> GDALDatasetH
+
+Return a view of this array as a "classic" GDALDataset (ie 2D)
+
+### Parameters
+* **hArray**: Array.
+* **iXDim**: Index of the dimension that will be used as the X/width axis.
+* **iYDim**: Index of the dimension that will be used as the Y/height axis.
+
+### Returns
+a new GDALDataset that must be freed with GDALClose(), or nullptr
+"""
+function gdalmdarrayasclassicdataset(hArray, iXDim, iYDim)
+    aftercare(ccall((:GDALMDArrayAsClassicDataset, libgdal), GDALDatasetH, (GDALMDArrayH, Csize_t, Csize_t), hArray, iXDim, iYDim))
+end
+
+"""
+    GDALMDArrayGetStatistics(GDALMDArrayH hArray,
+                             GDALDatasetH hDS,
+                             int bApproxOK,
+                             int bForce,
+                             double * pdfMin,
+                             double * pdfMax,
+                             double * pdfMean,
+                             double * pdfStdDev,
+                             GUInt64 * pnValidCount,
+                             GDALProgressFunc pfnProgress,
+                             void * pProgressData) -> CPLErr
+
+Fetch statistics.
+"""
+function gdalmdarraygetstatistics(hArray, arg1, bApproxOK, bForce, pdfMin, pdfMax, pdfMean, pdfStdDev, pnValidCount, pfnProgress, pProgressData)
+    aftercare(ccall((:GDALMDArrayGetStatistics, libgdal), CPLErr, (GDALMDArrayH, GDALDatasetH, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{GUInt64}, GDALProgressFunc, Ptr{Cvoid}), hArray, arg1, bApproxOK, bForce, pdfMin, pdfMax, pdfMean, pdfStdDev, pnValidCount, pfnProgress, pProgressData))
+end
+
+"""
+    GDALMDArrayComputeStatistics(GDALMDArrayH hArray,
+                                 GDALDatasetH hDS,
+                                 int bApproxOK,
+                                 double * pdfMin,
+                                 double * pdfMax,
+                                 double * pdfMean,
+                                 double * pdfStdDev,
+                                 GUInt64 * pnValidCount,
+                                 GDALProgressFunc pfnProgress,
+                                 void * pProgressData) -> int
+
+Compute statistics.
+"""
+function gdalmdarraycomputestatistics(hArray, arg1, bApproxOK, pdfMin, pdfMax, pdfMean, pdfStdDev, pnValidCount, arg2, pProgressData)
+    aftercare(ccall((:GDALMDArrayComputeStatistics, libgdal), Cint, (GDALMDArrayH, GDALDatasetH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{GUInt64}, GDALProgressFunc, Ptr{Cvoid}), hArray, arg1, bApproxOK, pdfMin, pdfMax, pdfMean, pdfStdDev, pnValidCount, arg2, pProgressData))
+end
+
+"""
+    GDALAttributeRelease(GDALAttributeH hAttr) -> void
+
+Release the GDAL in-memory object associated with a GDALAttribute.
+"""
+function gdalattributerelease(hAttr)
+    aftercare(ccall((:GDALAttributeRelease, libgdal), Cvoid, (GDALAttributeH,), hAttr))
+end
+
+"""
+    GDALReleaseAttributes(GDALAttributeH * attributes,
+                          size_t nCount) -> void
+
+Free the return of GDALGroupGetAttributes() or GDALMDArrayGetAttributes()
+
+### Parameters
+* **attributes**: return pointer of above methods
+* **nCount**: *pnCount value returned by above methods
+"""
+function gdalreleaseattributes(attributes, nCount)
+    aftercare(ccall((:GDALReleaseAttributes, libgdal), Cvoid, (Ptr{GDALAttributeH}, Csize_t), attributes, nCount))
+end
+
+"""
+    GDALAttributeGetName(GDALAttributeH hAttr) -> const char *
+
+Return the name of the attribute.
+"""
+function gdalattributegetname(hAttr)
+    aftercare(ccall((:GDALAttributeGetName, libgdal), Cstring, (GDALAttributeH,), hAttr), false)
+end
+
+"""
+    GDALAttributeGetFullName(GDALAttributeH hAttr) -> const char *
+
+Return the full name of the attribute.
+"""
+function gdalattributegetfullname(hAttr)
+    aftercare(ccall((:GDALAttributeGetFullName, libgdal), Cstring, (GDALAttributeH,), hAttr), false)
+end
+
+"""
+    GDALAttributeGetTotalElementsCount(GDALAttributeH hAttr) -> GUInt64
+
+Return the total number of values in the attribute.
+"""
+function gdalattributegettotalelementscount(hAttr)
+    aftercare(ccall((:GDALAttributeGetTotalElementsCount, libgdal), GUInt64, (GDALAttributeH,), hAttr))
+end
+
+"""
+    GDALAttributeGetDimensionCount(GDALAttributeH hAttr) -> size_t
+
+Return the number of dimensions.
+"""
+function gdalattributegetdimensioncount(hAttr)
+    aftercare(ccall((:GDALAttributeGetDimensionCount, libgdal), Csize_t, (GDALAttributeH,), hAttr))
+end
+
+"""
+    GDALAttributeGetDimensionsSize(GDALAttributeH hAttr,
+                                   size_t * pnCount) -> GUInt64 *
+
+Return the dimension sizes of the attribute.
+
+### Parameters
+* **hAttr**: Attribute.
+* **pnCount**: Pointer to the number of values returned. Must NOT be NULL.
+
+### Returns
+an array of *pnCount values.
+"""
+function gdalattributegetdimensionssize(hAttr, pnCount)
+    aftercare(ccall((:GDALAttributeGetDimensionsSize, libgdal), Ptr{GUInt64}, (GDALAttributeH, Ptr{Csize_t}), hAttr, pnCount))
+end
+
+"""
+    GDALAttributeGetDataType(GDALAttributeH hAttr) -> GDALExtendedDataTypeH
+
+Return the data type.
+"""
+function gdalattributegetdatatype(hAttr)
+    aftercare(ccall((:GDALAttributeGetDataType, libgdal), GDALExtendedDataTypeH, (GDALAttributeH,), hAttr))
+end
+
+"""
+    GDALAttributeReadAsRaw(GDALAttributeH hAttr,
+                           size_t * pnSize) -> GByte *
+
+Return the raw value of an attribute.
+
+### Parameters
+* **hAttr**: Attribute.
+* **pnSize**: Pointer to the number of bytes returned. Must NOT be NULL.
+
+### Returns
+a buffer of *pnSize bytes.
+"""
+function gdalattributereadasraw(hAttr, pnSize)
+    aftercare(ccall((:GDALAttributeReadAsRaw, libgdal), Ptr{GByte}, (GDALAttributeH, Ptr{Csize_t}), hAttr, pnSize))
+end
+
+"""
+    GDALAttributeFreeRawResult(GDALAttributeH hAttr,
+                               GByte * raw,
+                               size_t nSize) -> void
+
+Free the return of GDALAttributeAsRaw()
+"""
+function gdalattributefreerawresult(hAttr, raw, nSize)
+    aftercare(ccall((:GDALAttributeFreeRawResult, libgdal), Cvoid, (GDALAttributeH, Ptr{GByte}, Csize_t), hAttr, raw, nSize))
+end
+
+"""
+    GDALAttributeReadAsString(GDALAttributeH hAttr) -> const char *
+
+Return the value of an attribute as a string.
+
+### Returns
+a string, or nullptr.
+"""
+function gdalattributereadasstring(hAttr)
+    aftercare(ccall((:GDALAttributeReadAsString, libgdal), Cstring, (GDALAttributeH,), hAttr), false)
+end
+
+"""
+    GDALAttributeReadAsInt(GDALAttributeH hAttr) -> int
+
+Return the value of an attribute as a integer.
+
+### Returns
+a integer, or INT_MIN in case of error.
+"""
+function gdalattributereadasint(hAttr)
+    aftercare(ccall((:GDALAttributeReadAsInt, libgdal), Cint, (GDALAttributeH,), hAttr))
+end
+
+"""
+    GDALAttributeReadAsDouble(GDALAttributeH hAttr) -> double
+
+Return the value of an attribute as a double.
+
+### Returns
+a double value.
+"""
+function gdalattributereadasdouble(hAttr)
+    aftercare(ccall((:GDALAttributeReadAsDouble, libgdal), Cdouble, (GDALAttributeH,), hAttr))
+end
+
+"""
+    GDALAttributeReadAsStringArray(GDALAttributeH hAttr) -> char **
+
+Return the value of an attribute as an array of strings.
+"""
+function gdalattributereadasstringarray(hAttr)
+    aftercare(ccall((:GDALAttributeReadAsStringArray, libgdal), Ptr{Cstring}, (GDALAttributeH,), hAttr))
+end
+
+"""
+    GDALAttributeReadAsIntArray(GDALAttributeH hAttr,
+                                size_t * pnCount) -> int *
+
+Return the value of an attribute as an array of integers.
+
+### Parameters
+* **hAttr**: Attribute
+* **pnCount**: Pointer to the number of values returned. Must NOT be NULL.
+
+### Returns
+array to be freed with CPLFree(), or nullptr.
+"""
+function gdalattributereadasintarray(hAttr, pnCount)
+    aftercare(ccall((:GDALAttributeReadAsIntArray, libgdal), Ptr{Cint}, (GDALAttributeH, Ptr{Csize_t}), hAttr, pnCount))
+end
+
+"""
+    GDALAttributeReadAsDoubleArray(GDALAttributeH hAttr,
+                                   size_t * pnCount) -> double *
+
+Return the value of an attribute as an array of doubles.
+
+### Parameters
+* **hAttr**: Attribute
+* **pnCount**: Pointer to the number of values returned. Must NOT be NULL.
+
+### Returns
+array to be freed with CPLFree(), or nullptr.
+"""
+function gdalattributereadasdoublearray(hAttr, pnCount)
+    aftercare(ccall((:GDALAttributeReadAsDoubleArray, libgdal), Ptr{Cdouble}, (GDALAttributeH, Ptr{Csize_t}), hAttr, pnCount))
+end
+
+"""
+    GDALAttributeWriteRaw(GDALAttributeH hAttr,
+                          const void * pabyValue,
+                          size_t nLength) -> int
+
+Write an attribute from raw values expressed in GetDataType()
+
+### Parameters
+* **hAttr**: Attribute
+* **pabyValue**: Buffer of nLen bytes.
+* **nLength**: Size of pabyValue in bytes. Should be equal to GetTotalElementsCount() * GetDataType().GetSize()
+
+### Returns
+TRUE in case of success.
+"""
+function gdalattributewriteraw(hAttr, arg1, arg2)
+    aftercare(ccall((:GDALAttributeWriteRaw, libgdal), Cint, (GDALAttributeH, Ptr{Cvoid}, Csize_t), hAttr, arg1, arg2))
+end
+
+"""
+    GDALAttributeWriteString(GDALAttributeH hAttr,
+                             const char * pszVal) -> int
+
+Write an attribute from a string value.
+
+### Parameters
+* **hAttr**: Attribute
+* **pszVal**: Pointer to a string.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalattributewritestring(hAttr, arg1)
+    aftercare(ccall((:GDALAttributeWriteString, libgdal), Cint, (GDALAttributeH, Cstring), hAttr, arg1))
+end
+
+"""
+    GDALAttributeWriteStringArray(GDALAttributeH hAttr,
+                                  CSLConstList papszValues) -> int
+
+Write an attribute from an array of strings.
+
+### Parameters
+* **hAttr**: Attribute
+* **papszValues**: Array of strings.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalattributewritestringarray(hAttr, arg1)
+    aftercare(ccall((:GDALAttributeWriteStringArray, libgdal), Cint, (GDALAttributeH, CSLConstList), hAttr, arg1))
+end
+
+"""
+    GDALAttributeWriteInt(GDALAttributeH hAttr,
+                          int nVal) -> int
+
+Write an attribute from a integer value.
+
+### Parameters
+* **hAttr**: Attribute
+* **nVal**: Value.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalattributewriteint(hAttr, arg1)
+    aftercare(ccall((:GDALAttributeWriteInt, libgdal), Cint, (GDALAttributeH, Cint), hAttr, arg1))
+end
+
+"""
+    GDALAttributeWriteDouble(GDALAttributeH hAttr,
+                             double dfVal) -> int
+
+Write an attribute from a double value.
+
+### Parameters
+* **hAttr**: Attribute
+* **dfVal**: Value.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalattributewritedouble(hAttr, arg1)
+    aftercare(ccall((:GDALAttributeWriteDouble, libgdal), Cint, (GDALAttributeH, Cdouble), hAttr, arg1))
+end
+
+"""
+    GDALAttributeWriteDoubleArray(GDALAttributeH hAttr,
+                                  const double * padfValues,
+                                  size_t nCount) -> int
+
+Write an attribute from an array of double.
+
+### Parameters
+* **hAttr**: Attribute
+* **padfValues**: Array of double.
+* **nCount**: Should be equal to GetTotalElementsCount().
+
+### Returns
+TRUE in case of success.
+"""
+function gdalattributewritedoublearray(hAttr, arg1, arg2)
+    aftercare(ccall((:GDALAttributeWriteDoubleArray, libgdal), Cint, (GDALAttributeH, Ptr{Cdouble}, Csize_t), hAttr, arg1, arg2))
+end
+
+"""
+    GDALDimensionRelease(GDALDimensionH hDim) -> void
+
+Release the GDAL in-memory object associated with a GDALDimension.
+"""
+function gdaldimensionrelease(hDim)
+    aftercare(ccall((:GDALDimensionRelease, libgdal), Cvoid, (GDALDimensionH,), hDim))
+end
+
+"""
+    GDALReleaseDimensions(GDALDimensionH * dims,
+                          size_t nCount) -> void
+
+Free the return of GDALGroupGetDimensions() or GDALMDArrayGetDimensions()
+
+### Parameters
+* **dims**: return pointer of above methods
+* **nCount**: *pnCount value returned by above methods
+"""
+function gdalreleasedimensions(dims, nCount)
+    aftercare(ccall((:GDALReleaseDimensions, libgdal), Cvoid, (Ptr{GDALDimensionH}, Csize_t), dims, nCount))
+end
+
+"""
+    GDALDimensionGetName(GDALDimensionH hDim) -> const char *
+
+Return dimension name.
+"""
+function gdaldimensiongetname(hDim)
+    aftercare(ccall((:GDALDimensionGetName, libgdal), Cstring, (GDALDimensionH,), hDim), false)
+end
+
+"""
+    GDALDimensionGetFullName(GDALDimensionH hDim) -> const char *
+
+Return dimension full name.
+"""
+function gdaldimensiongetfullname(hDim)
+    aftercare(ccall((:GDALDimensionGetFullName, libgdal), Cstring, (GDALDimensionH,), hDim), false)
+end
+
+"""
+    GDALDimensionGetType(GDALDimensionH hDim) -> const char *
+
+Return dimension type.
+"""
+function gdaldimensiongettype(hDim)
+    aftercare(ccall((:GDALDimensionGetType, libgdal), Cstring, (GDALDimensionH,), hDim), false)
+end
+
+"""
+    GDALDimensionGetDirection(GDALDimensionH hDim) -> const char *
+
+Return dimension direction.
+"""
+function gdaldimensiongetdirection(hDim)
+    aftercare(ccall((:GDALDimensionGetDirection, libgdal), Cstring, (GDALDimensionH,), hDim), false)
+end
+
+"""
+    GDALDimensionGetSize(GDALDimensionH hDim) -> GUInt64
+
+Return the size, that is the number of values along the dimension.
+"""
+function gdaldimensiongetsize(hDim)
+    aftercare(ccall((:GDALDimensionGetSize, libgdal), GUInt64, (GDALDimensionH,), hDim))
+end
+
+"""
+    GDALDimensionGetIndexingVariable(GDALDimensionH hDim) -> GDALMDArrayH
+
+Return the variable that is used to index the dimension (if there is one).
+"""
+function gdaldimensiongetindexingvariable(hDim)
+    aftercare(ccall((:GDALDimensionGetIndexingVariable, libgdal), GDALMDArrayH, (GDALDimensionH,), hDim))
+end
+
+"""
+    GDALDimensionSetIndexingVariable(GDALDimensionH hDim,
+                                     GDALMDArrayH hArray) -> int
+
+Set the variable that is used to index the dimension.
+
+### Returns
+TRUE in case of success.
+"""
+function gdaldimensionsetindexingvariable(hDim, hArray)
+    aftercare(ccall((:GDALDimensionSetIndexingVariable, libgdal), Cint, (GDALDimensionH, GDALMDArrayH), hDim, hArray))
 end

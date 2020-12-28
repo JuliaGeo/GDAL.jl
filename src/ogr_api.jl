@@ -208,6 +208,21 @@ function ogr_g_forceto(hGeom, eTargetType, papszOptions)
 end
 
 """
+    OGR_G_RemoveLowerDimensionSubGeoms(const OGRGeometryH hGeom) -> OGRGeometryH
+
+Remove sub-geometries from a geometry collection that do not have the maximum topological dimensionality of the collection.
+
+### Parameters
+* **hGeom**: handle to the geometry to convert
+
+### Returns
+a new geometry.
+"""
+function ogr_g_removelowerdimensionsubgeoms(hGeom)
+    aftercare(ccall((:OGR_G_RemoveLowerDimensionSubGeoms, libgdal), OGRGeometryH, (OGRGeometryH,), hGeom))
+end
+
+"""
     OGR_G_GetDimension(OGRGeometryH hGeom) -> int
 
 Get the dimension of this geometry.
@@ -333,7 +348,7 @@ Make a copy of this object.
 * **hGeom**: handle on the geometry to clone from.
 
 ### Returns
-an handle on the copy of the geometry with the spatial reference system as the original.
+a handle on the copy of the geometry with the spatial reference system as the original.
 """
 function ogr_g_clone(arg1)
     aftercare(ccall((:OGR_G_Clone, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
@@ -693,6 +708,15 @@ function ogr_g_creategeometryfromjson(arg1)
 end
 
 """
+    OGR_G_CreateGeometryFromEsriJson(const char *) -> OGRGeometryH
+
+Create a OGR geometry from a ESRI JSON geometry object.
+"""
+function ogr_g_creategeometryfromesrijson(arg1)
+    aftercare(ccall((:OGR_G_CreateGeometryFromEsriJson, libgdal), OGRGeometryH, (Cstring,), arg1))
+end
+
+"""
     OGR_G_AssignSpatialReference(OGRGeometryH hGeom,
                                  OGRSpatialReferenceH hSRS) -> void
 
@@ -753,6 +777,57 @@ OGRERR_NONE on success, or an error code.
 """
 function ogr_g_transformto(arg1, arg2)
     aftercare(ccall((:OGR_G_TransformTo, libgdal), OGRErr, (OGRGeometryH, OGRSpatialReferenceH), arg1, arg2))
+end
+
+"""
+    OGR_GeomTransformer_Create(OGRCoordinateTransformationH hCT,
+                               CSLConstList papszOptions) -> OGRGeomTransformerH
+
+Create a geometry transformer.
+
+### Parameters
+* **hCT**: Coordinate transformation object (will be cloned) or NULL.
+* **papszOptions**: NULL terminated list of options, or NULL. Supported options are: 
+
+WRAPDATELINE=YES 
+
+
+DATELINEOFFSET=longitude_gap_in_degree. Defaults to 10.
+
+### Returns
+transformer object to free with OGR_GeomTransformer_Destroy()
+"""
+function ogr_geomtransformer_create(arg1, papszOptions)
+    aftercare(ccall((:OGR_GeomTransformer_Create, libgdal), OGRGeomTransformerH, (OGRCoordinateTransformationH, CSLConstList), arg1, papszOptions))
+end
+
+"""
+    OGR_GeomTransformer_Transform(OGRGeomTransformerH hTransformer,
+                                  OGRGeometryH hGeom) -> OGRGeometryH
+
+Transforms a geometry.
+
+### Parameters
+* **hTransformer**: transformer object.
+* **hGeom**: Source geometry.
+
+### Returns
+a new geometry (or NULL) to destroy with OGR_G_DestroyGeometry()
+"""
+function ogr_geomtransformer_transform(hTransformer, hGeom)
+    aftercare(ccall((:OGR_GeomTransformer_Transform, libgdal), OGRGeometryH, (OGRGeomTransformerH, OGRGeometryH), hTransformer, hGeom))
+end
+
+"""
+    OGR_GeomTransformer_Destroy(OGRGeomTransformerH hTransformer) -> void
+
+Destroy a geometry transformer allocated with OGR_GeomTransformer_Create()
+
+### Parameters
+* **hTransformer**: transformer object.
+"""
+function ogr_geomtransformer_destroy(hTransformer)
+    aftercare(ccall((:OGR_GeomTransformer_Destroy, libgdal), Cvoid, (OGRGeomTransformerH,), hTransformer))
 end
 
 """
@@ -1909,7 +1984,7 @@ Build a ring from a bunch of arcs.
 * **peErr**: OGRERR_NONE on success, or OGRERR_FAILURE on failure.
 
 ### Returns
-an handle to the new geometry, a polygon.
+a handle to the new geometry, a polygon.
 """
 function ogrbuildpolygonfromedges(hLinesAsCollection, bBestEffort, bAutoClose, dfTolerance, peErr)
     aftercare(ccall((:OGRBuildPolygonFromEdges, libgdal), OGRGeometryH, (OGRGeometryH, Cint, Cint, Cdouble, Ptr{OGRErr}), hLinesAsCollection, bBestEffort, bAutoClose, dfTolerance, peErr))
@@ -2008,6 +2083,35 @@ the name of the field definition.
 """
 function ogr_fld_getnameref(arg1)
     aftercare(ccall((:OGR_Fld_GetNameRef, libgdal), Cstring, (OGRFieldDefnH,), arg1), false)
+end
+
+"""
+    OGR_Fld_SetAlternativeName(OGRFieldDefnH hDefn,
+                               const char * pszAlternativeName) -> void
+
+Reset the alternative name (or "alias") for this field.
+
+### Parameters
+* **hDefn**: handle to the field definition to apply the new alternative name to.
+* **pszAlternativeName**: the new alternative name to apply.
+"""
+function ogr_fld_setalternativename(arg1, arg2)
+    aftercare(ccall((:OGR_Fld_SetAlternativeName, libgdal), Cvoid, (OGRFieldDefnH, Cstring), arg1, arg2))
+end
+
+"""
+    OGR_Fld_GetAlternativeNameRef(OGRFieldDefnH hDefn) -> const char *
+
+Fetch the alternative name (or "alias") for this field.
+
+### Parameters
+* **hDefn**: handle to the field definition.
+
+### Returns
+the alternative name of the field definition.
+"""
+function ogr_fld_getalternativenameref(arg1)
+    aftercare(ccall((:OGR_Fld_GetAlternativeNameRef, libgdal), Cstring, (OGRFieldDefnH,), arg1), false)
 end
 
 """
@@ -2233,6 +2337,35 @@ Set whether this field can receive null values.
 """
 function ogr_fld_setnullable(hDefn, arg1)
     aftercare(ccall((:OGR_Fld_SetNullable, libgdal), Cvoid, (OGRFieldDefnH, Cint), hDefn, arg1))
+end
+
+"""
+    OGR_Fld_IsUnique(OGRFieldDefnH hDefn) -> int
+
+Return whether this field has a unique constraint.
+
+### Parameters
+* **hDefn**: handle to the field definition
+
+### Returns
+TRUE if the field has a unique constraint.
+"""
+function ogr_fld_isunique(hDefn)
+    aftercare(ccall((:OGR_Fld_IsUnique, libgdal), Cint, (OGRFieldDefnH,), hDefn))
+end
+
+"""
+    OGR_Fld_SetUnique(OGRFieldDefnH hDefn,
+                      int bUniqueIn) -> void
+
+Set whether this field has a unique constraint.
+
+### Parameters
+* **hDefn**: handle to the field definition
+* **bUniqueIn**: TRUE if the field must have a unique constraint.
+"""
+function ogr_fld_setunique(hDefn, arg1)
+    aftercare(ccall((:OGR_Fld_SetUnique, libgdal), Cvoid, (OGRFieldDefnH, Cint), hDefn, arg1))
 end
 
 """
@@ -2580,7 +2713,7 @@ Fetch field definition of the passed feature definition.
 * **iField**: the field to fetch, between 0 and GetFieldCount()-1.
 
 ### Returns
-an handle to an internal field definition object or NULL if invalid index. This object should not be modified or freed by the application.
+a handle to an internal field definition object or NULL if invalid index. This object should not be modified or freed by the application.
 """
 function ogr_fd_getfielddefn(arg1, arg2)
     aftercare(ccall((:OGR_FD_GetFieldDefn, libgdal), OGRFieldDefnH, (OGRFeatureDefnH, Cint), arg1, arg2))
@@ -2809,7 +2942,7 @@ Fetch geometry field definition of the passed feature definition.
 * **iGeomField**: the geometry field to fetch, between 0 and GetGeomFieldCount() - 1.
 
 ### Returns
-an handle to an internal field definition object or NULL if invalid index. This object should not be modified or freed by the application.
+a handle to an internal field definition object or NULL if invalid index. This object should not be modified or freed by the application.
 """
 function ogr_fd_getgeomfielddefn(hFDefn, i)
     aftercare(ccall((:OGR_FD_GetGeomFieldDefn, libgdal), OGRGeomFieldDefnH, (OGRFeatureDefnH, Cint), hFDefn, i))
@@ -2889,7 +3022,7 @@ Feature factory.
 * **hDefn**: handle to the feature class (layer) definition to which the feature will adhere.
 
 ### Returns
-an handle to the new feature object with null fields and no geometry, or, starting with GDAL 2.1, NULL in case out of memory situation.
+a handle to the new feature object with null fields and no geometry, or, starting with GDAL 2.1, NULL in case out of memory situation.
 """
 function ogr_f_create(arg1)
     aftercare(ccall((:OGR_F_Create, libgdal), OGRFeatureH, (OGRFeatureDefnH,), arg1))
@@ -2916,7 +3049,7 @@ Fetch feature definition.
 * **hFeat**: handle to the feature to get the feature definition from.
 
 ### Returns
-an handle to the feature definition object on which feature depends.
+a handle to the feature definition object on which feature depends.
 """
 function ogr_f_getdefnref(arg1)
     aftercare(ccall((:OGR_F_GetDefnRef, libgdal), OGRFeatureDefnH, (OGRFeatureH,), arg1))
@@ -2959,13 +3092,13 @@ end
 """
     OGR_F_GetGeometryRef(OGRFeatureH hFeat) -> OGRGeometryH
 
-Fetch an handle to feature geometry.
+Fetch a handle to feature geometry.
 
 ### Parameters
 * **hFeat**: handle to the feature to get geometry from.
 
 ### Returns
-an handle to internal feature geometry. This object should not be modified.
+a handle to internal feature geometry. This object should not be modified.
 """
 function ogr_f_getgeometryref(arg1)
     aftercare(ccall((:OGR_F_GetGeometryRef, libgdal), OGRGeometryH, (OGRFeatureH,), arg1))
@@ -2992,7 +3125,7 @@ Duplicate feature.
 * **hFeat**: handle to the feature to clone.
 
 ### Returns
-an handle to the new feature, exactly matching this feature.
+a handle to the new feature, exactly matching this feature.
 """
 function ogr_f_clone(arg1)
     aftercare(ccall((:OGR_F_Clone, libgdal), OGRFeatureH, (OGRFeatureH,), arg1))
@@ -3041,7 +3174,7 @@ Fetch definition for this field.
 * **i**: the field to fetch, from 0 to GetFieldCount()-1.
 
 ### Returns
-an handle to the field definition (from the OGRFeatureDefn). This is an internal reference, and should not be deleted or modified.
+a handle to the field definition (from the OGRFeatureDefn). This is an internal reference, and should not be deleted or modified.
 """
 function ogr_f_getfielddefnref(arg1, arg2)
     aftercare(ccall((:OGR_F_GetFieldDefnRef, libgdal), OGRFieldDefnH, (OGRFeatureH, Cint), arg1, arg2))
@@ -3147,7 +3280,7 @@ end
     OGR_F_GetRawFieldRef(OGRFeatureH hFeat,
                          int iField) -> OGRField *
 
-Fetch an handle to the internal field value given the index.
+Fetch a handle to the internal field value given the index.
 
 ### Parameters
 * **hFeat**: handle to the feature on which field is found.
@@ -3681,7 +3814,7 @@ Fetch definition for this geometry field.
 * **i**: the field to fetch, from 0 to GetGeomFieldCount()-1.
 
 ### Returns
-an handle to the field definition (from the OGRFeatureDefn). This is an internal reference, and should not be deleted or modified.
+a handle to the field definition (from the OGRFeatureDefn). This is an internal reference, and should not be deleted or modified.
 """
 function ogr_f_getgeomfielddefnref(hFeat, iField)
     aftercare(ccall((:OGR_F_GetGeomFieldDefnRef, libgdal), OGRGeomFieldDefnH, (OGRFeatureH, Cint), hFeat, iField))
@@ -3708,14 +3841,14 @@ end
     OGR_F_GetGeomFieldRef(OGRFeatureH hFeat,
                           int iField) -> OGRGeometryH
 
-Fetch an handle to feature geometry.
+Fetch a handle to feature geometry.
 
 ### Parameters
 * **hFeat**: handle to the feature to get geometry from.
 * **iField**: geometry field to get.
 
 ### Returns
-an handle to internal feature geometry. This object should not be modified.
+a handle to internal feature geometry. This object should not be modified.
 """
 function ogr_f_getgeomfieldref(hFeat, iField)
     aftercare(ccall((:OGR_F_GetGeomFieldRef, libgdal), OGRGeometryH, (OGRFeatureH, Cint), hFeat, iField))
@@ -4049,7 +4182,7 @@ This function returns the current spatial filter for this layer.
 * **hLayer**: handle to the layer to get the spatial filter from.
 
 ### Returns
-an handle to the spatial filter geometry.
+a handle to the spatial filter geometry.
 """
 function ogr_l_getspatialfilter(arg1)
     aftercare(ccall((:OGR_L_GetSpatialFilter, libgdal), OGRGeometryH, (OGRLayerH,), arg1))
@@ -4165,7 +4298,7 @@ Fetch the next available feature from this layer.
 * **hLayer**: handle to the layer from which feature are read.
 
 ### Returns
-an handle to a feature, or NULL if no more features are available.
+a handle to a feature, or NULL if no more features are available.
 """
 function ogr_l_getnextfeature(arg1)
     aftercare(ccall((:OGR_L_GetNextFeature, libgdal), OGRFeatureH, (OGRLayerH,), arg1))
@@ -4199,7 +4332,7 @@ Fetch a feature by its identifier.
 * **nFeatureId**: the feature id of the feature to read.
 
 ### Returns
-an handle to a feature now owned by the caller, or NULL on failure.
+a handle to a feature now owned by the caller, or NULL on failure.
 """
 function ogr_l_getfeature(arg1, arg2)
     aftercare(ccall((:OGR_L_GetFeature, libgdal), OGRFeatureH, (OGRLayerH, GIntBig), arg1, arg2))
@@ -4265,7 +4398,7 @@ Fetch the schema information for this layer.
 * **hLayer**: handle to the layer to get the schema information.
 
 ### Returns
-an handle to the feature definition.
+a handle to the feature definition.
 """
 function ogr_l_getlayerdefn(arg1)
     aftercare(ccall((:OGR_L_GetLayerDefn, libgdal), OGRFeatureDefnH, (OGRLayerH,), arg1))
@@ -4640,6 +4773,7 @@ end
 Set which fields can be omitted when retrieving features from the layer.
 
 ### Parameters
+* **hLayer**: handle to the layer
 * **papszFields**: an array of field names terminated by NULL item. If NULL is passed, the ignored list is cleared.
 
 ### Returns
@@ -4830,7 +4964,7 @@ end
 Closes opened datasource and releases allocated resources.
 
 ### Parameters
-* **hDataSource**: handle to allocated datasource object.
+* **hDS**: handle to allocated datasource object.
 """
 function ogr_ds_destroy(arg1)
     aftercare(ccall((:OGR_DS_Destroy, libgdal), Cvoid, (OGRDataSourceH,), arg1))
@@ -4877,7 +5011,7 @@ Fetch a layer by index.
 * **iLayer**: a layer number between 0 and OGR_DS_GetLayerCount()-1.
 
 ### Returns
-an handle to the layer, or NULL if iLayer is out of range or an error occurs.
+a handle to the layer, or NULL if iLayer is out of range or an error occurs.
 """
 function ogr_ds_getlayer(arg1, arg2)
     aftercare(ccall((:OGR_DS_GetLayer, libgdal), OGRLayerH, (OGRDataSourceH, Cint), arg1, arg2))
@@ -4894,7 +5028,7 @@ Fetch a layer by name.
 * **pszLayerName**: Layer the layer name of the layer to fetch.
 
 ### Returns
-an handle to the layer, or NULL if the layer is not found or an error occurs.
+a handle to the layer, or NULL if the layer is not found or an error occurs.
 """
 function ogr_ds_getlayerbyname(arg1, arg2)
     aftercare(ccall((:OGR_DS_GetLayerByName, libgdal), OGRLayerH, (OGRDataSourceH, Cstring), arg1, arg2))
@@ -4970,7 +5104,7 @@ Duplicate an existing layer.
 * **papszOptions**: a StringList of name=value options. Options are driver specific.
 
 ### Returns
-an handle to the layer, or NULL if an error occurs.
+a handle to the layer, or NULL if an error occurs.
 """
 function ogr_ds_copylayer(arg1, arg2, arg3, arg4)
     aftercare(ccall((:OGR_DS_CopyLayer, libgdal), OGRLayerH, (OGRDataSourceH, OGRLayerH, Cstring, Ptr{Cstring}), arg1, arg2, arg3, arg4))
@@ -5003,12 +5137,12 @@ Execute an SQL statement against the data store.
 
 ### Parameters
 * **hDS**: handle to the data source on which the SQL query is executed.
-* **pszSQLCommand**: the SQL statement to execute.
+* **pszStatement**: the SQL statement to execute.
 * **hSpatialFilter**: handle to a geometry which represents a spatial filter. Can be NULL.
 * **pszDialect**: allows control of the statement dialect. If set to NULL, the OGR SQL engine will be used, except for RDBMS drivers that will use their dedicated SQL engine, unless OGRSQL is explicitly passed as the dialect. Starting with OGR 1.10, the SQLITE dialect can also be used.
 
 ### Returns
-an handle to a OGRLayer containing the results of the query. Deallocate with OGR_DS_ReleaseResultSet().
+a handle to a OGRLayer containing the results of the query. Deallocate with OGR_DS_ReleaseResultSet().
 """
 function ogr_ds_executesql(arg1, arg2, arg3, arg4)
     aftercare(ccall((:OGR_DS_ExecuteSQL, libgdal), OGRLayerH, (OGRDataSourceH, Cstring, OGRGeometryH, Cstring), arg1, arg2, arg3, arg4))
@@ -5021,7 +5155,7 @@ end
 Release results of OGR_DS_ExecuteSQL().
 
 ### Parameters
-* **hDS**: an handle to the data source on which was executed an SQL query.
+* **hDS**: a handle to the data source on which was executed an SQL query.
 * **hLayer**: handle to the result of a previous OGR_DS_ExecuteSQL() call.
 """
 function ogr_ds_releaseresultset(arg1, arg2)
@@ -5122,7 +5256,7 @@ Attempt to open file with this driver.
 * **bUpdate**: TRUE if update access is required, otherwise FALSE (the default).
 
 ### Returns
-NULL on error or if the pass name is not supported by this driver, otherwise an handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
+NULL on error or if the pass name is not supported by this driver, otherwise a handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
 """
 function ogr_dr_open(arg1, arg2, arg3)
     aftercare(ccall((:OGR_Dr_Open, libgdal), OGRDataSourceH, (OGRSFDriverH, Cstring, Cint), arg1, arg2, arg3))
@@ -5215,7 +5349,7 @@ Open a file / data source with one of the registered drivers.
 * **pahDriverList**: if non-NULL, this argument will be updated with a pointer to the driver which was used to open the data source.
 
 ### Returns
-NULL on error or if the pass name is not supported by this driver, otherwise an handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
+NULL on error or if the pass name is not supported by this driver, otherwise a handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
 """
 function ogropen(arg1, arg2, arg3)
     aftercare(ccall((:OGROpen, libgdal), OGRDataSourceH, (Cstring, Cint, Ptr{OGRSFDriverH}), arg1, arg2, arg3))
@@ -5234,7 +5368,7 @@ Open a file / data source with one of the registered drivers if not already open
 * **pahDriverList**: if non-NULL, this argument will be updated with a pointer to the driver which was used to open the data source.
 
 ### Returns
-NULL on error or if the pass name is not supported by this driver, otherwise an handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
+NULL on error or if the pass name is not supported by this driver, otherwise a handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
 """
 function ogropenshared(arg1, arg2, arg3)
     aftercare(ccall((:OGROpenShared, libgdal), OGRDataSourceH, (Cstring, Cint, Ptr{OGRSFDriverH}), arg1, arg2, arg3))
@@ -5340,7 +5474,7 @@ OGRStyleMgr factory.
 * **hStyleTable**: pointer to OGRStyleTable or NULL if not working with a style table.
 
 ### Returns
-an handle to the new style manager object.
+a handle to the new style manager object.
 """
 function ogr_sm_create(hStyleTable)
     aftercare(ccall((:OGR_SM_Create, libgdal), OGRStyleMgrH, (OGRStyleTableH,), hStyleTable))
@@ -5473,7 +5607,7 @@ OGRStyleTool factory.
 * **eClassId**: subclass of style tool to create. One of OGRSTCPen (1), OGRSTCBrush (2), OGRSTCSymbol (3) or OGRSTCLabel (4).
 
 ### Returns
-an handle to the new style tool object or NULL if the creation failed.
+a handle to the new style tool object or NULL if the creation failed.
 """
 function ogr_st_create(eClassId)
     aftercare(ccall((:OGR_ST_Create, libgdal), OGRStyleToolH, (OGRSTClassId,), eClassId))
@@ -5688,7 +5822,7 @@ end
 OGRStyleTable factory.
 
 ### Returns
-an handle to the new style table object.
+a handle to the new style table object.
 """
 function ogr_stbl_create()
     aftercare(ccall((:OGR_STBL_Create, libgdal), OGRStyleTableH, ()))

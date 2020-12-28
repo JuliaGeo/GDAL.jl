@@ -1006,6 +1006,23 @@ function cplgethomedir()
 end
 
 """
+    CPLLaunderForFilename(const char * pszName,
+                          const char * pszOutputPath) -> const char *
+
+Launder a string to be compatible of a filename.
+
+### Parameters
+* **pszName**: The input string to launder.
+* **pszOutputPath**: The directory where the file would be created. Unused for now. May be NULL.
+
+### Returns
+the laundered name.
+"""
+function cpllaunderforfilename(pszName, pszOutputPath)
+    aftercare(ccall((:CPLLaunderForFilename, libgdal), Cstring, (Cstring, Cstring), pszName, pszOutputPath), false)
+end
+
+"""
     CPLFindFile(const char * pszClass,
                 const char * pszBasename) -> const char *
 

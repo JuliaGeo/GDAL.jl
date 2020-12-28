@@ -66,6 +66,7 @@ const CPLE_AWSSignatureDoesNotMatch = 16
 "VSIE_AWSError"
 const CPLE_AWSError = 17
 
+# Skipping MacroDefinition: CPLDebugOnly ( ... )
 # Skipping MacroDefinition: CPLAssertAlwaysEval ( expr ) ( void ) ( expr )
 
 "Error category"
@@ -97,7 +98,6 @@ const CPLErrorHandler = Ptr{Cvoid}
 end
 
 
-"Document node structure"
 struct CPLXMLNode
     eType::CPLXMLNodeType
     pszValue::Cstring
@@ -224,8 +224,6 @@ const GPtrDiff_t = GIntBig
 
 "Type of a constant null-terminated list of nul terminated strings"
 const CSLConstList = Ptr{Cstring}
-
-"Callback progress definition for long operations"
 const GDALProgressFunc = Ptr{Cvoid}
 
 "Opaque type that represents a virtual memory mapping"
@@ -300,7 +298,6 @@ const VSIStatBufL = Cvoid
 "Opaque type for a directory iterator"
 const VSIDIR = Cvoid
 
-"Directory entry"
 struct VSIDIREntry
     pszName::Cstring
     nMode::Cint
@@ -331,6 +328,9 @@ const VSIFilesystemPluginRmdirCallback = Ptr{Cvoid}
 
 "List directory content"
 const VSIFilesystemPluginReadDirCallback = Ptr{Cvoid}
+
+"List related files"
+const VSIFilesystemPluginSiblingFilesCallback = Ptr{Cvoid}
 
 "Open a handle"
 const VSIFilesystemPluginOpenCallback = Ptr{Cvoid}
@@ -384,6 +384,9 @@ struct VSIFilesystemPluginCallbacksStruct
     flush::VSIFilesystemPluginFlushCallback
     truncate::VSIFilesystemPluginTruncateCallback
     close::VSIFilesystemPluginCloseCallback
+    nBufferSize::Csize_t
+    nCacheSize::Csize_t
+    sibling_files::VSIFilesystemPluginSiblingFilesCallback
 end
 
 const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
@@ -422,6 +425,21 @@ const GDAL_DMD_EXTENSIONS = "DMD_EXTENSIONS"
 "XML snippet with creation options"
 const GDAL_DMD_CREATIONOPTIONLIST = "DMD_CREATIONOPTIONLIST"
 
+"XML snippet with multidimensional dataset creation options"
+const GDAL_DMD_MULTIDIM_DATASET_CREATIONOPTIONLIST = "DMD_MULTIDIM_DATASET_CREATIONOPTIONLIST"
+
+"XML snippet with multidimensional group creation options"
+const GDAL_DMD_MULTIDIM_GROUP_CREATIONOPTIONLIST = "DMD_MULTIDIM_GROUP_CREATIONOPTIONLIST"
+
+"XML snippet with multidimensional dimension creation options"
+const GDAL_DMD_MULTIDIM_DIMENSION_CREATIONOPTIONLIST = "DMD_MULTIDIM_DIMENSION_CREATIONOPTIONLIST"
+
+"XML snippet with multidimensional array creation options"
+const GDAL_DMD_MULTIDIM_ARRAY_CREATIONOPTIONLIST = "DMD_MULTIDIM_ARRAY_CREATIONOPTIONLIST"
+
+"XML snippet with multidimensional attribute creation options"
+const GDAL_DMD_MULTIDIM_ATTRIBUTE_CREATIONOPTIONLIST = "DMD_MULTIDIM_ATTRIBUTE_CREATIONOPTIONLIST"
+
 "XML snippet with open options"
 const GDAL_DMD_OPENOPTIONLIST = "DMD_OPENOPTIONLIST"
 
@@ -443,8 +461,17 @@ const GDAL_DCAP_OPEN = "DCAP_OPEN"
 "Capability set by a driver that implements the Create() API"
 const GDAL_DCAP_CREATE = "DCAP_CREATE"
 
+"Capability set by a driver that implements the CreateMultidimensional() API"
+const GDAL_DCAP_CREATE_MULTIDIMENSIONAL = "DCAP_CREATE_MULTIDIMENSIONAL"
+
 "Capability set by a driver that implements the CreateCopy() API"
 const GDAL_DCAP_CREATECOPY = "DCAP_CREATECOPY"
+
+"Capability set by a driver that implements the CreateCopy() API, but with multidimensional raster as input and output"
+const GDAL_DCAP_CREATECOPY_MULTIDIMENSIONAL = "DCAP_CREATECOPY_MULTIDIMENSIONAL"
+
+"Capability set by a driver that supports multidimensional data"
+const GDAL_DCAP_MULTIDIM_RASTER = "DCAP_MULTIDIM_RASTER"
 
 "Capability set by a driver that can copy over subdatasets"
 const GDAL_DCAP_SUBCREATECOPY = "DCAP_SUBCREATECOPY"
@@ -464,6 +491,9 @@ const GDAL_DCAP_GNM = "DCAP_GNM"
 "Capability set by a driver that can create fields with NOT NULL constraint"
 const GDAL_DCAP_NOTNULL_FIELDS = "DCAP_NOTNULL_FIELDS"
 
+"Capability set by a driver that can create fields with UNIQUE constraint"
+const GDAL_DCAP_UNIQUE_FIELDS = "DCAP_UNIQUE_FIELDS"
+
 "Capability set by a driver that can create fields with DEFAULT values"
 const GDAL_DCAP_DEFAULT_FIELDS = "DCAP_DEFAULT_FIELDS"
 
@@ -475,6 +505,21 @@ const GDAL_DCAP_NONSPATIAL = "DCAP_NONSPATIAL"
 
 "Capability set by drivers which support feature styles"
 const GDAL_DCAP_FEATURE_STYLES = "DCAP_FEATURE_STYLES"
+
+"Value for GDALDimension::GetType() specifying the X axis of a horizontal CRS"
+const GDAL_DIM_TYPE_HORIZONTAL_X = "HORIZONTAL_X"
+
+"Value for GDALDimension::GetType() specifying the Y axis of a horizontal CRS"
+const GDAL_DIM_TYPE_HORIZONTAL_Y = "HORIZONTAL_Y"
+
+"Value for GDALDimension::GetType() specifying a vertical axis"
+const GDAL_DIM_TYPE_VERTICAL = "VERTICAL"
+
+"Value for GDALDimension::GetType() specifying a temporal axis"
+const GDAL_DIM_TYPE_TEMPORAL = "TEMPORAL"
+
+"Value for GDALDimension::GetType() specifying a parametric axis"
+const GDAL_DIM_TYPE_PARAMETRIC = "PARAMETRIC"
 
 "Open in read-only mode"
 const GDAL_OF_READONLY = 0x00
@@ -493,6 +538,9 @@ const GDAL_OF_VECTOR = 0x04
 
 "Allow gnm drivers to be used"
 const GDAL_OF_GNM = 0x08
+
+"Allow multidimensional raster drivers to be used"
+const GDAL_OF_MULTIDIM_RASTER = 0x10
 const GDAL_OF_KIND_MASK = 0x1e
 
 "Open in shared mode"
@@ -588,6 +636,7 @@ end
     GRIORA_Average = 5
     GRIORA_Mode = 6
     GRIORA_Gauss = 7
+    GRIORA_LAST = 7
 end
 
 
@@ -655,6 +704,62 @@ const GDALAsyncReaderH = Ptr{Cvoid}
 
 "Type to express pixel, line or band spacing"
 const GSpacing = GIntBig
+
+"Enumeration giving the class of a GDALExtendedDataType"
+@cenum GDALExtendedDataTypeClass::UInt32 begin
+    GEDTC_NUMERIC = 0
+    GEDTC_STRING = 1
+    GEDTC_COMPOUND = 2
+end
+
+
+"""
+    GDALExtendedDataTypeHS(GDALExtendedDataType * dt) -> 
+"""
+const GDALExtendedDataTypeHS = Cvoid
+
+"Opaque type for C++ GDALExtendedDataType"
+const GDALExtendedDataTypeH = Ptr{GDALExtendedDataTypeHS}
+
+"""
+    GDALEDTComponentHS(const GDALEDTComponent & component) -> 
+"""
+const GDALEDTComponentHS = Cvoid
+
+"Opaque type for C++ GDALEDTComponent"
+const GDALEDTComponentH = Ptr{GDALEDTComponentHS}
+
+"""
+    GDALGroupHS(const std::shared_ptr< GDALGroup > & poGroup) -> 
+"""
+const GDALGroupHS = Cvoid
+
+"Opaque type for C++ GDALGroup"
+const GDALGroupH = Ptr{GDALGroupHS}
+
+"""
+    GDALMDArrayHS(const std::shared_ptr< GDALMDArray > & poArray) -> 
+"""
+const GDALMDArrayHS = Cvoid
+
+"Opaque type for C++ GDALMDArray"
+const GDALMDArrayH = Ptr{GDALMDArrayHS}
+
+"""
+    GDALAttributeHS(const std::shared_ptr< GDALAttribute > & poAttr) -> 
+"""
+const GDALAttributeHS = Cvoid
+
+"Opaque type for C++ GDALAttribute"
+const GDALAttributeH = Ptr{GDALAttributeHS}
+
+"""
+    GDALDimensionHS(const std::shared_ptr< GDALDimension > & poDim) -> 
+"""
+const GDALDimensionHS = Cvoid
+
+"Opaque type for C++ GDALDimension"
+const GDALDimensionH = Ptr{GDALDimensionHS}
 
 struct GDAL_GCP
     pszId::Cstring
@@ -772,6 +877,23 @@ struct OGRContourWriterInfo
     nNextID::Cint
 end
 
+"Viewshed Modes"
+@cenum GDALViewshedMode::UInt32 begin
+    GVM_Diagonal = 1
+    GVM_Edge = 2
+    GVM_Max = 3
+    GVM_Min = 4
+end
+
+
+"Viewshed output types"
+@cenum GDALViewshedOutputType::UInt32 begin
+    GVOT_NORMAL = 1
+    GVOT_MIN_TARGET_HEIGHT_FROM_DEM = 2
+    GVOT_MIN_TARGET_HEIGHT_FROM_GROUND = 3
+end
+
+
 "Gridding Algorithms"
 @cenum GDALGridAlgorithm::UInt32 begin
     GGA_InverseDistanceToAPower = 1
@@ -874,6 +996,7 @@ end
     GRA_Med = 10
     GRA_Q1 = 11
     GRA_Q3 = 12
+    GRA_Sum = 13
 end
 
 @cenum GWKAverageOrModeAlg::UInt32 begin
@@ -883,6 +1006,7 @@ end
     GWKAOM_Max = 4
     GWKAOM_Min = 5
     GWKAOM_Quant = 6
+    GWKAOM_Sum = 7
 end
 
 
@@ -1000,6 +1124,14 @@ const GDALBuildVRTOptions = Cvoid
 
 "Opaque type"
 const GDALBuildVRTOptionsForBinary = Cvoid
+const GDALMultiDimInfoOptions = Cvoid
+
+"Opaque type"
+const GDALMultiDimInfoOptionsForBinary = Cvoid
+const GDALMultiDimTranslateOptions = Cvoid
+
+"Opaque type"
+const GDALMultiDimTranslateOptionsForBinary = Cvoid
 
 # Skipping MacroDefinition: OGR_FOR_EACH_FEATURE_BEGIN ( hFeat , hLayer ) { OGRFeatureH hFeat = CPL_NULLPTR ; OGR_L_ResetReading ( hLayer ) ; while ( true ) { if ( hFeat ) OGR_F_Destroy ( hFeat ) ; hFeat = OGR_L_GetNextFeature ( hLayer ) ; if ( ! hFeat ) break ;
 # Skipping MacroDefinition: OGR_FOR_EACH_FEATURE_END ( hFeat ) } OGR_F_Destroy ( hFeat ) ; }
@@ -1013,6 +1145,14 @@ const OGRSpatialReferenceH = Ptr{Cvoid}
 "Opaque type for a coordinate transformation object"
 const OGRCoordinateTransformationH = Ptr{Cvoid}
 const _CPLXMLNode = Cvoid
+
+"""
+    OGRGeomTransformer() -> 
+"""
+const OGRGeomTransformer = Cvoid
+
+"Opaque type for a geometry transformer"
+const OGRGeomTransformerH = Ptr{OGRGeomTransformer}
 
 "Opaque type for a field definition (OGRFieldDefn)"
 const OGRFieldDefnH = Ptr{Cvoid}
@@ -1102,8 +1242,11 @@ const ALTER_NULLABLE_FLAG = 0x08
 "Alter field DEFAULT value"
 const ALTER_DEFAULT_FLAG = 0x10
 
+"Alter field UNIQUE constraint"
+const ALTER_UNIQUE_FLAG = 0x20
+
 "Alter all parameters of field definition"
-const ALTER_ALL_FLAG = (((ALTER_NAME_FLAG | ALTER_TYPE_FLAG) | ALTER_WIDTH_PRECISION_FLAG) | ALTER_NULLABLE_FLAG) | ALTER_DEFAULT_FLAG
+const ALTER_ALL_FLAG = ((((ALTER_NAME_FLAG | ALTER_TYPE_FLAG) | ALTER_WIDTH_PRECISION_FLAG) | ALTER_NULLABLE_FLAG) | ALTER_DEFAULT_FLAG) | ALTER_UNIQUE_FLAG
 
 "Validate that fields respect not-null constraints"
 const OGR_F_VAL_NULL = 0x00000001
@@ -1225,6 +1368,11 @@ const OLMD_FID64 = "OLMD_FID64"
 
 # Skipping MacroDefinition: GDAL_CHECK_VERSION ( pszCallingComponentName ) GDALCheckVersion ( GDAL_VERSION_MAJOR , GDAL_VERSION_MINOR , pszCallingComponentName )
 
+"""
+    OGREnvelope() -> 
+
+Default constructor.
+"""
 struct OGREnvelope
     MinX::Cdouble
     MaxX::Cdouble
@@ -1232,6 +1380,11 @@ struct OGREnvelope
     MaxY::Cdouble
 end
 
+"""
+    OGREnvelope3D() -> 
+
+Default constructor.
+"""
 struct OGREnvelope3D
     MinX::Cdouble
     MaxX::Cdouble
@@ -1241,7 +1394,7 @@ struct OGREnvelope3D
     MaxZ::Cdouble
 end
 
-"Simple container for a bounding region"
+"Type for a OGR error"
 const OGRErr = Cint
 
 "Type for a OGR boolean"
