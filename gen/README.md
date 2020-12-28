@@ -1,16 +1,6 @@
 GDAL.jl generation documentation
 ================================
 
-### Install Clang.jl
-```
-pkg> add Clang
-```
-
-### Make sure you have the GDAL header files
-```
-pkg> build GDAL
-```
-
 ### Prepare the GDAL Doxygen XML
 Below are the steps needed to create an XML file from which the documentation is created.
 
@@ -33,5 +23,6 @@ Below are the steps needed to create an XML file from which the documentation is
 3. Copy the result to `GDAL.jl/gen/doxygen.xml`
 
 ### Run the wrapping scripts
-1. Run `julia gen/wrap.jl` to generate the wrapping (GDAL + documentation). If you get `UndefVarError` from `common.jl`, empty the file and retry.
-2. Run `julia gen/wrap.jl` again.
+1. Run `julia --project` in this directory and `pkg> instantiate` the dependencies.
+2. Run `include("wrap.jl")` to generate the wrapping (GDAL + documentation). If you get `UndefVarError` from `common.jl`, empty the file and retry.
+3. Run `include("wrap.jl")` again.
