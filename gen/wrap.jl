@@ -15,6 +15,7 @@ using MacroTools
 using Logging
 using EzXML
 using CEnum  # to be able to include common.jl
+using GDAL_jll
 
 const output_dir = joinpath(@__DIR__, "..", "src")
 const xmlpath = joinpath(@__DIR__, "doxygen.xml")
@@ -30,7 +31,7 @@ global_logger(logger)
 # several functions for building docstrings
 include(joinpath(@__DIR__, "doc.jl"))
 
-includedir = normpath(joinpath(@__DIR__, "..", "deps", "usr", "include"))
+includedir = joinpath(GDAL_jll.artifact_dir, "include")
 headerfiles = joinpath.(includedir, [
     "cpl_conv.h",
     "cpl_error.h",
@@ -51,7 +52,7 @@ headerfiles = joinpath.(includedir, [
 
 for headerfile in headerfiles
     if !isfile(headerfile)
-        error("Header file missing, please run `pkg> build GDAL`($headerfile)")
+        error("Header file missing `($headerfile)")
     end
 end
 
@@ -59,6 +60,7 @@ end
 # or because the right hand side is a function that is defined later
 const skip_exprs = [
     :(const CPLAssert = expr),
+    :(const CPL_UNSTABLE_API = CPL_DLL),
     :(const EMULATED_BOOL = bool),
     :(const GINT64_MIN = GINTBIG_MIN),
     :(const GINT64_MAX = GINTBIG_MAX),
