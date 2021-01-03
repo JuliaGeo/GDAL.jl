@@ -3,7 +3,7 @@ uuid = "add2ef01-049f-52c4-9ee2-e494f65e021a"
 keywords = ["GDAL", "IO"]
 license = "MIT"
 desc = "Wrapper for GDAL - Geospatial Data Abstraction Library"
-version = "1.1.5"
+version = "1.2.0"
 
 [deps]
 CEnum = "fa961155-64e5-5f13-b03f-caf6b980ea82"
@@ -13,7 +13,7 @@ PROJ_jll = "58948b4f-47e0-5654-a9ad-f609743f8632"
 
 [compat]
 CEnum = "0.2, 0.3, 0.4"
-GDAL_jll = "3.0.4"
+GDAL_jll = "3.2"
 MozillaCACerts_jll = ">= 2020"
 PROJ_jll = "7.2.0"
 julia = "1.3"
