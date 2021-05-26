@@ -184,6 +184,7 @@ function header_outputfile(h)
     end
 end
 
+#=
 # set up the wrapping context
 wc = init(;
     headers = headerfiles,
@@ -206,5 +207,22 @@ rm(joinpath(@__DIR__, "..", "src", "cpl_port.jl"))
 # delete Clang.jl helper files
 rm(joinpath(@__DIR__, "..", "src", "LibTemplate.jl"))
 rm(joinpath(@__DIR__, "..", "src", "ctypes.jl"))
+=#
+
+using Clang.Generators
+
+cd(@__DIR__)
+
+options = load_options(joinpath(@__DIR__, "generator.toml"))
+
+# add compiler flags, e.g. "-DXXXXXXXXX"
+args = get_default_args()
+push!(args, "-I$includedir")
+
+# create context
+ctx = create_context(headerfiles, args, options)
+
+# run generator
+build!(ctx)
 
 close(loghandle)
