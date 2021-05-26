@@ -8,13 +8,12 @@ version = "1.2.1"
 [deps]
 CEnum = "fa961155-64e5-5f13-b03f-caf6b980ea82"
 GDAL_jll = "a7073274-a066-55f0-b90d-d619367d196c"
-MozillaCACerts_jll = "14a3606d-f60d-562e-9121-12d972cd8159"
+NetworkOptions = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 PROJ_jll = "58948b4f-47e0-5654-a9ad-f609743f8632"
 
 [compat]
 CEnum = "0.2, 0.3, 0.4"
 GDAL_jll = "300.200"
-MozillaCACerts_jll = ">= 2020"
 PROJ_jll = "700.200"
 julia = "1.3"
 
