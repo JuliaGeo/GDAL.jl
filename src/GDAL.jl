@@ -2,8 +2,8 @@ module GDAL
 
 using PROJ_jll
 using GDAL_jll
-using MozillaCACerts_jll: cacert  # not needed since julia 1.6
 using CEnum
+using NetworkOptions
 
 const Ctm = Base.Libc.TmStruct
 
@@ -45,9 +45,14 @@ function __init__()
     GDAL_DATA[] = joinpath(GDAL_jll.artifact_dir, "share", "gdal")
     cplsetconfigoption("GDAL_DATA", GDAL_DATA[])
 
-    @static if VERSION < v"1.6"
-        # set path to CA certificates
-        cplsetconfigoption("CURL_CA_BUNDLE", cacert)
+    # set path to CA certificates
+    ca_path = @static if VERSION >= v"1.6"
+        ca_roots()
+    else
+        ca_roots_path()
+    end
+    if ca_path !== nothing
+        cplsetconfigoption("CURL_CA_BUNDLE", ca_path)
     end
 
     # set PROJ_LIB location, this overrides setting the environment variable
