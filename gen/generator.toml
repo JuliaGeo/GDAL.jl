@@ -1,0 +1,49 @@
+# [general]
+# library_name = "libclang"
+# output_file_path = "./LibClang.jl"
+# module_name = "LibClang"
+# jll_pkg_name = "Clang_jll"
+# export_symbol_prefixes = ["CX", "clang_"]
+
+[general]
+library_name = "libgdal"
+output_file_path = "./GDAL.jl"
+module_name = "GDAL"
+jll_pkg_name = "GDAL_jll"
+
+# node with an id in the `printer_blacklist` will be ignored in the printing passes. 
+# this is very useful for custom editing. 
+# printer_blacklist = [
+#     "CINDEX_EXPORTS",
+#     "CINDEX_VERSION",
+#     "CINDEX_VERSION_STRING",
+#     "CINDEX_LINKAGE",
+#     "CINDEX_DEPRECATED",
+#     "LLVM_CLANG_C_STRICT_PROTOTYPES_BEGIN",
+#     "LLVM_CLANG_C_STRICT_PROTOTYPES_END",
+#     "LLVM_CLANG_C_EXTERN_C_BEGIN",
+#     "LLVM_CLANG_C_EXTERN_C_END"
+# ]
+
+smart_de_anonymize = true
+
+[codegen]
+use_julia_bool = true
+
+
+[codegen.macro]
+# it‘s highly recommended to set this entry to "basic".
+# if you'd like to skip all of the macros, please set this entry to "disable".
+# if you'd like to translate function-like macros to Julia, please set this entry to "aggressive".
+macro_mode = "basic"
+
+# if true, the generator prints the following message as comments.
+# "# Skipping MacroDefinition: ..."
+add_comment_for_skipped_macro = true
+
+# if true, ignore any macros that is suffixed with "_H" or in the `ignore_header_guards_with_suffixes` list
+ignore_header_guards = true
+ignore_header_guards_with_suffixes = []
+
+# if true, ignore those pure definition macros in the C code
+ignore_pure_definition = true
