@@ -9,11 +9,11 @@ Other packages can build on top of this to provide a more Julian user experience
 *Most users will want to use [ArchGDAL.jl](https://github.com/yeesian/ArchGDAL.jl) instead of using GDAL.jl directly.*
 
 ## Installation
-This package is registered, so add it using `Pkg`. This will also download GDAL binaries created by [Yggdrasil](https://github.com/JuliaPackaging/Yggdrasil/tree/master/G/GDAL).
+This package is registered, so add it using `Pkg`. This will also download GDAL binaries created in [Yggdrasil](https://github.com/JuliaPackaging/Yggdrasil/tree/master/G/GDAL).
 ```
 pkg> add GDAL
 ```
-To test if it is installed correctly, use:
+To check if it is installed correctly, you could run the test suite with:
 ```
 pkg> test GDAL
 ```
@@ -39,9 +39,13 @@ help?> GDAL.ogr_g_creategeometry
   handle to the newly create geometry or NULL on failure. Should be freed with OGRGDestroyGeometry() after use.
 ```
 
-Further usage documentation is not yet available, but the files `test/tutorial_raster.jl` and `test/tutorial_vector.jl` should provide a good hint based on the API tutorials from [GDAL.org](http://gdal.org/).
+Further usage documentation is not yet available, but the files
+[`test/tutorial_raster.jl`](https://github.com/JuliaGeo/GDAL.jl/blob/master/test/tutorial_raster.jl)
+and
+[`test/tutorial_vector.jl`](https://github.com/JuliaGeo/GDAL.jl/blob/master/test/tutorial_vector.jl)
+should provide a good hint based on the API tutorials from [GDAL.org](http://gdal.org/).
 
-The bulk of this package is generated automatically by the scripts under `gen/`. For developer documentation regarding this process see `gen/README.md`.
+The bulk of this package is generated automatically by the scripts under [`gen/`](https://github.com/JuliaGeo/GDAL.jl/tree/master/gen).
 
 ## Using the GDAL and OGR utilities
 
@@ -78,7 +82,7 @@ you set two things:
 Inside of julia (2) is always the case, and (1) happens on loading the `GDAL` module, in its
 `__init__` function.
 
-### Missing driver to support a format
+## Missing driver to support a format
 
 If you get an error such as the one below:
 ```
