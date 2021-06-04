@@ -1,15 +1,21 @@
 # GDAL.jl
 [![CI](https://github.com/JuliaGeo/GDAL.jl/workflows/CI/badge.svg)](https://github.com/JuliaGeo/GDAL.jl/actions?query=workflow%3ACI)
 
-Julia wrapper for [GDAL - Geospatial Data Abstraction Library](http://gdal.org/).
-This package is a binding to the C API of GDAL/OGR. It provides only a C style usage, where resources must be closed manually, and datasets are pointers. *Note: this also means that before being able to use any drivers (for input/output of different formats), they must be registered first using `GDAL.gdalallregister()`.*
+Julia wrapper for [GDAL - Geospatial Data Abstraction Library](http://gdal.org/). This
+package is a binding to the C API of GDAL/OGR. It provides only a C style usage, where
+resources must be closed manually, and datasets are pointers. *Note: this also means that
+before being able to use any drivers (for input/output of different formats), they must be
+registered first using `GDAL.gdalallregister()`.*
 
-Other packages can build on top of this to provide a more Julian user experience. See for example [ArchGDAL.jl](https://github.com/yeesian/ArchGDAL.jl).
+Other packages can build on top of this to provide a more Julian user experience. See for
+example [ArchGDAL.jl](https://github.com/yeesian/ArchGDAL.jl).
 
-*Most users will want to use [ArchGDAL.jl](https://github.com/yeesian/ArchGDAL.jl) instead of using GDAL.jl directly.*
+*Most users will want to use [ArchGDAL.jl](https://github.com/yeesian/ArchGDAL.jl) instead
+of using GDAL.jl directly.*
 
 ## Installation
-This package is registered, so add it using `Pkg`. This will also download GDAL binaries created in [Yggdrasil](https://github.com/JuliaPackaging/Yggdrasil/tree/master/G/GDAL).
+This package is registered, so add it using `Pkg`. This will also download GDAL binaries
+created in [Yggdrasil](https://github.com/JuliaPackaging/Yggdrasil/tree/master/G/GDAL).
 ```
 pkg> add GDAL
 ```
@@ -19,7 +25,8 @@ pkg> test GDAL
 ```
 
 ## Documentation
-Docstrings are automatically inserted from the GDAL documentation. Note that these are written for the C API, so function names and argument type names will differ.
+Docstrings are automatically inserted from the GDAL documentation. Note that these are
+written for the C API, so function names and argument type names will differ.
 ```
 julia> using GDAL
 
@@ -45,7 +52,8 @@ and
 [`test/tutorial_vector.jl`](https://github.com/JuliaGeo/GDAL.jl/blob/master/test/tutorial_vector.jl)
 should provide a good hint based on the API tutorials from [GDAL.org](http://gdal.org/).
 
-The bulk of this package is generated automatically by the scripts under [`gen/`](https://github.com/JuliaGeo/GDAL.jl/tree/master/gen).
+The bulk of this package is generated automatically by the scripts under
+[`gen/`](https://github.com/JuliaGeo/GDAL.jl/tree/master/gen).
 
 ## Using the GDAL and OGR utilities
 
@@ -90,4 +98,15 @@ GDALError (CE_Failure, code 6):
     The <...> driver needs to be compiled to support <...>
 ```
 
-This means that the GDAL binaries you are using, which normally come from the [Yggdrasil community build tree](https://github.com/JuliaPackaging/Yggdrasil/tree/master/G/GDAL), are not compiled with support for the format or feature you need. GDAL is a large library with many optional dependencies which allow support for more formats. Currently the amount of formats supported is still limited, but will grow over time. Lists of available formats can be found [here](https://gdal.org/drivers/raster/index.html) for rasters and [here](https://gdal.org/drivers/vector/index.html) for vectors. If you need support for another format, consider making an issue in this repository. Many formats need external libraries as added dependencies. This means an Yggdrasil build also needs to be available for that library, and added as a dependency. See [issue #65](https://github.com/JuliaGeo/GDAL.jl/issues/65) for a discussion on which new drivers should be prioritized.
+This means that the GDAL binaries you are using, which normally come from the [Yggdrasil
+community build tree](https://github.com/JuliaPackaging/Yggdrasil/tree/master/G/GDAL), are
+not compiled with support for the format or feature you need. GDAL is a large library with
+many optional dependencies which allow support for more formats. Currently the amount of
+formats supported is still limited, but will grow over time. Lists of available formats can
+be found [here](https://gdal.org/drivers/raster/index.html) for rasters and
+[here](https://gdal.org/drivers/vector/index.html) for vectors. If you need support for
+another format, consider making an issue in this repository. Many formats need external
+libraries as added dependencies. This means an Yggdrasil build also needs to be available
+for that library, and added as a dependency. See [issue
+#65](https://github.com/JuliaGeo/GDAL.jl/issues/65) for a discussion on which new drivers
+should be prioritized.
