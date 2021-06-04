@@ -43,13 +43,40 @@ Further usage documentation is not yet available, but the files `test/tutorial_r
 
 The bulk of this package is generated automatically by the scripts under `gen/`. For developer documentation regarding this process see `gen/README.md`.
 
-## Changelog
+## Using the GDAL and OGR utilities
 
-Since GDAL.jl v0.2.0 the package has changed considerably. The GDAL C function names are no longer being shortened. This brought many complications forcing us to simulate GDAL's types to disambiguate methods. As an example, the old `GDAL.open` now has to be made explicit: use `GDAL.gdalopen`, `ogr_dr_open`, or `ogropen`. Other options are simpler, `GDAL.allregister` can only become `GDAL.gdalallregister`. To help with updating old code in a semi automatic fashion, look at [this script](https://gist.github.com/visr/0a2ad3fe92073345c93c2ca42f5f58a0#file-renamer-jl) which uses [MacroTools.jl](https://mikeinnes.github.io/MacroTools.jl/stable/sourcewalk/) to do function renaming.
+The provided GDAL installation also contains the commonly used utilities such as
+`gdal_translate` and `ogr2ogr`. They can be called from Julia like so:
+```julia
+using GDAL
 
-The `GDAL.C` submodule no longer exists. All functions that were there and not in the main `GDAL` module, have now been moved over.
+GDAL.gdalinfo_path() do gdalinfo
+    run(`$gdalinfo path/to/file`)
+end
+```
 
-## Troubleshooting
+The `GDAL.<util>_path` are defined in the
+[`GDAL_jll`](https://github.com/JuliaBinaryWrappers/GDAL_jll.jl) package. If you only wish
+to run the utilities, that package will have all you need. A list of the available utilities
+can be found [here](https://github.com/JuliaBinaryWrappers/GDAL_jll.jl#products).
+Documentation for them is available on
+[gdal.org/programs](https://gdal.org/programs/index.html). Note that programs implemented in
+python (ending in .py) are not available, since those would require a python installations.
+
+Since GDAL 2.1's [RFC59.1](https://trac.osgeo.org/gdal/wiki/rfc59.1_utilities_as_a_library)
+most utilities are also available as functions in the library, they are implemented
+[here](https://github.com/JuliaGeo/GDAL.jl/blob/master/src/gdal_utils.jl) and tested
+[here](https://github.com/JuliaGeo/GDAL.jl/blob/master/test/gdal_utils.jl). If these are
+used you can avoid the need for calling the binaries.
+
+If you want to use these utilities from outside julia, note that this will not work unless
+you set two things:
+1. The environment variable `GDAL_DATA` must be set to the value returned in julia by
+   `GDAL.GDAL_DATA[]`.
+2. Julia's `Sys.BINDIR` must be in your path.
+
+Inside of julia (2) is always the case, and (1) happens on loading the `GDAL` module, in its
+`__init__` function.
 
 ### Missing driver to support a format
 
