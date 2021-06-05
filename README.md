@@ -62,8 +62,24 @@ The provided GDAL installation also contains the commonly used utilities such as
 ```julia
 using GDAL
 
+# list information about a raster dataset
 GDAL.gdalinfo_path() do gdalinfo
-    run(`$gdalinfo path/to/file`)
+    run(`$gdalinfo path/to/raster-file`)
+end
+
+# convert raster data between different formats
+GDAL.gdal_translate_path() do gdal_translate
+    run(`$gdal_translate -of COG input.asc output.tif`)
+end
+
+# list information about an OGR-supported data source
+GDAL.ogrinfo_path() do ogrinfo
+    run(`$ogrinfo path/to/vector-file`)
+end
+
+# convert simple features data between file formats
+GDAL.ogr2ogr_path() do ogr2ogr
+    run(`$ogr2ogr -f FlatGeobuf output.fgb input.shp`)
 end
 ```
 
