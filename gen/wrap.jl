@@ -11,6 +11,7 @@ Several custom transformations are applied that should make using this package m
 =#
 
 using Clang
+using Clang.Generators
 using MacroTools
 using Logging
 using EzXML
@@ -184,34 +185,19 @@ function header_outputfile(h)
     end
 end
 
-#=
-# set up the wrapping context
-wc = init(;
-    headers = headerfiles,
-    output_dir = output_dir,
-    common_file = joinpath(output_dir, "common.jl"),
-    clang_includes = [includedir, CLANG_INCLUDE],
-    clang_args = ["-I", includedir],
-    header_wrapped = (root, current) -> root == current,
-    header_library = x -> "libgdal",
-    header_outputfile = header_outputfile,
-    clang_diagnostics = true,
-    rewriter = rewriter,
-)
 
-# run the wrapping
-run(wc)
+function rewriter(dag::Clang.ExprDAG)
+    for node in get_nodes(dag)
+        # Macros are not generated, so no need to skip
+        map!(rewriter, node.exprs, node.exprs)
+    end
+end
 
-# delete empty file
-rm(joinpath(@__DIR__, "..", "src", "cpl_port.jl"))
-# delete Clang.jl helper files
-rm(joinpath(@__DIR__, "..", "src", "LibTemplate.jl"))
-rm(joinpath(@__DIR__, "..", "src", "ctypes.jl"))
-=#
-
-using Clang.Generators
 
 cd(@__DIR__)
+
+# Do not wrap stat, it is handled in prologue.jl
+@add_def stat
 
 options = load_options(joinpath(@__DIR__, "generator.toml"))
 
@@ -223,6 +209,8 @@ push!(args, "-I$includedir")
 ctx = create_context(headerfiles, args, options)
 
 # run generator
-build!(ctx)
+build!(ctx, BUILDSTAGE_NO_PRINTING)
+rewriter(ctx.dag)
+build!(ctx, BUILDSTAGE_PRINTING_ONLY)
 
 close(loghandle)

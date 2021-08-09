@@ -11,6 +11,8 @@ output_file_path = "./GDAL.jl"
 module_name = "GDAL"
 jll_pkg_name = "GDAL_jll"
 
+prologue_file_path = "./prologue.jl"
+
 # node with an id in the `printer_blacklist` will be ignored in the printing passes. 
 # this is very useful for custom editing. 
 # printer_blacklist = [
@@ -25,17 +27,40 @@ jll_pkg_name = "GDAL_jll"
 #     "LLVM_CLANG_C_EXTERN_C_END"
 # ]
 
+use_deterministic_symbol = true
+
 smart_de_anonymize = true
+
+# if set to "raw", extract and dump raw c comment;
+# if set to "doxygen", parse and format doxygen comment.
+# note: by default, Clang only parses doxygen comment, pass `-fparse-all-comments` to Clang in order to parse non-doxygen comments.
+extract_c_comment_style = "doxygen"
+
+# if set to true, single line comment will be printed as """comment""" instead of """\ncomment\n"""
+fold_single_line_comment = true
+
+# if set to "outofline", documentation of struct fields will be collected at the "Fields" section of the struct
+# if set to "inline", documentation of struct fields will go right above struct definition
+struct_field_comment_style = "outofline"
+
+# if set to "outofline", documentation of enumerators will be collected at the "Enumerators" section of the enum
+enumerator_comment_style = "outofline"
+
+# if set to true, C function prototype will be included in documentation
+show_c_function_prototype = false
 
 [codegen]
 use_julia_bool = true
 
+# set this to true if the C routine always expects a NUL-terminated string.
+# TODO: support filtering
+always_NUL_terminated_string = true
 
 [codegen.macro]
 # it‘s highly recommended to set this entry to "basic".
 # if you'd like to skip all of the macros, please set this entry to "disable".
 # if you'd like to translate function-like macros to Julia, please set this entry to "aggressive".
-macro_mode = "basic"
+macro_mode = "disable"
 
 # if true, the generator prints the following message as comments.
 # "# Skipping MacroDefinition: ..."
