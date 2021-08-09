@@ -111,7 +111,8 @@ function findnode(name::String, doc::EzXML.Document)
     # First we use XPath to find all nodes with this name and not kind='friend'.
     memberdef = "/doxygen/compounddef/sectiondef/memberdef"
     nofriend = "not(@kind='friend')"  # :-(
-    nodes = findall("$memberdef[name='$name' and $nofriend]", doc)
+    # Case insensitive hack
+    nodes = findall("$memberdef[translate(name, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='$name' and $nofriend]", doc)
 
     if length(nodes) == 0
         return nothing
