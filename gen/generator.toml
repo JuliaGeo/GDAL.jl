@@ -31,6 +31,8 @@ printer_blacklist = [
     "CPL_NULLPTR",
     "CPLReadDir",
     "OGRUnknownType",
+    "VSI_STAT64",
+    "VSI_STAT64_T",
 ]
 
 use_deterministic_symbol = true
