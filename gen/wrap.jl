@@ -27,6 +27,7 @@ global_logger(logger)
 
 # several functions for building docstrings
 include(joinpath(@__DIR__, "doc.jl"))
+include(joinpath(@__DIR__, "add_doc.jl"))
 
 includedir = joinpath(GDAL_jll.artifact_dir, "include")
 headerfiles = joinpath.(includedir, [
@@ -199,5 +200,7 @@ ctx = create_context(headerfiles, args, options)
 build!(ctx, BUILDSTAGE_NO_PRINTING)
 rewriter(ctx.dag)
 build!(ctx, BUILDSTAGE_PRINTING_ONLY)
+
+add_doc("../src/GDAL.jl")
 
 close(loghandle)
