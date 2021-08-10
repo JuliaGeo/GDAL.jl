@@ -198,6 +198,7 @@ cd(@__DIR__)
 
 # Do not wrap stat, it is handled in prologue.jl
 @add_def stat
+@add_def _stat64
 
 options = load_options(joinpath(@__DIR__, "generator.toml"))
 
