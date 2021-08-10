@@ -4,12 +4,11 @@ using GDAL_jll
 export GDAL_jll
 
 using CEnum
-using NetworkOptions
 
 # begin of prologue.jl
 
 using PROJ_jll
-using MozillaCACerts_jll: cacert
+using NetworkOptions
 
 const stat = Cvoid
 
