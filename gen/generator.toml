@@ -7,11 +7,12 @@
 
 [general]
 library_name = "libgdal"
-output_file_path = "./GDAL.jl"
+output_file_path = "../src/GDAL.jl"
 module_name = "GDAL"
 jll_pkg_name = "GDAL_jll"
 
 prologue_file_path = "./prologue.jl"
+epilogue_file_path = "./epilogue.jl"
 
 # node with an id in the `printer_blacklist` will be ignored in the printing passes. 
 # this is very useful for custom editing. 
