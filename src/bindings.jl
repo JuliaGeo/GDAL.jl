@@ -1,10 +1,3 @@
-module GDAL
-using GDAL_jll
-
-export GDAL_jll
-
-using CEnum
-
 """
     Stat(const char * pszFilename,
          VSIStatBufL * pStatBuf,
@@ -22028,6 +22021,4 @@ end
 
 function Base.setproperty!(x::Ptr{__JL_Ctag_438}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
-end
-
 end
