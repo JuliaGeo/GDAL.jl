@@ -7,6 +7,14 @@ const stat = Cvoid
 
 const tm = Libc.TmStruct
 
+CPL_STATIC_CAST(type, value) = begin
+        value % type
+    end
+
+GDAL_COMPUTE_VERSION(maj, min, rev) = begin
+        maj * 1000000 + min * 10000 + rev * 100
+    end
+
 const __time_t = Clong
 
 const time_t = __time_t
@@ -2051,8 +2059,7 @@ function gdaldestroyscaledprogress(arg1)
     aftercare(ccall((:GDALDestroyScaledProgress, libgdal), Cvoid, (Ptr{Cvoid},), arg1))
 end
 
-mutable struct CPLVirtualMem
-end
+const CPLVirtualMem = Cvoid
 
 """
 Callback triggered when a still unmapped page of virtual memory is accessed. The callback has the responsibility of filling the page with relevant values
@@ -2873,8 +2880,7 @@ function vsioverwritefile(fpTarget, pszSourceFilename)
     aftercare(ccall((:VSIOverwriteFile, libgdal), Cint, (Ptr{VSILFILE}, Cstring), fpTarget, pszSourceFilename))
 end
 
-mutable struct stat64
-end
+const stat64 = Cvoid
 
 "Type for [`VSIStatL`](@ref)() "
 const VSIStatBufL = stat64
@@ -3394,8 +3400,7 @@ function vsisiblingfiles(pszPath)
     aftercare(ccall((:VSISiblingFiles, libgdal), Ptr{Cstring}, (Cstring,), pszPath))
 end
 
-mutable struct VSIDIR
-end
+const VSIDIR = Cvoid
 
 """
     VSIOpenDir(const char * pszPath,
@@ -4802,38 +4807,32 @@ Enumeration giving the class of a GDALExtendedDataType.
         GEDTC_COMPOUND = 2
     end
 
-mutable struct GDALExtendedDataTypeHS
-end
+const GDALExtendedDataTypeHS = Cvoid
 
 "Opaque type for C++ GDALExtendedDataType "
 const GDALExtendedDataTypeH = Ptr{GDALExtendedDataTypeHS}
 
-mutable struct GDALEDTComponentHS
-end
+const GDALEDTComponentHS = Cvoid
 
 "Opaque type for C++ GDALEDTComponent "
 const GDALEDTComponentH = Ptr{GDALEDTComponentHS}
 
-mutable struct GDALGroupHS
-end
+const GDALGroupHS = Cvoid
 
 "Opaque type for C++ GDALGroup "
 const GDALGroupH = Ptr{GDALGroupHS}
 
-mutable struct GDALMDArrayHS
-end
+const GDALMDArrayHS = Cvoid
 
 "Opaque type for C++ GDALMDArray "
 const GDALMDArrayH = Ptr{GDALMDArrayHS}
 
-mutable struct GDALAttributeHS
-end
+const GDALAttributeHS = Cvoid
 
 "Opaque type for C++ GDALAttribute "
 const GDALAttributeH = Ptr{GDALAttributeHS}
 
-mutable struct GDALDimensionHS
-end
+const GDALDimensionHS = Cvoid
 
 "Opaque type for C++ GDALDimension "
 const GDALDimensionH = Ptr{GDALDimensionHS}
@@ -11063,8 +11062,7 @@ function gdalgridcreate(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, ar
     aftercare(ccall((:GDALGridCreate, libgdal), CPLErr, (GDALGridAlgorithm, Ptr{Cvoid}, GUInt32, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Cdouble, Cdouble, Cdouble, Cdouble, GUInt32, GUInt32, GDALDataType, Ptr{Cvoid}, GDALProgressFunc, Ptr{Cvoid}), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16))
 end
 
-mutable struct GDALGridContext
-end
+const GDALGridContext = Cvoid
 
 """
     GDALGridContextCreate(GDALGridAlgorithm eAlgorithm,
@@ -11595,8 +11593,7 @@ function cplgetnumcpus()
     aftercare(ccall((:CPLGetNumCPUs, libgdal), Cint, ()))
 end
 
-mutable struct _CPLLock
-end
+const _CPLLock = Cvoid
 
 const CPLLock = _CPLLock
 
@@ -12384,11 +12381,9 @@ function vrtaddfuncsource(arg1, arg2, arg3, arg4)
     aftercare(ccall((:VRTAddFuncSource, libgdal), CPLErr, (VRTSourcedRasterBandH, VRTImageReadFunc, Ptr{Cvoid}, Cdouble), arg1, arg2, arg3, arg4))
 end
 
-mutable struct GDALInfoOptions
-end
+const GDALInfoOptions = Cvoid
 
-mutable struct GDALInfoOptionsForBinary
-end
+const GDALInfoOptionsForBinary = Cvoid
 
 """
     GDALInfoOptionsNew(char ** papszArgv,
@@ -12436,11 +12431,9 @@ function gdalinfo(hDataset, psOptions)
     aftercare(ccall((:GDALInfo, libgdal), Cstring, (GDALDatasetH, Ptr{GDALInfoOptions}), hDataset, psOptions), true)
 end
 
-mutable struct GDALTranslateOptions
-end
+const GDALTranslateOptions = Cvoid
 
-mutable struct GDALTranslateOptionsForBinary
-end
+const GDALTranslateOptionsForBinary = Cvoid
 
 """
     GDALTranslateOptionsNew(char ** papszArgv,
@@ -12508,11 +12501,9 @@ function gdaltranslate(pszDestFilename, hSrcDataset, psOptions, pbUsageError)
     aftercare(ccall((:GDALTranslate, libgdal), GDALDatasetH, (Cstring, GDALDatasetH, Ptr{GDALTranslateOptions}, Ptr{Cint}), pszDestFilename, hSrcDataset, psOptions, pbUsageError))
 end
 
-mutable struct GDALWarpAppOptions
-end
+const GDALWarpAppOptions = Cvoid
 
-mutable struct GDALWarpAppOptionsForBinary
-end
+const GDALWarpAppOptionsForBinary = Cvoid
 
 """
     GDALWarpAppOptionsNew(char ** papszArgv,
@@ -12614,11 +12605,9 @@ function gdalwarp(pszDest, hDstDS, nSrcCount, pahSrcDS, psOptions, pbUsageError)
     aftercare(ccall((:GDALWarp, libgdal), GDALDatasetH, (Cstring, GDALDatasetH, Cint, Ptr{GDALDatasetH}, Ptr{GDALWarpAppOptions}, Ptr{Cint}), pszDest, hDstDS, nSrcCount, pahSrcDS, psOptions, pbUsageError))
 end
 
-mutable struct GDALVectorTranslateOptions
-end
+const GDALVectorTranslateOptions = Cvoid
 
-mutable struct GDALVectorTranslateOptionsForBinary
-end
+const GDALVectorTranslateOptionsForBinary = Cvoid
 
 """
     GDALVectorTranslateOptionsNew(char ** papszArgv,
@@ -12690,11 +12679,9 @@ function gdalvectortranslate(pszDest, hDstDS, nSrcCount, pahSrcDS, psOptions, pb
     aftercare(ccall((:GDALVectorTranslate, libgdal), GDALDatasetH, (Cstring, GDALDatasetH, Cint, Ptr{GDALDatasetH}, Ptr{GDALVectorTranslateOptions}, Ptr{Cint}), pszDest, hDstDS, nSrcCount, pahSrcDS, psOptions, pbUsageError))
 end
 
-mutable struct GDALDEMProcessingOptions
-end
+const GDALDEMProcessingOptions = Cvoid
 
-mutable struct GDALDEMProcessingOptionsForBinary
-end
+const GDALDEMProcessingOptionsForBinary = Cvoid
 
 """
     GDALDEMProcessingOptionsNew(char ** papszArgv,
@@ -12766,11 +12753,9 @@ function gdaldemprocessing(pszDestFilename, hSrcDataset, pszProcessing, pszColor
     aftercare(ccall((:GDALDEMProcessing, libgdal), GDALDatasetH, (Cstring, GDALDatasetH, Cstring, Cstring, Ptr{GDALDEMProcessingOptions}, Ptr{Cint}), pszDestFilename, hSrcDataset, pszProcessing, pszColorFilename, psOptions, pbUsageError))
 end
 
-mutable struct GDALNearblackOptions
-end
+const GDALNearblackOptions = Cvoid
 
-mutable struct GDALNearblackOptionsForBinary
-end
+const GDALNearblackOptionsForBinary = Cvoid
 
 """
     GDALNearblackOptionsNew(char ** papszArgv,
@@ -12840,11 +12825,9 @@ function gdalnearblack(pszDest, hDstDS, hSrcDS, psOptions, pbUsageError)
     aftercare(ccall((:GDALNearblack, libgdal), GDALDatasetH, (Cstring, GDALDatasetH, GDALDatasetH, Ptr{GDALNearblackOptions}, Ptr{Cint}), pszDest, hDstDS, hSrcDS, psOptions, pbUsageError))
 end
 
-mutable struct GDALGridOptions
-end
+const GDALGridOptions = Cvoid
 
-mutable struct GDALGridOptionsForBinary
-end
+const GDALGridOptionsForBinary = Cvoid
 
 """
     GDALGridOptionsNew(char ** papszArgv,
@@ -12912,11 +12895,9 @@ function gdalgrid(pszDest, hSrcDS, psOptions, pbUsageError)
     aftercare(ccall((:GDALGrid, libgdal), GDALDatasetH, (Cstring, GDALDatasetH, Ptr{GDALGridOptions}, Ptr{Cint}), pszDest, hSrcDS, psOptions, pbUsageError))
 end
 
-mutable struct GDALRasterizeOptions
-end
+const GDALRasterizeOptions = Cvoid
 
-mutable struct GDALRasterizeOptionsForBinary
-end
+const GDALRasterizeOptionsForBinary = Cvoid
 
 """
     GDALRasterizeOptionsNew(char ** papszArgv,
@@ -12986,11 +12967,9 @@ function gdalrasterize(pszDest, hDstDS, hSrcDS, psOptions, pbUsageError)
     aftercare(ccall((:GDALRasterize, libgdal), GDALDatasetH, (Cstring, GDALDatasetH, GDALDatasetH, Ptr{GDALRasterizeOptions}, Ptr{Cint}), pszDest, hDstDS, hSrcDS, psOptions, pbUsageError))
 end
 
-mutable struct GDALBuildVRTOptions
-end
+const GDALBuildVRTOptions = Cvoid
 
-mutable struct GDALBuildVRTOptionsForBinary
-end
+const GDALBuildVRTOptionsForBinary = Cvoid
 
 """
     GDALBuildVRTOptionsNew(char ** papszArgv,
@@ -13062,11 +13041,9 @@ function gdalbuildvrt(pszDest, nSrcCount, pahSrcDS, papszSrcDSNames, psOptions, 
     aftercare(ccall((:GDALBuildVRT, libgdal), GDALDatasetH, (Cstring, Cint, Ptr{GDALDatasetH}, Ptr{Cstring}, Ptr{GDALBuildVRTOptions}, Ptr{Cint}), pszDest, nSrcCount, pahSrcDS, papszSrcDSNames, psOptions, pbUsageError))
 end
 
-mutable struct GDALMultiDimInfoOptions
-end
+const GDALMultiDimInfoOptions = Cvoid
 
-mutable struct GDALMultiDimInfoOptionsForBinary
-end
+const GDALMultiDimInfoOptionsForBinary = Cvoid
 
 """
     GDALMultiDimInfoOptionsNew(char ** papszArgv,
@@ -13114,11 +13091,9 @@ function gdalmultidiminfo(hDataset, psOptions)
     aftercare(ccall((:GDALMultiDimInfo, libgdal), Cstring, (GDALDatasetH, Ptr{GDALMultiDimInfoOptions}), hDataset, psOptions), false)
 end
 
-mutable struct GDALMultiDimTranslateOptions
-end
+const GDALMultiDimTranslateOptions = Cvoid
 
-mutable struct GDALMultiDimTranslateOptionsForBinary
-end
+const GDALMultiDimTranslateOptionsForBinary = Cvoid
 
 """
     GDALMultiDimTranslateOptionsNew(char ** papszArgv,
@@ -13193,8 +13168,7 @@ end
 "Opaque type for a coordinate transformation object "
 const OGRCoordinateTransformationH = Ptr{Cvoid}
 
-mutable struct _CPLXMLNode
-end
+const _CPLXMLNode = Cvoid
 
 """
     OGR_G_CreateFromWkb(const void * pabyData,
@@ -14004,8 +13978,7 @@ function ogr_g_transformto(arg1, arg2)
     aftercare(ccall((:OGR_G_TransformTo, libgdal), OGRErr, (OGRGeometryH, OGRSpatialReferenceH), arg1, arg2))
 end
 
-mutable struct OGRGeomTransformer
-end
+const OGRGeomTransformer = Cvoid
 
 "Opaque type for a geometry transformer. "
 const OGRGeomTransformerH = Ptr{OGRGeomTransformer}
@@ -15269,8 +15242,7 @@ const OGRFieldDefnH = Ptr{Cvoid}
 "Opaque type for a feature definition (OGRFeatureDefn) "
 const OGRFeatureDefnH = Ptr{Cvoid}
 
-mutable struct OGRGeomFieldDefnHS
-end
+const OGRGeomFieldDefnHS = Cvoid
 
 "Opaque type for a geometry field definition (OGRGeomFieldDefn) "
 const OGRGeomFieldDefnH = Ptr{OGRGeomFieldDefnHS}
@@ -21653,8 +21625,7 @@ struct OSRCRSInfo
     pszProjectionMethod::Cstring
 end
 
-mutable struct OSRCRSListParameters
-end
+const OSRCRSListParameters = Cvoid
 
 """
     OSRGetCRSInfoListFromDatabase(const char * pszAuthName,
@@ -21701,8 +21672,7 @@ function octnewcoordinatetransformation(hSourceSRS, hTargetSRS)
     aftercare(ccall((:OCTNewCoordinateTransformation, libgdal), OGRCoordinateTransformationH, (OGRSpatialReferenceH, OGRSpatialReferenceH), hSourceSRS, hTargetSRS))
 end
 
-mutable struct OGRCoordinateTransformationOptions
-end
+const OGRCoordinateTransformationOptions = Cvoid
 
 "Coordinate transformation options. "
 const OGRCoordinateTransformationOptionsH = Ptr{OGRCoordinateTransformationOptions}
@@ -22022,3 +21992,841 @@ end
 function Base.setproperty!(x::Ptr{__JL_Ctag_438}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
+
+const CPL_MULTIPROC_PTHREAD = 1
+
+const GDAL_PREFIX = "/workspace/destdir"
+
+const HAVE_5ARGS_MREMAP = 1
+
+const HAVE_ATOLL = 1
+
+const HAVE_CXX11 = 1
+
+const HAVE_DECL_STRTOF = 1
+
+const HAVE_GCC_ATOMIC_BUILTINS = 1
+
+const HAVE_GCC_BSWAP = 1
+
+const HAVE_GCC_WARNING_ZERO_AS_NULL_POINTER_CONSTANT = 1
+
+const HAVE_GETADDRINFO = 1
+
+const HAVE_GETCWD = 1
+
+const HAVE_GETRLIMIT = 1
+
+const HAVE_IEEEFP = 1
+
+const HAVE_LIBDL = 1
+
+const HAVE_LIBM = 1
+
+const HAVE_LIBRT = 1
+
+const HAVE_LONG_LONG = 1
+
+const HAVE_LSTAT = 1
+
+const HAVE_MMAP = 1
+
+const HAVE_POSIX_MEMALIGN = 1
+
+const HAVE_POSIX_SPAWNP = 1
+
+const HAVE_PTHREAD_MUTEX_ADAPTIVE_NP = 1
+
+const HAVE_PTHREAD_MUTEX_RECURSIVE = 1
+
+const HAVE_PTHREAD_SPINLOCK = 1
+
+const HAVE_READLINK = 1
+
+const HAVE_RLIMIT_AS = 1
+
+const HAVE_SC_PHYS_PAGES = 1
+
+const HAVE_SIGACTION = 1
+
+const HAVE_SNPRINTF = 1
+
+const HAVE_STATVFS = 1
+
+const HAVE_STATVFS64 = 1
+
+const HAVE_STD_IS_NAN = 1
+
+const HAVE_STRTOF = 1
+
+const HAVE_STRTOLL = 1
+
+const HAVE_STRTOULL = 1
+
+const HAVE_UINT128_T = 1
+
+const HAVE_UINTPTR_T = 1
+
+const HAVE_USELOCALE = 1
+
+const HAVE_VFORK = 1
+
+const HAVE_VPRINTF = 1
+
+const HAVE_VSNPRINTF = 1
+
+const LT_OBJDIR = ".libs/"
+
+const PACKAGE_BUGREPORT = ""
+
+const PACKAGE_NAME = ""
+
+const PACKAGE_STRING = ""
+
+const PACKAGE_TARNAME = ""
+
+const PACKAGE_URL = ""
+
+const PACKAGE_VERSION = ""
+
+const SIZEOF_INT = 4
+
+const SIZEOF_UNSIGNED_LONG = 8
+
+const SIZEOF_VOIDP = 8
+
+const STDC_HEADERS = 1
+
+const UNIX_STDIO_64 = 1
+
+const VSI_LARGE_API_SUPPORTED = 1
+
+const VSI_STAT64 = stat64
+
+const VSI_STAT64_T = stat64
+
+const CPLE_None = 0
+
+const CPLE_AppDefined = 1
+
+const CPLE_OutOfMemory = 2
+
+const CPLE_FileIO = 3
+
+const CPLE_OpenFailed = 4
+
+const CPLE_IllegalArg = 5
+
+const CPLE_NotSupported = 6
+
+const CPLE_AssertionFailed = 7
+
+const CPLE_NoWriteAccess = 8
+
+const CPLE_UserInterrupt = 9
+
+const CPLE_ObjectNull = 10
+
+const CPLE_HttpResponse = 11
+
+const CPLE_AWSBucketNotFound = 12
+
+const CPLE_AWSObjectNotFound = 13
+
+const CPLE_AWSAccessDenied = 14
+
+const CPLE_AWSInvalidCredentials = 15
+
+const CPLE_AWSSignatureDoesNotMatch = 16
+
+const CPLE_AWSError = 17
+
+const VALIDATE_POINTER_ERR = CE_Failure
+
+const GINTBIG_MIN = CPL_STATIC_CAST(GIntBig, 0x80000000) << 32
+
+const GINTBIG_MAX = CPL_STATIC_CAST(GIntBig, 0x7fffffff) << 32 | Cuint(0xffffffff)
+
+const GUINTBIG_MAX = CPL_STATIC_CAST(GUIntBig, Cuint(0xffffffff)) << 32 | Cuint(0xffffffff)
+
+const CPL_HAS_GINT64 = 1
+
+const GINT64_MIN = GINTBIG_MIN
+
+const GINT64_MAX = GINTBIG_MAX
+
+const GUINT64_MAX = GUINTBIG_MAX
+
+const CPL_FRMT_GB_WITHOUT_PREFIX = "ll"
+
+const CPL_IS_LSB = 1
+
+const FALSE = 0
+
+const TRUE = 1
+
+const VSI_L_OFFSET_MAX = GUINTBIG_MAX
+
+const VSI_STAT_EXISTS_FLAG = 0x01
+
+const VSI_STAT_NATURE_FLAG = 0x02
+
+const VSI_STAT_SIZE_FLAG = 0x04
+
+const VSI_STAT_SET_ERROR_FLAG = 0x08
+
+const GDAL_VERSION_MAJOR = 3
+
+const GDAL_VERSION_MINOR = 2
+
+const GDAL_VERSION_REV = 1
+
+const GDAL_VERSION_BUILD = 0
+
+const GDAL_VERSION_NUM = GDAL_COMPUTE_VERSION(GDAL_VERSION_MAJOR, GDAL_VERSION_MINOR, GDAL_VERSION_REV) + GDAL_VERSION_BUILD
+
+const GDAL_RELEASE_DATE = 20201229
+
+const GDAL_RELEASE_NAME = "3.2.1"
+
+const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
+
+const GDALMD_AREA_OR_POINT = "AREA_OR_POINT"
+
+const GDALMD_AOP_AREA = "Area"
+
+const GDALMD_AOP_POINT = "Point"
+
+const CPLE_WrongFormat = CPL_STATIC_CAST(CPLErrorNum, 200)
+
+const GDAL_DMD_LONGNAME = "DMD_LONGNAME"
+
+const GDAL_DMD_HELPTOPIC = "DMD_HELPTOPIC"
+
+const GDAL_DMD_MIMETYPE = "DMD_MIMETYPE"
+
+const GDAL_DMD_EXTENSION = "DMD_EXTENSION"
+
+const GDAL_DMD_CONNECTION_PREFIX = "DMD_CONNECTION_PREFIX"
+
+const GDAL_DMD_EXTENSIONS = "DMD_EXTENSIONS"
+
+const GDAL_DMD_CREATIONOPTIONLIST = "DMD_CREATIONOPTIONLIST"
+
+const GDAL_DMD_MULTIDIM_DATASET_CREATIONOPTIONLIST = "DMD_MULTIDIM_DATASET_CREATIONOPTIONLIST"
+
+const GDAL_DMD_MULTIDIM_GROUP_CREATIONOPTIONLIST = "DMD_MULTIDIM_GROUP_CREATIONOPTIONLIST"
+
+const GDAL_DMD_MULTIDIM_DIMENSION_CREATIONOPTIONLIST = "DMD_MULTIDIM_DIMENSION_CREATIONOPTIONLIST"
+
+const GDAL_DMD_MULTIDIM_ARRAY_CREATIONOPTIONLIST = "DMD_MULTIDIM_ARRAY_CREATIONOPTIONLIST"
+
+const GDAL_DMD_MULTIDIM_ATTRIBUTE_CREATIONOPTIONLIST = "DMD_MULTIDIM_ATTRIBUTE_CREATIONOPTIONLIST"
+
+const GDAL_DMD_OPENOPTIONLIST = "DMD_OPENOPTIONLIST"
+
+const GDAL_DMD_CREATIONDATATYPES = "DMD_CREATIONDATATYPES"
+
+const GDAL_DMD_CREATIONFIELDDATATYPES = "DMD_CREATIONFIELDDATATYPES"
+
+const GDAL_DMD_CREATIONFIELDDATASUBTYPES = "DMD_CREATIONFIELDDATASUBTYPES"
+
+const GDAL_DMD_SUBDATASETS = "DMD_SUBDATASETS"
+
+const GDAL_DCAP_OPEN = "DCAP_OPEN"
+
+const GDAL_DCAP_CREATE = "DCAP_CREATE"
+
+const GDAL_DCAP_CREATE_MULTIDIMENSIONAL = "DCAP_CREATE_MULTIDIMENSIONAL"
+
+const GDAL_DCAP_CREATECOPY = "DCAP_CREATECOPY"
+
+const GDAL_DCAP_CREATECOPY_MULTIDIMENSIONAL = "DCAP_CREATECOPY_MULTIDIMENSIONAL"
+
+const GDAL_DCAP_MULTIDIM_RASTER = "DCAP_MULTIDIM_RASTER"
+
+const GDAL_DCAP_SUBCREATECOPY = "DCAP_SUBCREATECOPY"
+
+const GDAL_DCAP_VIRTUALIO = "DCAP_VIRTUALIO"
+
+const GDAL_DCAP_RASTER = "DCAP_RASTER"
+
+const GDAL_DCAP_VECTOR = "DCAP_VECTOR"
+
+const GDAL_DCAP_GNM = "DCAP_GNM"
+
+const GDAL_DCAP_NOTNULL_FIELDS = "DCAP_NOTNULL_FIELDS"
+
+const GDAL_DCAP_UNIQUE_FIELDS = "DCAP_UNIQUE_FIELDS"
+
+const GDAL_DCAP_DEFAULT_FIELDS = "DCAP_DEFAULT_FIELDS"
+
+const GDAL_DCAP_NOTNULL_GEOMFIELDS = "DCAP_NOTNULL_GEOMFIELDS"
+
+const GDAL_DCAP_NONSPATIAL = "DCAP_NONSPATIAL"
+
+const GDAL_DCAP_FEATURE_STYLES = "DCAP_FEATURE_STYLES"
+
+const GDAL_DIM_TYPE_HORIZONTAL_X = "HORIZONTAL_X"
+
+const GDAL_DIM_TYPE_HORIZONTAL_Y = "HORIZONTAL_Y"
+
+const GDAL_DIM_TYPE_VERTICAL = "VERTICAL"
+
+const GDAL_DIM_TYPE_TEMPORAL = "TEMPORAL"
+
+const GDAL_DIM_TYPE_PARAMETRIC = "PARAMETRIC"
+
+const GDAL_OF_READONLY = 0x00
+
+const GDAL_OF_UPDATE = 0x01
+
+const GDAL_OF_ALL = 0x00
+
+const GDAL_OF_RASTER = 0x02
+
+const GDAL_OF_VECTOR = 0x04
+
+const GDAL_OF_GNM = 0x08
+
+const GDAL_OF_MULTIDIM_RASTER = 0x10
+
+const GDAL_OF_KIND_MASK = 0x1e
+
+const GDAL_OF_SHARED = 0x20
+
+const GDAL_OF_VERBOSE_ERROR = 0x40
+
+const GDAL_OF_INTERNAL = 0x80
+
+const GDAL_OF_DEFAULT_BLOCK_ACCESS = 0
+
+const GDAL_OF_ARRAY_BLOCK_ACCESS = 0x0100
+
+const GDAL_OF_HASHSET_BLOCK_ACCESS = 0x0200
+
+const GDAL_OF_RESERVED_1 = 0x0300
+
+const GDAL_OF_BLOCK_ACCESS_MASK = 0x0300
+
+const GDAL_DS_LAYER_CREATIONOPTIONLIST = "DS_LAYER_CREATIONOPTIONLIST"
+
+const GMF_ALL_VALID = 0x01
+
+const GMF_PER_DATASET = 0x02
+
+const GMF_ALPHA = 0x04
+
+const GMF_NODATA = 0x08
+
+const GDAL_DATA_COVERAGE_STATUS_UNIMPLEMENTED = 0x01
+
+const GDAL_DATA_COVERAGE_STATUS_DATA = 0x02
+
+const GDAL_DATA_COVERAGE_STATUS_EMPTY = 0x04
+
+const GDAL_GTI2_SIGNATURE = "GTI2"
+
+const CPLMutex = Cvoid
+
+const CPLCond = Cvoid
+
+const CPLJoinableThread = Cvoid
+
+const CPL_MUTEX_RECURSIVE = 0
+
+const CPL_MUTEX_ADAPTIVE = 1
+
+const CPL_MUTEX_REGULAR = 2
+
+const CTLS_RLBUFFERINFO = 1
+
+const CTLS_WIN32_COND = 2
+
+const CTLS_CSVTABLEPTR = 3
+
+const CTLS_CSVDEFAULTFILENAME = 4
+
+const CTLS_ERRORCONTEXT = 5
+
+const CTLS_VSICURL_CACHEDCONNECTION = 6
+
+const CTLS_PATHBUF = 7
+
+const CTLS_ABSTRACTARCHIVE_SPLIT = 8
+
+const CTLS_GDALOPEN_ANTIRECURSION = 9
+
+const CTLS_CPLSPRINTF = 10
+
+const CTLS_RESPONSIBLEPID = 11
+
+const CTLS_VERSIONINFO = 12
+
+const CTLS_VERSIONINFO_LICENCE = 13
+
+const CTLS_CONFIGOPTIONS = 14
+
+const CTLS_FINDFILE = 15
+
+const CTLS_VSIERRORCONTEXT = 16
+
+const CTLS_ERRORHANDLERACTIVEDATA = 17
+
+const CTLS_PROJCONTEXTHOLDER = 18
+
+const CTLS_GDALDEFAULTOVR_ANTIREC = 19
+
+const CTLS_HTTPFETCHCALLBACK = 20
+
+const CTLS_MAX = 32
+
+const VRT_NODATA_UNSET = -1234.56
+
+const OGRERR_NONE = 0
+
+const OGRERR_NOT_ENOUGH_DATA = 1
+
+const OGRERR_NOT_ENOUGH_MEMORY = 2
+
+const OGRERR_UNSUPPORTED_GEOMETRY_TYPE = 3
+
+const OGRERR_UNSUPPORTED_OPERATION = 4
+
+const OGRERR_CORRUPT_DATA = 5
+
+const OGRERR_FAILURE = 6
+
+const OGRERR_UNSUPPORTED_SRS = 7
+
+const OGRERR_INVALID_HANDLE = 8
+
+const OGRERR_NON_EXISTING_FEATURE = 9
+
+const wkb25DBit = 0x80000000
+
+const ogrZMarker = 0x21125711
+
+const ALTER_NAME_FLAG = 0x01
+
+const ALTER_TYPE_FLAG = 0x02
+
+const ALTER_WIDTH_PRECISION_FLAG = 0x04
+
+const ALTER_NULLABLE_FLAG = 0x08
+
+const ALTER_DEFAULT_FLAG = 0x10
+
+const ALTER_UNIQUE_FLAG = 0x20
+
+const ALTER_ALL_FLAG = ((((ALTER_NAME_FLAG | ALTER_TYPE_FLAG) | ALTER_WIDTH_PRECISION_FLAG) | ALTER_NULLABLE_FLAG) | ALTER_DEFAULT_FLAG) | ALTER_UNIQUE_FLAG
+
+const OGR_F_VAL_NULL = 0x00000001
+
+const OGR_F_VAL_GEOM_TYPE = 0x00000002
+
+const OGR_F_VAL_WIDTH = 0x00000004
+
+const OGR_F_VAL_ALLOW_NULL_WHEN_DEFAULT = 0x00000008
+
+const OGR_F_VAL_ALLOW_DIFFERENT_GEOM_DIM = 0x00000010
+
+const OGR_F_VAL_ALL = 0x7fffffff & ~OGR_F_VAL_ALLOW_DIFFERENT_GEOM_DIM
+
+const OGRNullFID = -1
+
+const OGRUnsetMarker = -21121
+
+const OGRNullMarker = -21122
+
+const OLCRandomRead = "RandomRead"
+
+const OLCSequentialWrite = "SequentialWrite"
+
+const OLCRandomWrite = "RandomWrite"
+
+const OLCFastSpatialFilter = "FastSpatialFilter"
+
+const OLCFastFeatureCount = "FastFeatureCount"
+
+const OLCFastGetExtent = "FastGetExtent"
+
+const OLCCreateField = "CreateField"
+
+const OLCDeleteField = "DeleteField"
+
+const OLCReorderFields = "ReorderFields"
+
+const OLCAlterFieldDefn = "AlterFieldDefn"
+
+const OLCTransactions = "Transactions"
+
+const OLCDeleteFeature = "DeleteFeature"
+
+const OLCFastSetNextByIndex = "FastSetNextByIndex"
+
+const OLCStringsAsUTF8 = "StringsAsUTF8"
+
+const OLCIgnoreFields = "IgnoreFields"
+
+const OLCCreateGeomField = "CreateGeomField"
+
+const OLCCurveGeometries = "CurveGeometries"
+
+const OLCMeasuredGeometries = "MeasuredGeometries"
+
+const ODsCCreateLayer = "CreateLayer"
+
+const ODsCDeleteLayer = "DeleteLayer"
+
+const ODsCCreateGeomFieldAfterCreateLayer = "CreateGeomFieldAfterCreateLayer"
+
+const ODsCCurveGeometries = "CurveGeometries"
+
+const ODsCTransactions = "Transactions"
+
+const ODsCEmulatedTransactions = "EmulatedTransactions"
+
+const ODsCMeasuredGeometries = "MeasuredGeometries"
+
+const ODsCRandomLayerRead = "RandomLayerRead"
+
+const ODsCRandomLayerWrite = "RandomLayerWrite "
+
+const ODrCCreateDataSource = "CreateDataSource"
+
+const ODrCDeleteDataSource = "DeleteDataSource"
+
+const OLMD_FID64 = "OLMD_FID64"
+
+const SRS_WKT_WGS84_LAT_LONG = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]"
+
+const SRS_PT_ALBERS_CONIC_EQUAL_AREA = "Albers_Conic_Equal_Area"
+
+const SRS_PT_AZIMUTHAL_EQUIDISTANT = "Azimuthal_Equidistant"
+
+const SRS_PT_CASSINI_SOLDNER = "Cassini_Soldner"
+
+const SRS_PT_CYLINDRICAL_EQUAL_AREA = "Cylindrical_Equal_Area"
+
+const SRS_PT_BONNE = "Bonne"
+
+const SRS_PT_ECKERT_I = "Eckert_I"
+
+const SRS_PT_ECKERT_II = "Eckert_II"
+
+const SRS_PT_ECKERT_III = "Eckert_III"
+
+const SRS_PT_ECKERT_IV = "Eckert_IV"
+
+const SRS_PT_ECKERT_V = "Eckert_V"
+
+const SRS_PT_ECKERT_VI = "Eckert_VI"
+
+const SRS_PT_EQUIDISTANT_CONIC = "Equidistant_Conic"
+
+const SRS_PT_EQUIRECTANGULAR = "Equirectangular"
+
+const SRS_PT_GALL_STEREOGRAPHIC = "Gall_Stereographic"
+
+const SRS_PT_GAUSSSCHREIBERTMERCATOR = "Gauss_Schreiber_Transverse_Mercator"
+
+const SRS_PT_GEOSTATIONARY_SATELLITE = "Geostationary_Satellite"
+
+const SRS_PT_GOODE_HOMOLOSINE = "Goode_Homolosine"
+
+const SRS_PT_IGH = "Interrupted_Goode_Homolosine"
+
+const SRS_PT_GNOMONIC = "Gnomonic"
+
+const SRS_PT_HOTINE_OBLIQUE_MERCATOR_AZIMUTH_CENTER = "Hotine_Oblique_Mercator_Azimuth_Center"
+
+const SRS_PT_HOTINE_OBLIQUE_MERCATOR = "Hotine_Oblique_Mercator"
+
+const SRS_PT_HOTINE_OBLIQUE_MERCATOR_TWO_POINT_NATURAL_ORIGIN = "Hotine_Oblique_Mercator_Two_Point_Natural_Origin"
+
+const SRS_PT_LABORDE_OBLIQUE_MERCATOR = "Laborde_Oblique_Mercator"
+
+const SRS_PT_LAMBERT_CONFORMAL_CONIC_1SP = "Lambert_Conformal_Conic_1SP"
+
+const SRS_PT_LAMBERT_CONFORMAL_CONIC_2SP = "Lambert_Conformal_Conic_2SP"
+
+const SRS_PT_LAMBERT_CONFORMAL_CONIC_2SP_BELGIUM = "Lambert_Conformal_Conic_2SP_Belgium"
+
+const SRS_PT_LAMBERT_AZIMUTHAL_EQUAL_AREA = "Lambert_Azimuthal_Equal_Area"
+
+const SRS_PT_MERCATOR_1SP = "Mercator_1SP"
+
+const SRS_PT_MERCATOR_2SP = "Mercator_2SP"
+
+const SRS_PT_MERCATOR_AUXILIARY_SPHERE = "Mercator_Auxiliary_Sphere"
+
+const SRS_PT_MILLER_CYLINDRICAL = "Miller_Cylindrical"
+
+const SRS_PT_MOLLWEIDE = "Mollweide"
+
+const SRS_PT_NEW_ZEALAND_MAP_GRID = "New_Zealand_Map_Grid"
+
+const SRS_PT_OBLIQUE_STEREOGRAPHIC = "Oblique_Stereographic"
+
+const SRS_PT_ORTHOGRAPHIC = "Orthographic"
+
+const SRS_PT_POLAR_STEREOGRAPHIC = "Polar_Stereographic"
+
+const SRS_PT_POLYCONIC = "Polyconic"
+
+const SRS_PT_ROBINSON = "Robinson"
+
+const SRS_PT_SINUSOIDAL = "Sinusoidal"
+
+const SRS_PT_STEREOGRAPHIC = "Stereographic"
+
+const SRS_PT_SWISS_OBLIQUE_CYLINDRICAL = "Swiss_Oblique_Cylindrical"
+
+const SRS_PT_TRANSVERSE_MERCATOR = "Transverse_Mercator"
+
+const SRS_PT_TRANSVERSE_MERCATOR_SOUTH_ORIENTED = "Transverse_Mercator_South_Orientated"
+
+const SRS_PT_TRANSVERSE_MERCATOR_MI_21 = "Transverse_Mercator_MapInfo_21"
+
+const SRS_PT_TRANSVERSE_MERCATOR_MI_22 = "Transverse_Mercator_MapInfo_22"
+
+const SRS_PT_TRANSVERSE_MERCATOR_MI_23 = "Transverse_Mercator_MapInfo_23"
+
+const SRS_PT_TRANSVERSE_MERCATOR_MI_24 = "Transverse_Mercator_MapInfo_24"
+
+const SRS_PT_TRANSVERSE_MERCATOR_MI_25 = "Transverse_Mercator_MapInfo_25"
+
+const SRS_PT_TUNISIA_MINING_GRID = "Tunisia_Mining_Grid"
+
+const SRS_PT_TWO_POINT_EQUIDISTANT = "Two_Point_Equidistant"
+
+const SRS_PT_VANDERGRINTEN = "VanDerGrinten"
+
+const SRS_PT_KROVAK = "Krovak"
+
+const SRS_PT_IMW_POLYCONIC = "International_Map_of_the_World_Polyconic"
+
+const SRS_PT_WAGNER_I = "Wagner_I"
+
+const SRS_PT_WAGNER_II = "Wagner_II"
+
+const SRS_PT_WAGNER_III = "Wagner_III"
+
+const SRS_PT_WAGNER_IV = "Wagner_IV"
+
+const SRS_PT_WAGNER_V = "Wagner_V"
+
+const SRS_PT_WAGNER_VI = "Wagner_VI"
+
+const SRS_PT_WAGNER_VII = "Wagner_VII"
+
+const SRS_PT_QSC = "Quadrilateralized_Spherical_Cube"
+
+const SRS_PT_AITOFF = "Aitoff"
+
+const SRS_PT_WINKEL_I = "Winkel_I"
+
+const SRS_PT_WINKEL_II = "Winkel_II"
+
+const SRS_PT_WINKEL_TRIPEL = "Winkel_Tripel"
+
+const SRS_PT_CRASTER_PARABOLIC = "Craster_Parabolic"
+
+const SRS_PT_LOXIMUTHAL = "Loximuthal"
+
+const SRS_PT_QUARTIC_AUTHALIC = "Quartic_Authalic"
+
+const SRS_PT_SCH = "Spherical_Cross_Track_Height"
+
+const SRS_PP_CENTRAL_MERIDIAN = "central_meridian"
+
+const SRS_PP_SCALE_FACTOR = "scale_factor"
+
+const SRS_PP_STANDARD_PARALLEL_1 = "standard_parallel_1"
+
+const SRS_PP_STANDARD_PARALLEL_2 = "standard_parallel_2"
+
+const SRS_PP_PSEUDO_STD_PARALLEL_1 = "pseudo_standard_parallel_1"
+
+const SRS_PP_LONGITUDE_OF_CENTER = "longitude_of_center"
+
+const SRS_PP_LATITUDE_OF_CENTER = "latitude_of_center"
+
+const SRS_PP_LONGITUDE_OF_ORIGIN = "longitude_of_origin"
+
+const SRS_PP_LATITUDE_OF_ORIGIN = "latitude_of_origin"
+
+const SRS_PP_FALSE_EASTING = "false_easting"
+
+const SRS_PP_FALSE_NORTHING = "false_northing"
+
+const SRS_PP_AZIMUTH = "azimuth"
+
+const SRS_PP_LONGITUDE_OF_POINT_1 = "longitude_of_point_1"
+
+const SRS_PP_LATITUDE_OF_POINT_1 = "latitude_of_point_1"
+
+const SRS_PP_LONGITUDE_OF_POINT_2 = "longitude_of_point_2"
+
+const SRS_PP_LATITUDE_OF_POINT_2 = "latitude_of_point_2"
+
+const SRS_PP_LONGITUDE_OF_POINT_3 = "longitude_of_point_3"
+
+const SRS_PP_LATITUDE_OF_POINT_3 = "latitude_of_point_3"
+
+const SRS_PP_RECTIFIED_GRID_ANGLE = "rectified_grid_angle"
+
+const SRS_PP_LANDSAT_NUMBER = "landsat_number"
+
+const SRS_PP_PATH_NUMBER = "path_number"
+
+const SRS_PP_PERSPECTIVE_POINT_HEIGHT = "perspective_point_height"
+
+const SRS_PP_SATELLITE_HEIGHT = "satellite_height"
+
+const SRS_PP_FIPSZONE = "fipszone"
+
+const SRS_PP_ZONE = "zone"
+
+const SRS_PP_LATITUDE_OF_1ST_POINT = "Latitude_Of_1st_Point"
+
+const SRS_PP_LONGITUDE_OF_1ST_POINT = "Longitude_Of_1st_Point"
+
+const SRS_PP_LATITUDE_OF_2ND_POINT = "Latitude_Of_2nd_Point"
+
+const SRS_PP_LONGITUDE_OF_2ND_POINT = "Longitude_Of_2nd_Point"
+
+const SRS_PP_PEG_POINT_LATITUDE = "peg_point_latitude"
+
+const SRS_PP_PEG_POINT_LONGITUDE = "peg_point_longitude"
+
+const SRS_PP_PEG_POINT_HEADING = "peg_point_heading"
+
+const SRS_PP_PEG_POINT_HEIGHT = "peg_point_height"
+
+const SRS_UL_METER = "Meter"
+
+const SRS_UL_FOOT = "Foot (International)"
+
+const SRS_UL_FOOT_CONV = "0.3048"
+
+const SRS_UL_US_FOOT = "Foot_US"
+
+const SRS_UL_US_FOOT_CONV = "0.3048006096012192"
+
+const SRS_UL_NAUTICAL_MILE = "Nautical Mile"
+
+const SRS_UL_NAUTICAL_MILE_CONV = "1852.0"
+
+const SRS_UL_LINK = "Link"
+
+const SRS_UL_LINK_CONV = "0.20116684023368047"
+
+const SRS_UL_CHAIN = "Chain"
+
+const SRS_UL_CHAIN_CONV = "20.116684023368047"
+
+const SRS_UL_ROD = "Rod"
+
+const SRS_UL_ROD_CONV = "5.02921005842012"
+
+const SRS_UL_LINK_Clarke = "Link_Clarke"
+
+const SRS_UL_LINK_Clarke_CONV = "0.2011661949"
+
+const SRS_UL_KILOMETER = "Kilometer"
+
+const SRS_UL_KILOMETER_CONV = "1000."
+
+const SRS_UL_DECIMETER = "Decimeter"
+
+const SRS_UL_DECIMETER_CONV = "0.1"
+
+const SRS_UL_CENTIMETER = "Centimeter"
+
+const SRS_UL_CENTIMETER_CONV = "0.01"
+
+const SRS_UL_MILLIMETER = "Millimeter"
+
+const SRS_UL_MILLIMETER_CONV = "0.001"
+
+const SRS_UL_INTL_NAUT_MILE = "Nautical_Mile_International"
+
+const SRS_UL_INTL_NAUT_MILE_CONV = "1852.0"
+
+const SRS_UL_INTL_INCH = "Inch_International"
+
+const SRS_UL_INTL_INCH_CONV = "0.0254"
+
+const SRS_UL_INTL_FOOT = "Foot_International"
+
+const SRS_UL_INTL_FOOT_CONV = "0.3048"
+
+const SRS_UL_INTL_YARD = "Yard_International"
+
+const SRS_UL_INTL_YARD_CONV = "0.9144"
+
+const SRS_UL_INTL_STAT_MILE = "Statute_Mile_International"
+
+const SRS_UL_INTL_STAT_MILE_CONV = "1609.344"
+
+const SRS_UL_INTL_FATHOM = "Fathom_International"
+
+const SRS_UL_INTL_FATHOM_CONV = "1.8288"
+
+const SRS_UL_INTL_CHAIN = "Chain_International"
+
+const SRS_UL_INTL_CHAIN_CONV = "20.1168"
+
+const SRS_UL_INTL_LINK = "Link_International"
+
+const SRS_UL_INTL_LINK_CONV = "0.201168"
+
+const SRS_UL_US_INCH = "Inch_US_Surveyor"
+
+const SRS_UL_US_INCH_CONV = "0.025400050800101603"
+
+const SRS_UL_US_YARD = "Yard_US_Surveyor"
+
+const SRS_UL_US_YARD_CONV = "0.914401828803658"
+
+const SRS_UL_US_CHAIN = "Chain_US_Surveyor"
+
+const SRS_UL_US_CHAIN_CONV = "20.11684023368047"
+
+const SRS_UL_US_STAT_MILE = "Statute_Mile_US_Surveyor"
+
+const SRS_UL_US_STAT_MILE_CONV = "1609.347218694437"
+
+const SRS_UL_INDIAN_YARD = "Yard_Indian"
+
+const SRS_UL_INDIAN_YARD_CONV = "0.91439523"
+
+const SRS_UL_INDIAN_FOOT = "Foot_Indian"
+
+const SRS_UL_INDIAN_FOOT_CONV = "0.30479841"
+
+const SRS_UL_INDIAN_CHAIN = "Chain_Indian"
+
+const SRS_UL_INDIAN_CHAIN_CONV = "20.11669506"
+
+const SRS_UA_DEGREE = "degree"
+
+const SRS_UA_DEGREE_CONV = "0.0174532925199433"
+
+const SRS_UA_RADIAN = "radian"
+
+const SRS_PM_GREENWICH = "Greenwich"
+
+const SRS_DN_NAD27 = "North_American_Datum_1927"
+
+const SRS_DN_NAD83 = "North_American_Datum_1983"
+
+const SRS_DN_WGS72 = "WGS_1972"
+
+const SRS_DN_WGS84 = "WGS_1984"
+
+const SRS_WGS84_SEMIMAJOR = 6.378137e6
+
+const SRS_WGS84_INVFLATTENING = 298.257223563
