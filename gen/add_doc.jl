@@ -34,9 +34,3 @@ function add_doc(lib_path)
         println(io, "end")
     end
 end
-
-
-cd(@__DIR__)
-
-
-add_doc("GDAL.jl")

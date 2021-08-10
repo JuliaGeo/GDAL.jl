@@ -1,5 +1,3 @@
-# begin of prologue.jl
-
 using PROJ_jll
 using NetworkOptions
 
@@ -14,5 +12,3 @@ const time_t = Int
 CPL_STATIC_CAST(type, value) = value % type
 
 GDAL_COMPUTE_VERSION(maj,min,rev) = ((maj)*1000000+(min)*10000+(rev)*100)
-
-# end of prologue.jl

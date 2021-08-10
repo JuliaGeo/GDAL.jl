@@ -1,6 +1,3 @@
-
-# begin of epilogue.jl
-
 include("error.jl")
 
 const GDALVERSION = Ref{VersionNumber}()
@@ -34,5 +31,3 @@ function __init__()
     PROJ_LIB[] = joinpath(PROJ_jll.artifact_dir, "share", "proj")
     osrsetprojsearchpaths([PROJ_LIB[]])
 end
-
-# end of epilogue.jl
