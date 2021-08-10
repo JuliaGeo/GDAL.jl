@@ -15,17 +15,23 @@ prologue_file_path = "./prologue.jl"
 
 # node with an id in the `printer_blacklist` will be ignored in the printing passes. 
 # this is very useful for custom editing. 
-# printer_blacklist = [
-#     "CINDEX_EXPORTS",
-#     "CINDEX_VERSION",
-#     "CINDEX_VERSION_STRING",
-#     "CINDEX_LINKAGE",
-#     "CINDEX_DEPRECATED",
-#     "LLVM_CLANG_C_STRICT_PROTOTYPES_BEGIN",
-#     "LLVM_CLANG_C_STRICT_PROTOTYPES_END",
-#     "LLVM_CLANG_C_EXTERN_C_BEGIN",
-#     "LLVM_CLANG_C_EXTERN_C_END"
-# ]
+printer_blacklist = [
+    "VSI_FOPEN64",
+    "VSI_FSEEK64",
+    "VSI_FTELL64",
+    "VSI_FTRUNCATE64",
+    "CPLFree",
+    "CPL_FRMT_GIB",
+    "CPL_FRMT_GUIB",
+    "CPL_UNSTABLE_API",
+    "CPL_UNUSED",
+    "CPL_RESTRICT",
+    "EMULATED_BOOL",
+    "VOLATILE_BOOL",
+    "CPL_NULLPTR",
+    "CPLReadDir",
+    "OGRUnknownType",
+]
 
 use_deterministic_symbol = true
 
@@ -56,11 +62,15 @@ use_julia_bool = true
 # TODO: support filtering
 always_NUL_terminated_string = true
 
+opaque_func_arg_as_PtrCvoid = true
+
+opaque_as_mutable_struct = false
+
 [codegen.macro]
 # it‘s highly recommended to set this entry to "basic".
 # if you'd like to skip all of the macros, please set this entry to "disable".
 # if you'd like to translate function-like macros to Julia, please set this entry to "aggressive".
-macro_mode = "disable"
+macro_mode = "basic"
 
 # if true, the generator prints the following message as comments.
 # "# Skipping MacroDefinition: ..."
