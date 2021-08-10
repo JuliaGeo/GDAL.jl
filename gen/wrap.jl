@@ -22,7 +22,7 @@ const output_dir = joinpath(@__DIR__, "..", "src")
 const xmlpath = joinpath(@__DIR__, "doxygen.xml")
 
 # used to eval if a return type is Ptr{Cvoid}
-include(joinpath(@__DIR__, "..", "src", "common.jl"))
+include(joinpath(@__DIR__, "..", "src", "bindings.jl"))
 
 # set up a global logger to log.txt to store the large amount of logging
 loghandle = open(joinpath(@__DIR__, "log.txt"), "w")

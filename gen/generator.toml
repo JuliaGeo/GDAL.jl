@@ -56,6 +56,12 @@ use_julia_bool = true
 # TODO: support filtering
 always_NUL_terminated_string = true
 
+# if true, opaque pointers in function arguments will be translated to `Ptr{Cvoid}`.
+opaque_func_arg_as_PtrCvoid = false
+
+# if true, opaque types are translated to `mutable struct` instead of `Cvoid`.
+opaque_as_mutable_struct = true
+
 [codegen.macro]
 # it‘s highly recommended to set this entry to "basic".
 # if you'd like to skip all of the macros, please set this entry to "disable".

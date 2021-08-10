@@ -35,7 +35,7 @@ using Test
     @test GDAL.ogr_gfld_gettype(gfld) == GDAL.wkbPoint
     # same as above but for the lower level C API
     gfld = GDAL.ogr_gfld_create("name-b", GDAL.wkbPolygon)
-    @test gfld isa Ptr{Cvoid}
+    @test gfld isa Ptr{GDAL.OGRGeomFieldDefnHS}
     @test GDAL.ogr_gfld_getnameref(gfld) == "name-b"
     @test GDAL.ogr_gfld_gettype(gfld) == GDAL.wkbPolygon
 

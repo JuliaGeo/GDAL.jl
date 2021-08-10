@@ -5,27 +5,9 @@ using GDAL_jll
 using CEnum
 using NetworkOptions
 
-const Ctm = Base.Libc.TmStruct
+export GDAL_jll
 
-include("common.jl")
-
-include("gdal_h.jl")
-include("gdal_alg.jl")
-include("gdal_vrt.jl")
-include("gdal_utils.jl")
-include("gdalwarper.jl")
-
-include("ogr_api.jl")
-include("ogr_srs_api.jl")
-include("ogr_core.jl")
-
-include("cpl_error.jl")
-include("cpl_conv.jl")
-include("cpl_minixml.jl")
-include("cpl_progress.jl")
-include("cpl_virtualmem.jl")
-include("cpl_vsi.jl")
-
+include("bindings.jl")
 include("error.jl")
 
 const GDALVERSION = Ref{VersionNumber}()
