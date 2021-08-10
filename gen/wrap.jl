@@ -15,14 +15,10 @@ using Clang.Generators
 using MacroTools
 using Logging
 using EzXML
-using CEnum  # to be able to include common.jl
 using GDAL_jll
 
 const output_dir = joinpath(@__DIR__, "..", "src")
 const xmlpath = joinpath(@__DIR__, "doxygen.xml")
-
-# used to eval if a return type is Ptr{Cvoid}
-include(joinpath(@__DIR__, "..", "src", "bindings.jl"))
 
 # set up a global logger to log.txt to store the large amount of logging
 loghandle = open(joinpath(@__DIR__, "log.txt"), "w")
@@ -134,17 +130,6 @@ function rewriter(x::Expr)
         # bind the ccall such that we can easily wrap it
         cc = :(ccall($fname, $rettype, $argtypes, $(argvalues...)))
 
-        # eval to check if it is Ptr{Cvoid} indirectly
-        # e.g. const GDALInfoOptions = Cvoid; Ptr{GDALInfoOptions}
-        # it works since we include common.jl, meaning we do need to run this twice
-        # in case a new run creates new const X = Cvoid
-        isptrvoid = try
-            eval(rettype) == Ptr{Cvoid}
-        catch  # UndefVarError
-            # it might still be true if common.jl is not yet complete, run twice to avoid this
-            false
-        end
-
         cc2 = if occursin(r"^cpl.*error", String(f2))
             # We will take care of GDAL error states and memory freeing by
             # calling `aftercare`, except for `cpl*error*` functions, as these
@@ -196,9 +181,10 @@ end
 
 cd(@__DIR__)
 
-# Do not wrap stat, it is handled in prologue.jl
+# do not wrap, handled in prologue.jl
 @add_def stat
 @add_def _stat64
+@add_def time_t
 
 options = load_options(joinpath(@__DIR__, "generator.toml"))
 
