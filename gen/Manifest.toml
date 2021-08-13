@@ -24,7 +24,7 @@ version = "3.2.4"
 deps = ["CEnum", "Clang_jll", "Downloads", "Pkg", "TOML"]
 git-tree-sha1 = "847c607053e8976d4b6a2e236015c384a44f01b4"
 repo-rev = "dump-doc-patch"
-repo-url = "https://github.com/melonedo/Clang.jl.git"
+repo-url = "https://github.com/melonedo/Clang.jl"
 uuid = "40e3b903-d033-50b4-a0cc-940c62c95e31"
 version = "0.14.0"
 
@@ -171,9 +171,9 @@ uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
 [[MacroTools]]
 deps = ["Markdown", "Random"]
-git-tree-sha1 = "6a8a2a625ab0dea913aba95c11370589e0239ff0"
+git-tree-sha1 = "0fb723cd8c45858c22169b2e42269e53271a6df7"
 uuid = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
-version = "0.5.6"
+version = "0.5.7"
 
 [[Markdown]]
 deps = ["Base64"]
