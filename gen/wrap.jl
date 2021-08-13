@@ -16,6 +16,7 @@ using MacroTools
 using Logging
 using EzXML
 using GDAL_jll
+using JuliaFormatter
 
 const output_dir = joinpath(@__DIR__, "..", "src")
 const xmlpath = joinpath(@__DIR__, "doxygen.xml")
@@ -27,26 +28,29 @@ global_logger(logger)
 
 # several functions for building docstrings
 include(joinpath(@__DIR__, "doc.jl"))
-include(joinpath(@__DIR__, "add_doc.jl"))
 
 includedir = joinpath(GDAL_jll.artifact_dir, "include")
-headerfiles = joinpath.(includedir, [
-    "cpl_conv.h",
-    "cpl_error.h",
-    "cpl_minixml.h",
-    "cpl_port.h",
-    "cpl_progress.h",
-    "cpl_virtualmem.h",
-    "cpl_vsi.h",
-    "gdal.h",
-    "gdal_alg.h",
-    "gdalwarper.h",
-    "gdal_vrt.h",
-    "gdal_utils.h",
-    "ogr_api.h",
-    "ogr_core.h",
-    "ogr_srs_api.h",
-])
+headerfiles =
+    joinpath.(
+        includedir,
+        [
+            "cpl_conv.h",
+            "cpl_error.h",
+            "cpl_minixml.h",
+            "cpl_port.h",
+            "cpl_progress.h",
+            "cpl_virtualmem.h",
+            "cpl_vsi.h",
+            "gdal.h",
+            "gdal_alg.h",
+            "gdalwarper.h",
+            "gdal_vrt.h",
+            "gdal_utils.h",
+            "ogr_api.h",
+            "ogr_core.h",
+            "ogr_srs_api.h",
+        ],
+    )
 
 for headerfile in headerfiles
     if !isfile(headerfile)
@@ -70,7 +74,7 @@ const skip_exprs = [
     :(const tm = Cvoid),
     :(const CPLReadDir = VSIReadDir),
     :(const CPLFree = VSIFree),
-    :(const VALIDATE_POINTER_ERR = CE_Failure)
+    :(const VALIDATE_POINTER_ERR = CE_Failure),
 ]
 
 const replace_exprs = Dict{Expr,Expr}(
@@ -118,11 +122,9 @@ end
 
 "Rewrite expressions in the ways listed at the top of this file."
 function rewriter(x::Expr)
-    if @capture(x,
-        function f_(fargs__)
-            ccall(fname_, rettype_, argtypes_, argvalues__)
-        end
-    )
+    if @capture(x, function f_(fargs__)
+        ccall(fname_, rettype_, argtypes_, argvalues__)
+    end)
         # it is a function wrapper around a ccall
 
         # lowercase the function name
@@ -180,8 +182,6 @@ function rewriter(dag::Clang.ExprDAG)
 end
 
 
-cd(@__DIR__)
-
 # do not wrap, handled in prologue.jl
 @add_def stat
 @add_def _stat64
@@ -201,6 +201,8 @@ build!(ctx, BUILDSTAGE_NO_PRINTING)
 rewriter(ctx.dag)
 build!(ctx, BUILDSTAGE_PRINTING_ONLY)
 
-add_doc("../src/GDAL.jl")
+add_doc(joinpath(@__DIR__, "..", "src", "GDAL.jl"))
 
 close(loghandle)
+
+format(joinpath(@__DIR__, ".."))
