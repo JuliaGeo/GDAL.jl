@@ -89,7 +89,9 @@ end
 
 "Get the C name out of a expression"
 function cname(ex)
-    if @capture(ex, function f_(args__) ccall((a_, b_), xs__) end)
+    if @capture(ex, function f_(args__)
+        ccall((a_, b_), xs__)
+    end)
         String(eval(a))
     else
         # TODO make MacroTools.namify work for structs and macros
@@ -112,7 +114,10 @@ function findnode(name::String, doc::EzXML.Document)
     memberdef = "/doxygen/compounddef/sectiondef/memberdef"
     nofriend = "not(@kind='friend')"  # :-(
     # Case insensitive hack
-    nodes = findall("$memberdef[translate(name, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='$name' and $nofriend]", doc)
+    nodes = findall(
+        "$memberdef[translate(name, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='$name' and $nofriend]",
+        doc,
+    )
 
     if length(nodes) == 0
         return nothing
@@ -141,5 +146,38 @@ function findnode(name::String, doc::EzXML.Document)
         end
         # .cpp not present, just pick the first
         return first(nodes)
+    end
+end
+
+"Use MacroTools.prewalk to add docstrings to a script"
+function add_doc(lib_path)
+    code = Meta.parse(read(lib_path, String))
+    code = MacroTools.prewalk(rmlines, code)
+
+    @assert Meta.isexpr(code, :module) && Meta.isexpr(code.args[3], :block)
+    body = code.args[3].args
+    rewritten = []
+    for ex in body
+        if Meta.isexpr(ex, :macrocall) && ex.args[1] == GlobalRef(Core, Symbol("@doc"))
+            push!(rewritten, addquotes(ex.args[3]), ex.args[4])
+        else
+            name = cname(ex)
+            node = findnode(name, doc)
+            docstr = node === nothing ? "" : build_docstring(node)
+            isempty(docstr) || push!(rewritten, addquotes(docstr))
+            push!(rewritten, ex)
+        end
+    end
+
+    open(lib_path, "w") do io
+        println(io, "module ", code.args[2])
+        for ex in rewritten
+            if ex isa String
+                println(io, replace(ex, r"([\\\$])" => s"\\\1"))
+            else
+                println(io, ex, '\n')
+            end
+        end
+        println(io, "end")
     end
 end
