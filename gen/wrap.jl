@@ -58,11 +58,6 @@ for headerfile in headerfiles
     end
 end
 
-const replace_exprs = Dict{Expr,Expr}(
-    :(const VSIStatBuf = stat) => :(const VSIStatBuf = Cvoid),
-    :(const VSIStatBufL = __stat64) => :(const VSIStatBufL = Cvoid),
-)
-
 # functions that return a Cstring, of which we know we must free them
 # because for instance the documentation says: "Free with CPLFree() or VSIFree()"
 # use the renamed (lowercased) function names here
@@ -87,8 +82,6 @@ function rewriter(xs::Vector)
             continue
         end
         @assert x isa Expr
-
-        x = get(replace_exprs, x, x)
 
         name = cname(x)
         node = findnode(name, doc)
