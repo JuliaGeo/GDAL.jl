@@ -58,25 +58,6 @@ for headerfile in headerfiles
     end
 end
 
-# skip these; right hand side is undefined usually because of Skipping MacroDefinition
-# or because the right hand side is a function that is defined later
-const skip_exprs = [
-    :(const CPLAssert = expr),
-    :(const CPL_UNSTABLE_API = CPL_DLL),
-    :(const EMULATED_BOOL = bool),
-    :(const GINT64_MIN = GINTBIG_MIN),
-    :(const GINT64_MAX = GINTBIG_MAX),
-    :(const GUINT64_MAX = GUINTBIG_MAX),
-    :(const VSI_L_OFFSET_MAX = GUINTBIG_MAX),
-    :(const CPL_STATIC_ASSERT_IF_AVAILABLE = x),
-    :(const CPL_NULLPTR = NULL),
-    :(const stat = Cvoid),
-    :(const tm = Cvoid),
-    :(const CPLReadDir = VSIReadDir),
-    :(const CPLFree = VSIFree),
-    :(const VALIDATE_POINTER_ERR = CE_Failure),
-]
-
 const replace_exprs = Dict{Expr,Expr}(
     :(const VSIStatBuf = stat) => :(const VSIStatBuf = Cvoid),
     :(const VSIStatBufL = __stat64) => :(const VSIStatBufL = Cvoid),
@@ -107,7 +88,6 @@ function rewriter(xs::Vector)
         end
         @assert x isa Expr
 
-        x in skip_exprs && continue
         x = get(replace_exprs, x, x)
 
         name = cname(x)
@@ -203,6 +183,6 @@ build!(ctx, BUILDSTAGE_PRINTING_ONLY)
 
 add_doc(joinpath(@__DIR__, "..", "src", "GDAL.jl"))
 
-close(loghandle)
-
 format(joinpath(@__DIR__, ".."))
+
+close(loghandle)
