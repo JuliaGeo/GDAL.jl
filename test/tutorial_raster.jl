@@ -25,7 +25,7 @@ nad27_prefix = "PROJCS[\"NAD27 / UTM zone 11N\",GEOGCS[\"NAD27\",DATUM[\"North_A
 
 geotransform = fill(0.0, 6)
 GDAL.gdalgetgeotransform(dataset, geotransform)
-@test geotransform == [440720.0,60.0,0.0,3.75132e6,0.0,-60.0]
+@test geotransform == [440720.0, 60.0, 0.0, 3.75132e6, 0.0, -60.0]
 
 
 # Fetching a Raster Band
@@ -37,7 +37,8 @@ GDAL.gdalgetblocksize(band, blockxsize, blockysize)
 @test blockysize[] == 81
 
 @test GDAL.gdalgetdatatypename(GDAL.gdalgetrasterdatatype(band)) == "Byte"
-@test GDAL.gdalgetcolorinterpretationname(GDAL.gdalgetrastercolorinterpretation(band)) == "Gray"
+@test GDAL.gdalgetcolorinterpretationname(GDAL.gdalgetrastercolorinterpretation(band)) ==
+      "Gray"
 
 gotmin, gotmax = Ref(Cint(-1)), Ref(Cint(-1))
 @test GDAL.gdalgetrasterminimum(band, gotmin) == 0.0
@@ -54,9 +55,122 @@ gotmin, gotmax = Ref(Cint(-1)), Ref(Cint(-1))
 xsize = GDAL.gdalgetrasterbandxsize(band)
 @test xsize == 100
 scanline = fill(0.0f0, xsize)
-GDAL.gdalrasterio(band, GDAL.GF_Read, 0, 0, xsize, 1,
-              scanline, xsize, 1, GDAL.GDT_Float32, 0, 0)
-@test scanline == Float32[107.0f0,123.0f0,132.0f0,115.0f0,132.0f0,132.0f0,140.0f0,132.0f0,132.0f0,132.0f0,107.0f0,132.0f0,107.0f0,132.0f0,132.0f0,107.0f0,123.0f0,115.0f0,156.0f0,148.0f0,107.0f0,132.0f0,107.0f0,115.0f0,99.0f0,123.0f0,99.0f0,74.0f0,115.0f0,82.0f0,115.0f0,115.0f0,107.0f0,123.0f0,123.0f0,99.0f0,123.0f0,123.0f0,115.0f0,115.0f0,107.0f0,90.0f0,99.0f0,107.0f0,107.0f0,99.0f0,123.0f0,107.0f0,140.0f0,123.0f0,123.0f0,115.0f0,99.0f0,132.0f0,123.0f0,115.0f0,115.0f0,123.0f0,132.0f0,115.0f0,123.0f0,132.0f0,214.0f0,156.0f0,165.0f0,148.0f0,115.0f0,148.0f0,156.0f0,148.0f0,140.0f0,165.0f0,156.0f0,197.0f0,156.0f0,197.0f0,140.0f0,173.0f0,156.0f0,165.0f0,148.0f0,156.0f0,206.0f0,214.0f0,181.0f0,206.0f0,173.0f0,222.0f0,206.0f0,255.0f0,214.0f0,173.0f0,214.0f0,255.0f0,214.0f0,247.0f0,255.0f0,230.0f0,206.0f0,197.0f0]
+GDAL.gdalrasterio(
+    band,
+    GDAL.GF_Read,
+    0,
+    0,
+    xsize,
+    1,
+    scanline,
+    xsize,
+    1,
+    GDAL.GDT_Float32,
+    0,
+    0,
+)
+@test scanline == Float32[
+    107.0f0,
+    123.0f0,
+    132.0f0,
+    115.0f0,
+    132.0f0,
+    132.0f0,
+    140.0f0,
+    132.0f0,
+    132.0f0,
+    132.0f0,
+    107.0f0,
+    132.0f0,
+    107.0f0,
+    132.0f0,
+    132.0f0,
+    107.0f0,
+    123.0f0,
+    115.0f0,
+    156.0f0,
+    148.0f0,
+    107.0f0,
+    132.0f0,
+    107.0f0,
+    115.0f0,
+    99.0f0,
+    123.0f0,
+    99.0f0,
+    74.0f0,
+    115.0f0,
+    82.0f0,
+    115.0f0,
+    115.0f0,
+    107.0f0,
+    123.0f0,
+    123.0f0,
+    99.0f0,
+    123.0f0,
+    123.0f0,
+    115.0f0,
+    115.0f0,
+    107.0f0,
+    90.0f0,
+    99.0f0,
+    107.0f0,
+    107.0f0,
+    99.0f0,
+    123.0f0,
+    107.0f0,
+    140.0f0,
+    123.0f0,
+    123.0f0,
+    115.0f0,
+    99.0f0,
+    132.0f0,
+    123.0f0,
+    115.0f0,
+    115.0f0,
+    123.0f0,
+    132.0f0,
+    115.0f0,
+    123.0f0,
+    132.0f0,
+    214.0f0,
+    156.0f0,
+    165.0f0,
+    148.0f0,
+    115.0f0,
+    148.0f0,
+    156.0f0,
+    148.0f0,
+    140.0f0,
+    165.0f0,
+    156.0f0,
+    197.0f0,
+    156.0f0,
+    197.0f0,
+    140.0f0,
+    173.0f0,
+    156.0f0,
+    165.0f0,
+    148.0f0,
+    156.0f0,
+    206.0f0,
+    214.0f0,
+    181.0f0,
+    206.0f0,
+    173.0f0,
+    222.0f0,
+    206.0f0,
+    255.0f0,
+    214.0f0,
+    173.0f0,
+    214.0f0,
+    255.0f0,
+    214.0f0,
+    247.0f0,
+    255.0f0,
+    230.0f0,
+    206.0f0,
+    197.0f0,
+]
 
 
 # Closing the Dataset
@@ -73,8 +187,7 @@ ds_src = GDAL.gdalopen(utmsmall, GDAL.GA_ReadOnly)
 
 progressfunc = convert(Ptr{GDAL.GDALProgressFunc}, C_NULL)
 
-ds_dst = GDAL.gdalcreatecopy(driver, utmsmall_copy, ds_src, 0,
-                         C_NULL, progressfunc, C_NULL)
+ds_dst = GDAL.gdalcreatecopy(driver, utmsmall_copy, ds_src, 0, C_NULL, progressfunc, C_NULL)
 GDAL.gdalclose(ds_dst)
 GDAL.gdalclose(ds_src)
 

@@ -7,8 +7,8 @@ utmsmall_vrt = joinpath(@__DIR__, "tmp/utmsmall.vrt")
 driver = GDAL.gdalgetdriverbyname("VRT")
 src_dataset = GDAL.gdalopenshared(utmsmall, GDAL.GA_ReadOnly)
 progressfunc = convert(Ptr{GDAL.GDALProgressFunc}, C_NULL)
-vrt_dataset = GDAL.gdalcreatecopy(driver, utmsmall_vrt, src_dataset, 0,
-                              C_NULL, progressfunc, C_NULL)
+vrt_dataset =
+    GDAL.gdalcreatecopy(driver, utmsmall_vrt, src_dataset, 0, C_NULL, progressfunc, C_NULL)
 
 GDAL.gdalsetmetadataitem(vrt_dataset, "SourceAgency", "JuliaGeo", "")
 

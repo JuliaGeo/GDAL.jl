@@ -40,7 +40,7 @@ using Test
     @test GDAL.ogr_gfld_gettype(gfld) == GDAL.wkbPolygon
 
     cd(dirname(@__FILE__)) do
-        rm("tmp", recursive=true, force=true)
+        rm("tmp", recursive = true, force = true)
         mkpath("tmp") # ensure it exists
         include("tutorial_raster.jl")
         include("tutorial_vector.jl")
