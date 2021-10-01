@@ -8,6 +8,7 @@ function __init__()
     # register custom error handler
     funcptr = @cfunction(gdaljl_errorhandler, Ptr{Cvoid}, (CPLErr, Cint, Cstring))
     cplseterrorhandler(funcptr)
+    atexit(() -> cplseterrorhandler(C_NULL))
 
     # get GDAL version number
     versionstring = gdalversioninfo("RELEASE_NAME")
