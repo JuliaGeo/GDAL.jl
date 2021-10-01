@@ -3,3 +3,4 @@
 *.jl.*.cov
 *.jl.mem
 log.txt
+.DS_Store
