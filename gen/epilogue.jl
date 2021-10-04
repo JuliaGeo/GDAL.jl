@@ -7,12 +7,10 @@ const PROJ_LIB = Ref{String}()
 function __init__()
     # Cleanup at exit
     atexit(gdaldestroy)
-    # atexit(() -> gdaldumpopendatasets("/dev/stderr")) # TODO find a way to pass a pointer to stderr
     
     # register custom error handler
     funcptr = @cfunction(gdaljl_errorhandler, Ptr{Cvoid}, (CPLErr, Cint, Cstring))
     cplseterrorhandler(funcptr)
-    # atexit(() -> cplseterrorhandler(C_NULL))
 
     # get GDAL version number
     versionstring = gdalversioninfo("RELEASE_NAME")
