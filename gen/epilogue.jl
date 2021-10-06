@@ -5,9 +5,9 @@ const GDAL_DATA = Ref{String}()
 const PROJ_LIB = Ref{String}()
 
 function __init__()
-    # Cleanup at exit
+    # cleanup at exit
     atexit(gdaldestroy)
-    
+
     # register custom error handler
     funcptr = @cfunction(gdaljl_errorhandler, Ptr{Cvoid}, (CPLErr, Cint, Cstring))
     cplseterrorhandler(funcptr)

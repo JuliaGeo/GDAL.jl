@@ -32994,6 +32994,7 @@ const GDAL_DATA = Ref{String}()
 const PROJ_LIB = Ref{String}()
 
 function __init__()
+    atexit(gdaldestroy)
     funcptr = @cfunction(gdaljl_errorhandler, Ptr{Cvoid}, (CPLErr, Cint, Cstring))
     cplseterrorhandler(funcptr)
     versionstring = gdalversioninfo("RELEASE_NAME")
