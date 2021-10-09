@@ -3,9 +3,7 @@
 
 Julia wrapper for [GDAL - Geospatial Data Abstraction Library](http://gdal.org/). This
 package is a binding to the C API of GDAL/OGR. It provides only a C style usage, where
-resources must be closed manually, and datasets are pointers. *Note: this also means that
-before being able to use any drivers (for input/output of different formats), they must be
-registered first using `GDAL.gdalallregister()`.*
+resources must be closed manually, and datasets are pointers.
 
 Other packages can build on top of this to provide a more Julian user experience. See for
 example [ArchGDAL.jl](https://github.com/yeesian/ArchGDAL.jl).
