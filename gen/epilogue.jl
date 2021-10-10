@@ -8,7 +8,6 @@ function __init__()
     # register custom error handler
     funcptr = @cfunction(gdaljl_errorhandler, Ptr{Cvoid}, (CPLErr, Cint, Cstring))
     cplseterrorhandler(funcptr)
-    atexit(() -> cplseterrorhandler(C_NULL))
 
     # get GDAL version number
     versionstring = gdalversioninfo("RELEASE_NAME")
@@ -31,4 +30,7 @@ function __init__()
     # set PROJ_LIB location, this overrides setting the environment variable
     PROJ_LIB[] = joinpath(PROJ_jll.artifact_dir, "share", "proj")
     osrsetprojsearchpaths([PROJ_LIB[]])
+
+    # register all known configured GDAL drivers
+    gdalallregister()
 end

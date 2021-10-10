@@ -5,9 +5,6 @@ using GDAL
 utmsmall = joinpath(@__DIR__, "data/utmsmall.tif")
 utmsmall_copy = joinpath(@__DIR__, "tmp/utmsmall.tif")
 
-# needed to actually load tifs
-GDAL.gdalallregister()
-
 # Opening the File
 dataset = GDAL.gdalopen(utmsmall, GDAL.GA_ReadOnly) # file from GDAL SVN
 

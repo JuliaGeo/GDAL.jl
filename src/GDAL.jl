@@ -33010,6 +33010,7 @@ function __init__()
     end
     PROJ_LIB[] = joinpath(PROJ_jll.artifact_dir, "share", "proj")
     osrsetprojsearchpaths([PROJ_LIB[]])
+    gdalallregister()
 end
 
 end
