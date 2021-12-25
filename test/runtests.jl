@@ -3,10 +3,6 @@ using Test
 
 @testset "GDAL" begin
 
-    # drivers
-    # before being able to use any drivers, they must be registered first
-    GDAL.gdalallregister()
-
     version = GDAL.gdalversioninfo("--version")
     n_gdal_driver = GDAL.gdalgetdrivercount()
     n_ogr_driver = GDAL.ogrgetdrivercount()
