@@ -31,6 +31,15 @@ GDAL_COMPUTE_VERSION(maj, min, rev) = begin
 end
 
 """
+    VSIFree(void * pData) -> void
+
+Analog of free() for data allocated with VSIMalloc(), VSICalloc(), VSIRealloc()
+"""
+function vsifree(arg1)
+    aftercare(ccall((:VSIFree, libgdal), Cvoid, (Ptr{Cvoid},), arg1))
+end
+
+"""
     cplverifyconfiguration()
 
 Doxygen\\_Suppress 
@@ -844,7 +853,7 @@ function cplprinttime(arg1, arg2, arg3, arg4, arg5)
         ccall(
             (:CPLPrintTime, libgdal),
             Cint,
-            (Cstring, Cint, Cstring, Ptr{tm}, Cstring),
+            (Cstring, Cint, Cstring, Ptr{Cvoid}, Cstring),
             arg1,
             arg2,
             arg3,
@@ -2425,14 +2434,17 @@ function cplserializexmltreetofile(psTree, pszFilename)
     )
 end
 
-"Int16 type "
-const GInt16 = Cshort
-
 "Unsigned int16 type "
 const GUInt16 = Cushort
 
+"Unsigned 64 bit integer type "
+const GUInt64 = GUIntBig
+
 "Unsigned byte type "
 const GByte = Cuchar
+
+"Int16 type "
+const GInt16 = Cshort
 
 """
 
@@ -2443,9 +2455,6 @@ const GBool = Cint
 
 "Signed 64 bit integer type "
 const GInt64 = GIntBig
-
-"Unsigned 64 bit integer type "
-const GUInt64 = GUIntBig
 
 "Integer type large enough to hold the difference between 2 addresses "
 const GPtrDiff_t = GIntBig
@@ -3071,6 +3080,155 @@ This function must be called after the last [`CPLVirtualMem`](@ref) object has b
 """
 function cplvirtualmemmanagerterminate()
     aftercare(ccall((:CPLVirtualMemManagerTerminate, libgdal), Cvoid, ()))
+end
+
+"""
+    VSIMallocAlignedAutoVerbose(size_t nSize,
+                                const char * pszFile,
+                                int nLine) -> void *
+
+See VSIMallocAlignedAuto()
+"""
+function vsimallocalignedautoverbose(nSize, pszFile, nLine)
+    aftercare(
+        ccall(
+            (:VSIMallocAlignedAutoVerbose, libgdal),
+            Ptr{Cvoid},
+            (Csize_t, Cstring, Cint),
+            nSize,
+            pszFile,
+            nLine,
+        ),
+    )
+end
+
+"""
+    vsimallocverbose(nSize, pszFile, nLine)
+
+[`VSIMallocVerbose`](@ref) 
+"""
+function vsimallocverbose(nSize, pszFile, nLine)
+    aftercare(
+        ccall(
+            (:VSIMallocVerbose, libgdal),
+            Ptr{Cvoid},
+            (Csize_t, Cstring, Cint),
+            nSize,
+            pszFile,
+            nLine,
+        ),
+    )
+end
+
+"""
+    vsimalloc2verbose(nSize1, nSize2, pszFile, nLine)
+
+[`VSIMalloc2Verbose`](@ref) 
+"""
+function vsimalloc2verbose(nSize1, nSize2, pszFile, nLine)
+    aftercare(
+        ccall(
+            (:VSIMalloc2Verbose, libgdal),
+            Ptr{Cvoid},
+            (Csize_t, Csize_t, Cstring, Cint),
+            nSize1,
+            nSize2,
+            pszFile,
+            nLine,
+        ),
+    )
+end
+
+"""
+    vsimalloc3verbose(nSize1, nSize2, nSize3, pszFile, nLine)
+
+[`VSIMalloc3Verbose`](@ref) 
+"""
+function vsimalloc3verbose(nSize1, nSize2, nSize3, pszFile, nLine)
+    aftercare(
+        ccall(
+            (:VSIMalloc3Verbose, libgdal),
+            Ptr{Cvoid},
+            (Csize_t, Csize_t, Csize_t, Cstring, Cint),
+            nSize1,
+            nSize2,
+            nSize3,
+            pszFile,
+            nLine,
+        ),
+    )
+end
+
+"""
+    vsicallocverbose(nCount, nSize, pszFile, nLine)
+
+[`VSICallocVerbose`](@ref) 
+"""
+function vsicallocverbose(nCount, nSize, pszFile, nLine)
+    aftercare(
+        ccall(
+            (:VSICallocVerbose, libgdal),
+            Ptr{Cvoid},
+            (Csize_t, Csize_t, Cstring, Cint),
+            nCount,
+            nSize,
+            pszFile,
+            nLine,
+        ),
+    )
+end
+
+"""
+    vsireallocverbose(pOldPtr, nNewSize, pszFile, nLine)
+
+[`VSIReallocVerbose`](@ref) 
+"""
+function vsireallocverbose(pOldPtr, nNewSize, pszFile, nLine)
+    aftercare(
+        ccall(
+            (:VSIReallocVerbose, libgdal),
+            Ptr{Cvoid},
+            (Ptr{Cvoid}, Csize_t, Cstring, Cint),
+            pOldPtr,
+            nNewSize,
+            pszFile,
+            nLine,
+        ),
+    )
+end
+
+"""
+    vsistrdupverbose(pszStr, pszFile, nLine)
+
+[`VSIStrdupVerbose`](@ref) 
+"""
+function vsistrdupverbose(pszStr, pszFile, nLine)
+    aftercare(
+        ccall(
+            (:VSIStrdupVerbose, libgdal),
+            Cstring,
+            (Cstring, Cstring, Cint),
+            pszStr,
+            pszFile,
+            nLine,
+        ),
+        false,
+    )
+end
+
+"""
+    VSIReadDir(const char * pszPath) -> char **
+
+Read names in a directory.
+
+### Parameters
+* **pszPath**: the relative, or absolute path of a directory to read. UTF-8 encoded.
+
+### Returns
+The list of entries in the directory, or NULL if the directory doesn't exist. Filenames are returned in UTF-8 encoding.
+"""
+function vsireaddir(arg1)
+    aftercare(ccall((:VSIReadDir, libgdal), Ptr{Cstring}, (Cstring,), arg1))
 end
 
 """
@@ -3885,15 +4043,6 @@ function vsimalloc(arg1)
 end
 
 """
-    VSIFree(void * pData) -> void
-
-Analog of free() for data allocated with VSIMalloc(), VSICalloc(), VSIRealloc()
-"""
-function vsifree(arg1)
-    aftercare(ccall((:VSIFree, libgdal), Cvoid, (Ptr{Cvoid},), arg1))
-end
-
-"""
     VSIRealloc(void * pData,
                size_t nNewSize) -> void *
 
@@ -3965,26 +4114,6 @@ function vsifreealigned(ptr)
 end
 
 """
-    VSIMallocAlignedAutoVerbose(size_t nSize,
-                                const char * pszFile,
-                                int nLine) -> void *
-
-See VSIMallocAlignedAuto()
-"""
-function vsimallocalignedautoverbose(nSize, pszFile, nLine)
-    aftercare(
-        ccall(
-            (:VSIMallocAlignedAutoVerbose, libgdal),
-            Ptr{Cvoid},
-            (Csize_t, Cstring, Cint),
-            nSize,
-            pszFile,
-            nLine,
-        ),
-    )
-end
-
-"""
     vsimalloc2(nSize1, nSize2)
 
 [`VSIMalloc2`](@ref) allocates (nSize1 * nSize2) bytes. In case of overflow of the multiplication, or if memory allocation fails, a NULL pointer is returned and a CE\\_Failure error is raised with [`CPLError`](@ref)(). If nSize1 == 0 || nSize2 == 0, a NULL pointer will also be returned. [`CPLFree`](@ref)() or [`VSIFree`](@ref)() can be used to free memory allocated by this function.
@@ -4012,120 +4141,6 @@ function vsimalloc3(nSize1, nSize2, nSize3)
 end
 
 """
-    vsimallocverbose(nSize, pszFile, nLine)
-
-[`VSIMallocVerbose`](@ref) 
-"""
-function vsimallocverbose(nSize, pszFile, nLine)
-    aftercare(
-        ccall(
-            (:VSIMallocVerbose, libgdal),
-            Ptr{Cvoid},
-            (Csize_t, Cstring, Cint),
-            nSize,
-            pszFile,
-            nLine,
-        ),
-    )
-end
-
-"""
-    vsimalloc2verbose(nSize1, nSize2, pszFile, nLine)
-
-[`VSIMalloc2Verbose`](@ref) 
-"""
-function vsimalloc2verbose(nSize1, nSize2, pszFile, nLine)
-    aftercare(
-        ccall(
-            (:VSIMalloc2Verbose, libgdal),
-            Ptr{Cvoid},
-            (Csize_t, Csize_t, Cstring, Cint),
-            nSize1,
-            nSize2,
-            pszFile,
-            nLine,
-        ),
-    )
-end
-
-"""
-    vsimalloc3verbose(nSize1, nSize2, nSize3, pszFile, nLine)
-
-[`VSIMalloc3Verbose`](@ref) 
-"""
-function vsimalloc3verbose(nSize1, nSize2, nSize3, pszFile, nLine)
-    aftercare(
-        ccall(
-            (:VSIMalloc3Verbose, libgdal),
-            Ptr{Cvoid},
-            (Csize_t, Csize_t, Csize_t, Cstring, Cint),
-            nSize1,
-            nSize2,
-            nSize3,
-            pszFile,
-            nLine,
-        ),
-    )
-end
-
-"""
-    vsicallocverbose(nCount, nSize, pszFile, nLine)
-
-[`VSICallocVerbose`](@ref) 
-"""
-function vsicallocverbose(nCount, nSize, pszFile, nLine)
-    aftercare(
-        ccall(
-            (:VSICallocVerbose, libgdal),
-            Ptr{Cvoid},
-            (Csize_t, Csize_t, Cstring, Cint),
-            nCount,
-            nSize,
-            pszFile,
-            nLine,
-        ),
-    )
-end
-
-"""
-    vsireallocverbose(pOldPtr, nNewSize, pszFile, nLine)
-
-[`VSIReallocVerbose`](@ref) 
-"""
-function vsireallocverbose(pOldPtr, nNewSize, pszFile, nLine)
-    aftercare(
-        ccall(
-            (:VSIReallocVerbose, libgdal),
-            Ptr{Cvoid},
-            (Ptr{Cvoid}, Csize_t, Cstring, Cint),
-            pOldPtr,
-            nNewSize,
-            pszFile,
-            nLine,
-        ),
-    )
-end
-
-"""
-    vsistrdupverbose(pszStr, pszFile, nLine)
-
-[`VSIStrdupVerbose`](@ref) 
-"""
-function vsistrdupverbose(pszStr, pszFile, nLine)
-    aftercare(
-        ccall(
-            (:VSIStrdupVerbose, libgdal),
-            Cstring,
-            (Cstring, Cstring, Cint),
-            pszStr,
-            pszFile,
-            nLine,
-        ),
-        false,
-    )
-end
-
-"""
     CPLGetPhysicalRAM(void) -> GIntBig
 
 Return the total physical RAM in bytes.
@@ -4147,21 +4162,6 @@ the total physical RAM, usable by a process, in bytes (or 0 in case of failure).
 """
 function cplgetusablephysicalram()
     aftercare(ccall((:CPLGetUsablePhysicalRAM, libgdal), GIntBig, ()))
-end
-
-"""
-    VSIReadDir(const char * pszPath) -> char **
-
-Read names in a directory.
-
-### Parameters
-* **pszPath**: the relative, or absolute path of a directory to read. UTF-8 encoded.
-
-### Returns
-The list of entries in the directory, or NULL if the directory doesn't exist. Filenames are returned in UTF-8 encoding.
-"""
-function vsireaddir(arg1)
-    aftercare(ccall((:VSIReadDir, libgdal), Ptr{Cstring}, (Cstring,), arg1))
 end
 
 """
@@ -5131,7 +5131,13 @@ end
 """
 function vsigmtime(pnTime, poBrokenTime)
     aftercare(
-        ccall((:VSIGMTime, libgdal), Ptr{tm}, (Ptr{time_t}, Ptr{tm}), pnTime, poBrokenTime),
+        ccall(
+            (:VSIGMTime, libgdal),
+            Ptr{Cvoid},
+            (Ptr{time_t}, Ptr{Cvoid}),
+            pnTime,
+            poBrokenTime,
+        ),
     )
 end
 
@@ -5143,8 +5149,8 @@ function vsilocaltime(pnTime, poBrokenTime)
     aftercare(
         ccall(
             (:VSILocalTime, libgdal),
-            Ptr{tm},
-            (Ptr{time_t}, Ptr{tm}),
+            Ptr{Cvoid},
+            (Ptr{time_t}, Ptr{Cvoid}),
             pnTime,
             poBrokenTime,
         ),
@@ -19609,6 +19615,45 @@ function gdalmultidimtranslate(
     )
 end
 
+"""
+    OGR_L_ResetReading(OGRLayerH) -> void
+
+Reset feature reading to start on the first feature.
+
+### Parameters
+* **hLayer**: handle to the layer on which features are read.
+"""
+function ogr_l_resetreading(arg1)
+    aftercare(ccall((:OGR_L_ResetReading, libgdal), Cvoid, (OGRLayerH,), arg1))
+end
+
+"""
+    OGR_F_Destroy(OGRFeatureH hFeat) -> void
+
+Destroy feature.
+
+### Parameters
+* **hFeat**: handle to the feature to destroy.
+"""
+function ogr_f_destroy(arg1)
+    aftercare(ccall((:OGR_F_Destroy, libgdal), Cvoid, (OGRFeatureH,), arg1))
+end
+
+"""
+    OGR_L_GetNextFeature(OGRLayerH) -> OGRFeatureH
+
+Fetch the next available feature from this layer.
+
+### Parameters
+* **hLayer**: handle to the layer from which feature are read.
+
+### Returns
+a handle to a feature, or NULL if no more features are available.
+"""
+function ogr_l_getnextfeature(arg1)
+    aftercare(ccall((:OGR_L_GetNextFeature, libgdal), OGRFeatureH, (OGRLayerH,), arg1))
+end
+
 "Opaque type for a coordinate transformation object "
 const OGRCoordinateTransformationH = Ptr{Cvoid}
 
@@ -23743,18 +23788,6 @@ function ogr_f_create(arg1)
 end
 
 """
-    OGR_F_Destroy(OGRFeatureH hFeat) -> void
-
-Destroy feature.
-
-### Parameters
-* **hFeat**: handle to the feature to destroy.
-"""
-function ogr_f_destroy(arg1)
-    aftercare(ccall((:OGR_F_Destroy, libgdal), Cvoid, (OGRFeatureH,), arg1))
-end
-
-"""
     OGR_F_GetDefnRef(OGRFeatureH hFeat) -> OGRFeatureDefnH
 
 Fetch feature definition.
@@ -25487,33 +25520,6 @@ function ogr_l_setattributefilter(arg1, arg2)
             arg2,
         ),
     )
-end
-
-"""
-    OGR_L_ResetReading(OGRLayerH) -> void
-
-Reset feature reading to start on the first feature.
-
-### Parameters
-* **hLayer**: handle to the layer on which features are read.
-"""
-function ogr_l_resetreading(arg1)
-    aftercare(ccall((:OGR_L_ResetReading, libgdal), Cvoid, (OGRLayerH,), arg1))
-end
-
-"""
-    OGR_L_GetNextFeature(OGRLayerH) -> OGRFeatureH
-
-Fetch the next available feature from this layer.
-
-### Parameters
-* **hLayer**: handle to the layer from which feature are read.
-
-### Returns
-a handle to a feature, or NULL if no more features are available.
-"""
-function ogr_l_getnextfeature(arg1)
-    aftercare(ccall((:OGR_L_GetNextFeature, libgdal), OGRFeatureH, (OGRLayerH,), arg1))
 end
 
 """
@@ -27760,6 +27766,114 @@ function ogr_stbl_getlaststylename(hStyleTable)
 end
 
 """
+    OGR_GT_Flatten(OGRwkbGeometryType eType) -> OGRwkbGeometryType
+
+Returns the 2D geometry type corresponding to the passed geometry type.
+
+### Parameters
+* **eType**: Input geometry type
+
+### Returns
+2D geometry type corresponding to the passed geometry type.
+"""
+function ogr_gt_flatten(eType)
+    aftercare(
+        ccall((:OGR_GT_Flatten, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType),
+    )
+end
+
+"""
+    OGR_GT_HasZ(OGRwkbGeometryType eType) -> int
+
+Return if the geometry type is a 3D geometry type.
+
+### Parameters
+* **eType**: Input geometry type
+
+### Returns
+TRUE if the geometry type is a 3D geometry type.
+"""
+function ogr_gt_hasz(eType)
+    aftercare(ccall((:OGR_GT_HasZ, libgdal), Cint, (OGRwkbGeometryType,), eType))
+end
+
+"""
+    OGR_GT_SetZ(OGRwkbGeometryType eType) -> OGRwkbGeometryType
+
+Returns the 3D geometry type corresponding to the passed geometry type.
+
+### Parameters
+* **eType**: Input geometry type
+
+### Returns
+3D geometry type corresponding to the passed geometry type.
+"""
+function ogr_gt_setz(eType)
+    aftercare(
+        ccall((:OGR_GT_SetZ, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType),
+    )
+end
+
+"""
+    OGR_GT_HasM(OGRwkbGeometryType eType) -> int
+
+Return if the geometry type is a measured type.
+
+### Parameters
+* **eType**: Input geometry type
+
+### Returns
+TRUE if the geometry type is a measured type.
+"""
+function ogr_gt_hasm(eType)
+    aftercare(ccall((:OGR_GT_HasM, libgdal), Cint, (OGRwkbGeometryType,), eType))
+end
+
+"""
+    OGR_GT_SetM(OGRwkbGeometryType eType) -> OGRwkbGeometryType
+
+Returns the measured geometry type corresponding to the passed geometry type.
+
+### Parameters
+* **eType**: Input geometry type
+
+### Returns
+measured geometry type corresponding to the passed geometry type.
+"""
+function ogr_gt_setm(eType)
+    aftercare(
+        ccall((:OGR_GT_SetM, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType),
+    )
+end
+
+"""
+    gdalcheckversion(nVersionMajor, nVersionMinor, pszCallingComponentName)
+
+Return [`TRUE`](@ref) if GDAL library version at runtime matches nVersionMajor.nVersionMinor.
+
+The purpose of this method is to ensure that calling code will run with the GDAL version it is compiled for. It is primarily indented for external plugins.
+
+### Parameters
+* `nVersionMajor`: Major version to be tested against 
+
+* `nVersionMinor`: Minor version to be tested against 
+
+* `pszCallingComponentName`: If not NULL, in case of version mismatch, the method will issue a failure mentioning the name of the calling component.
+"""
+function gdalcheckversion(nVersionMajor, nVersionMinor, pszCallingComponentName)
+    aftercare(
+        ccall(
+            (:GDALCheckVersion, libgdal),
+            Cint,
+            (Cint, Cint, Cstring),
+            nVersionMajor,
+            nVersionMinor,
+            pszCallingComponentName,
+        ),
+    )
+end
+
+"""
     ogrmalloc(arg1)
 
 Doxygen\\_Suppress 
@@ -27891,57 +28005,6 @@ function ogrmergegeometrytypesex(eMain, eExtra, bAllowPromotingToCurves)
 end
 
 """
-    OGR_GT_Flatten(OGRwkbGeometryType eType) -> OGRwkbGeometryType
-
-Returns the 2D geometry type corresponding to the passed geometry type.
-
-### Parameters
-* **eType**: Input geometry type
-
-### Returns
-2D geometry type corresponding to the passed geometry type.
-"""
-function ogr_gt_flatten(eType)
-    aftercare(
-        ccall((:OGR_GT_Flatten, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType),
-    )
-end
-
-"""
-    OGR_GT_SetZ(OGRwkbGeometryType eType) -> OGRwkbGeometryType
-
-Returns the 3D geometry type corresponding to the passed geometry type.
-
-### Parameters
-* **eType**: Input geometry type
-
-### Returns
-3D geometry type corresponding to the passed geometry type.
-"""
-function ogr_gt_setz(eType)
-    aftercare(
-        ccall((:OGR_GT_SetZ, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType),
-    )
-end
-
-"""
-    OGR_GT_SetM(OGRwkbGeometryType eType) -> OGRwkbGeometryType
-
-Returns the measured geometry type corresponding to the passed geometry type.
-
-### Parameters
-* **eType**: Input geometry type
-
-### Returns
-measured geometry type corresponding to the passed geometry type.
-"""
-function ogr_gt_setm(eType)
-    aftercare(
-        ccall((:OGR_GT_SetM, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType),
-    )
-end
-
-"""
     OGR_GT_SetModifier(OGRwkbGeometryType eType,
                        int bHasZ,
                        int bHasM) -> OGRwkbGeometryType
@@ -27967,36 +28030,6 @@ function ogr_gt_setmodifier(eType, bSetZ, bSetM)
             bSetM,
         ),
     )
-end
-
-"""
-    OGR_GT_HasZ(OGRwkbGeometryType eType) -> int
-
-Return if the geometry type is a 3D geometry type.
-
-### Parameters
-* **eType**: Input geometry type
-
-### Returns
-TRUE if the geometry type is a 3D geometry type.
-"""
-function ogr_gt_hasz(eType)
-    aftercare(ccall((:OGR_GT_HasZ, libgdal), Cint, (OGRwkbGeometryType,), eType))
-end
-
-"""
-    OGR_GT_HasM(OGRwkbGeometryType eType) -> int
-
-Return if the geometry type is a measured type.
-
-### Parameters
-* **eType**: Input geometry type
-
-### Returns
-TRUE if the geometry type is a measured type.
-"""
-function ogr_gt_hasm(eType)
-    aftercare(ccall((:OGR_GT_HasM, libgdal), Cint, (OGRwkbGeometryType,), eType))
 end
 
 """
@@ -28334,33 +28367,6 @@ an internal string containing the requested information.
 """
 function gdalversioninfo(arg1)
     aftercare(ccall((:GDALVersionInfo, libgdal), Cstring, (Cstring,), arg1), false)
-end
-
-"""
-    gdalcheckversion(nVersionMajor, nVersionMinor, pszCallingComponentName)
-
-Return [`TRUE`](@ref) if GDAL library version at runtime matches nVersionMajor.nVersionMinor.
-
-The purpose of this method is to ensure that calling code will run with the GDAL version it is compiled for. It is primarily indented for external plugins.
-
-### Parameters
-* `nVersionMajor`: Major version to be tested against 
-
-* `nVersionMinor`: Minor version to be tested against 
-
-* `pszCallingComponentName`: If not NULL, in case of version mismatch, the method will issue a failure mentioning the name of the calling component.
-"""
-function gdalcheckversion(nVersionMajor, nVersionMinor, pszCallingComponentName)
-    aftercare(
-        ccall(
-            (:GDALCheckVersion, libgdal),
-            Cint,
-            (Cint, Cint, Cstring),
-            nVersionMajor,
-            nVersionMinor,
-            pszCallingComponentName,
-        ),
-    )
 end
 
 """
