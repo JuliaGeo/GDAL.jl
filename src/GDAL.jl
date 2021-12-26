@@ -15539,7 +15539,7 @@ Create viewshed from raster DEM.
 * **dfInvisibleVal**: pixel value for invisibility (default 0)
 * **dfOutOfRangeVal**: The value to be set for the cells that fall outside of the range specified by dfMaxDistance.
 * **dfNoDataVal**: The value to be set for the cells that have no data. If set to a negative value, nodata is not set. Note: currently, no special processing of input cells at a nodata value is done (which may result in erroneous results).
-* **dfCurvCoeff**: Coefficient to consider the effect of the curvature and refraction. The height of the DEM is corrected according to the following formula: [Height] -= dfCurvCoeff * [Target Distance]^2 / [Earth Diameter] For the effect of the atmospheric refraction we can use 0.85714‬.
+* **dfCurvCoeff**: Coefficient to consider the effect of the curvature and refraction. The height of the DEM is corrected according to the following formula: [Height] -= dfCurvCoeff * [Target Distance]^2 / [Earth Diameter] For the effect of the atmospheric refraction we can use 0.85714.
 * **eMode**: The mode of the viewshed calculation. Possible values GVM_Diagonal = 1, GVM_Edge = 2 (default), GVM_Max = 3, GVM_Min = 4.
 * **dfMaxDistance**: maximum distance range to compute viewshed. It is also used to clamp the extent of the output raster. If set to 0, then unlimited range is assumed, that is to say the computation is performed on the extent of the whole raster.
 * **pfnProgress**: A GDALProgressFunc that may be used to report progress to the user, or to interrupt the algorithm. May be NULL if not required.
