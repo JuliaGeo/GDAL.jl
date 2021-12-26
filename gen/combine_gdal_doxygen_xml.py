@@ -41,3 +41,10 @@ for elem in tree.xpath('/doxygen/compounddef'):
             elem.remove(subelem)
 
 tree.write(outxml)
+
+# remove hidden character that the julia parser won't accept, fixed in GDAL 3.4.1
+# https://github.com/OSGeo/gdal/pull/5043
+with open(outxml) as f:
+    clean_text = f.read().replace('&#8236;', '')
+with open(outxml, "w") as f:
+    f.write(clean_text)
