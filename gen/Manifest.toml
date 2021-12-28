@@ -25,9 +25,9 @@ version = "3.3.0"
 
 [[deps.Clang]]
 deps = ["CEnum", "Clang_jll", "Downloads", "Pkg", "TOML"]
-git-tree-sha1 = "45a5a25b76dbdaf8e794a585936ec56020e606d7"
+git-tree-sha1 = "6b979ea288e9acf04982dd192a57c1c578cabd44"
 uuid = "40e3b903-d033-50b4-a0cc-940c62c95e31"
-version = "0.15.0"
+version = "0.15.3"
 
 [[deps.Clang_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "Zlib_jll", "libLLVM_jll"]
@@ -126,9 +126,9 @@ version = "2.1.0+0"
 
 [[deps.JuliaFormatter]]
 deps = ["CSTParser", "CommonMark", "DataStructures", "Pkg", "Tokenize"]
-git-tree-sha1 = "51e6716cc630c157dc5fbd466429c891f5ce6462"
+git-tree-sha1 = "4802d7f8bf3801e68e3c774135f3c5c6a7ce675d"
 uuid = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
-version = "0.20.5"
+version = "0.21.0"
 
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
