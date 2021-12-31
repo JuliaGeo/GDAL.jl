@@ -24,4 +24,4 @@ Below are the steps needed to create an XML file from which the documentation is
 
 ### Run the wrapping scripts
 1. Run `julia --project` in this directory and `pkg> instantiate` the dependencies.
-2. Run `include("wrap.jl")` to generate the wrapping (GDAL + documentation).
+2. Run `include("generator.jl")` to generate the wrapping (GDAL + documentation).
