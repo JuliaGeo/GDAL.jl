@@ -1,21 +1,10 @@
-# [general]
-# library_name = "libclang"
-# output_file_path = "./LibClang.jl"
-# module_name = "LibClang"
-# jll_pkg_name = "Clang_jll"
-# export_symbol_prefixes = ["CX", "clang_"]
-
 [general]
 library_name = "libgdal"
-output_file_path = "../src/GDAL.jl"
-module_name = "GDAL"
-jll_pkg_name = "GDAL_jll"
+output_file_path = "../src/libgdal.jl"
+print_using_CEnum = false
 
-prologue_file_path = "./prologue.jl"
-epilogue_file_path = "./epilogue.jl"
-
-# node with an id in the `printer_blacklist` will be ignored in the printing passes. 
-# this is very useful for custom editing. 
+# node with an id in the `printer_blacklist` will be ignored in the printing passes.
+# this is very useful for custom editing.
 printer_blacklist = [
     "VSI_FOPEN64",
     "VSI_FSEEK64",
