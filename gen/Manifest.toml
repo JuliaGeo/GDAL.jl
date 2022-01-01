@@ -126,9 +126,9 @@ version = "2.1.0+0"
 
 [[deps.JuliaFormatter]]
 deps = ["CSTParser", "CommonMark", "DataStructures", "Pkg", "Tokenize"]
-git-tree-sha1 = "4802d7f8bf3801e68e3c774135f3c5c6a7ce675d"
+git-tree-sha1 = "74831e2d1e29b58dd34d3ae3f6ca9ba8a2aea4b9"
 uuid = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
-version = "0.21.0"
+version = "0.21.1"
 
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]

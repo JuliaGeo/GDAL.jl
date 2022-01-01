@@ -174,7 +174,7 @@ build!(ctx, BUILDSTAGE_NO_PRINTING)
 rewriter(ctx.dag)
 build!(ctx, BUILDSTAGE_PRINTING_ONLY)
 
-add_doc(joinpath(@__DIR__, "..", "src", "GDAL.jl"))
+add_doc(joinpath(@__DIR__, "..", "src", "libgdal.jl"))
 
 format(joinpath(@__DIR__, ".."))
 
