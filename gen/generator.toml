@@ -5,7 +5,7 @@ print_using_CEnum = false
 
 # node with an id in the `printer_blacklist` will be ignored in the printing passes.
 # this is very useful for custom editing.
-printer_blacklist = [
+output_ignorelist = [
     "VSI_FOPEN64",
     "VSI_FSEEK64",
     "VSI_FTELL64",
