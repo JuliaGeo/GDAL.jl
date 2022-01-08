@@ -52,9 +52,9 @@ deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
 
 [[deps.Crayons]]
-git-tree-sha1 = "3f71217b538d7aaee0b69ab47d9b7724ca8afa0d"
+git-tree-sha1 = "b618084b49e78985ffa8422f32b9838e397b9fc2"
 uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
-version = "4.0.4"
+version = "4.1.0"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
@@ -91,16 +91,16 @@ uuid = "8f5d6c58-4d21-5cfd-889c-e3ad7ee6a615"
 version = "1.1.0"
 
 [[deps.GDAL_jll]]
-deps = ["Artifacts", "Expat_jll", "GEOS_jll", "JLLWrappers", "LibCURL_jll", "LibSSH2_jll", "Libdl", "Libtiff_jll", "MbedTLS_jll", "OpenJpeg_jll", "PROJ_jll", "Pkg", "SQLite_jll", "Zlib_jll", "Zstd_jll", "libgeotiff_jll", "nghttp2_jll"]
-git-tree-sha1 = "439c33eb4dfa74a43a1e96b1d758aeb3cbc33dc3"
+deps = ["Artifacts", "Expat_jll", "GEOS_jll", "JLLWrappers", "LibCURL_jll", "Libdl", "Libtiff_jll", "OpenJpeg_jll", "PROJ_jll", "Pkg", "SQLite_jll", "Zlib_jll", "Zstd_jll", "libgeotiff_jll"]
+git-tree-sha1 = "5272b856ca84a20871858b46a1f3b529e12c38a7"
 uuid = "a7073274-a066-55f0-b90d-d619367d196c"
-version = "300.202.100+0"
+version = "300.400.100+0"
 
 [[deps.GEOS_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "45d0ddfd29620ac9b2d1072801e90fb016c5f94c"
+git-tree-sha1 = "07f6426d716d0d110cdede90ebd3bbb2f3be0d8c"
 uuid = "d604d12d-fa86-5845-992e-78dc15976526"
-version = "3.9.0+0"
+version = "3.10.0+0"
 
 [[deps.InteractiveUtils]]
 deps = ["Markdown"]
@@ -213,10 +213,10 @@ uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 version = "1.4.1"
 
 [[deps.PROJ_jll]]
-deps = ["Artifacts", "JLLWrappers", "LibCURL_jll", "LibSSH2_jll", "Libdl", "Libtiff_jll", "MbedTLS_jll", "Pkg", "SQLite_jll", "Zlib_jll", "nghttp2_jll"]
-git-tree-sha1 = "2435e91710d7f97f53ef7a4872bf1f948dc8e5f8"
+deps = ["Artifacts", "JLLWrappers", "LibCURL_jll", "Libdl", "Libtiff_jll", "Pkg", "SQLite_jll"]
+git-tree-sha1 = "59c43648bf081f732eae1e44b8883f713d2ca1b6"
 uuid = "58948b4f-47e0-5654-a9ad-f609743f8632"
-version = "700.202.100+0"
+version = "800.200.100+0"
 
 [[deps.Parsers]]
 deps = ["Dates"]
@@ -327,10 +327,10 @@ deps = ["Artifacts", "Libdl", "OpenBLAS_jll"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
 
 [[deps.libgeotiff_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Libtiff_jll", "PROJ_jll", "Pkg"]
-git-tree-sha1 = "a5cc2e3dd7b1c1e783a61b8ab7de03eebddfed60"
+deps = ["Artifacts", "JLLWrappers", "LibCURL_jll", "Libdl", "Libtiff_jll", "PROJ_jll", "Pkg"]
+git-tree-sha1 = "91197a1c90fc19ce66e5151c92d41679a52ad4b5"
 uuid = "06c338fa-64ff-565b-ac2f-249532af990e"
-version = "1.6.0+1"
+version = "1.7.0+0"
 
 [[deps.libpng_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "Zlib_jll"]
