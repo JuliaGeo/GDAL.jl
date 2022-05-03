@@ -3,7 +3,7 @@ module GDAL
 using CEnum
 using GDAL_jll
 using PROJ_jll
-using NetworkOptions
+using NetworkOptions: ca_roots
 
 # some manual replacements for generated code in libgdal.jl
 const stat = Cvoid
@@ -35,11 +35,7 @@ function __init__()
     cplsetconfigoption("GDAL_DATA", GDAL_DATA[])
 
     # set path to CA certificates
-    ca_path = @static if VERSION >= v"1.6"
-        ca_roots()
-    else
-        ca_roots_path()
-    end
+    ca_path = ca_roots()
     if ca_path !== nothing
         cplsetconfigoption("CURL_CA_BUNDLE", ca_path)
     end
