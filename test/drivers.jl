@@ -64,8 +64,8 @@ available_drivers = [
 end
 
 # errors with BADCERT_NOT_TRUSTED if the CA certificate paths is not properly configured
-landsat = "https://landsat-pds.s3.amazonaws.com/L8/139/045/LC81390452014295LGN00/LC81390452014295LGN00_B1.TIF"
-ds_landsat = GDAL.gdalopen(string("/vsicurl/", landsat), GDAL.GA_ReadOnly)
-GDAL.gdalclose(ds_landsat)
+sentinel = "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/30/U/WA/2020/7/S2B_30UWA_20200730_0_L2A/L2A_PVI.tif"
+ds_sentinel = GDAL.gdalopen(string("/vsicurl/", sentinel), GDAL.GA_ReadOnly)
+GDAL.gdalclose(ds_sentinel)
 # actually also works without the /vsicurl/ prefix, but takes 50s versus 1s, so let's
 # not waste CI time. (it's probably downloading the whole file)
