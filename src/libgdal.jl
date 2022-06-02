@@ -12,7 +12,7 @@ end
 """
     cplverifyconfiguration()
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function cplverifyconfiguration()
     aftercare(ccall((:CPLVerifyConfiguration, libgdal), Cvoid, ()))
@@ -96,7 +96,7 @@ end
 """
     cplfreeconfig()
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function cplfreeconfig()
     aftercare(ccall((:CPLFreeConfig, libgdal), Cvoid, ()))
@@ -313,7 +313,7 @@ function cplreadline(arg1)
     aftercare(ccall((:CPLReadLine, libgdal), Cstring, (Ptr{Libc.FILE},), arg1), false)
 end
 
-"Opaque type for a FILE that implements the VSIVirtualHandle API "
+"Opaque type for a FILE that implements the VSIVirtualHandle API"
 const VSILFILE = Libc.FILE
 
 """
@@ -331,7 +331,7 @@ function cplreadlinel(arg1)
     aftercare(ccall((:CPLReadLineL, libgdal), Cstring, (Ptr{VSILFILE},), arg1), false)
 end
 
-"Type of a constant null-terminated list of nul terminated strings. Seen as char** from C and const char* const* from C++ "
+"Type of a constant null-terminated list of nul terminated strings. Seen as char** from C and const char* const* from C++"
 const CSLConstList = Ptr{Cstring}
 
 """
@@ -615,7 +615,7 @@ function cplscanulong(arg1, arg2)
     aftercare(ccall((:CPLScanULong, libgdal), Culong, (Cstring, Cint), arg1, arg2))
 end
 
-"Large unsigned integer type (generally 64-bit unsigned integer type). Use [`GUInt64`](@ref) when exactly 64 bit is needed "
+"Large unsigned integer type (generally 64-bit unsigned integer type). Use [`GUInt64`](@ref) when exactly 64 bit is needed"
 const GUIntBig = Culonglong
 
 """
@@ -635,7 +635,7 @@ function cplscanuintbig(arg1, arg2)
     aftercare(ccall((:CPLScanUIntBig, libgdal), GUIntBig, (Cstring, Cint), arg1, arg2))
 end
 
-"Large signed integer type (generally 64-bit integer type). Use [`GInt64`](@ref) when exactly 64 bit is needed "
+"Large signed integer type (generally 64-bit integer type). Use [`GInt64`](@ref) when exactly 64 bit is needed"
 const GIntBig = Clonglong
 
 """
@@ -747,7 +747,7 @@ function cplprintstringfill(arg1, arg2, arg3)
     )
 end
 
-"Int32 type "
+"Int32 type"
 const GInt32 = Cint
 
 """
@@ -1302,7 +1302,7 @@ function cpllaunderforfilename(pszName, pszOutputPath)
     )
 end
 
-"Callback for [`CPLPushFileFinder`](@ref) "
+"Callback for [`CPLPushFileFinder`](@ref)"
 const CPLFileFinder = Ptr{Cvoid}
 
 """
@@ -1382,7 +1382,7 @@ function cplfinderclean()
     aftercare(ccall((:CPLFinderClean, libgdal), Cvoid, ()))
 end
 
-"Doxygen\\\\_Suppress "
+"Doxygen\\\\_Suppress"
 const VSIStatBuf = stat
 
 """
@@ -1398,15 +1398,15 @@ end
 """
     CPLSharedFileInfo
 
-Information on a shared file 
+Information on a shared file
 
-| Field       | Note                                         |
-| :---------- | :------------------------------------------- |
-| fp          | File pointer                                 |
-| nRefCount   | Reference counter                            |
-| bLarge      | Whether fp must be interpreted as VSIFILE*   |
-| pszFilename | Filename                                     |
-| pszAccess   | Access mode                                  |
+| Field       | Note                                        |
+| :---------- | :------------------------------------------ |
+| fp          | File pointer                                |
+| nRefCount   | Reference counter                           |
+| bLarge      | Whether fp must be interpreted as VSIFILE*  |
+| pszFilename | Filename                                    |
+| pszAccess   | Access mode                                 |
 """
 struct CPLSharedFileInfo
     fp::Ptr{Libc.FILE}
@@ -1488,7 +1488,7 @@ end
 """
     cplcleanupsharedfilemutex()
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function cplcleanupsharedfilemutex()
     aftercare(ccall((:CPLCleanupSharedFileMutex, libgdal), Cvoid, ()))
@@ -1661,7 +1661,7 @@ end
 """
     CPLErr
 
-Error category 
+Error category
 """
 @cenum CPLErr::UInt32 begin
     CE_None = 0
@@ -1818,7 +1818,7 @@ end
 """
     cplcleanupsetlocalemutex()
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function cplcleanupsetlocalemutex()
     aftercare(ccall((:CPLCleanupSetlocaleMutex, libgdal), Cvoid, ()))
@@ -1827,11 +1827,10 @@ end
 """
     cplispoweroftwo(i)
 
-[`CPLIsPowerOfTwo`](@ref)() 
+[`CPLIsPowerOfTwo`](@ref)()
 
 ### Parameters
-* `i`: - tested number 
-
+* `i`: - tested number
 ### Returns
 [`TRUE`](@ref) if i is power of two otherwise return [`FALSE`](@ref)
 """
@@ -1839,7 +1838,7 @@ function cplispoweroftwo(i)
     aftercare(ccall((:CPLIsPowerOfTwo, libgdal), Cint, (Cuint,), i))
 end
 
-"Error number "
+"Error number"
 const CPLErrorNum = Cint
 
 function cplemergencyerror(arg1)
@@ -1870,7 +1869,7 @@ function cplgetlasterrormsg()
     unsafe_string(ccall((:CPLGetLastErrorMsg, libgdal), Cstring, ()))
 end
 
-"Unsigned int32 type "
+"Unsigned int32 type"
 const GUInt32 = Cuint
 
 function cplgeterrorcounter()
@@ -1895,13 +1894,13 @@ end
 """
     cplcleanuperrormutex()
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function cplcleanuperrormutex()
     ccall((:CPLCleanupErrorMutex, libgdal), Cvoid, ())
 end
 
-"Callback for a custom error handler "
+"Callback for a custom error handler"
 const CPLErrorHandler = Ptr{Cvoid}
 
 function cplloggingerrorhandler(arg1, arg2, arg3)
@@ -1998,15 +1997,15 @@ end
 """
     CPLXMLNodeType
 
-XML node type 
+XML node type
 
-| Enumerator      | Note                        |
-| :-------------- | :-------------------------- |
-| CXT\\_Element   | Node is an element          |
-| CXT\\_Text      | Node is a raw text value    |
-| CXT\\_Attribute | Node is attribute           |
-| CXT\\_Comment   | Node is an XML comment.     |
-| CXT\\_Literal   | Node is a special literal   |
+| Enumerator      | Note                       |
+| :-------------- | :------------------------- |
+| CXT\\_Element   | Node is an element         |
+| CXT\\_Text      | Node is a raw text value   |
+| CXT\\_Attribute | Node is attribute          |
+| CXT\\_Comment   | Node is an XML comment.    |
+| CXT\\_Literal   | Node is a special literal  |
 """
 @cenum CPLXMLNodeType::UInt32 begin
     CXT_Element = 0
@@ -2435,29 +2434,29 @@ function cplserializexmltreetofile(psTree, pszFilename)
     )
 end
 
-"Unsigned int16 type "
+"Unsigned int16 type"
 const GUInt16 = Cushort
 
-"Unsigned 64 bit integer type "
+"Unsigned 64 bit integer type"
 const GUInt64 = GUIntBig
 
-"Unsigned byte type "
+"Unsigned byte type"
 const GByte = Cuchar
 
-"Int16 type "
+"Int16 type"
 const GInt16 = Cshort
 
 """
 
 
-Type for boolean values (alias to int) 
+Type for boolean values (alias to int)
 """
 const GBool = Cint
 
-"Signed 64 bit integer type "
+"Signed 64 bit integer type"
 const GInt64 = GIntBig
 
-"Integer type large enough to hold the difference between 2 addresses "
+"Integer type large enough to hold the difference between 2 addresses"
 const GPtrDiff_t = GIntBig
 
 const GDALProgressFunc = Ptr{Cvoid}
@@ -2579,14 +2578,10 @@ const CPLVirtualMem = Cvoid
 Callback triggered when a still unmapped page of virtual memory is accessed. The callback has the responsibility of filling the page with relevant values
 
 ### Parameters
-* `ctxt`: virtual memory handle. 
-
-* `nOffset`: offset of the page in the memory mapping. 
-
-* `pPageToFill`: address of the page to fill. Note that the address might be a temporary location, and not at [`CPLVirtualMemGetAddr`](@ref)() + nOffset. 
-
-* `nToFill`: number of bytes of the page. 
-
+* `ctxt`: virtual memory handle.
+* `nOffset`: offset of the page in the memory mapping.
+* `pPageToFill`: address of the page to fill. Note that the address might be a temporary location, and not at [`CPLVirtualMemGetAddr`](@ref)() + nOffset.
+* `nToFill`: number of bytes of the page.
 * `pUserData`: user data that was passed to [`CPLVirtualMemNew`](@ref)().
 """
 const CPLVirtualMemCachePageCbk = Ptr{Cvoid}
@@ -2595,20 +2590,16 @@ const CPLVirtualMemCachePageCbk = Ptr{Cvoid}
 Callback triggered when a dirty mapped page is going to be freed. (saturation of cache, or termination of the virtual memory mapping).
 
 ### Parameters
-* `ctxt`: virtual memory handle. 
-
-* `nOffset`: offset of the page in the memory mapping. 
-
-* `pPageToBeEvicted`: address of the page that will be flushed. Note that the address might be a temporary location, and not at [`CPLVirtualMemGetAddr`](@ref)() + nOffset. 
-
-* `nToBeEvicted`: number of bytes of the page. 
-
+* `ctxt`: virtual memory handle.
+* `nOffset`: offset of the page in the memory mapping.
+* `pPageToBeEvicted`: address of the page that will be flushed. Note that the address might be a temporary location, and not at [`CPLVirtualMemGetAddr`](@ref)() + nOffset.
+* `nToBeEvicted`: number of bytes of the page.
 * `pUserData`: user data that was passed to [`CPLVirtualMemNew`](@ref)().
 """
 const CPLVirtualMemUnCachePageCbk = Ptr{Cvoid}
 
 """
-Callback triggered when a virtual memory mapping is destroyed. 
+Callback triggered when a virtual memory mapping is destroyed.
 
 ### Parameters
 * `pUserData`: user data that was passed to [`CPLVirtualMemNew`](@ref)().
@@ -2618,13 +2609,13 @@ const CPLVirtualMemFreeUserData = Ptr{Cvoid}
 """
     CPLVirtualMemAccessMode
 
-Access mode of a virtual memory mapping. 
+Access mode of a virtual memory mapping.
 
-| Enumerator                       | Note                                                                                                                         |
-| :------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
-| VIRTUALMEM\\_READONLY            | The mapping is meant at being read-only, but writes will not be prevented. Note that any content written will be lost.       |
-| VIRTUALMEM\\_READONLY\\_ENFORCED | The mapping is meant at being read-only, and this will be enforced through the operating system page protection mechanism.   |
-| VIRTUALMEM\\_READWRITE           | The mapping is meant at being read-write, and modified pages can be saved thanks to the pfnUnCachePage callback              |
+| Enumerator                       | Note                                                                                                                        |
+| :------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
+| VIRTUALMEM\\_READONLY            | The mapping is meant at being read-only, but writes will not be prevented. Note that any content written will be lost.      |
+| VIRTUALMEM\\_READONLY\\_ENFORCED | The mapping is meant at being read-only, and this will be enforced through the operating system page protection mechanism.  |
+| VIRTUALMEM\\_READWRITE           | The mapping is meant at being read-write, and modified pages can be saved thanks to the pfnUnCachePage callback             |
 """
 @cenum CPLVirtualMemAccessMode::UInt32 begin
     VIRTUALMEM_READONLY = 0
@@ -2662,24 +2653,15 @@ Note that on Linux, this function will install a SIGSEGV handler. The original h
 \\since GDAL 1.11
 
 ### Parameters
-* `nSize`: size in bytes of the virtual memory mapping. 
-
-* `nCacheSize`: size in bytes of the maximum memory that will be really allocated (must ideally fit into RAM). 
-
-* `nPageSizeHint`: hint for the page size. Must be a multiple of the system page size, returned by [`CPLGetPageSize`](@ref)(). Minimum value is generally 4096. Might be set to 0 to let the function determine a default page size. 
-
-* `bSingleThreadUsage`: set to [`TRUE`](@ref) if there will be no concurrent threads that will access the virtual memory mapping. This can optimize performance a bit. 
-
-* `eAccessMode`: permission to use for the virtual memory mapping. 
-
-* `pfnCachePage`: callback triggered when a still unmapped page of virtual memory is accessed. The callback has the responsibility of filling the page with relevant values. 
-
-* `pfnUnCachePage`: callback triggered when a dirty mapped page is going to be freed (saturation of cache, or termination of the virtual memory mapping). Might be NULL. 
-
-* `pfnFreeUserData`: callback that can be used to free pCbkUserData. Might be NULL 
-
+* `nSize`: size in bytes of the virtual memory mapping.
+* `nCacheSize`: size in bytes of the maximum memory that will be really allocated (must ideally fit into RAM).
+* `nPageSizeHint`: hint for the page size. Must be a multiple of the system page size, returned by [`CPLGetPageSize`](@ref)(). Minimum value is generally 4096. Might be set to 0 to let the function determine a default page size.
+* `bSingleThreadUsage`: set to [`TRUE`](@ref) if there will be no concurrent threads that will access the virtual memory mapping. This can optimize performance a bit.
+* `eAccessMode`: permission to use for the virtual memory mapping.
+* `pfnCachePage`: callback triggered when a still unmapped page of virtual memory is accessed. The callback has the responsibility of filling the page with relevant values.
+* `pfnUnCachePage`: callback triggered when a dirty mapped page is going to be freed (saturation of cache, or termination of the virtual memory mapping). Might be NULL.
+* `pfnFreeUserData`: callback that can be used to free pCbkUserData. Might be NULL
 * `pCbkUserData`: user data passed to pfnCachePage and pfnUnCachePage.
-
 ### Returns
 a virtual memory object that must be freed by [`CPLVirtualMemFree`](@ref)(), or NULL in case of failure.
 """
@@ -2730,13 +2712,13 @@ Return if virtual memory mapping of a file is available.
 \\since GDAL 1.11
 
 ### Returns
-[`TRUE`](@ref) if virtual memory mapping of a file is available. 
+[`TRUE`](@ref) if virtual memory mapping of a file is available.
 """
 function cplisvirtualmemfilemapavailable()
     aftercare(ccall((:CPLIsVirtualMemFileMapAvailable, libgdal), Cint, ()))
 end
 
-"Type for a file offset "
+"Type for a file offset"
 const vsi_l_offset = GUIntBig
 
 """
@@ -2755,18 +2737,12 @@ Supported on Linux only in GDAL <= 2.0, and all POSIX systems supporting mmap() 
 \\since GDAL 1.11
 
 ### Parameters
-* `fp`: Virtual file handle. 
-
-* `nOffset`: Offset in the file to start the mapping from. 
-
-* `nLength`: Length of the portion of the file to map into memory. 
-
-* `eAccessMode`: Permission to use for the virtual memory mapping. This must be consistent with how the file has been opened. 
-
-* `pfnFreeUserData`: callback that is called when the object is destroyed. 
-
-* `pCbkUserData`: user data passed to pfnFreeUserData. 
-
+* `fp`: Virtual file handle.
+* `nOffset`: Offset in the file to start the mapping from.
+* `nLength`: Length of the portion of the file to map into memory.
+* `eAccessMode`: Permission to use for the virtual memory mapping. This must be consistent with how the file has been opened.
+* `pfnFreeUserData`: callback that is called when the object is destroyed.
+* `pCbkUserData`: user data passed to pfnFreeUserData.
 ### Returns
 a virtual memory object that must be freed by [`CPLVirtualMemFree`](@ref)(), or NULL in case of failure.
 """
@@ -2812,16 +2788,11 @@ The new mapping takes a reference on the base mapping.
 \\since GDAL 1.11
 
 ### Parameters
-* `pVMemBase`: Base virtual memory mapping 
-
-* `nOffset`: Offset in the base virtual memory mapping from which to start the new mapping. 
-
-* `nSize`: Size of the base virtual memory mapping to expose in the the new mapping. 
-
-* `pfnFreeUserData`: callback that is called when the object is destroyed. 
-
-* `pCbkUserData`: user data passed to pfnFreeUserData. 
-
+* `pVMemBase`: Base virtual memory mapping
+* `nOffset`: Offset in the base virtual memory mapping from which to start the new mapping.
+* `nSize`: Size of the base virtual memory mapping to expose in the the new mapping.
+* `pfnFreeUserData`: callback that is called when the object is destroyed.
+* `pCbkUserData`: user data passed to pfnFreeUserData.
 ### Returns
 a virtual memory object that must be freed by [`CPLVirtualMemFree`](@ref)(), or NULL in case of failure.
 """
@@ -2874,8 +2845,7 @@ Note that if a range of bytes used as an argument of a system call (such as read
 \\since GDAL 1.11
 
 ### Parameters
-* `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)(). 
-
+* `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
 ### Returns
 the pointer to the start of a virtual memory mapping.
 """
@@ -2893,8 +2863,7 @@ Return the size of the virtual memory mapping.
 \\since GDAL 1.11
 
 ### Parameters
-* `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)(). 
-
+* `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
 ### Returns
 the size of the virtual memory mapping.
 """
@@ -2910,8 +2879,7 @@ Return if the virtual memory mapping is a direct file mapping.
 \\since GDAL 1.11
 
 ### Parameters
-* `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)(). 
-
+* `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
 ### Returns
 [`TRUE`](@ref) if the virtual memory mapping is a direct file mapping.
 """
@@ -2929,8 +2897,7 @@ Return the access mode of the virtual memory mapping.
 \\since GDAL 1.11
 
 ### Parameters
-* `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)(). 
-
+* `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
 ### Returns
 the access mode of the virtual memory mapping.
 """
@@ -2955,8 +2922,7 @@ The value returned will be at least [`CPLGetPageSize`](@ref)(), but potentially 
 \\since GDAL 1.11
 
 ### Parameters
-* `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)(). 
-
+* `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
 ### Returns
 the page size
 """
@@ -2980,8 +2946,7 @@ On Linux, this will always return [`TRUE`](@ref) if bSingleThreadUsage = [`FALSE
 \\since GDAL 1.11
 
 ### Parameters
-* `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)(). 
-
+* `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
 ### Returns
 [`TRUE`](@ref) if this memory mapping can be accessed safely from concurrent threads.
 """
@@ -3048,12 +3013,9 @@ It is also needed when wanting to provide part of virtual memory mapping to a sy
 \\since GDAL 1.11
 
 ### Parameters
-* `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)(). 
-
-* `pAddr`: the memory region to pin. 
-
-* `nSize`: the size of the memory region. 
-
+* `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
+* `pAddr`: the memory region to pin.
+* `nSize`: the size of the memory region.
 * `bWriteOp`: set to [`TRUE`](@ref) if the memory are will be accessed in write mode.
 """
 function cplvirtualmempin(ctxt, pAddr, nSize, bWriteOp)
@@ -3106,7 +3068,7 @@ end
 """
     vsimallocverbose(nSize, pszFile, nLine)
 
-[`VSIMallocVerbose`](@ref) 
+[`VSIMallocVerbose`](@ref)
 """
 function vsimallocverbose(nSize, pszFile, nLine)
     aftercare(
@@ -3124,7 +3086,7 @@ end
 """
     vsimalloc2verbose(nSize1, nSize2, pszFile, nLine)
 
-[`VSIMalloc2Verbose`](@ref) 
+[`VSIMalloc2Verbose`](@ref)
 """
 function vsimalloc2verbose(nSize1, nSize2, pszFile, nLine)
     aftercare(
@@ -3143,7 +3105,7 @@ end
 """
     vsimalloc3verbose(nSize1, nSize2, nSize3, pszFile, nLine)
 
-[`VSIMalloc3Verbose`](@ref) 
+[`VSIMalloc3Verbose`](@ref)
 """
 function vsimalloc3verbose(nSize1, nSize2, nSize3, pszFile, nLine)
     aftercare(
@@ -3163,7 +3125,7 @@ end
 """
     vsicallocverbose(nCount, nSize, pszFile, nLine)
 
-[`VSICallocVerbose`](@ref) 
+[`VSICallocVerbose`](@ref)
 """
 function vsicallocverbose(nCount, nSize, pszFile, nLine)
     aftercare(
@@ -3182,7 +3144,7 @@ end
 """
     vsireallocverbose(pOldPtr, nNewSize, pszFile, nLine)
 
-[`VSIReallocVerbose`](@ref) 
+[`VSIReallocVerbose`](@ref)
 """
 function vsireallocverbose(pOldPtr, nNewSize, pszFile, nLine)
     aftercare(
@@ -3201,7 +3163,7 @@ end
 """
     vsistrdupverbose(pszStr, pszFile, nLine)
 
-[`VSIStrdupVerbose`](@ref) 
+[`VSIStrdupVerbose`](@ref)
 """
 function vsistrdupverbose(pszStr, pszFile, nLine)
     aftercare(
@@ -3235,7 +3197,7 @@ end
 """
     vsifopen(arg1, arg2)
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function vsifopen(arg1, arg2)
     aftercare(ccall((:VSIFOpen, libgdal), Ptr{Libc.FILE}, (Cstring, Cstring), arg1, arg2))
@@ -3696,13 +3658,13 @@ end
 """
     VSIRangeStatus
 
-Range status 
+Range status
 
-| Enumerator                     | Note           |
-| :----------------------------- | :------------- |
-| VSI\\_RANGE\\_STATUS\\_UNKNOWN | Unknown        |
-| VSI\\_RANGE\\_STATUS\\_DATA    | Data present   |
-| VSI\\_RANGE\\_STATUS\\_HOLE    | Hole           |
+| Enumerator                     | Note          |
+| :----------------------------- | :------------ |
+| VSI\\_RANGE\\_STATUS\\_UNKNOWN | Unknown       |
+| VSI\\_RANGE\\_STATUS\\_DATA    | Data present  |
+| VSI\\_RANGE\\_STATUS\\_HOLE    | Hole          |
 """
 @cenum VSIRangeStatus::UInt32 begin
     VSI_RANGE_STATUS_UNKNOWN = 0
@@ -3797,7 +3759,7 @@ function vsioverwritefile(fpTarget, pszSourceFilename)
     )
 end
 
-"Type for [`VSIStatL`](@ref)() "
+"Type for [`VSIStatL`](@ref)()"
 const VSIStatBufL = _stat64
 
 """
@@ -4098,6 +4060,64 @@ function vsisetfilemetadata(pszFilename, papszMetadata, pszDomain, papszOptions)
 end
 
 """
+    VSISetCredential(const char * pszPathPrefix,
+                     const char * pszKey,
+                     const char * pszValue) -> void
+
+Set a credential (or more generally an option related to a virtual file system) for a given path prefix.
+
+### Parameters
+* **pszPathPrefix**: a path prefix of a virtual file system handler. Typically of the form "/vsiXXX/bucket". Must NOT be NULL.
+* **pszKey**: Option name. Must NOT be NULL.
+* **pszValue**: Option value. May be NULL to erase it.
+"""
+function vsisetcredential(pszPathPrefix, pszKey, pszValue)
+    aftercare(
+        ccall(
+            (:VSISetCredential, libgdal),
+            Cvoid,
+            (Cstring, Cstring, Cstring),
+            pszPathPrefix,
+            pszKey,
+            pszValue,
+        ),
+    )
+end
+
+"""
+    VSIClearCredentials(const char * pszPathPrefix) -> void
+
+Clear credentials set with VSISetCredential()
+
+### Parameters
+* **pszPathPrefix**: If set to NULL, all credentials are cleared. If set to not-NULL, only those set with VSISetCredential(pszPathPrefix, ...) will be cleared.
+"""
+function vsiclearcredentials(pszPathPrefix)
+    aftercare(ccall((:VSIClearCredentials, libgdal), Cvoid, (Cstring,), pszPathPrefix))
+end
+
+"""
+    VSIGetCredential(const char * pszPath,
+                     const char * pszKey,
+                     const char * pszDefault) -> const char *
+
+Get a credential option for a given path.
+"""
+function vsigetcredential(pszPath, pszKey, pszDefault)
+    aftercare(
+        ccall(
+            (:VSIGetCredential, libgdal),
+            Cstring,
+            (Cstring, Cstring, Cstring),
+            pszPath,
+            pszKey,
+            pszDefault,
+        ),
+        false,
+    )
+end
+
+"""
     VSICalloc(size_t nCount,
               size_t nSize) -> void *
 
@@ -4325,18 +4345,18 @@ end
 """
     VSIDIREntry
 
-Directory entry. 
+Directory entry.
 
-| Field       | Note                                                           |
-| :---------- | :------------------------------------------------------------- |
-| pszName     | Filename                                                       |
-| nMode       | File mode. See [`VSI_ISREG`](@ref)() / [`VSI_ISDIR`](@ref)()   |
-| nSize       | File size                                                      |
-| nMTime      | Last modification time (seconds since 1970/01/01)              |
-| bModeKnown  | Whether nMode is known: 0 = unknown, 1 = known.                |
-| bSizeKnown  | Whether nSize is known: 0 = unknown, 1 = known.                |
-| bMTimeKnown | Whether nMTime is known: 0 = unknown, 1 = known.               |
-| papszExtra  | NULL-terminated list of extra properties.                      |
+| Field       | Note                                                          |
+| :---------- | :------------------------------------------------------------ |
+| pszName     | Filename                                                      |
+| nMode       | File mode. See [`VSI_ISREG`](@ref)() / [`VSI_ISDIR`](@ref)()  |
+| nSize       | File size                                                     |
+| nMTime      | Last modification time (seconds since 1970/01/01)             |
+| bModeKnown  | Whether nMode is known: 0 = unknown, 1 = known.               |
+| bSizeKnown  | Whether nSize is known: 0 = unknown, 1 = known.               |
+| bMTimeKnown | Whether nMTime is known: 0 = unknown, 1 = known.              |
+| papszExtra  | NULL-terminated list of extra properties.                     |
 """
 struct VSIDIREntry
     pszName::Cstring
@@ -4513,7 +4533,16 @@ The OVERWRITE strategy (GDAL >= 3.2) will always overwrite the target file with 
 NUM_THREADS=integer. (GDAL >= 3.1) Number of threads to use for parallel file copying. Only use for when /vsis3/, /vsigs/, /vsiaz/ or /vsiadls/ is in source or target. The default is 10 since GDAL 3.3 
 
 
-CHUNK_SIZE=integer. (GDAL >= 3.1) Maximum size of chunk (in bytes) to use to split large objects when downloading them from /vsis3/, /vsigs/, /vsiaz/ or /vsiadls/ to local file system, or for upload to /vsis3/, /vsiaz/ or /vsiadls/ from local file system. Only used if NUM_THREADS > 1. For upload to /vsis3/, this chunk size must be set at least to 5 MB. The default is 8 MB since GDAL 3.3
+CHUNK_SIZE=integer. (GDAL >= 3.1) Maximum size of chunk (in bytes) to use to split large objects when downloading them from /vsis3/, /vsigs/, /vsiaz/ or /vsiadls/ to local file system, or for upload to /vsis3/, /vsiaz/ or /vsiadls/ from local file system. Only used if NUM_THREADS > 1. For upload to /vsis3/, this chunk size must be set at least to 5 MB. The default is 8 MB since GDAL 3.3 
+
+
+x-amz-KEY=value. (GDAL >= 3.5) MIME header to pass during creation of a /vsis3/ object. 
+
+
+x-goog-KEY=value. (GDAL >= 3.5) MIME header to pass during creation of a /vsigs/ object. 
+
+
+x-ms-KEY=value. (GDAL >= 3.5) MIME header to pass during creation of a /vsiaz/ or /vsiadls/ object.
 * **pProgressFunc**: Progress callback, or NULL.
 * **pProgressData**: User data of progress callback, or NULL.
 * **ppapszOutputs**: Unused. Should be set to NULL for now.
@@ -4634,7 +4663,7 @@ end
 """
     vsiinstalllargefilehandler()
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function vsiinstalllargefilehandler()
     aftercare(ccall((:VSIInstallLargeFileHandler, libgdal), Cvoid, ()))
@@ -4747,7 +4776,7 @@ end
 """
     VSIInstallADLSFileHandler(void) -> void
 
-Install /vsiadls/ Microsoft Azure Data Lake Storage Gen2 file system handler (requires libcurl)
+Install /vsiaz/ Microsoft Azure Data Lake Storage Gen2 file system handler (requires libcurl)
 """
 function vsiinstalladlsfilehandler()
     aftercare(ccall((:VSIInstallADLSFileHandler, libgdal), Cvoid, ()))
@@ -4765,7 +4794,7 @@ end
 """
     VSIInstallOSSStreamingFileHandler(void) -> void
 
-Install /vsioss_streaming/ Alibaba Cloud Object Storage Service (OSS) file system handler (requires libcurl)
+Install /vsiaz_streaming/ Alibaba Cloud Object Storage Service (OSS) (requires libcurl)
 """
 function vsiinstallossstreamingfilehandler()
     aftercare(ccall((:VSIInstallOSSStreamingFileHandler, libgdal), Cvoid, ()))
@@ -4783,7 +4812,7 @@ end
 """
     VSIInstallSwiftStreamingFileHandler(void) -> void
 
-Install /vsiswift_streamin/ OpenStack Swif Object Storage (Swift) file system handler (requires libcurl)
+Install /vsiswift_streaming/ OpenStack Swif Object Storage (Swift) file system handler (requires libcurl)
 """
 function vsiinstallswiftstreamingfilehandler()
     aftercare(ccall((:VSIInstallSwiftStreamingFileHandler, libgdal), Cvoid, ()))
@@ -4889,7 +4918,7 @@ end
 """
     vsicleanupfilemanager()
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function vsicleanupfilemanager()
     aftercare(ccall((:VSICleanupFileManager, libgdal), Cvoid, ()))
@@ -4954,7 +4983,7 @@ function vsigetmemfilebuffer(pszFilename, pnDataLength, bUnlinkAndSeize)
     )
 end
 
-"Callback used by [`VSIStdoutSetRedirection`](@ref)() "
+"Callback used by [`VSIStdoutSetRedirection`](@ref)()"
 const VSIWriteFunction = Ptr{Cvoid}
 
 """
@@ -4980,42 +5009,42 @@ function vsistdoutsetredirection(pFct, stream)
 end
 
 """
-Return information about a handle. Optional (driver dependent) 
+Return information about a handle. Optional (driver dependent)
 
 \\since GDAL 3.0
 """
 const VSIFilesystemPluginStatCallback = Ptr{Cvoid}
 
 """
-Remove handle by name. Optional 
+Remove handle by name. Optional
 
 \\since GDAL 3.0
 """
 const VSIFilesystemPluginUnlinkCallback = Ptr{Cvoid}
 
 """
-Rename handle. Optional 
+Rename handle. Optional
 
 \\since GDAL 3.0
 """
 const VSIFilesystemPluginRenameCallback = Ptr{Cvoid}
 
 """
-Create Directory. Optional 
+Create Directory. Optional
 
 \\since GDAL 3.0
 """
 const VSIFilesystemPluginMkdirCallback = Ptr{Cvoid}
 
 """
-Delete Directory. Optional 
+Delete Directory. Optional
 
 \\since GDAL 3.0
 """
 const VSIFilesystemPluginRmdirCallback = Ptr{Cvoid}
 
 """
-List directory content. Optional 
+List directory content. Optional
 
 \\since GDAL 3.0
 """
@@ -5024,70 +5053,70 @@ const VSIFilesystemPluginReadDirCallback = Ptr{Cvoid}
 """
 List related files. Must return NULL if unknown, or a list of relative filenames that can be opened along the main file. If no other file than pszFilename needs to be opened, return static\\_cast<char**> ([`CPLCalloc`](@ref)(1,sizeof(char*)));
 
-Optional 
+Optional
 
 \\since GDAL 3.2
 """
 const VSIFilesystemPluginSiblingFilesCallback = Ptr{Cvoid}
 
 """
-Open a handle. Mandatory. Returns an opaque pointer that will be used in subsequent file I/O calls. Should return null and/or set errno if the handle does not exist or the access mode is incorrect. 
+Open a handle. Mandatory. Returns an opaque pointer that will be used in subsequent file I/O calls. Should return null and/or set errno if the handle does not exist or the access mode is incorrect.
 
 \\since GDAL 3.0
 """
 const VSIFilesystemPluginOpenCallback = Ptr{Cvoid}
 
 """
-Return current position in handle. Mandatory 
+Return current position in handle. Mandatory
 
 \\since GDAL 3.0
 """
 const VSIFilesystemPluginTellCallback = Ptr{Cvoid}
 
 """
-Seek to position in handle. Mandatory except for write only handles 
+Seek to position in handle. Mandatory except for write only handles
 
 \\since GDAL 3.0
 """
 const VSIFilesystemPluginSeekCallback = Ptr{Cvoid}
 
 """
-Read data from current position, returns the number of blocks correctly read. Mandatory except for write only handles 
+Read data from current position, returns the number of blocks correctly read. Mandatory except for write only handles
 
 \\since GDAL 3.0
 """
 const VSIFilesystemPluginReadCallback = Ptr{Cvoid}
 
 """
-Read from multiple offsets. Optional, will be replaced by multiple calls to Read() if not provided 
+Read from multiple offsets. Optional, will be replaced by multiple calls to Read() if not provided
 
 \\since GDAL 3.0
 """
 const VSIFilesystemPluginReadMultiRangeCallback = Ptr{Cvoid}
 
 """
-Get empty ranges. Optional 
+Get empty ranges. Optional
 
 \\since GDAL 3.0
 """
 const VSIFilesystemPluginGetRangeStatusCallback = Ptr{Cvoid}
 
 """
-Has end of file been reached. Mandatory? for read handles. 
+Has end of file been reached. Mandatory? for read handles.
 
 \\since GDAL 3.0
 """
 const VSIFilesystemPluginEofCallback = Ptr{Cvoid}
 
 """
-Write bytes at current offset. Mandatory for writable handles 
+Write bytes at current offset. Mandatory for writable handles
 
 \\since GDAL 3.0
 """
 const VSIFilesystemPluginWriteCallback = Ptr{Cvoid}
 
 """
-Sync written bytes. Optional 
+Sync written bytes. Optional
 
 \\since GDAL 3.0
 """
@@ -5097,7 +5126,7 @@ const VSIFilesystemPluginFlushCallback = Ptr{Cvoid}
 const VSIFilesystemPluginTruncateCallback = Ptr{Cvoid}
 
 """
-Close file handle. Optional 
+Close file handle. Optional
 
 \\since GDAL 3.0
 """
@@ -5106,7 +5135,7 @@ const VSIFilesystemPluginCloseCallback = Ptr{Cvoid}
 """
     VSIFilesystemPluginCallbacksStruct
 
-struct containing callbacks to used by the handler. (rw), (r), (w) or () at the end indicate whether the given callback is mandatory for reading and or writing handlers. A (?) indicates that the callback might be mandatory for certain drivers only. 
+struct containing callbacks to used by the handler. (rw), (r), (w) or () at the end indicate whether the given callback is mandatory for reading and or writing handlers. A (?) indicates that the callback might be mandatory for certain drivers only.
 
 \\since GDAL 3.0
 
@@ -5161,7 +5190,7 @@ end
 """
     vsiallocfilesystemplugincallbacksstruct()
 
-return a [`VSIFilesystemPluginCallbacksStruct`](@ref) to be populated at runtime with handler callbacks 
+return a [`VSIFilesystemPluginCallbacksStruct`](@ref) to be populated at runtime with handler callbacks
 
 \\since GDAL 3.0
 """
@@ -5178,7 +5207,7 @@ end
 """
     vsifreefilesystemplugincallbacksstruct(poCb)
 
-free resources allocated by [`VSIAllocFilesystemPluginCallbacksStruct`](@ref) 
+free resources allocated by [`VSIAllocFilesystemPluginCallbacksStruct`](@ref)
 
 \\since GDAL 3.0
 """
@@ -5196,7 +5225,7 @@ end
 """
     vsiinstallpluginhandler(pszPrefix, poCb)
 
-register a handler on the given prefix. All IO on datasets opened with the filename /prefix/xxxxxx will go through these callbacks. pszPrefix must begin and end with a '/' 
+register a handler on the given prefix. All IO on datasets opened with the filename /prefix/xxxxxx will go through these callbacks. pszPrefix must begin and end with a '/'
 
 \\since GDAL 3.0
 """
@@ -5215,7 +5244,7 @@ end
 """
     vsitime(arg1)
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function vsitime(arg1)
     aftercare(ccall((:VSITime, libgdal), Culong, (Ptr{Culong},), arg1))
@@ -5263,30 +5292,30 @@ end
 """
     GDALRPCInfoV2
 
-Structure to store Rational Polynomial Coefficients / Rigorous Projection Model. See http://geotiff.maptools.org/rpc\\_prop.html 
+Structure to store Rational Polynomial Coefficients / Rigorous Projection Model. See http://geotiff.maptools.org/rpc\\_prop.html
 
-| Field                 | Note                                    |
-| :-------------------- | :-------------------------------------- |
-| dfLINE\\_OFF          | Line offset                             |
-| dfSAMP\\_OFF          | Sample/Pixel offset                     |
-| dfLAT\\_OFF           | Latitude offset                         |
-| dfLONG\\_OFF          | Longitude offset                        |
-| dfHEIGHT\\_OFF        | Height offset                           |
-| dfLINE\\_SCALE        | Line scale                              |
-| dfSAMP\\_SCALE        | Sample/Pixel scale                      |
-| dfLAT\\_SCALE         | Latitude scale                          |
-| dfLONG\\_SCALE        | Longitude scale                         |
-| dfHEIGHT\\_SCALE      | Height scale                            |
-| adfLINE\\_NUM\\_COEFF | Line Numerator Coefficients             |
-| adfLINE\\_DEN\\_COEFF | Line Denominator Coefficients           |
-| adfSAMP\\_NUM\\_COEFF | Sample/Pixel Numerator Coefficients     |
-| adfSAMP\\_DEN\\_COEFF | Sample/Pixel Denominator Coefficients   |
-| dfMIN\\_LONG          | Minimum longitude                       |
-| dfMIN\\_LAT           | Minimum latitude                        |
-| dfMAX\\_LONG          | Maximum longitude                       |
-| dfMAX\\_LAT           | Maximum latitude                        |
-| dfERR\\_BIAS          | Bias error                              |
-| dfERR\\_RAND          | Random error                            |
+| Field                 | Note                                   |
+| :-------------------- | :------------------------------------- |
+| dfLINE\\_OFF          | Line offset                            |
+| dfSAMP\\_OFF          | Sample/Pixel offset                    |
+| dfLAT\\_OFF           | Latitude offset                        |
+| dfLONG\\_OFF          | Longitude offset                       |
+| dfHEIGHT\\_OFF        | Height offset                          |
+| dfLINE\\_SCALE        | Line scale                             |
+| dfSAMP\\_SCALE        | Sample/Pixel scale                     |
+| dfLAT\\_SCALE         | Latitude scale                         |
+| dfLONG\\_SCALE        | Longitude scale                        |
+| dfHEIGHT\\_SCALE      | Height scale                           |
+| adfLINE\\_NUM\\_COEFF | Line Numerator Coefficients            |
+| adfLINE\\_DEN\\_COEFF | Line Denominator Coefficients          |
+| adfSAMP\\_NUM\\_COEFF | Sample/Pixel Numerator Coefficients    |
+| adfSAMP\\_DEN\\_COEFF | Sample/Pixel Denominator Coefficients  |
+| dfMIN\\_LONG          | Minimum longitude                      |
+| dfMIN\\_LAT           | Minimum latitude                       |
+| dfMAX\\_LONG          | Maximum longitude                      |
+| dfMAX\\_LAT           | Maximum latitude                       |
+| dfERR\\_BIAS          | Bias error                             |
+| dfERR\\_RAND          | Random error                           |
 """
 struct GDALRPCInfoV2
     dfLINE_OFF::Cdouble
@@ -5339,23 +5368,25 @@ end
 """
     GDALDataType
 
-Pixel data types 
+Pixel data types
 
-| Enumerator      | Note                              |
-| :-------------- | :-------------------------------- |
-| GDT\\_Unknown   | Unknown or unspecified type       |
-| GDT\\_Byte      | Eight bit unsigned integer        |
-| GDT\\_UInt16    | Sixteen bit unsigned integer      |
-| GDT\\_Int16     | Sixteen bit signed integer        |
-| GDT\\_UInt32    | Thirty two bit unsigned integer   |
-| GDT\\_Int32     | Thirty two bit signed integer     |
-| GDT\\_Float32   | Thirty two bit floating point     |
-| GDT\\_Float64   | Sixty four bit floating point     |
-| GDT\\_CInt16    | Complex Int16                     |
-| GDT\\_CInt32    | Complex Int32                     |
-| GDT\\_CFloat32  | Complex Float32                   |
-| GDT\\_CFloat64  | Complex Float64                   |
-| GDT\\_TypeCount |                                   |
+| Enumerator      | Note                                   |
+| :-------------- | :------------------------------------- |
+| GDT\\_Unknown   | Unknown or unspecified type            |
+| GDT\\_Byte      | Eight bit unsigned integer             |
+| GDT\\_UInt16    | Sixteen bit unsigned integer           |
+| GDT\\_Int16     | Sixteen bit signed integer             |
+| GDT\\_UInt32    | Thirty two bit unsigned integer        |
+| GDT\\_Int32     | Thirty two bit signed integer          |
+| GDT\\_UInt64    | 64 bit unsigned integer (GDAL >= 3.5)  |
+| GDT\\_Int64     | 64 bit signed integer (GDAL >= 3.5)    |
+| GDT\\_Float32   | Thirty two bit floating point          |
+| GDT\\_Float64   | Sixty four bit floating point          |
+| GDT\\_CInt16    | Complex Int16                          |
+| GDT\\_CInt32    | Complex Int32                          |
+| GDT\\_CFloat32  | Complex Float32                        |
+| GDT\\_CFloat64  | Complex Float64                        |
+| GDT\\_TypeCount |                                        |
 """
 @cenum GDALDataType::UInt32 begin
     GDT_Unknown = 0
@@ -5364,13 +5395,15 @@ Pixel data types
     GDT_Int16 = 3
     GDT_UInt32 = 4
     GDT_Int32 = 5
+    GDT_UInt64 = 12
+    GDT_Int64 = 13
     GDT_Float32 = 6
     GDT_Float64 = 7
     GDT_CInt16 = 8
     GDT_CInt32 = 9
     GDT_CFloat32 = 10
     GDT_CFloat64 = 11
-    GDT_TypeCount = 12
+    GDT_TypeCount = 14
 end
 
 """
@@ -5739,12 +5772,12 @@ end
 """
     GDALAccess
 
-Flag indicating read/write, or read-only access to data. 
+Flag indicating read/write, or read-only access to data.
 
-| Enumerator    | Note                           |
-| :------------ | :----------------------------- |
-| GA\\_ReadOnly | Read only (no update) access   |
-| GA\\_Update   | Read/write access.             |
+| Enumerator    | Note                          |
+| :------------ | :---------------------------- |
+| GA\\_ReadOnly | Read only (no update) access  |
+| GA\\_Update   | Read/write access.            |
 """
 @cenum GDALAccess::UInt32 begin
     GA_ReadOnly = 0
@@ -5754,12 +5787,12 @@ end
 """
     GDALRWFlag
 
-Read/Write flag for RasterIO() method 
+Read/Write flag for RasterIO() method
 
-| Enumerator | Note         |
-| :--------- | :----------- |
-| GF\\_Read  | Read data    |
-| GF\\_Write | Write data   |
+| Enumerator | Note        |
+| :--------- | :---------- |
+| GF\\_Read  | Read data   |
+| GF\\_Write | Write data  |
 """
 @cenum GDALRWFlag::UInt32 begin
     GF_Read = 0
@@ -5769,7 +5802,7 @@ end
 """
     GDALRIOResampleAlg
 
-RasterIO() resampling method. 
+RasterIO() resampling method.
 
 \\since GDAL 2.0
 
@@ -5806,21 +5839,21 @@ end
 """
     GDALRasterIOExtraArg
 
-Structure to pass extra arguments to RasterIO() method, must be initialized with [`INIT_RASTERIO_EXTRA_ARG`](@ref) 
+Structure to pass extra arguments to RasterIO() method, must be initialized with [`INIT_RASTERIO_EXTRA_ARG`](@ref)
 
 \\since GDAL 2.0
 
-| Field                        | Note                                                                                                                                                                                                                                                              |
-| :--------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| nVersion                     | Version of structure (to allow future extensions of the structure)                                                                                                                                                                                                |
-| eResampleAlg                 | Resampling algorithm                                                                                                                                                                                                                                              |
-| pfnProgress                  | Progress callback                                                                                                                                                                                                                                                 |
-| pProgressData                | Progress callback user data                                                                                                                                                                                                                                       |
-| bFloatingPointWindowValidity | Indicate if dfXOff, dfYOff, dfXSize and dfYSize are set. Mostly reserved from the VRT driver to communicate a more precise source window. Must be such that dfXOff - nXOff < 1.0 and dfYOff - nYOff < 1.0 and nXSize - dfXSize < 1.0 and nYSize - dfYSize < 1.0   |
-| dfXOff                       | Pixel offset to the top left corner. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                                  |
-| dfYOff                       | Line offset to the top left corner. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                                   |
-| dfXSize                      | Width in pixels of the area of interest. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                              |
-| dfYSize                      | Height in pixels of the area of interest. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                             |
+| Field                        | Note                                                                                                                                                                                                                                                             |
+| :--------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| nVersion                     | Version of structure (to allow future extensions of the structure)                                                                                                                                                                                               |
+| eResampleAlg                 | Resampling algorithm                                                                                                                                                                                                                                             |
+| pfnProgress                  | Progress callback                                                                                                                                                                                                                                                |
+| pProgressData                | Progress callback user data                                                                                                                                                                                                                                      |
+| bFloatingPointWindowValidity | Indicate if dfXOff, dfYOff, dfXSize and dfYSize are set. Mostly reserved from the VRT driver to communicate a more precise source window. Must be such that dfXOff - nXOff < 1.0 and dfYOff - nYOff < 1.0 and nXSize - dfXSize < 1.0 and nYSize - dfYSize < 1.0  |
+| dfXOff                       | Pixel offset to the top left corner. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                                 |
+| dfYOff                       | Line offset to the top left corner. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                                  |
+| dfXSize                      | Width in pixels of the area of interest. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                             |
+| dfYSize                      | Height in pixels of the area of interest. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                            |
 """
 struct GDALRasterIOExtraArg
     nVersion::Cint
@@ -5837,28 +5870,28 @@ end
 """
     GDALColorInterp
 
-Types of color interpretation for raster bands. 
+Types of color interpretation for raster bands.
 
-| Enumerator           | Note                                                           |
-| :------------------- | :------------------------------------------------------------- |
-| GCI\\_Undefined      | Undefined                                                      |
-| GCI\\_GrayIndex      | Greyscale                                                      |
-| GCI\\_PaletteIndex   | Paletted (see associated color table)                          |
-| GCI\\_RedBand        | Red band of RGBA image                                         |
-| GCI\\_GreenBand      | Green band of RGBA image                                       |
-| GCI\\_BlueBand       | Blue band of RGBA image                                        |
-| GCI\\_AlphaBand      | Alpha (0=transparent, 255=opaque)                              |
-| GCI\\_HueBand        | Hue band of HLS image                                          |
-| GCI\\_SaturationBand | Saturation band of HLS image                                   |
-| GCI\\_LightnessBand  | Lightness band of HLS image                                    |
-| GCI\\_CyanBand       | Cyan band of CMYK image                                        |
-| GCI\\_MagentaBand    | Magenta band of CMYK image                                     |
-| GCI\\_YellowBand     | Yellow band of CMYK image                                      |
-| GCI\\_BlackBand      | Black band of CMYK image                                       |
-| GCI\\_YCbCr\\_YBand  | Y Luminance                                                    |
-| GCI\\_YCbCr\\_CbBand | Cb Chroma                                                      |
-| GCI\\_YCbCr\\_CrBand | Cr Chroma                                                      |
-| GCI\\_Max            | Max current value (equals to GCI\\_YCbCr\\_CrBand currently)   |
+| Enumerator           | Note                                                          |
+| :------------------- | :------------------------------------------------------------ |
+| GCI\\_Undefined      | Undefined                                                     |
+| GCI\\_GrayIndex      | Greyscale                                                     |
+| GCI\\_PaletteIndex   | Paletted (see associated color table)                         |
+| GCI\\_RedBand        | Red band of RGBA image                                        |
+| GCI\\_GreenBand      | Green band of RGBA image                                      |
+| GCI\\_BlueBand       | Blue band of RGBA image                                       |
+| GCI\\_AlphaBand      | Alpha (0=transparent, 255=opaque)                             |
+| GCI\\_HueBand        | Hue band of HLS image                                         |
+| GCI\\_SaturationBand | Saturation band of HLS image                                  |
+| GCI\\_LightnessBand  | Lightness band of HLS image                                   |
+| GCI\\_CyanBand       | Cyan band of CMYK image                                       |
+| GCI\\_MagentaBand    | Magenta band of CMYK image                                    |
+| GCI\\_YellowBand     | Yellow band of CMYK image                                     |
+| GCI\\_BlackBand      | Black band of CMYK image                                      |
+| GCI\\_YCbCr\\_YBand  | Y Luminance                                                   |
+| GCI\\_YCbCr\\_CbBand | Cb Chroma                                                     |
+| GCI\\_YCbCr\\_CrBand | Cr Chroma                                                     |
+| GCI\\_Max            | Max current value (equals to GCI\\_YCbCr\\_CrBand currently)  |
 """
 @cenum GDALColorInterp::UInt32 begin
     GCI_Undefined = 0
@@ -5929,7 +5962,7 @@ end
 """
     GDALPaletteInterp
 
-Types of color interpretations for a GDALColorTable. 
+Types of color interpretations for a GDALColorTable.
 
 | Enumerator | Note                                                    |
 | :--------- | :------------------------------------------------------ |
@@ -5968,42 +6001,42 @@ function gdalgetpaletteinterpretationname(arg1)
     )
 end
 
-"Opaque type used for the C bindings of the C++ GDALMajorObject class "
+"Opaque type used for the C bindings of the C++ GDALMajorObject class"
 const GDALMajorObjectH = Ptr{Cvoid}
 
-"Opaque type used for the C bindings of the C++ GDALDataset class "
+"Opaque type used for the C bindings of the C++ GDALDataset class"
 const GDALDatasetH = Ptr{Cvoid}
 
-"Opaque type used for the C bindings of the C++ GDALRasterBand class "
+"Opaque type used for the C bindings of the C++ GDALRasterBand class"
 const GDALRasterBandH = Ptr{Cvoid}
 
-"Opaque type used for the C bindings of the C++ GDALDriver class "
+"Opaque type used for the C bindings of the C++ GDALDriver class"
 const GDALDriverH = Ptr{Cvoid}
 
-"Opaque type used for the C bindings of the C++ GDALColorTable class "
+"Opaque type used for the C bindings of the C++ GDALColorTable class"
 const GDALColorTableH = Ptr{Cvoid}
 
-"Opaque type used for the C bindings of the C++ GDALRasterAttributeTable class "
+"Opaque type used for the C bindings of the C++ GDALRasterAttributeTable class"
 const GDALRasterAttributeTableH = Ptr{Cvoid}
 
-"Opaque type used for the C bindings of the C++ GDALAsyncReader class "
+"Opaque type used for the C bindings of the C++ GDALAsyncReader class"
 const GDALAsyncReaderH = Ptr{Cvoid}
 
-"Type to express pixel, line or band spacing. Signed 64 bit integer. "
+"Type to express pixel, line or band spacing. Signed 64 bit integer"
 const GSpacing = GIntBig
 
 """
     GDALExtendedDataTypeClass
 
-Enumeration giving the class of a GDALExtendedDataType. 
+Enumeration giving the class of a GDALExtendedDataType.
 
 \\since GDAL 3.1
 
-| Enumerator       | Note                                                         |
-| :--------------- | :----------------------------------------------------------- |
-| GEDTC\\_NUMERIC  | Numeric value. Based on [`GDALDataType`](@ref) enumeration   |
-| GEDTC\\_STRING   | String value.                                                |
-| GEDTC\\_COMPOUND | Compound data type.                                          |
+| Enumerator       | Note                                                        |
+| :--------------- | :---------------------------------------------------------- |
+| GEDTC\\_NUMERIC  | Numeric value. Based on [`GDALDataType`](@ref) enumeration  |
+| GEDTC\\_STRING   | String value.                                               |
+| GEDTC\\_COMPOUND | Compound data type.                                         |
 """
 @cenum GDALExtendedDataTypeClass::UInt32 begin
     GEDTC_NUMERIC = 0
@@ -6014,14 +6047,14 @@ end
 """
     GDALExtendedDataTypeSubType
 
-Enumeration giving the subtype of a GDALExtendedDataType. 
+Enumeration giving the subtype of a GDALExtendedDataType.
 
 \\since GDAL 3.4
 
-| Enumerator    | Note                                   |
-| :------------ | :------------------------------------- |
-| GEDTST\\_NONE | None.                                  |
-| GEDTST\\_JSON | JSon. Only applies to GEDTC\\_STRING   |
+| Enumerator    | Note                                  |
+| :------------ | :------------------------------------ |
+| GEDTST\\_NONE | None.                                 |
+| GEDTST\\_JSON | JSon. Only applies to GEDTC\\_STRING  |
 """
 @cenum GDALExtendedDataTypeSubType::UInt32 begin
     GEDTST_NONE = 0
@@ -6030,32 +6063,32 @@ end
 
 const GDALExtendedDataTypeHS = Cvoid
 
-"Opaque type for C++ GDALExtendedDataType "
+"Opaque type for C++ GDALExtendedDataType"
 const GDALExtendedDataTypeH = Ptr{GDALExtendedDataTypeHS}
 
 const GDALEDTComponentHS = Cvoid
 
-"Opaque type for C++ GDALEDTComponent "
+"Opaque type for C++ GDALEDTComponent"
 const GDALEDTComponentH = Ptr{GDALEDTComponentHS}
 
 const GDALGroupHS = Cvoid
 
-"Opaque type for C++ GDALGroup "
+"Opaque type for C++ GDALGroup"
 const GDALGroupH = Ptr{GDALGroupHS}
 
 const GDALMDArrayHS = Cvoid
 
-"Opaque type for C++ GDALMDArray "
+"Opaque type for C++ GDALMDArray"
 const GDALMDArrayH = Ptr{GDALMDArrayHS}
 
 const GDALAttributeHS = Cvoid
 
-"Opaque type for C++ GDALAttribute "
+"Opaque type for C++ GDALAttribute"
 const GDALAttributeH = Ptr{GDALAttributeHS}
 
 const GDALDimensionHS = Cvoid
 
-"Opaque type for C++ GDALDimension "
+"Opaque type for C++ GDALDimension"
 const GDALDimensionH = Ptr{GDALDimensionHS}
 
 """
@@ -6544,17 +6577,17 @@ end
 """
     GDAL_GCP
 
-Ground Control Point 
+Ground Control Point
 
-| Field      | Note                                       |
-| :--------- | :----------------------------------------- |
-| pszId      | Unique identifier, often numeric           |
-| pszInfo    | Informational message or ""                |
-| dfGCPPixel | Pixel (x) location of GCP on raster        |
-| dfGCPLine  | Line (y) location of GCP on raster         |
-| dfGCPX     | X position of GCP in georeferenced space   |
-| dfGCPY     | Y position of GCP in georeferenced space   |
-| dfGCPZ     | Elevation of GCP, or zero if not known     |
+| Field      | Note                                      |
+| :--------- | :---------------------------------------- |
+| pszId      | Unique identifier, often numeric          |
+| pszInfo    | Informational message or ""               |
+| dfGCPPixel | Pixel (x) location of GCP on raster       |
+| dfGCPLine  | Line (y) location of GCP on raster        |
+| dfGCPX     | X position of GCP in georeferenced space  |
+| dfGCPY     | Y position of GCP in georeferenced space  |
+| dfGCPZ     | Elevation of GCP, or zero if not known    |
 """
 struct GDAL_GCP
     pszId::Cstring
@@ -7296,7 +7329,7 @@ function gdalgetprojectionref(arg1)
     )
 end
 
-"Opaque type for a spatial reference system "
+"Opaque type for a spatial reference system"
 const OGRSpatialReferenceH = Ptr{Cvoid}
 
 """
@@ -7750,7 +7783,7 @@ function gdaldatasetgetlayercount(arg1)
     aftercare(ccall((:GDALDatasetGetLayerCount, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
-"Opaque type for a layer (OGRLayer) "
+"Opaque type for a layer (OGRLayer)"
 const OGRLayerH = Ptr{Cvoid}
 
 """
@@ -7822,7 +7855,7 @@ function gdaldatasetislayerprivate(arg1, arg2)
     )
 end
 
-"Type for a OGR error "
+"Type for a OGR error"
 const OGRErr = Cint
 
 """
@@ -7849,79 +7882,79 @@ end
 
 List of well known binary geometry types. These are used within the BLOBs but are also returned from OGRGeometry::getGeometryType() to identify the type of a geometry object.
 
-| Enumerator               | Note                                                                                                                                   |
-| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
-| wkbUnknown               | unknown type, non-standard                                                                                                             |
-| wkbPoint                 | 0-dimensional geometric object, standard WKB                                                                                           |
-| wkbLineString            | 1-dimensional geometric object with linear interpolation between Points, standard WKB                                                  |
-| wkbPolygon               | planar 2-dimensional geometric object defined by 1 exterior boundary and 0 or more interior boundaries, standard WKB                   |
-| wkbMultiPoint            | GeometryCollection of Points, standard WKB                                                                                             |
-| wkbMultiLineString       | GeometryCollection of LineStrings, standard WKB                                                                                        |
-| wkbMultiPolygon          | GeometryCollection of Polygons, standard WKB                                                                                           |
-| wkbGeometryCollection    | geometric object that is a collection of 1 or more geometric objects, standard WKB                                                     |
-| wkbCircularString        | one or more circular arc segments connected end to end, ISO SQL/MM Part 3. GDAL >= 2.0                                                 |
-| wkbCompoundCurve         | sequence of contiguous curves, ISO SQL/MM Part 3. GDAL >= 2.0                                                                          |
-| wkbCurvePolygon          | planar surface, defined by 1 exterior boundary and zero or more interior boundaries, that are curves. ISO SQL/MM Part 3. GDAL >= 2.0   |
-| wkbMultiCurve            | GeometryCollection of Curves, ISO SQL/MM Part 3. GDAL >= 2.0                                                                           |
-| wkbMultiSurface          | GeometryCollection of Surfaces, ISO SQL/MM Part 3. GDAL >= 2.0                                                                         |
-| wkbCurve                 | Curve (abstract type). ISO SQL/MM Part 3. GDAL >= 2.1                                                                                  |
-| wkbSurface               | Surface (abstract type). ISO SQL/MM Part 3. GDAL >= 2.1                                                                                |
-| wkbPolyhedralSurface     | a contiguous collection of polygons, which share common boundary segments, ISO SQL/MM Part 3. GDAL >= 2.3                              |
-| wkbTIN                   | a PolyhedralSurface consisting only of Triangle patches ISO SQL/MM Part 3. GDAL >= 2.3                                                 |
-| wkbTriangle              | a Triangle. ISO SQL/MM Part 3. GDAL >= 2.3                                                                                             |
-| wkbNone                  | non-standard, for pure attribute records                                                                                               |
-| wkbLinearRing            | non-standard, just for createGeometry()                                                                                                |
-| wkbCircularStringZ       | wkbCircularString with Z component. ISO SQL/MM Part 3. GDAL >= 2.0                                                                     |
-| wkbCompoundCurveZ        | wkbCompoundCurve with Z component. ISO SQL/MM Part 3. GDAL >= 2.0                                                                      |
-| wkbCurvePolygonZ         | wkbCurvePolygon with Z component. ISO SQL/MM Part 3. GDAL >= 2.0                                                                       |
-| wkbMultiCurveZ           | wkbMultiCurve with Z component. ISO SQL/MM Part 3. GDAL >= 2.0                                                                         |
-| wkbMultiSurfaceZ         | wkbMultiSurface with Z component. ISO SQL/MM Part 3. GDAL >= 2.0                                                                       |
-| wkbCurveZ                | wkbCurve with Z component. ISO SQL/MM Part 3. GDAL >= 2.1                                                                              |
-| wkbSurfaceZ              | wkbSurface with Z component. ISO SQL/MM Part 3. GDAL >= 2.1                                                                            |
-| wkbPolyhedralSurfaceZ    | ISO SQL/MM Part 3. GDAL >= 2.3                                                                                                         |
-| wkbTINZ                  |                                                                                                                                        |
-| wkbTriangleZ             |                                                                                                                                        |
-| wkbPointM                | ISO SQL/MM Part 3. GDAL >= 2.1                                                                                                         |
-| wkbLineStringM           |                                                                                                                                        |
-| wkbPolygonM              |                                                                                                                                        |
-| wkbMultiPointM           |                                                                                                                                        |
-| wkbMultiLineStringM      |                                                                                                                                        |
-| wkbMultiPolygonM         |                                                                                                                                        |
-| wkbGeometryCollectionM   |                                                                                                                                        |
-| wkbCircularStringM       |                                                                                                                                        |
-| wkbCompoundCurveM        |                                                                                                                                        |
-| wkbCurvePolygonM         |                                                                                                                                        |
-| wkbMultiCurveM           |                                                                                                                                        |
-| wkbMultiSurfaceM         |                                                                                                                                        |
-| wkbCurveM                |                                                                                                                                        |
-| wkbSurfaceM              |                                                                                                                                        |
-| wkbPolyhedralSurfaceM    | ISO SQL/MM Part 3. GDAL >= 2.3                                                                                                         |
-| wkbTINM                  |                                                                                                                                        |
-| wkbTriangleM             |                                                                                                                                        |
-| wkbPointZM               | ISO SQL/MM Part 3. GDAL >= 2.1                                                                                                         |
-| wkbLineStringZM          |                                                                                                                                        |
-| wkbPolygonZM             |                                                                                                                                        |
-| wkbMultiPointZM          |                                                                                                                                        |
-| wkbMultiLineStringZM     |                                                                                                                                        |
-| wkbMultiPolygonZM        |                                                                                                                                        |
-| wkbGeometryCollectionZM  |                                                                                                                                        |
-| wkbCircularStringZM      |                                                                                                                                        |
-| wkbCompoundCurveZM       |                                                                                                                                        |
-| wkbCurvePolygonZM        |                                                                                                                                        |
-| wkbMultiCurveZM          |                                                                                                                                        |
-| wkbMultiSurfaceZM        |                                                                                                                                        |
-| wkbCurveZM               |                                                                                                                                        |
-| wkbSurfaceZM             |                                                                                                                                        |
-| wkbPolyhedralSurfaceZM   | ISO SQL/MM Part 3. GDAL >= 2.3                                                                                                         |
-| wkbTINZM                 |                                                                                                                                        |
-| wkbTriangleZM            |                                                                                                                                        |
-| wkbPoint25D              | 2.5D extension as per 99-402                                                                                                           |
-| wkbLineString25D         |                                                                                                                                        |
-| wkbPolygon25D            |                                                                                                                                        |
-| wkbMultiPoint25D         |                                                                                                                                        |
-| wkbMultiLineString25D    |                                                                                                                                        |
-| wkbMultiPolygon25D       |                                                                                                                                        |
-| wkbGeometryCollection25D |                                                                                                                                        |
+| Enumerator               | Note                                                                                                                                  |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| wkbUnknown               | unknown type, non-standard                                                                                                            |
+| wkbPoint                 | 0-dimensional geometric object, standard WKB                                                                                          |
+| wkbLineString            | 1-dimensional geometric object with linear interpolation between Points, standard WKB                                                 |
+| wkbPolygon               | planar 2-dimensional geometric object defined by 1 exterior boundary and 0 or more interior boundaries, standard WKB                  |
+| wkbMultiPoint            | GeometryCollection of Points, standard WKB                                                                                            |
+| wkbMultiLineString       | GeometryCollection of LineStrings, standard WKB                                                                                       |
+| wkbMultiPolygon          | GeometryCollection of Polygons, standard WKB                                                                                          |
+| wkbGeometryCollection    | geometric object that is a collection of 1 or more geometric objects, standard WKB                                                    |
+| wkbCircularString        | one or more circular arc segments connected end to end, ISO SQL/MM Part 3. GDAL >= 2.0                                                |
+| wkbCompoundCurve         | sequence of contiguous curves, ISO SQL/MM Part 3. GDAL >= 2.0                                                                         |
+| wkbCurvePolygon          | planar surface, defined by 1 exterior boundary and zero or more interior boundaries, that are curves. ISO SQL/MM Part 3. GDAL >= 2.0  |
+| wkbMultiCurve            | GeometryCollection of Curves, ISO SQL/MM Part 3. GDAL >= 2.0                                                                          |
+| wkbMultiSurface          | GeometryCollection of Surfaces, ISO SQL/MM Part 3. GDAL >= 2.0                                                                        |
+| wkbCurve                 | Curve (abstract type). ISO SQL/MM Part 3. GDAL >= 2.1                                                                                 |
+| wkbSurface               | Surface (abstract type). ISO SQL/MM Part 3. GDAL >= 2.1                                                                               |
+| wkbPolyhedralSurface     | a contiguous collection of polygons, which share common boundary segments, ISO SQL/MM Part 3. GDAL >= 2.3                             |
+| wkbTIN                   | a PolyhedralSurface consisting only of Triangle patches ISO SQL/MM Part 3. GDAL >= 2.3                                                |
+| wkbTriangle              | a Triangle. ISO SQL/MM Part 3. GDAL >= 2.3                                                                                            |
+| wkbNone                  | non-standard, for pure attribute records                                                                                              |
+| wkbLinearRing            | non-standard, just for createGeometry()                                                                                               |
+| wkbCircularStringZ       | wkbCircularString with Z component. ISO SQL/MM Part 3. GDAL >= 2.0                                                                    |
+| wkbCompoundCurveZ        | wkbCompoundCurve with Z component. ISO SQL/MM Part 3. GDAL >= 2.0                                                                     |
+| wkbCurvePolygonZ         | wkbCurvePolygon with Z component. ISO SQL/MM Part 3. GDAL >= 2.0                                                                      |
+| wkbMultiCurveZ           | wkbMultiCurve with Z component. ISO SQL/MM Part 3. GDAL >= 2.0                                                                        |
+| wkbMultiSurfaceZ         | wkbMultiSurface with Z component. ISO SQL/MM Part 3. GDAL >= 2.0                                                                      |
+| wkbCurveZ                | wkbCurve with Z component. ISO SQL/MM Part 3. GDAL >= 2.1                                                                             |
+| wkbSurfaceZ              | wkbSurface with Z component. ISO SQL/MM Part 3. GDAL >= 2.1                                                                           |
+| wkbPolyhedralSurfaceZ    | ISO SQL/MM Part 3. GDAL >= 2.3                                                                                                        |
+| wkbTINZ                  |                                                                                                                                       |
+| wkbTriangleZ             |                                                                                                                                       |
+| wkbPointM                | ISO SQL/MM Part 3. GDAL >= 2.1                                                                                                        |
+| wkbLineStringM           |                                                                                                                                       |
+| wkbPolygonM              |                                                                                                                                       |
+| wkbMultiPointM           |                                                                                                                                       |
+| wkbMultiLineStringM      |                                                                                                                                       |
+| wkbMultiPolygonM         |                                                                                                                                       |
+| wkbGeometryCollectionM   |                                                                                                                                       |
+| wkbCircularStringM       |                                                                                                                                       |
+| wkbCompoundCurveM        |                                                                                                                                       |
+| wkbCurvePolygonM         |                                                                                                                                       |
+| wkbMultiCurveM           |                                                                                                                                       |
+| wkbMultiSurfaceM         |                                                                                                                                       |
+| wkbCurveM                |                                                                                                                                       |
+| wkbSurfaceM              |                                                                                                                                       |
+| wkbPolyhedralSurfaceM    | ISO SQL/MM Part 3. GDAL >= 2.3                                                                                                        |
+| wkbTINM                  |                                                                                                                                       |
+| wkbTriangleM             |                                                                                                                                       |
+| wkbPointZM               | ISO SQL/MM Part 3. GDAL >= 2.1                                                                                                        |
+| wkbLineStringZM          |                                                                                                                                       |
+| wkbPolygonZM             |                                                                                                                                       |
+| wkbMultiPointZM          |                                                                                                                                       |
+| wkbMultiLineStringZM     |                                                                                                                                       |
+| wkbMultiPolygonZM        |                                                                                                                                       |
+| wkbGeometryCollectionZM  |                                                                                                                                       |
+| wkbCircularStringZM      |                                                                                                                                       |
+| wkbCompoundCurveZM       |                                                                                                                                       |
+| wkbCurvePolygonZM        |                                                                                                                                       |
+| wkbMultiCurveZM          |                                                                                                                                       |
+| wkbMultiSurfaceZM        |                                                                                                                                       |
+| wkbCurveZM               |                                                                                                                                       |
+| wkbSurfaceZM             |                                                                                                                                       |
+| wkbPolyhedralSurfaceZM   | ISO SQL/MM Part 3. GDAL >= 2.3                                                                                                        |
+| wkbTINZM                 |                                                                                                                                       |
+| wkbTriangleZM            |                                                                                                                                       |
+| wkbPoint25D              | 2.5D extension as per 99-402                                                                                                          |
+| wkbLineString25D         |                                                                                                                                       |
+| wkbPolygon25D            |                                                                                                                                       |
+| wkbMultiPoint25D         |                                                                                                                                       |
+| wkbMultiLineString25D    |                                                                                                                                       |
+| wkbMultiPolygon25D       |                                                                                                                                       |
+| wkbGeometryCollection25D |                                                                                                                                       |
 """
 @cenum OGRwkbGeometryType::UInt32 begin
     wkbUnknown = 0
@@ -8074,7 +8107,7 @@ function gdaldatasetresetreading(arg1)
     aftercare(ccall((:GDALDatasetResetReading, libgdal), Cvoid, (GDALDatasetH,), arg1))
 end
 
-"Opaque type for a feature (OGRFeature) "
+"Opaque type for a feature (OGRFeature)"
 const OGRFeatureH = Ptr{Cvoid}
 
 """
@@ -8142,7 +8175,7 @@ function gdaldatasettestcapability(arg1, arg2)
     )
 end
 
-"Opaque type for a geometry "
+"Opaque type for a geometry"
 const OGRGeometryH = Ptr{Cvoid}
 
 """
@@ -8213,7 +8246,7 @@ function gdaldatasetreleaseresultset(arg1, arg2)
     )
 end
 
-"Opaque type for a style table (OGRStyleTable) "
+"Opaque type for a style table (OGRStyleTable)"
 const OGRStyleTableH = Ptr{Cvoid}
 
 """
@@ -8337,9 +8370,34 @@ function gdaldatasetclearstatistics(hDS)
     aftercare(ccall((:GDALDatasetClearStatistics, libgdal), Cvoid, (GDALDatasetH,), hDS))
 end
 
+"""
+    GDALDatasetGetFieldDomainNames(GDALDatasetH hDS,
+                                   CSLConstList papszOptions) -> char **
+
+Returns a list of the names of all field domains stored in the dataset.
+
+### Parameters
+* **hDS**: Dataset handle.
+* **papszOptions**: Driver specific options determining how attributes should be retrieved. Pass nullptr for default behavior.
+
+### Returns
+list of field domain names, to be freed with CSLDestroy()
+"""
+function gdaldatasetgetfielddomainnames(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALDatasetGetFieldDomainNames, libgdal),
+            Ptr{Cstring},
+            (GDALDatasetH, CSLConstList),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
 const OGRFieldDomainHS = Cvoid
 
-"Opaque type for a field domain definition (OGRFieldDomain) "
+"Opaque type for a field domain definition (OGRFieldDomain)"
 const OGRFieldDomainH = Ptr{OGRFieldDomainHS}
 
 """
@@ -8396,16 +8454,72 @@ function gdaldatasetaddfielddomain(hDS, hFieldDomain, ppszFailureReason)
 end
 
 """
-Type of functions to pass to [`GDALAddDerivedBandPixelFunc`](@ref). 
+    GDALDatasetDeleteFieldDomain(GDALDatasetH hDS,
+                                 const char * pszName,
+                                 char ** ppszFailureReason) -> bool
 
-\\since GDAL 2.2 
+Removes a field domain from the dataset.
+
+### Parameters
+* **hDS**: Dataset handle.
+* **pszName**: The domain name.
+* **ppszFailureReason**: Output parameter. Will contain an error message if an error occurs (*ppszFailureReason to be freed with CPLFree). May be NULL.
+
+### Returns
+true in case of success.
+"""
+function gdaldatasetdeletefielddomain(hDS, pszName, ppszFailureReason)
+    aftercare(
+        ccall(
+            (:GDALDatasetDeleteFieldDomain, libgdal),
+            Bool,
+            (GDALDatasetH, Cstring, Ptr{Cstring}),
+            hDS,
+            pszName,
+            ppszFailureReason,
+        ),
+    )
+end
+
+"""
+    GDALDatasetUpdateFieldDomain(GDALDatasetH hDS,
+                                 OGRFieldDomainH hFieldDomain,
+                                 char ** ppszFailureReason) -> bool
+
+Updates an existing field domain by replacing its definition.
+
+### Parameters
+* **hDS**: Dataset handle.
+* **hFieldDomain**: The domain definition. Contrary to the C++ version, the passed object is copied.
+* **ppszFailureReason**: Output parameter. Will contain an error message if an error occurs (*ppszFailureReason to be freed with CPLFree). May be NULL.
+
+### Returns
+true in case of success.
+"""
+function gdaldatasetupdatefielddomain(hDS, hFieldDomain, ppszFailureReason)
+    aftercare(
+        ccall(
+            (:GDALDatasetUpdateFieldDomain, libgdal),
+            Bool,
+            (GDALDatasetH, OGRFieldDomainH, Ptr{Cstring}),
+            hDS,
+            hFieldDomain,
+            ppszFailureReason,
+        ),
+    )
+end
+
+"""
+Type of functions to pass to [`GDALAddDerivedBandPixelFunc`](@ref).
+
+\\since GDAL 2.2
 """
 const GDALDerivedPixelFunc = Ptr{Cvoid}
 
 """
-Type of functions to pass to [`GDALAddDerivedBandPixelFuncWithArgs`](@ref). 
+Type of functions to pass to [`GDALAddDerivedBandPixelFuncWithArgs`](@ref).
 
-\\since GDAL 3.4 
+\\since GDAL 3.4
 """
 const GDALDerivedPixelFuncWithArgs = Ptr{Cvoid}
 
@@ -8860,6 +8974,42 @@ function gdalgetrasternodatavalue(arg1, arg2)
 end
 
 """
+    GDALGetRasterNoDataValueAsInt64(GDALRasterBandH hBand,
+                                    int * pbSuccess) -> int64_t
+
+Fetch the no data value for this band.
+"""
+function gdalgetrasternodatavalueasint64(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALGetRasterNoDataValueAsInt64, libgdal),
+            Int64,
+            (GDALRasterBandH, Ptr{Cint}),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
+"""
+    GDALGetRasterNoDataValueAsUInt64(GDALRasterBandH hBand,
+                                     int * pbSuccess) -> uint64_t
+
+Fetch the no data value for this band.
+"""
+function gdalgetrasternodatavalueasuint64(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALGetRasterNoDataValueAsUInt64, libgdal),
+            UInt64,
+            (GDALRasterBandH, Ptr{Cint}),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
+"""
     GDALSetRasterNoDataValue(GDALRasterBandH hBand,
                              double dfValue) -> CPLErr
 
@@ -8871,6 +9021,42 @@ function gdalsetrasternodatavalue(arg1, arg2)
             (:GDALSetRasterNoDataValue, libgdal),
             CPLErr,
             (GDALRasterBandH, Cdouble),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
+"""
+    GDALSetRasterNoDataValueAsInt64(GDALRasterBandH hBand,
+                                    int64_t nValue) -> CPLErr
+
+Set the no data value for this band.
+"""
+function gdalsetrasternodatavalueasint64(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALSetRasterNoDataValueAsInt64, libgdal),
+            CPLErr,
+            (GDALRasterBandH, Int64),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
+"""
+    GDALSetRasterNoDataValueAsUInt64(GDALRasterBandH hBand,
+                                     uint64_t nValue) -> CPLErr
+
+Set the no data value for this band.
+"""
+function gdalsetrasternodatavalueasuint64(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALSetRasterNoDataValueAsUInt64, libgdal),
+            CPLErr,
+            (GDALRasterBandH, UInt64),
             arg1,
             arg2,
         ),
@@ -9677,13 +9863,13 @@ function gdalsetdefaultrat(arg1, arg2)
 end
 
 """
-    GDALAddDerivedBandPixelFunc(const char * pszFuncName,
+    GDALAddDerivedBandPixelFunc(const char * pszName,
                                 GDALDerivedPixelFunc pfnNewFunction) -> CPLErr
 
 This adds a pixel function to the global list of available pixel functions for derived bands.
 
 ### Parameters
-* **pszFuncName**: Name used to access pixel function
+* **pszName**: Name used to access pixel function
 * **pfnNewFunction**: Pixel function associated with name. An existing pixel function registered with the same name will be replaced with the new one.
 
 ### Returns
@@ -9702,14 +9888,14 @@ function gdaladdderivedbandpixelfunc(pszName, pfnPixelFunc)
 end
 
 """
-    GDALAddDerivedBandPixelFuncWithArgs(const char * pszFuncName,
+    GDALAddDerivedBandPixelFuncWithArgs(const char * pszName,
                                         GDALDerivedPixelFuncWithArgs pfnNewFunction,
                                         const char * pszMetadata) -> CPLErr
 
 This adds a pixel function to the global list of available pixel functions for derived bands.
 
 ### Parameters
-* **pszFuncName**: Name used to access pixel function
+* **pszName**: Name used to access pixel function
 * **pfnNewFunction**: Pixel function associated with name. An existing pixel function registered with the same name will be replaced with the new one.
 * **pszMetadata**: Pixel function metadata (not currently implemented)
 
@@ -9765,6 +9951,18 @@ function gdalcreatemaskband(hBand, nFlags)
             nFlags,
         ),
     )
+end
+
+"""
+    GDALIsMaskBand(GDALRasterBandH hBand) -> bool
+
+Returns whether a band is a mask band.
+
+### Returns
+true if the band is a mask band.
+"""
+function gdalismaskband(hBand)
+    aftercare(ccall((:GDALIsMaskBand, libgdal), Bool, (GDALRasterBandH,), hBand))
 end
 
 """
@@ -10363,26 +10561,26 @@ end
 """
     GDALRPCInfoV1
 
-| Field                 | Note                                    |
-| :-------------------- | :-------------------------------------- |
-| dfLINE\\_OFF          | Line offset                             |
-| dfSAMP\\_OFF          | Sample/Pixel offset                     |
-| dfLAT\\_OFF           | Latitude offset                         |
-| dfLONG\\_OFF          | Longitude offset                        |
-| dfHEIGHT\\_OFF        | Height offset                           |
-| dfLINE\\_SCALE        | Line scale                              |
-| dfSAMP\\_SCALE        | Sample/Pixel scale                      |
-| dfLAT\\_SCALE         | Latitude scale                          |
-| dfLONG\\_SCALE        | Longitude scale                         |
-| dfHEIGHT\\_SCALE      | Height scale                            |
-| adfLINE\\_NUM\\_COEFF | Line Numerator Coefficients             |
-| adfLINE\\_DEN\\_COEFF | Line Denominator Coefficients           |
-| adfSAMP\\_NUM\\_COEFF | Sample/Pixel Numerator Coefficients     |
-| adfSAMP\\_DEN\\_COEFF | Sample/Pixel Denominator Coefficients   |
-| dfMIN\\_LONG          | Minimum longitude                       |
-| dfMIN\\_LAT           | Minimum latitude                        |
-| dfMAX\\_LONG          | Maximum longitude                       |
-| dfMAX\\_LAT           | Maximum latitude                        |
+| Field                 | Note                                   |
+| :-------------------- | :------------------------------------- |
+| dfLINE\\_OFF          | Line offset                            |
+| dfSAMP\\_OFF          | Sample/Pixel offset                    |
+| dfLAT\\_OFF           | Latitude offset                        |
+| dfLONG\\_OFF          | Longitude offset                       |
+| dfHEIGHT\\_OFF        | Height offset                          |
+| dfLINE\\_SCALE        | Line scale                             |
+| dfSAMP\\_SCALE        | Sample/Pixel scale                     |
+| dfLAT\\_SCALE         | Latitude scale                         |
+| dfLONG\\_SCALE        | Longitude scale                        |
+| dfHEIGHT\\_SCALE      | Height scale                           |
+| adfLINE\\_NUM\\_COEFF | Line Numerator Coefficients            |
+| adfLINE\\_DEN\\_COEFF | Line Denominator Coefficients          |
+| adfSAMP\\_NUM\\_COEFF | Sample/Pixel Numerator Coefficients    |
+| adfSAMP\\_DEN\\_COEFF | Sample/Pixel Denominator Coefficients  |
+| dfMIN\\_LONG          | Minimum longitude                      |
+| dfMIN\\_LAT           | Minimum latitude                       |
+| dfMAX\\_LONG          | Maximum longitude                      |
+| dfMAX\\_LAT           | Maximum latitude                       |
 """
 struct GDALRPCInfoV1
     dfLINE_OFF::Cdouble
@@ -10408,7 +10606,7 @@ end
 """
     gdalextractrpcinfov1(arg1, arg2)
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function gdalextractrpcinfov1(arg1, arg2)
     aftercare(
@@ -10425,14 +10623,14 @@ end
 """
     GDALColorEntry
 
-Color tuple 
+Color tuple
 
-| Field | Note                           |
-| :---- | :----------------------------- |
-| c1    | gray, red, cyan or hue         |
-| c2    | green, magenta, or lightness   |
-| c3    | blue, yellow, or saturation    |
-| c4    | alpha or blackband             |
+| Field | Note                          |
+| :---- | :---------------------------- |
+| c1    | gray, red, cyan or hue        |
+| c2    | green, magenta, or lightness  |
+| c3    | blue, yellow, or saturation   |
+| c4    | alpha or blackband            |
 """
 struct GDALColorEntry
     c1::Cshort
@@ -10587,13 +10785,13 @@ end
 """
     GDALRATFieldType
 
-Field type of raster attribute table 
+Field type of raster attribute table
 
-| Enumerator    | Note                            |
-| :------------ | :------------------------------ |
-| GFT\\_Integer | Integer field                   |
-| GFT\\_Real    | Floating point (double) field   |
-| GFT\\_String  | String field                    |
+| Enumerator    | Note                           |
+| :------------ | :----------------------------- |
+| GFT\\_Integer | Integer field                  |
+| GFT\\_Real    | Floating point (double) field  |
+| GFT\\_String  | String field                   |
 """
 @cenum GDALRATFieldType::UInt32 begin
     GFT_Integer = 0
@@ -10604,29 +10802,29 @@ end
 """
     GDALRATFieldUsage
 
-Field usage of raster attribute table 
+Field usage of raster attribute table
 
-| Enumerator       | Note                                                       |
-| :--------------- | :--------------------------------------------------------- |
-| GFU\\_Generic    | General purpose field.                                     |
-| GFU\\_PixelCount | Histogram pixel count                                      |
-| GFU\\_Name       | Class name                                                 |
-| GFU\\_Min        | Class range minimum                                        |
-| GFU\\_Max        | Class range maximum                                        |
-| GFU\\_MinMax     | Class value (min=max)                                      |
-| GFU\\_Red        | Red class color (0-255)                                    |
-| GFU\\_Green      | Green class color (0-255)                                  |
-| GFU\\_Blue       | Blue class color (0-255)                                   |
-| GFU\\_Alpha      | Alpha (0=transparent,255=opaque)                           |
-| GFU\\_RedMin     | Color Range Red Minimum                                    |
-| GFU\\_GreenMin   | Color Range Green Minimum                                  |
-| GFU\\_BlueMin    | Color Range Blue Minimum                                   |
-| GFU\\_AlphaMin   | Color Range Alpha Minimum                                  |
-| GFU\\_RedMax     | Color Range Red Maximum                                    |
-| GFU\\_GreenMax   | Color Range Green Maximum                                  |
-| GFU\\_BlueMax    | Color Range Blue Maximum                                   |
-| GFU\\_AlphaMax   | Color Range Alpha Maximum                                  |
-| GFU\\_MaxCount   | Maximum GFU value (equals to GFU\\_AlphaMax+1 currently)   |
+| Enumerator       | Note                                                      |
+| :--------------- | :-------------------------------------------------------- |
+| GFU\\_Generic    | General purpose field.                                    |
+| GFU\\_PixelCount | Histogram pixel count                                     |
+| GFU\\_Name       | Class name                                                |
+| GFU\\_Min        | Class range minimum                                       |
+| GFU\\_Max        | Class range maximum                                       |
+| GFU\\_MinMax     | Class value (min=max)                                     |
+| GFU\\_Red        | Red class color (0-255)                                   |
+| GFU\\_Green      | Green class color (0-255)                                 |
+| GFU\\_Blue       | Blue class color (0-255)                                  |
+| GFU\\_Alpha      | Alpha (0=transparent,255=opaque)                          |
+| GFU\\_RedMin     | Color Range Red Minimum                                   |
+| GFU\\_GreenMin   | Color Range Green Minimum                                 |
+| GFU\\_BlueMin    | Color Range Blue Minimum                                  |
+| GFU\\_AlphaMin   | Color Range Alpha Minimum                                 |
+| GFU\\_RedMax     | Color Range Red Maximum                                   |
+| GFU\\_GreenMax   | Color Range Green Maximum                                 |
+| GFU\\_BlueMax    | Color Range Blue Maximum                                  |
+| GFU\\_AlphaMax   | Color Range Alpha Maximum                                 |
+| GFU\\_MaxCount   | Maximum GFU value (equals to GFU\\_AlphaMax+1 currently)  |
 """
 @cenum GDALRATFieldUsage::UInt32 begin
     GFU_Generic = 0
@@ -10653,14 +10851,14 @@ end
 """
     GDALRATTableType
 
-RAT table type (thematic or athematic) 
+RAT table type (thematic or athematic)
 
 \\since GDAL 2.4
 
-| Enumerator       | Note                   |
-| :--------------- | :--------------------- |
-| GRTT\\_THEMATIC  | Thematic table type    |
-| GRTT\\_ATHEMATIC | Athematic table type   |
+| Enumerator       | Note                  |
+| :--------------- | :-------------------- |
+| GRTT\\_THEMATIC  | Thematic table type   |
+| GRTT\\_ATHEMATIC | Athematic table type  |
 """
 @cenum GDALRATTableType::UInt32 begin
     GRTT_THEMATIC = 0
@@ -11593,13 +11791,13 @@ end
 """
     GDALTileOrganization
 
-! Enumeration to describe the tile organization 
+! Enumeration to describe the tile organization
 
-| Enumerator | Note                                                                                                                                           |
-| :--------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| GTO\\_TIP  | Tile Interleaved by Pixel: tile (0,0) with internal band interleaved by pixel organization, tile (1, 0), ...                                   |
-| GTO\\_BIT  | Band Interleaved by Tile : tile (0,0) of first band, tile (0,0) of second band, ... tile (1,0) of first band, tile (1,0) of second band, ...   |
-| GTO\\_BSQ  | Band SeQuential : all the tiles of first band, all the tiles of following band...                                                              |
+| Enumerator | Note                                                                                                                                          |
+| :--------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| GTO\\_TIP  | Tile Interleaved by Pixel: tile (0,0) with internal band interleaved by pixel organization, tile (1, 0), ...                                  |
+| GTO\\_BIT  | Band Interleaved by Tile : tile (0,0) of first band, tile (0,0) of second band, ... tile (1,0) of first band, tile (1,0) of second band, ...  |
+| GTO\\_BSQ  | Band SeQuential : all the tiles of first band, all the tiles of following band...                                                             |
 """
 @cenum GDALTileOrganization::UInt32 begin
     GTO_TIP = 0
@@ -13108,6 +13306,56 @@ function gdalmdarraygetnodatavalueasdouble(hArray, pbHasNoDataValue)
 end
 
 """
+    GDALMDArrayGetNoDataValueAsInt64(GDALMDArrayH hArray,
+                                     int * pbHasNoDataValue) -> int64_t
+
+Return the nodata value as a Int64.
+
+### Parameters
+* **hArray**: Array handle.
+* **pbHasNoDataValue**: Pointer to a output boolean that will be set to true if a nodata value exists and can be converted to Int64. Might be nullptr.
+
+### Returns
+the nodata value as a Int64.
+"""
+function gdalmdarraygetnodatavalueasint64(hArray, pbHasNoDataValue)
+    aftercare(
+        ccall(
+            (:GDALMDArrayGetNoDataValueAsInt64, libgdal),
+            Int64,
+            (GDALMDArrayH, Ptr{Cint}),
+            hArray,
+            pbHasNoDataValue,
+        ),
+    )
+end
+
+"""
+    GDALMDArrayGetNoDataValueAsUInt64(GDALMDArrayH hArray,
+                                      int * pbHasNoDataValue) -> uint64_t
+
+Return the nodata value as a UInt64.
+
+### Parameters
+* **hArray**: Array handle.
+* **pbHasNoDataValue**: Pointer to a output boolean that will be set to true if a nodata value exists and can be converted to UInt64. Might be nullptr.
+
+### Returns
+the nodata value as a UInt64.
+"""
+function gdalmdarraygetnodatavalueasuint64(hArray, pbHasNoDataValue)
+    aftercare(
+        ccall(
+            (:GDALMDArrayGetNoDataValueAsUInt64, libgdal),
+            UInt64,
+            (GDALMDArrayH, Ptr{Cint}),
+            hArray,
+            pbHasNoDataValue,
+        ),
+    )
+end
+
+"""
     GDALMDArraySetRawNoDataValue(GDALMDArrayH hArray,
                                  const void * pNoData) -> int
 
@@ -13145,6 +13393,48 @@ function gdalmdarraysetnodatavalueasdouble(hArray, dfNoDataValue)
             (GDALMDArrayH, Cdouble),
             hArray,
             dfNoDataValue,
+        ),
+    )
+end
+
+"""
+    GDALMDArraySetNoDataValueAsInt64(GDALMDArrayH hArray,
+                                     int64_t nNoDataValue) -> int
+
+Set the nodata value as a Int64.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalmdarraysetnodatavalueasint64(hArray, nNoDataValue)
+    aftercare(
+        ccall(
+            (:GDALMDArraySetNoDataValueAsInt64, libgdal),
+            Cint,
+            (GDALMDArrayH, Int64),
+            hArray,
+            nNoDataValue,
+        ),
+    )
+end
+
+"""
+    GDALMDArraySetNoDataValueAsUInt64(GDALMDArrayH hArray,
+                                      uint64_t nNoDataValue) -> int
+
+Set the nodata value as a UInt64.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalmdarraysetnodatavalueasuint64(hArray, nNoDataValue)
+    aftercare(
+        ccall(
+            (:GDALMDArraySetNoDataValueAsUInt64, libgdal),
+            Cint,
+            (GDALMDArrayH, UInt64),
+            hArray,
+            nNoDataValue,
         ),
     )
 end
@@ -14807,7 +15097,7 @@ end
 """
     gdaldestroytransformer(pTransformerArg)
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function gdaldestroytransformer(pTransformerArg)
     aftercare(
@@ -15833,7 +16123,7 @@ end
 """
     gdalserializetransformer(pfnFunc, pTransformArg)
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function gdalserializetransformer(pfnFunc, pTransformArg)
     aftercare(
@@ -15926,10 +16216,10 @@ function gdaltransformgeolocations(
     )
 end
 
-"Contour writer callback type "
+"Contour writer callback type"
 const GDALContourWriter = Ptr{Cvoid}
 
-"Contour generator opaque type "
+"Contour generator opaque type"
 const GDALContourGeneratorH = Ptr{Cvoid}
 
 """
@@ -16001,7 +16291,7 @@ end
 """
     OGRContourWriterInfo
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 struct OGRContourWriterInfo
     hLayer::Ptr{Cvoid}
@@ -16153,7 +16443,7 @@ end
 """
     GDALViewshedMode
 
-Viewshed Modes 
+Viewshed Modes
 """
 @cenum GDALViewshedMode::UInt32 begin
     GVM_Diagonal = 1
@@ -16165,7 +16455,7 @@ end
 """
     GDALViewshedOutputType
 
-Viewshed output types 
+Viewshed output types
 """
 @cenum GDALViewshedOutputType::UInt32 begin
     GVOT_NORMAL = 1
@@ -16290,7 +16580,7 @@ function gdalviewshedgenerate(
 end
 
 """
-    gdalrasterizegeometries(hDS, nBandCount, panBandList, nGeomCount, pahGeometries, pfnTransformer, pTransformArg, padfGeomBurnValue, papszOptions, pfnProgress, pProgressArg)
+    gdalrasterizegeometries(hDS, nBandCount, panBandList, nGeomCount, pahGeometries, pfnTransformer, pTransformArg, padfGeomBurnValues, papszOptions, pfnProgress, pProgressArg)
 
 *********************************************************************
 """
@@ -16302,7 +16592,7 @@ function gdalrasterizegeometries(
     pahGeometries,
     pfnTransformer,
     pTransformArg,
-    padfGeomBurnValue,
+    padfGeomBurnValues,
     papszOptions,
     pfnProgress,
     pProgressArg,
@@ -16320,7 +16610,7 @@ function gdalrasterizegeometries(
                 GDALTransformerFunc,
                 Ptr{Cvoid},
                 Ptr{Cdouble},
-                Ptr{Cstring},
+                CSLConstList,
                 GDALProgressFunc,
                 Ptr{Cvoid},
             ),
@@ -16331,7 +16621,67 @@ function gdalrasterizegeometries(
             pahGeometries,
             pfnTransformer,
             pTransformArg,
-            padfGeomBurnValue,
+            padfGeomBurnValues,
+            papszOptions,
+            pfnProgress,
+            pProgressArg,
+        ),
+    )
+end
+
+"""
+    GDALRasterizeGeometriesInt64(GDALDatasetH hDS,
+                                 int nBandCount,
+                                 const int * panBandList,
+                                 int nGeomCount,
+                                 const OGRGeometryH * pahGeometries,
+                                 GDALTransformerFunc pfnTransformer,
+                                 void * pTransformArg,
+                                 const int64_t * panGeomBurnValues,
+                                 CSLConstList papszOptions,
+                                 GDALProgressFunc pfnProgress,
+                                 void * pProgressArg) -> CPLErr
+
+Burn geometries into raster.
+"""
+function gdalrasterizegeometriesint64(
+    hDS,
+    nBandCount,
+    panBandList,
+    nGeomCount,
+    pahGeometries,
+    pfnTransformer,
+    pTransformArg,
+    panGeomBurnValues,
+    papszOptions,
+    pfnProgress,
+    pProgressArg,
+)
+    aftercare(
+        ccall(
+            (:GDALRasterizeGeometriesInt64, libgdal),
+            CPLErr,
+            (
+                GDALDatasetH,
+                Cint,
+                Ptr{Cint},
+                Cint,
+                Ptr{OGRGeometryH},
+                GDALTransformerFunc,
+                Ptr{Cvoid},
+                Ptr{Int64},
+                CSLConstList,
+                GDALProgressFunc,
+                Ptr{Cvoid},
+            ),
+            hDS,
+            nBandCount,
+            panBandList,
+            nGeomCount,
+            pahGeometries,
+            pfnTransformer,
+            pTransformArg,
+            panGeomBurnValues,
             papszOptions,
             pfnProgress,
             pProgressArg,
@@ -16544,21 +16894,21 @@ end
 """
     GDALGridAlgorithm
 
-Gridding Algorithms 
+Gridding Algorithms
 
-| Enumerator                                   | Note                                                                      |
-| :------------------------------------------- | :------------------------------------------------------------------------ |
-| GGA\\_InverseDistanceToAPower                | Inverse distance to a power                                               |
-| GGA\\_MovingAverage                          | Moving Average                                                            |
-| GGA\\_NearestNeighbor                        | Nearest Neighbor                                                          |
-| GGA\\_MetricMinimum                          | Minimum Value (Data Metric)                                               |
-| GGA\\_MetricMaximum                          | Maximum Value (Data Metric)                                               |
-| GGA\\_MetricRange                            | Data Range (Data Metric)                                                  |
-| GGA\\_MetricCount                            | Number of Points (Data Metric)                                            |
-| GGA\\_MetricAverageDistance                  | Average Distance (Data Metric)                                            |
-| GGA\\_MetricAverageDistancePts               | Average Distance Between Data Points (Data Metric)                        |
-| GGA\\_Linear                                 | Linear interpolation (from Delaunay triangulation. Since GDAL 2.1         |
-| GGA\\_InverseDistanceToAPowerNearestNeighbor | Inverse distance to a power with nearest neighbor search for max points   |
+| Enumerator                                   | Note                                                                     |
+| :------------------------------------------- | :----------------------------------------------------------------------- |
+| GGA\\_InverseDistanceToAPower                | Inverse distance to a power                                              |
+| GGA\\_MovingAverage                          | Moving Average                                                           |
+| GGA\\_NearestNeighbor                        | Nearest Neighbor                                                         |
+| GGA\\_MetricMinimum                          | Minimum Value (Data Metric)                                              |
+| GGA\\_MetricMaximum                          | Maximum Value (Data Metric)                                              |
+| GGA\\_MetricRange                            | Data Range (Data Metric)                                                 |
+| GGA\\_MetricCount                            | Number of Points (Data Metric)                                           |
+| GGA\\_MetricAverageDistance                  | Average Distance (Data Metric)                                           |
+| GGA\\_MetricAverageDistancePts               | Average Distance Between Data Points (Data Metric)                       |
+| GGA\\_Linear                                 | Linear interpolation (from Delaunay triangulation. Since GDAL 2.1        |
+| GGA\\_InverseDistanceToAPowerNearestNeighbor | Inverse distance to a power with nearest neighbor search for max points  |
 """
 @cenum GDALGridAlgorithm::UInt32 begin
     GGA_InverseDistanceToAPower = 1
@@ -16577,7 +16927,7 @@ end
 """
     GDALGridInverseDistanceToAPowerOptions
 
-Inverse distance to a power method control options 
+Inverse distance to a power method control options
 
 | Field             | Note                                                                                                                                                                                         |
 | :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -16608,7 +16958,7 @@ end
 """
     GDALGridInverseDistanceToAPowerNearestNeighborOptions
 
-Inverse distance to a power, with nearest neighbour search, control options 
+Inverse distance to a power, with nearest neighbour search, control options
 
 | Field         | Note                                                                                                                                                                                         |
 | :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -16631,7 +16981,7 @@ end
 """
     GDALGridMovingAverageOptions
 
-Moving average method control options 
+Moving average method control options
 
 | Field         | Note                                                                                                                                             |
 | :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -16652,7 +17002,7 @@ end
 """
     GDALGridNearestNeighborOptions
 
-Nearest neighbor method control options 
+Nearest neighbor method control options
 
 | Field         | Note                                                                       |
 | :------------ | :------------------------------------------------------------------------- |
@@ -16671,7 +17021,7 @@ end
 """
     GDALGridDataMetricsOptions
 
-Data metrics method control options 
+Data metrics method control options
 
 | Field         | Note                                                                                                                                             |
 | :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -16692,7 +17042,7 @@ end
 """
     GDALGridLinearOptions
 
-Linear method control options 
+Linear method control options
 
 | Field         | Note                                                                                                                                                                                                                                                                              |
 | :------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -16978,12 +17328,12 @@ end
 """
     GDALTriFacet
 
-Triangle fact 
+Triangle fact
 
-| Field         | Note                                                  |
-| :------------ | :---------------------------------------------------- |
-| anVertexIdx   | index to the padfX/padfY arrays                       |
-| anNeighborIdx | index to GDALDelaunayTriangulation.pasFacets, or -1   |
+| Field         | Note                                                 |
+| :------------ | :--------------------------------------------------- |
+| anVertexIdx   | index to the padfX/padfY arrays                      |
+| anNeighborIdx | index to GDALDelaunayTriangulation.pasFacets, or -1  |
 """
 struct GDALTriFacet
     anVertexIdx::NTuple{3,Cint}
@@ -16997,14 +17347,14 @@ Triangle barycentric coefficients.
 
 Conversion from cartesian (x,y) to barycentric (l1,l2,l3) with : l1 = dfMul1X * (x - dfCxtX) + dfMul1Y * (y - dfCstY) l2 = dfMul2X * (x - dfCxtX) + dfMul2Y * (y - dfCstY) l3 = 1 - l1 - l2
 
-| Field   | Note      |
-| :------ | :-------- |
-| dfMul1X | dfMul1X   |
-| dfMul1Y | dfMul1Y   |
-| dfMul2X | dfMul2X   |
-| dfMul2Y | dfMul2Y   |
-| dfCstX  | dfCstX    |
-| dfCstY  | dfCstY    |
+| Field   | Note     |
+| :------ | :------- |
+| dfMul1X | dfMul1X  |
+| dfMul1Y | dfMul1Y  |
+| dfMul2X | dfMul2X  |
+| dfMul2Y | dfMul2Y  |
+| dfCstX  | dfCstX   |
+| dfCstY  | dfCstY   |
 """
 struct GDALTriBarycentricCoefficients
     dfMul1X::Cdouble
@@ -17018,13 +17368,13 @@ end
 """
     GDALTriangulation
 
-Triangulation structure 
+Triangulation structure
 
-| Field                | Note                                       |
-| :------------------- | :----------------------------------------- |
-| nFacets              | number of facets                           |
-| pasFacets            | array of nFacets facets                    |
-| pasFacetCoefficients | arra of nFacets barycentric coefficients   |
+| Field                | Note                                      |
+| :------------------- | :---------------------------------------- |
+| nFacets              | number of facets                          |
+| pasFacets            | array of nFacets facets                   |
+| pasFacetCoefficients | arra of nFacets barycentric coefficients  |
 """
 struct GDALTriangulation
     nFacets::Cint
@@ -17233,15 +17583,6 @@ function gdaltriangulationfree(psDT)
     aftercare(
         ccall((:GDALTriangulationFree, libgdal), Cvoid, (Ptr{GDALTriangulation},), psDT),
     )
-end
-
-"""
-    gdaltriangulationterminate()
-
-Doxygen\\_Suppress 
-"""
-function gdaltriangulationterminate()
-    aftercare(ccall((:GDALTriangulationTerminate, libgdal), Cvoid, ()))
 end
 
 """
@@ -17502,7 +17843,7 @@ end
 """
     cplgetpid()
 
-Contrary to what its name suggests, [`CPLGetPID`](@ref)() actually returns the thread id 
+Contrary to what its name suggests, [`CPLGetPID`](@ref)() actually returns the thread id
 """
 function cplgetpid()
     aftercare(ccall((:CPLGetPID, libgdal), GIntBig, ()))
@@ -17736,25 +18077,25 @@ end
 """
     GDALResampleAlg
 
-Warp Resampling Algorithm 
+Warp Resampling Algorithm
 
-| Enumerator             | Note                                                                                     |
-| :--------------------- | :--------------------------------------------------------------------------------------- |
-| GRA\\_NearestNeighbour | Nearest neighbour (select on one input pixel)                                            |
-| GRA\\_Bilinear         | Bilinear (2x2 kernel)                                                                    |
-| GRA\\_Cubic            | Cubic Convolution Approximation (4x4 kernel)                                             |
-| GRA\\_CubicSpline      | Cubic B-Spline Approximation (4x4 kernel)                                                |
-| GRA\\_Lanczos          | Lanczos windowed sinc interpolation (6x6 kernel)                                         |
-| GRA\\_Average          | Average (computes the weighted average of all non-NODATA contributing pixels)            |
-| GRA\\_Mode             | Mode (selects the value which appears most often of all the sampled points)              |
-| GRA\\_Max              | Max (selects maximum of all non-NODATA contributing pixels)                              |
-| GRA\\_Min              | Min (selects minimum of all non-NODATA contributing pixels)                              |
-| GRA\\_Med              | Med (selects median of all non-NODATA contributing pixels)                               |
-| GRA\\_Q1               | Q1 (selects first quartile of all non-NODATA contributing pixels)                        |
-| GRA\\_Q3               | Q3 (selects third quartile of all non-NODATA contributing pixels)                        |
-| GRA\\_Sum              | Sum (weighed sum of all non-NODATA contributing pixels). Added in GDAL 3.1               |
-| GRA\\_RMS              | RMS (weighted root mean square (quadratic mean) of all non-NODATA contributing pixels)   |
-| GRA\\_LAST\\_VALUE     | Doxygen\\_Suppress                                                                       |
+| Enumerator             | Note                                                                                    |
+| :--------------------- | :-------------------------------------------------------------------------------------- |
+| GRA\\_NearestNeighbour | Nearest neighbour (select on one input pixel)                                           |
+| GRA\\_Bilinear         | Bilinear (2x2 kernel)                                                                   |
+| GRA\\_Cubic            | Cubic Convolution Approximation (4x4 kernel)                                            |
+| GRA\\_CubicSpline      | Cubic B-Spline Approximation (4x4 kernel)                                               |
+| GRA\\_Lanczos          | Lanczos windowed sinc interpolation (6x6 kernel)                                        |
+| GRA\\_Average          | Average (computes the weighted average of all non-NODATA contributing pixels)           |
+| GRA\\_Mode             | Mode (selects the value which appears most often of all the sampled points)             |
+| GRA\\_Max              | Max (selects maximum of all non-NODATA contributing pixels)                             |
+| GRA\\_Min              | Min (selects minimum of all non-NODATA contributing pixels)                             |
+| GRA\\_Med              | Med (selects median of all non-NODATA contributing pixels)                              |
+| GRA\\_Q1               | Q1 (selects first quartile of all non-NODATA contributing pixels)                       |
+| GRA\\_Q3               | Q3 (selects third quartile of all non-NODATA contributing pixels)                       |
+| GRA\\_Sum              | Sum (weighed sum of all non-NODATA contributing pixels). Added in GDAL 3.1              |
+| GRA\\_RMS              | RMS (weighted root mean square (quadratic mean) of all non-NODATA contributing pixels)  |
+| GRA\\_LAST\\_VALUE     | Doxygen\\_Suppress                                                                      |
 """
 @cenum GDALResampleAlg::UInt32 begin
     GRA_NearestNeighbour = 0
@@ -17777,18 +18118,18 @@ end
 """
     GWKAverageOrModeAlg
 
-GWKAverageOrMode Algorithm 
+GWKAverageOrMode Algorithm
 
-| Enumerator       | Note                                               |
-| :--------------- | :------------------------------------------------- |
-| GWKAOM\\_Average | Average                                            |
-| GWKAOM\\_Fmode   | Mode                                               |
-| GWKAOM\\_Imode   | Mode of GDT\\_Byte, GDT\\_UInt16, or GDT\\_Int16   |
-| GWKAOM\\_Max     | Maximum                                            |
-| GWKAOM\\_Min     | Minimum                                            |
-| GWKAOM\\_Quant   | Quantile                                           |
-| GWKAOM\\_Sum     | Sum                                                |
-| GWKAOM\\_RMS     | RMS                                                |
+| Enumerator       | Note                                              |
+| :--------------- | :------------------------------------------------ |
+| GWKAOM\\_Average | Average                                           |
+| GWKAOM\\_Fmode   | Mode                                              |
+| GWKAOM\\_Imode   | Mode of GDT\\_Byte, GDT\\_UInt16, or GDT\\_Int16  |
+| GWKAOM\\_Max     | Maximum                                           |
+| GWKAOM\\_Min     | Minimum                                           |
+| GWKAOM\\_Quant   | Quantile                                          |
+| GWKAOM\\_Sum     | Sum                                               |
+| GWKAOM\\_RMS     | RMS                                               |
 """
 @cenum GWKAverageOrModeAlg::UInt32 begin
     GWKAOM_Average = 1
@@ -17801,7 +18142,7 @@ GWKAverageOrMode Algorithm
     GWKAOM_RMS = 8
 end
 
-"Doxygen\\\\_Suppress "
+"Doxygen\\\\_Suppress"
 const GDALMaskFunc = Ptr{Cvoid}
 
 """
@@ -18085,44 +18426,44 @@ end
 """
     GDALWarpOptions
 
-Warp control options for use with GDALWarpOperation::Initialize() 
+Warp control options for use with GDALWarpOperation::Initialize()
 
-| Field                            | Note                                                                                                                                                                       |
-| :------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| dfWarpMemoryLimit                | In bytes, 0.0 for internal default                                                                                                                                         |
-| eResampleAlg                     | Resampling algorithm to use                                                                                                                                                |
-| eWorkingDataType                 | data type to use during warp operation, GDT\\_Unknown lets the algorithm select the type                                                                                   |
-| hSrcDS                           | Source image dataset.                                                                                                                                                      |
-| hDstDS                           | Destination image dataset - may be NULL if only using GDALWarpOperation::WarpRegionToBuffer().                                                                             |
-| nBandCount                       | Number of bands to process, may be 0 to select all bands.                                                                                                                  |
-| panSrcBands                      | The band numbers for the source bands to process (1 based)                                                                                                                 |
-| panDstBands                      | The band numbers for the destination bands to process (1 based)                                                                                                            |
-| nSrcAlphaBand                    | The source band so use as an alpha (transparency) value, 0=disabled                                                                                                        |
-| nDstAlphaBand                    | The dest. band so use as an alpha (transparency) value, 0=disabled                                                                                                         |
-| padfSrcNoDataReal                | The "nodata" value real component for each input band, if NULL there isn't one                                                                                             |
-| padfSrcNoDataImag                | The "nodata" value imaginary component - may be NULL even if real component is provided. This value is not used to flag invalid values. Only the real component is used.   |
-| padfDstNoDataReal                | The "nodata" value real component for each output band, if NULL there isn't one                                                                                            |
-| padfDstNoDataImag                | The "nodata" value imaginary component - may be NULL even if real component is provided. Note that warp operations only use real component for flagging invalid data.      |
-| pfnProgress                      | [`GDALProgressFunc`](@ref)() compatible progress reporting function, or NULL if there isn't one.                                                                           |
-| pProgressArg                     | Callback argument to be passed to pfnProgress.                                                                                                                             |
-| pfnTransformer                   | Type of spatial point transformer function                                                                                                                                 |
-| pTransformerArg                  | Handle to image transformer setup structure                                                                                                                                |
-| papfnSrcPerBandValidityMaskFunc  | Unused. Must be NULL                                                                                                                                                       |
-| papSrcPerBandValidityMaskFuncArg |                                                                                                                                                                            |
-| pfnSrcValidityMaskFunc           |                                                                                                                                                                            |
-| pSrcValidityMaskFuncArg          |                                                                                                                                                                            |
-| pfnSrcDensityMaskFunc            |                                                                                                                                                                            |
-| pSrcDensityMaskFuncArg           |                                                                                                                                                                            |
-| pfnDstDensityMaskFunc            |                                                                                                                                                                            |
-| pDstDensityMaskFuncArg           |                                                                                                                                                                            |
-| pfnDstValidityMaskFunc           |                                                                                                                                                                            |
-| pDstValidityMaskFuncArg          |                                                                                                                                                                            |
-| pfnPreWarpChunkProcessor         |                                                                                                                                                                            |
-| pPreWarpProcessorArg             |                                                                                                                                                                            |
-| pfnPostWarpChunkProcessor        |                                                                                                                                                                            |
-| pPostWarpProcessorArg            |                                                                                                                                                                            |
-| hCutline                         | Optional OGRPolygonH for a masking cutline.                                                                                                                                |
-| dfCutlineBlendDist               | Optional blending distance to apply across cutline in pixels, default is zero.                                                                                             |
+| Field                            | Note                                                                                                                                                                      |
+| :------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| dfWarpMemoryLimit                | In bytes, 0.0 for internal default                                                                                                                                        |
+| eResampleAlg                     | Resampling algorithm to use                                                                                                                                               |
+| eWorkingDataType                 | data type to use during warp operation, GDT\\_Unknown lets the algorithm select the type                                                                                  |
+| hSrcDS                           | Source image dataset.                                                                                                                                                     |
+| hDstDS                           | Destination image dataset - may be NULL if only using GDALWarpOperation::WarpRegionToBuffer().                                                                            |
+| nBandCount                       | Number of bands to process, may be 0 to select all bands.                                                                                                                 |
+| panSrcBands                      | The band numbers for the source bands to process (1 based)                                                                                                                |
+| panDstBands                      | The band numbers for the destination bands to process (1 based)                                                                                                           |
+| nSrcAlphaBand                    | The source band so use as an alpha (transparency) value, 0=disabled                                                                                                       |
+| nDstAlphaBand                    | The dest. band so use as an alpha (transparency) value, 0=disabled                                                                                                        |
+| padfSrcNoDataReal                | The "nodata" value real component for each input band, if NULL there isn't one                                                                                            |
+| padfSrcNoDataImag                | The "nodata" value imaginary component - may be NULL even if real component is provided. This value is not used to flag invalid values. Only the real component is used.  |
+| padfDstNoDataReal                | The "nodata" value real component for each output band, if NULL there isn't one                                                                                           |
+| padfDstNoDataImag                | The "nodata" value imaginary component - may be NULL even if real component is provided. Note that warp operations only use real component for flagging invalid data.     |
+| pfnProgress                      | [`GDALProgressFunc`](@ref)() compatible progress reporting function, or NULL if there isn't one.                                                                          |
+| pProgressArg                     | Callback argument to be passed to pfnProgress.                                                                                                                            |
+| pfnTransformer                   | Type of spatial point transformer function                                                                                                                                |
+| pTransformerArg                  | Handle to image transformer setup structure                                                                                                                               |
+| papfnSrcPerBandValidityMaskFunc  | Unused. Must be NULL                                                                                                                                                      |
+| papSrcPerBandValidityMaskFuncArg |                                                                                                                                                                           |
+| pfnSrcValidityMaskFunc           |                                                                                                                                                                           |
+| pSrcValidityMaskFuncArg          |                                                                                                                                                                           |
+| pfnSrcDensityMaskFunc            |                                                                                                                                                                           |
+| pSrcDensityMaskFuncArg           |                                                                                                                                                                           |
+| pfnDstDensityMaskFunc            |                                                                                                                                                                           |
+| pDstDensityMaskFuncArg           |                                                                                                                                                                           |
+| pfnDstValidityMaskFunc           |                                                                                                                                                                           |
+| pDstValidityMaskFuncArg          |                                                                                                                                                                           |
+| pfnPreWarpChunkProcessor         |                                                                                                                                                                           |
+| pPreWarpProcessorArg             |                                                                                                                                                                           |
+| pfnPostWarpChunkProcessor        |                                                                                                                                                                           |
+| pPostWarpProcessorArg            |                                                                                                                                                                           |
+| hCutline                         | Optional OGRPolygonH for a masking cutline.                                                                                                                               |
+| dfCutlineBlendDist               | Optional blending distance to apply across cutline in pixels, default is zero.                                                                                            |
 """
 struct GDALWarpOptions
     papszWarpOptions::Ptr{Cstring}
@@ -18352,7 +18693,7 @@ end
 """
     gdalserializewarpoptions(arg1)
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function gdalserializewarpoptions(arg1)
     aftercare(
@@ -18628,7 +18969,7 @@ function gdalinitializewarpedvrt(hDS, psWO)
     )
 end
 
-"Opaque type representing a GDALWarpOperation object "
+"Opaque type representing a GDALWarpOperation object"
 const GDALWarpOperationH = Ptr{Cvoid}
 
 """
@@ -18789,7 +19130,7 @@ end
 """
     gwkgetfilterradius(eResampleAlg)
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function gwkgetfilterradius(eResampleAlg)
     aftercare(ccall((:GWKGetFilterRadius, libgdal), Cint, (GDALResampleAlg,), eResampleAlg))
@@ -18827,10 +19168,10 @@ function gwkgetfilterfunc4values(eResampleAlg)
     )
 end
 
-"Type for a function that returns the pixel data in a provided window "
+"Type for a function that returns the pixel data in a provided window"
 const VRTImageReadFunc = Ptr{Cvoid}
 
-"Doxygen\\\\_Suppress "
+"Doxygen\\\\_Suppress"
 const VRTAveragedSourceH = Ptr{Cvoid}
 
 const VRTAverageFilteredSourceH = Ptr{Cvoid}
@@ -18859,10 +19200,10 @@ const VRTWarpedDatasetH = Ptr{Cvoid}
 
 const VRTWarpedRasterBandH = Ptr{Cvoid}
 
-"Opaque type for a VRT dataset "
+"Opaque type for a VRT dataset"
 const VRTDatasetH = Ptr{Cvoid}
 
-"Opaque type for a VRT sourced raster band "
+"Opaque type for a VRT sourced raster band"
 const VRTSourcedRasterBandH = Ptr{Cvoid}
 
 """
@@ -20358,7 +20699,7 @@ function ogrgetgeosversion(pnMajor, pnMinor, pnPatch)
     )
 end
 
-"Opaque type for a coordinate transformation object "
+"Opaque type for a coordinate transformation object"
 const OGRCoordinateTransformationH = Ptr{Cvoid}
 
 const _CPLXMLNode = Cvoid
@@ -20941,12 +21282,12 @@ end
 """
     OGRwkbByteOrder
 
-Enumeration to describe byte order 
+Enumeration to describe byte order
 
-| Enumerator | Note                                            |
-| :--------- | :---------------------------------------------- |
-| wkbXDR     | MSB/Sun/Motorola: Most Significant Byte First   |
-| wkbNDR     | LSB/Intel/Vax: Least Significant Byte First     |
+| Enumerator | Note                                           |
+| :--------- | :--------------------------------------------- |
+| wkbXDR     | MSB/Sun/Motorola: Most Significant Byte First  |
+| wkbNDR     | LSB/Intel/Vax: Least Significant Byte First    |
 """
 @cenum OGRwkbByteOrder::UInt32 begin
     wkbXDR = 0
@@ -21362,7 +21703,7 @@ end
 """
     ogr_g_creategeometryfromjson(arg1)
 
-Create a OGR geometry from a GeoJSON geometry object 
+Create a OGR geometry from a GeoJSON geometry object
 """
 function ogr_g_creategeometryfromjson(arg1)
     aftercare(
@@ -21373,7 +21714,7 @@ end
 """
     ogr_g_creategeometryfromesrijson(arg1)
 
-Create a OGR geometry from a ESRI JSON geometry object 
+Create a OGR geometry from a ESRI JSON geometry object
 """
 function ogr_g_creategeometryfromesrijson(arg1)
     aftercare(
@@ -21477,7 +21818,7 @@ end
 
 const OGRGeomTransformer = Cvoid
 
-"Opaque type for a geometry transformer. "
+"Opaque type for a geometry transformer"
 const OGRGeomTransformerH = Ptr{OGRGeomTransformer}
 
 """
@@ -22259,7 +22600,7 @@ end
 """
     ogr_g_intersect(arg1, arg2)
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function ogr_g_intersect(arg1, arg2)
     aftercare(
@@ -23189,7 +23530,7 @@ end
 """
     ogrsetgenerate_db2_v72_byte_order(bGenerate_DB2_V72_BYTE_ORDER)
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function ogrsetgenerate_db2_v72_byte_order(bGenerate_DB2_V72_BYTE_ORDER)
     aftercare(
@@ -23234,7 +23575,7 @@ end
 
 const _OGRPreparedGeometry = Cvoid
 
-"Opaque type for a prepared geometry "
+"Opaque type for a prepared geometry"
 const OGRPreparedGeometryH = Ptr{_OGRPreparedGeometry}
 
 """
@@ -23340,15 +23681,15 @@ function ogrpreparedgeometrycontains(hPreparedGeom, hOtherGeom)
     )
 end
 
-"Opaque type for a field definition (OGRFieldDefn) "
+"Opaque type for a field definition (OGRFieldDefn)"
 const OGRFieldDefnH = Ptr{Cvoid}
 
-"Opaque type for a feature definition (OGRFeatureDefn) "
+"Opaque type for a feature definition (OGRFeatureDefn)"
 const OGRFeatureDefnH = Ptr{Cvoid}
 
 const OGRGeomFieldDefnHS = Cvoid
 
-"Opaque type for a geometry field definition (OGRGeomFieldDefn) "
+"Opaque type for a geometry field definition (OGRGeomFieldDefn)"
 const OGRGeomFieldDefnH = Ptr{OGRGeomFieldDefnHS}
 
 """
@@ -23356,23 +23697,23 @@ const OGRGeomFieldDefnH = Ptr{OGRGeomFieldDefnHS}
 
 List of feature field types. This list is likely to be extended in the future ... avoid coding applications based on the assumption that all field types can be known.
 
-| Enumerator        | Note                              |
-| :---------------- | :-------------------------------- |
-| OFTInteger        | Simple 32bit integer              |
-| OFTIntegerList    | List of 32bit integers            |
-| OFTReal           | Double Precision floating point   |
-| OFTRealList       | List of doubles                   |
-| OFTString         | String of ASCII chars             |
-| OFTStringList     | Array of strings                  |
-| OFTWideString     | deprecated                        |
-| OFTWideStringList |                                   |
-| OFTBinary         | Raw Binary data                   |
-| OFTDate           | Date                              |
-| OFTTime           | Time                              |
-| OFTDateTime       | Date and Time                     |
-| OFTInteger64      | Single 64bit integer              |
-| OFTInteger64List  | List of 64bit integers            |
-| OFTMaxType        |                                   |
+| Enumerator        | Note                             |
+| :---------------- | :------------------------------- |
+| OFTInteger        | Simple 32bit integer             |
+| OFTIntegerList    | List of 32bit integers           |
+| OFTReal           | Double Precision floating point  |
+| OFTRealList       | List of doubles                  |
+| OFTString         | String of ASCII chars            |
+| OFTStringList     | Array of strings                 |
+| OFTWideString     | deprecated                       |
+| OFTWideStringList |                                  |
+| OFTBinary         | Raw Binary data                  |
+| OFTDate           | Date                             |
+| OFTTime           | Time                             |
+| OFTDateTime       | Date and Time                    |
+| OFTInteger64      | Single 64bit integer             |
+| OFTInteger64List  | List of 64bit integers           |
+| OFTMaxType        |                                  |
 """
 @cenum OGRFieldType::UInt32 begin
     OFTInteger = 0
@@ -23540,19 +23881,19 @@ end
 """
     OGRFieldSubType
 
-List of field subtypes. A subtype represents a hint, a restriction of the main type, that is not strictly necessary to consult. This list is likely to be extended in the future ... avoid coding applications based on the assumption that all field types can be known. Most subtypes only make sense for a restricted set of main types. 
+List of field subtypes. A subtype represents a hint, a restriction of the main type, that is not strictly necessary to consult. This list is likely to be extended in the future ... avoid coding applications based on the assumption that all field types can be known. Most subtypes only make sense for a restricted set of main types.
 
 \\since GDAL 2.0
 
-| Enumerator     | Note                                                                                |
-| :------------- | :---------------------------------------------------------------------------------- |
-| OFSTNone       | No subtype. This is the default value                                               |
-| OFSTBoolean    | Boolean integer. Only valid for OFTInteger and OFTIntegerList.                      |
-| OFSTInt16      | Signed 16-bit integer. Only valid for OFTInteger and OFTIntegerList.                |
-| OFSTFloat32    | Single precision (32 bit) floating point. Only valid for OFTReal and OFTRealList.   |
-| OFSTJSON       | JSON content. Only valid for OFTString.   \\since GDAL 2.4                          |
-| OFSTUUID       | UUID string representation. Only valid for OFTString.   \\since GDAL 3.3            |
-| OFSTMaxSubType |                                                                                     |
+| Enumerator     | Note                                                                               |
+| :------------- | :--------------------------------------------------------------------------------- |
+| OFSTNone       | No subtype. This is the default value                                              |
+| OFSTBoolean    | Boolean integer. Only valid for OFTInteger and OFTIntegerList.                     |
+| OFSTInt16      | Signed 16-bit integer. Only valid for OFTInteger and OFTIntegerList.               |
+| OFSTFloat32    | Single precision (32 bit) floating point. Only valid for OFTReal and OFTRealList.  |
+| OFSTJSON       | JSON content. Only valid for OFTString.  \\since GDAL 2.4                          |
+| OFSTUUID       | UUID string representation. Only valid for OFTString.  \\since GDAL 3.3            |
+| OFSTMaxSubType |                                                                                    |
 """
 @cenum OGRFieldSubType::UInt32 begin
     OFSTNone = 0
@@ -24812,11 +25153,39 @@ end
 
 Take away ownership of geometry.
 
+### Parameters
+* **hFeat**: feature from which to steal the first geometry.
+
 ### Returns
-the pointer to the geometry.
+the pointer to the stolen geometry.
 """
 function ogr_f_stealgeometry(arg1)
     aftercare(ccall((:OGR_F_StealGeometry, libgdal), OGRGeometryH, (OGRFeatureH,), arg1))
+end
+
+"""
+    OGR_F_StealGeometryEx(OGRFeatureH hFeat,
+                          int iGeomField) -> OGRGeometryH
+
+Take away ownership of geometry.
+
+### Parameters
+* **hFeat**: feature from which to steal a geometry.
+* **iGeomField**: index of the geometry field to steal.
+
+### Returns
+the pointer to the stolen geometry.
+"""
+function ogr_f_stealgeometryex(arg1, iGeomField)
+    aftercare(
+        ccall(
+            (:OGR_F_StealGeometryEx, libgdal),
+            OGRGeometryH,
+            (OGRFeatureH, Cint),
+            arg1,
+            iGeomField,
+        ),
+    )
 end
 
 """
@@ -25659,7 +26028,7 @@ end
 """
     OGR_F_SetFieldRaw(OGRFeatureH hFeat,
                       int iField,
-                      OGRField * psValue) -> void
+                      const OGRField * psValue) -> void
 
 Set field.
 
@@ -26110,7 +26479,7 @@ end
 """
     ogr_f_getstyletable(arg1)
 
-Return style table 
+Return style table
 """
 function ogr_f_getstyletable(arg1)
     aftercare(ccall((:OGR_F_GetStyleTable, libgdal), OGRStyleTableH, (OGRFeatureH,), arg1))
@@ -26119,7 +26488,7 @@ end
 """
     ogr_f_setstyletabledirectly(arg1, arg2)
 
-Set style table and take ownership 
+Set style table and take ownership
 """
 function ogr_f_setstyletabledirectly(arg1, arg2)
     aftercare(
@@ -26136,7 +26505,7 @@ end
 """
     ogr_f_setstyletable(arg1, arg2)
 
-Set style table 
+Set style table
 """
 function ogr_f_setstyletable(arg1, arg2)
     aftercare(
@@ -26329,11 +26698,11 @@ Type of field domain.
 
 \\since GDAL 3.3
 
-| Enumerator   | Note                        |
-| :----------- | :-------------------------- |
-| OFDT\\_CODED | Coded                       |
-| OFDT\\_RANGE | Range (min/max)             |
-| OFDT\\_GLOB  | Glob (used by GeoPackage)   |
+| Enumerator   | Note                       |
+| :----------- | :------------------------- |
+| OFDT\\_CODED | Coded                      |
+| OFDT\\_RANGE | Range (min/max)            |
+| OFDT\\_GLOB  | Glob (used by GeoPackage)  |
 """
 @cenum OGRFieldDomainType::UInt32 begin
     OFDT_CODED = 0
@@ -26416,11 +26785,11 @@ When a feature is split in two, defines how the value of attributes following th
 
 \\since GDAL 3.3
 
-| Enumerator               | Note                                                                                                            |
-| :----------------------- | :-------------------------------------------------------------------------------------------------------------- |
-| OFDSP\\_DEFAULT\\_VALUE  | Default value                                                                                                   |
-| OFDSP\\_DUPLICATE        | Duplicate                                                                                                       |
-| OFDSP\\_GEOMETRY\\_RATIO | New values are computed by the ratio of their area/length compared to the area/length of the original feature   |
+| Enumerator               | Note                                                                                                           |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------- |
+| OFDSP\\_DEFAULT\\_VALUE  | Default value                                                                                                  |
+| OFDSP\\_DUPLICATE        | Duplicate                                                                                                      |
+| OFDSP\\_GEOMETRY\\_RATIO | New values are computed by the ratio of their area/length compared to the area/length of the original feature  |
 """
 @cenum OGRFieldDomainSplitPolicy::UInt32 begin
     OFDSP_DEFAULT_VALUE = 0
@@ -26481,11 +26850,11 @@ When a feature is built by merging two features, defines how the value of attrib
 
 \\since GDAL 3.3
 
-| Enumerator                  | Note                                                                    |
-| :-------------------------- | :---------------------------------------------------------------------- |
-| OFDMP\\_DEFAULT\\_VALUE     | Default value                                                           |
-| OFDMP\\_SUM                 | Sum                                                                     |
-| OFDMP\\_GEOMETRY\\_WEIGHTED | New values are computed as the weighted average of the source values.   |
+| Enumerator                  | Note                                                                   |
+| :-------------------------- | :--------------------------------------------------------------------- |
+| OFDMP\\_DEFAULT\\_VALUE     | Default value                                                          |
+| OFDMP\\_SUM                 | Sum                                                                    |
+| OFDMP\\_GEOMETRY\\_WEIGHTED | New values are computed as the weighted average of the source values.  |
 """
 @cenum OGRFieldDomainMergePolicy::UInt32 begin
     OFDMP_DEFAULT_VALUE = 0
@@ -26544,10 +26913,10 @@ Associates a code and a value
 
 \\since GDAL 3.3
 
-| Field    | Note                                                        |
-| :------- | :---------------------------------------------------------- |
-| pszCode  | Code. Content should be of the type of the OGRFieldDomain   |
-| pszValue | Value. Might be NULL                                        |
+| Field    | Note                                                       |
+| :------- | :--------------------------------------------------------- |
+| pszCode  | Code. Content should be of the type of the OGRFieldDomain  |
+| pszValue | Value. Might be NULL                                       |
 """
 struct OGRCodedValue
     pszCode::Cstring
@@ -26785,10 +27154,10 @@ function ogr_globflddomain_getglob(arg1)
     )
 end
 
-"Opaque type for a OGR datasource (OGRDataSource) "
+"Opaque type for a OGR datasource (OGRDataSource)"
 const OGRDataSourceH = Ptr{Cvoid}
 
-"Opaque type for a OGR driver (OGRSFDriver) "
+"Opaque type for a OGR driver (OGRSFDriver)"
 const OGRSFDriverH = Ptr{Cvoid}
 
 """
@@ -27429,9 +27798,28 @@ function ogr_l_rollbacktransaction(arg1)
 end
 
 """
+    OGR_L_Rename(OGRLayerH hLayer,
+                 const char * pszNewName) -> OGRErr
+
+Rename layer.
+
+### Parameters
+* **hLayer**: Layer to rename.
+* **pszNewName**: New layer name. Must not be NULL.
+
+### Returns
+OGRERR_NONE in case of success
+"""
+function ogr_l_rename(hLayer, pszNewName)
+    aftercare(
+        ccall((:OGR_L_Rename, libgdal), OGRErr, (OGRLayerH, Cstring), hLayer, pszNewName),
+    )
+end
+
+"""
     ogr_l_reference(arg1)
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function ogr_l_reference(arg1)
     aftercare(ccall((:OGR_L_Reference, libgdal), Cint, (OGRLayerH,), arg1))
@@ -27469,7 +27857,7 @@ end
 """
     ogr_l_getfeaturesread(arg1)
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function ogr_l_getfeaturesread(arg1)
     aftercare(ccall((:OGR_L_GetFeaturesRead, libgdal), GIntBig, (OGRLayerH,), arg1))
@@ -27511,7 +27899,7 @@ end
 """
     ogr_l_getstyletable(arg1)
 
-Get style table 
+Get style table
 """
 function ogr_l_getstyletable(arg1)
     aftercare(ccall((:OGR_L_GetStyleTable, libgdal), OGRStyleTableH, (OGRLayerH,), arg1))
@@ -27520,7 +27908,7 @@ end
 """
     ogr_l_setstyletabledirectly(arg1, arg2)
 
-Set style table (and take ownership) 
+Set style table (and take ownership)
 """
 function ogr_l_setstyletabledirectly(arg1, arg2)
     aftercare(
@@ -27537,7 +27925,7 @@ end
 """
     ogr_l_setstyletable(arg1, arg2)
 
-Set style table 
+Set style table
 """
 function ogr_l_setstyletable(arg1, arg2)
     aftercare(
@@ -28107,7 +28495,7 @@ end
 """
     ogr_ds_reference(arg1)
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function ogr_ds_reference(arg1)
     aftercare(ccall((:OGR_DS_Reference, libgdal), Cint, (OGRDataSourceH,), arg1))
@@ -28139,7 +28527,7 @@ end
 
 
 
-Flush pending changes to disk. See GDALDataset::FlushCache() 
+Flush pending changes to disk. See GDALDataset::FlushCache()
 """
 function ogr_ds_synctodisk(arg1)
     aftercare(ccall((:OGR_DS_SyncToDisk, libgdal), OGRErr, (OGRDataSourceH,), arg1))
@@ -28148,7 +28536,7 @@ end
 """
     ogr_ds_getstyletable(arg1)
 
-Get style table 
+Get style table
 """
 function ogr_ds_getstyletable(arg1)
     aftercare(
@@ -28159,7 +28547,7 @@ end
 """
     ogr_ds_setstyletabledirectly(arg1, arg2)
 
-Set style table (and take ownership) 
+Set style table (and take ownership)
 """
 function ogr_ds_setstyletabledirectly(arg1, arg2)
     aftercare(
@@ -28176,7 +28564,7 @@ end
 """
     ogr_ds_setstyletable(arg1, arg2)
 
-Set style table 
+Set style table
 """
 function ogr_ds_setstyletable(arg1, arg2)
     aftercare(
@@ -28410,7 +28798,7 @@ end
 """
     ogrregisterdriver(arg1)
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function ogrregisterdriver(arg1)
     aftercare(ccall((:OGRRegisterDriver, libgdal), Cvoid, (OGRSFDriverH,), arg1))
@@ -28465,7 +28853,7 @@ end
 """
     ogrgetopendscount()
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function ogrgetopendscount()
     aftercare(ccall((:OGRGetOpenDSCount, libgdal), Cint, ()))
@@ -28487,16 +28875,16 @@ end
 """
     ogrcleanupall()
 
-Clean-up all drivers (including raster ones starting with GDAL 2.0. See [`GDALDestroyDriverManager`](@ref)() 
+Clean-up all drivers (including raster ones starting with GDAL 2.0. See [`GDALDestroyDriverManager`](@ref)()
 """
 function ogrcleanupall()
     aftercare(ccall((:OGRCleanupAll, libgdal), Cvoid, ()))
 end
 
-"Style manager opaque type "
+"Style manager opaque type"
 const OGRStyleMgrH = Ptr{Cvoid}
 
-"Style tool opaque type "
+"Style tool opaque type"
 const OGRStyleToolH = Ptr{Cvoid}
 
 """
@@ -28684,14 +29072,14 @@ end
 
 OGRStyleTool derived class types (returned by GetType()).
 
-| Enumerator   | Note     |
-| :----------- | :------- |
-| OGRSTCNone   | None     |
-| OGRSTCPen    | Pen      |
-| OGRSTCBrush  | Brush    |
-| OGRSTCSymbol | Symbol   |
-| OGRSTCLabel  | Label    |
-| OGRSTCVector | Vector   |
+| Enumerator   | Note    |
+| :----------- | :------ |
+| OGRSTCNone   | None    |
+| OGRSTCPen    | Pen     |
+| OGRSTCBrush  | Brush   |
+| OGRSTCSymbol | Symbol  |
+| OGRSTCLabel  | Label   |
+| OGRSTCVector | Vector  |
 """
 @cenum ogr_style_tool_class_id::UInt32 begin
     OGRSTCNone = 0
@@ -28752,14 +29140,14 @@ end
 
 List of units supported by OGRStyleTools.
 
-| Enumerator   | Note          |
-| :----------- | :------------ |
-| OGRSTUGround | Ground unit   |
-| OGRSTUPixel  | Pixel         |
-| OGRSTUPoints | Points        |
-| OGRSTUMM     | Millimeter    |
-| OGRSTUCM     | Centimeter    |
-| OGRSTUInches | Inch          |
+| Enumerator   | Note         |
+| :----------- | :----------- |
+| OGRSTUGround | Ground unit  |
+| OGRSTUPixel  | Pixel        |
+| OGRSTUPoints | Points       |
+| OGRSTUMM     | Millimeter   |
+| OGRSTUCM     | Centimeter   |
+| OGRSTUInches | Inch         |
 """
 @cenum ogr_style_tool_units_id::UInt32 begin
     OGRSTUGround = 0
@@ -29305,10 +29693,8 @@ Return [`TRUE`](@ref) if GDAL library version at runtime matches nVersionMajor.n
 The purpose of this method is to ensure that calling code will run with the GDAL version it is compiled for. It is primarily indented for external plugins.
 
 ### Parameters
-* `nVersionMajor`: Major version to be tested against 
-
-* `nVersionMinor`: Minor version to be tested against 
-
+* `nVersionMajor`: Major version to be tested against
+* `nVersionMinor`: Minor version to be tested against
 * `pszCallingComponentName`: If not NULL, in case of version mismatch, the method will issue a failure mentioning the name of the calling component.
 """
 function gdalcheckversion(nVersionMajor, nVersionMinor, pszCallingComponentName)
@@ -29327,7 +29713,7 @@ end
 """
     ogrmalloc(arg1)
 
-Doxygen\\_Suppress 
+Doxygen\\_Suppress
 """
 function ogrmalloc(arg1)
     aftercare(ccall((:OGRMalloc, libgdal), Ptr{Cvoid}, (Csize_t,), arg1))
@@ -29360,7 +29746,7 @@ function ogrfree(arg1)
     aftercare(ccall((:OGRFree, libgdal), Cvoid, (Ptr{Cvoid},), arg1))
 end
 
-"Type for a OGR boolean "
+"Type for a OGR boolean"
 const OGRBoolean = Cint
 
 """
@@ -29372,11 +29758,11 @@ Output variants of WKB we support.
 
 SQL/MM Part 3 and SFSQL 1.2 use offsets of 1000 (Z), 2000 (M) and 3000 (ZM) to indicate the present of higher dimensional coordinates in a WKB geometry. Reference: <a href="https://portal.opengeospatial.org/files/?artifact_id=320243"> 09-009\\_Committee\\_Draft\\_ISOIEC\\_CD\\_13249-3\\_SQLMM\\_Spatial.pdf</a>, ISO/IEC JTC 1/SC 32 N 1820, ISO/IEC CD 13249-3:201x(E), Date: 2009-01-16. The codes are also found in §8.2.3 of <a href="http://portal.opengeospatial.org/files/?artifact_id=25355"> OGC 06-103r4 "OpenGIS® Implementation Standard for Geographic information - Simple feature access - Part 1: Common architecture", v1.2.1</a>
 
-| Enumerator         | Note                                                                            |
-| :----------------- | :------------------------------------------------------------------------------ |
-| wkbVariantOldOgc   | Old-style 99-402 extended dimension (Z) WKB types                               |
-| wkbVariantIso      | SFSQL 1.2 and ISO SQL/MM Part 3 extended dimension (Z&M) WKB types              |
-| wkbVariantPostGIS1 | PostGIS 1.X has different codes for CurvePolygon, MultiCurve and MultiSurface   |
+| Enumerator         | Note                                                                           |
+| :----------------- | :----------------------------------------------------------------------------- |
+| wkbVariantOldOgc   | Old-style 99-402 extended dimension (Z) WKB types                              |
+| wkbVariantIso      | SFSQL 1.2 and ISO SQL/MM Part 3 extended dimension (Z&M) WKB types             |
+| wkbVariantPostGIS1 | PostGIS 1.X has different codes for CurvePolygon, MultiCurve and MultiSurface  |
 """
 @cenum OGRwkbVariant::UInt32 begin
     wkbVariantOldOgc = 0
@@ -29652,16 +30038,16 @@ end
 
 List of parameters for use with OGRStylePen.
 
-| Enumerator        | Note                   |
-| :---------------- | :--------------------- |
-| OGRSTPenColor     | Color                  |
-| OGRSTPenWidth     | Width                  |
-| OGRSTPenPattern   | Pattern                |
-| OGRSTPenId        | Id                     |
-| OGRSTPenPerOffset | Perpendicular offset   |
-| OGRSTPenCap       | Cap                    |
-| OGRSTPenJoin      | Join                   |
-| OGRSTPenPriority  | Priority               |
+| Enumerator        | Note                  |
+| :---------------- | :-------------------- |
+| OGRSTPenColor     | Color                 |
+| OGRSTPenWidth     | Width                 |
+| OGRSTPenPattern   | Pattern               |
+| OGRSTPenId        | Id                    |
+| OGRSTPenPerOffset | Perpendicular offset  |
+| OGRSTPenCap       | Cap                   |
+| OGRSTPenJoin      | Join                  |
+| OGRSTPenPriority  | Priority              |
 """
 @cenum ogr_style_tool_param_pen_id::UInt32 begin
     OGRSTPenColor = 0
@@ -29683,16 +30069,16 @@ const OGRSTPenParam = ogr_style_tool_param_pen_id
 
 List of parameters for use with OGRStyleBrush.
 
-| Enumerator         | Note               |
-| :----------------- | :----------------- |
-| OGRSTBrushFColor   | Foreground color   |
-| OGRSTBrushBColor   | Background color   |
-| OGRSTBrushId       | Id                 |
-| OGRSTBrushAngle    | Angle              |
-| OGRSTBrushSize     | Size               |
-| OGRSTBrushDx       | Dx                 |
-| OGRSTBrushDy       | Dy                 |
-| OGRSTBrushPriority | Priority           |
+| Enumerator         | Note              |
+| :----------------- | :---------------- |
+| OGRSTBrushFColor   | Foreground color  |
+| OGRSTBrushBColor   | Background color  |
+| OGRSTBrushId       | Id                |
+| OGRSTBrushAngle    | Angle             |
+| OGRSTBrushSize     | Size              |
+| OGRSTBrushDx       | Dx                |
+| OGRSTBrushDy       | Dy                |
+| OGRSTBrushPriority | Priority          |
 """
 @cenum ogr_style_tool_param_brush_id::UInt32 begin
     OGRSTBrushFColor = 0
@@ -29714,20 +30100,20 @@ const OGRSTBrushParam = ogr_style_tool_param_brush_id
 
 List of parameters for use with OGRStyleSymbol.
 
-| Enumerator          | Note            |
-| :------------------ | :-------------- |
-| OGRSTSymbolId       | Id              |
-| OGRSTSymbolAngle    | Angle           |
-| OGRSTSymbolColor    | Color           |
-| OGRSTSymbolSize     | Size            |
-| OGRSTSymbolDx       | Dx              |
-| OGRSTSymbolDy       | Dy              |
-| OGRSTSymbolStep     | Step            |
-| OGRSTSymbolPerp     | Perpendicular   |
-| OGRSTSymbolOffset   | Offset          |
-| OGRSTSymbolPriority | Priority        |
-| OGRSTSymbolFontName | Font name       |
-| OGRSTSymbolOColor   | Outline color   |
+| Enumerator          | Note           |
+| :------------------ | :------------- |
+| OGRSTSymbolId       | Id             |
+| OGRSTSymbolAngle    | Angle          |
+| OGRSTSymbolColor    | Color          |
+| OGRSTSymbolSize     | Size           |
+| OGRSTSymbolDx       | Dx             |
+| OGRSTSymbolDy       | Dy             |
+| OGRSTSymbolStep     | Step           |
+| OGRSTSymbolPerp     | Perpendicular  |
+| OGRSTSymbolOffset   | Offset         |
+| OGRSTSymbolPriority | Priority       |
+| OGRSTSymbolFontName | Font name      |
+| OGRSTSymbolOColor   | Outline color  |
 """
 @cenum ogr_style_tool_param_symbol_id::UInt32 begin
     OGRSTSymbolId = 0
@@ -29753,29 +30139,29 @@ const OGRSTSymbolParam = ogr_style_tool_param_symbol_id
 
 List of parameters for use with OGRStyleLabel.
 
-| Enumerator           | Note                   |
-| :------------------- | :--------------------- |
-| OGRSTLabelFontName   | Font name              |
-| OGRSTLabelSize       | Size                   |
-| OGRSTLabelTextString | Text string            |
-| OGRSTLabelAngle      | Angle                  |
-| OGRSTLabelFColor     | Foreground color       |
-| OGRSTLabelBColor     | Background color       |
-| OGRSTLabelPlacement  | Placement              |
-| OGRSTLabelAnchor     | Anchor                 |
-| OGRSTLabelDx         | Dx                     |
-| OGRSTLabelDy         | Dy                     |
-| OGRSTLabelPerp       | Perpendicular          |
-| OGRSTLabelBold       | Bold                   |
-| OGRSTLabelItalic     | Italic                 |
-| OGRSTLabelUnderline  | Underline              |
-| OGRSTLabelPriority   | Priority               |
-| OGRSTLabelStrikeout  | Strike out             |
-| OGRSTLabelStretch    | Stretch                |
-| OGRSTLabelAdjHor     | OBSOLETE; do not use   |
-| OGRSTLabelAdjVert    |                        |
-| OGRSTLabelHColor     | Highlight color        |
-| OGRSTLabelOColor     | Outline color          |
+| Enumerator           | Note                  |
+| :------------------- | :-------------------- |
+| OGRSTLabelFontName   | Font name             |
+| OGRSTLabelSize       | Size                  |
+| OGRSTLabelTextString | Text string           |
+| OGRSTLabelAngle      | Angle                 |
+| OGRSTLabelFColor     | Foreground color      |
+| OGRSTLabelBColor     | Background color      |
+| OGRSTLabelPlacement  | Placement             |
+| OGRSTLabelAnchor     | Anchor                |
+| OGRSTLabelDx         | Dx                    |
+| OGRSTLabelDy         | Dy                    |
+| OGRSTLabelPerp       | Perpendicular         |
+| OGRSTLabelBold       | Bold                  |
+| OGRSTLabelItalic     | Italic                |
+| OGRSTLabelUnderline  | Underline             |
+| OGRSTLabelPriority   | Priority              |
+| OGRSTLabelStrikeout  | Strike out            |
+| OGRSTLabelStretch    | Stretch               |
+| OGRSTLabelAdjHor     | OBSOLETE; do not use  |
+| OGRSTLabelAdjVert    |                       |
+| OGRSTLabelHColor     | Highlight color       |
+| OGRSTLabelOColor     | Outline color         |
 """
 @cenum ogr_style_tool_param_label_id::UInt32 begin
     OGRSTLabelFontName = 0
@@ -29823,17 +30209,17 @@ end
 """
     OGRAxisOrientation
 
-Axis orientations (corresponds to CS\\_AxisOrientationEnum). 
+Axis orientations (corresponds to CS\\_AxisOrientationEnum).
 
-| Enumerator  | Note                     |
-| :---------- | :----------------------- |
-| OAO\\_Other | Other                    |
-| OAO\\_North | North                    |
-| OAO\\_South | South                    |
-| OAO\\_East  | East                     |
-| OAO\\_West  | West                     |
-| OAO\\_Up    | Up (to space)            |
-| OAO\\_Down  | Down (to Earth center)   |
+| Enumerator  | Note                    |
+| :---------- | :---------------------- |
+| OAO\\_Other | Other                   |
+| OAO\\_North | North                   |
+| OAO\\_South | South                   |
+| OAO\\_East  | East                    |
+| OAO\\_West  | West                    |
+| OAO\\_Up    | Up (to space)           |
+| OAO\\_Down  | Down (to Earth center)  |
 """
 @cenum OGRAxisOrientation::UInt32 begin
     OAO_Other = 0
@@ -31806,13 +32192,13 @@ end
 """
     OSRAxisMappingStrategy
 
-Data axis to CRS axis mapping strategy. 
+Data axis to CRS axis mapping strategy.
 
-| Enumerator                       | Note                                                     |
-| :------------------------------- | :------------------------------------------------------- |
-| OAMS\\_TRADITIONAL\\_GIS\\_ORDER | Traditional GIS order                                    |
-| OAMS\\_AUTHORITY\\_COMPLIANT     | Compliant with the order mandated by the CRS authority   |
-| OAMS\\_CUSTOM                    | Custom                                                   |
+| Enumerator                       | Note                                                    |
+| :------------------------------- | :------------------------------------------------------ |
+| OAMS\\_TRADITIONAL\\_GIS\\_ORDER | Traditional GIS order                                   |
+| OAMS\\_AUTHORITY\\_COMPLIANT     | Compliant with the order mandated by the CRS authority  |
+| OAMS\\_CUSTOM                    | Custom                                                  |
 """
 @cenum OSRAxisMappingStrategy::UInt32 begin
     OAMS_TRADITIONAL_GIS_ORDER = 0
@@ -31895,7 +32281,7 @@ end
 """
     osrsetacea(hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Albers Conic Equal Area 
+Albers Conic Equal Area
 """
 function osrsetacea(
     hSRS,
@@ -31925,7 +32311,7 @@ end
 """
     osrsetae(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Azimuthal Equidistant 
+Azimuthal Equidistant
 """
 function osrsetae(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -31945,7 +32331,7 @@ end
 """
     osrsetbonne(hSRS, dfStandardParallel, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 
-Bonne 
+Bonne
 """
 function osrsetbonne(
     hSRS,
@@ -31971,7 +32357,7 @@ end
 """
     osrsetcea(hSRS, dfStdP1, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 
-Cylindrical Equal Area 
+Cylindrical Equal Area
 """
 function osrsetcea(hSRS, dfStdP1, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -31991,7 +32377,7 @@ end
 """
     osrsetcs(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Cassini-Soldner 
+Cassini-Soldner
 """
 function osrsetcs(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32011,7 +32397,7 @@ end
 """
     osrsetec(hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Equidistant Conic 
+Equidistant Conic
 """
 function osrsetec(
     hSRS,
@@ -32041,7 +32427,7 @@ end
 """
     osrseteckert(hSRS, nVariation, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 
-Eckert I-VI 
+Eckert I-VI
 """
 function osrseteckert(hSRS, nVariation, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32061,7 +32447,7 @@ end
 """
     osrseteckertiv(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 
-Eckert IV 
+Eckert IV
 """
 function osrseteckertiv(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32080,7 +32466,7 @@ end
 """
     osrseteckertvi(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 
-Eckert VI 
+Eckert VI
 """
 function osrseteckertvi(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32099,7 +32485,7 @@ end
 """
     osrsetequirectangular(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Equirectangular 
+Equirectangular
 """
 function osrsetequirectangular(
     hSRS,
@@ -32125,7 +32511,7 @@ end
 """
     osrsetequirectangular2(hSRS, dfCenterLat, dfCenterLong, dfPseudoStdParallel1, dfFalseEasting, dfFalseNorthing)
 
-Equirectangular generalized form 
+Equirectangular generalized form
 """
 function osrsetequirectangular2(
     hSRS,
@@ -32153,7 +32539,7 @@ end
 """
     osrsetgs(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 
-Gall Stereograpic 
+Gall Stereograpic
 """
 function osrsetgs(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32172,7 +32558,7 @@ end
 """
     osrsetgh(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 
-Goode Homolosine 
+Goode Homolosine
 """
 function osrsetgh(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32191,7 +32577,7 @@ end
 """
     osrsetigh(hSRS)
 
-Interrupted Goode Homolosine 
+Interrupted Goode Homolosine
 """
 function osrsetigh(hSRS)
     aftercare(ccall((:OSRSetIGH, libgdal), OGRErr, (OGRSpatialReferenceH,), hSRS))
@@ -32200,7 +32586,7 @@ end
 """
     osrsetgeos(hSRS, dfCentralMeridian, dfSatelliteHeight, dfFalseEasting, dfFalseNorthing)
 
-GEOS - Geostationary Satellite View 
+GEOS - Geostationary Satellite View
 """
 function osrsetgeos(
     hSRS,
@@ -32226,7 +32612,7 @@ end
 """
     osrsetgaussschreibertmercator(hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
 
-Gauss Schreiber Transverse Mercator 
+Gauss Schreiber Transverse Mercator
 """
 function osrsetgaussschreibertmercator(
     hSRS,
@@ -32254,7 +32640,7 @@ end
 """
     osrsetgnomonic(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Gnomonic 
+Gnomonic
 """
 function osrsetgnomonic(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32274,7 +32660,7 @@ end
 """
     osrsethom(hSRS, dfCenterLat, dfCenterLong, dfAzimuth, dfRectToSkew, dfScale, dfFalseEasting, dfFalseNorthing)
 
-Hotine Oblique Mercator using azimuth angle 
+Hotine Oblique Mercator using azimuth angle
 """
 function osrsethom(
     hSRS,
@@ -32363,7 +32749,7 @@ end
 """
     osrsethom2pno(hSRS, dfCenterLat, dfLat1, dfLong1, dfLat2, dfLong2, dfScale, dfFalseEasting, dfFalseNorthing)
 
-Hotine Oblique Mercator using two points on centerline 
+Hotine Oblique Mercator using two points on centerline
 """
 function osrsethom2pno(
     hSRS,
@@ -32407,7 +32793,7 @@ end
 """
     osrsetiwmpolyconic(hSRS, dfLat1, dfLat2, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-International Map of the World Polyconic 
+International Map of the World Polyconic
 """
 function osrsetiwmpolyconic(
     hSRS,
@@ -32435,7 +32821,7 @@ end
 """
     osrsetkrovak(hSRS, dfCenterLat, dfCenterLong, dfAzimuth, dfPseudoStdParallelLat, dfScale, dfFalseEasting, dfFalseNorthing)
 
-Krovak Oblique Conic Conformal 
+Krovak Oblique Conic Conformal
 """
 function osrsetkrovak(
     hSRS,
@@ -32476,7 +32862,7 @@ end
 """
     osrsetlaea(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Lambert Azimuthal Equal-Area 
+Lambert Azimuthal Equal-Area
 """
 function osrsetlaea(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32496,7 +32882,7 @@ end
 """
     osrsetlcc(hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Lambert Conformal Conic 
+Lambert Conformal Conic
 """
 function osrsetlcc(
     hSRS,
@@ -32526,7 +32912,7 @@ end
 """
     osrsetlcc1sp(hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
 
-Lambert Conformal Conic 1SP 
+Lambert Conformal Conic 1SP
 """
 function osrsetlcc1sp(
     hSRS,
@@ -32554,7 +32940,7 @@ end
 """
     osrsetlccb(hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Lambert Conformal Conic (Belgium) 
+Lambert Conformal Conic (Belgium)
 """
 function osrsetlccb(
     hSRS,
@@ -32584,7 +32970,7 @@ end
 """
     osrsetmc(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Miller Cylindrical 
+Miller Cylindrical
 """
 function osrsetmc(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32604,7 +32990,7 @@ end
 """
     osrsetmercator(hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
 
-Mercator 
+Mercator
 """
 function osrsetmercator(
     hSRS,
@@ -32632,7 +33018,7 @@ end
 """
     osrsetmercator2sp(hSRS, dfStdP1, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Mercator 2SP 
+Mercator 2SP
 """
 function osrsetmercator2sp(
     hSRS,
@@ -32660,7 +33046,7 @@ end
 """
     osrsetmollweide(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 
-Mollweide 
+Mollweide
 """
 function osrsetmollweide(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32679,7 +33065,7 @@ end
 """
     osrsetnzmg(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-New Zealand Map Grid 
+New Zealand Map Grid
 """
 function osrsetnzmg(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32699,7 +33085,7 @@ end
 """
     osrsetos(hSRS, dfOriginLat, dfCMeridian, dfScale, dfFalseEasting, dfFalseNorthing)
 
-Oblique Stereographic 
+Oblique Stereographic
 """
 function osrsetos(hSRS, dfOriginLat, dfCMeridian, dfScale, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32720,7 +33106,7 @@ end
 """
     osrsetorthographic(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Orthographic 
+Orthographic
 """
 function osrsetorthographic(
     hSRS,
@@ -32746,7 +33132,7 @@ end
 """
     osrsetpolyconic(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Polyconic 
+Polyconic
 """
 function osrsetpolyconic(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32766,7 +33152,7 @@ end
 """
     osrsetps(hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
 
-Polar Stereographic 
+Polar Stereographic
 """
 function osrsetps(hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32787,7 +33173,7 @@ end
 """
     osrsetrobinson(hSRS, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Robinson 
+Robinson
 """
 function osrsetrobinson(hSRS, dfCenterLong, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32806,7 +33192,7 @@ end
 """
     osrsetsinusoidal(hSRS, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Sinusoidal 
+Sinusoidal
 """
 function osrsetsinusoidal(hSRS, dfCenterLong, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32825,7 +33211,7 @@ end
 """
     osrsetstereographic(hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
 
-Stereographic 
+Stereographic
 """
 function osrsetstereographic(
     hSRS,
@@ -32853,7 +33239,7 @@ end
 """
     osrsetsoc(hSRS, dfLatitudeOfOrigin, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 
-Swiss Oblique Cylindrical 
+Swiss Oblique Cylindrical
 """
 function osrsetsoc(
     hSRS,
@@ -32902,7 +33288,7 @@ end
 """
     osrsettmvariant(hSRS, pszVariantName, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
 
-Transverse Mercator variant 
+Transverse Mercator variant
 """
 function osrsettmvariant(
     hSRS,
@@ -32932,7 +33318,7 @@ end
 """
     osrsettmg(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-Tunesia Mining Grid 
+Tunesia Mining Grid
 """
 function osrsettmg(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -32952,7 +33338,7 @@ end
 """
     osrsettmso(hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
 
-Transverse Mercator (South Oriented) 
+Transverse Mercator (South Oriented)
 """
 function osrsettmso(
     hSRS,
@@ -32980,7 +33366,7 @@ end
 """
     osrsettped(hSRS, dfLat1, dfLong1, dfLat2, dfLong2, dfFalseEasting, dfFalseNorthing)
 
-TPED (Two Point Equi Distant) 
+TPED (Two Point Equi Distant)
 """
 function osrsettped(hSRS, dfLat1, dfLong1, dfLat2, dfLong2, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -33002,7 +33388,7 @@ end
 """
     osrsetvdg(hSRS, dfCenterLong, dfFalseEasting, dfFalseNorthing)
 
-VanDerGrinten 
+VanDerGrinten
 """
 function osrsetvdg(hSRS, dfCenterLong, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -33021,7 +33407,7 @@ end
 """
     osrsetwagner(hSRS, nVariation, dfCenterLat, dfFalseEasting, dfFalseNorthing)
 
-Wagner I -- VII 
+Wagner I -- VII
 """
 function osrsetwagner(hSRS, nVariation, dfCenterLat, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -33041,7 +33427,7 @@ end
 """
     osrsetqsc(hSRS, dfCenterLat, dfCenterLong)
 
-Quadrilateralized Spherical Cube 
+Quadrilateralized Spherical Cube
 """
 function osrsetqsc(hSRS, dfCenterLat, dfCenterLong)
     aftercare(
@@ -33059,7 +33445,7 @@ end
 """
     osrsetsch(hSRS, dfPegLat, dfPegLong, dfPegHeading, dfPegHgt)
 
-Spherical, Cross-track, Height 
+Spherical, Cross-track, Height
 """
 function osrsetsch(hSRS, dfPegLat, dfPegLong, dfPegHeading, dfPegHgt)
     aftercare(
@@ -33079,7 +33465,7 @@ end
 """
     osrsetverticalperspective(hSRS, dfTopoOriginLat, dfTopoOriginLon, dfTopoOriginHeight, dfViewPointHeight, dfFalseEasting, dfFalseNorthing)
 
-Vertical Perspective / Near-sided Perspective 
+Vertical Perspective / Near-sided Perspective
 """
 function osrsetverticalperspective(
     hSRS,
@@ -33168,17 +33554,17 @@ end
 """
     OSRCRSType
 
-Type of Coordinate Reference System (CRS). 
+Type of Coordinate Reference System (CRS).
 
-| Enumerator                         | Note                |
-| :--------------------------------- | :------------------ |
-| OSR\\_CRS\\_TYPE\\_GEOGRAPHIC\\_2D | Geographic 2D CRS   |
-| OSR\\_CRS\\_TYPE\\_GEOGRAPHIC\\_3D | Geographic 3D CRS   |
-| OSR\\_CRS\\_TYPE\\_GEOCENTRIC      | Geocentric CRS      |
-| OSR\\_CRS\\_TYPE\\_PROJECTED       | Projected CRS       |
-| OSR\\_CRS\\_TYPE\\_VERTICAL        | Vertical CRS        |
-| OSR\\_CRS\\_TYPE\\_COMPOUND        | Compound CRS        |
-| OSR\\_CRS\\_TYPE\\_OTHER           | Other               |
+| Enumerator                         | Note               |
+| :--------------------------------- | :----------------- |
+| OSR\\_CRS\\_TYPE\\_GEOGRAPHIC\\_2D | Geographic 2D CRS  |
+| OSR\\_CRS\\_TYPE\\_GEOGRAPHIC\\_3D | Geographic 3D CRS  |
+| OSR\\_CRS\\_TYPE\\_GEOCENTRIC      | Geocentric CRS     |
+| OSR\\_CRS\\_TYPE\\_PROJECTED       | Projected CRS      |
+| OSR\\_CRS\\_TYPE\\_VERTICAL        | Vertical CRS       |
+| OSR\\_CRS\\_TYPE\\_COMPOUND        | Compound CRS       |
+| OSR\\_CRS\\_TYPE\\_OTHER           | Other              |
 """
 @cenum OSRCRSType::UInt32 begin
     OSR_CRS_TYPE_GEOGRAPHIC_2D = 0
@@ -33197,20 +33583,20 @@ Structure given overall description of a CRS.
 
 This structure may grow over time, and should not be directly allocated by client code.
 
-| Field               | Note                                                                                                                    |
-| :------------------ | :---------------------------------------------------------------------------------------------------------------------- |
-| pszAuthName         | Authority name.                                                                                                         |
-| pszCode             | Object code.                                                                                                            |
-| pszName             | Object name.                                                                                                            |
-| eType               | Object type.                                                                                                            |
-| bDeprecated         | Whether the object is deprecated                                                                                        |
-| bBboxValid          | Whereas the west\\_lon\\_degree, south\\_lat\\_degree, east\\_lon\\_degree and north\\_lat\\_degree fields are valid.   |
-| dfWestLongitudeDeg  | Western-most longitude of the area of use, in degrees.                                                                  |
-| dfSouthLatitudeDeg  | Southern-most latitude of the area of use, in degrees.                                                                  |
-| dfEastLongitudeDeg  | Eastern-most longitude of the area of use, in degrees.                                                                  |
-| dfNorthLatitudeDeg  | Northern-most latitude of the area of use, in degrees.                                                                  |
-| pszAreaName         | Name of the area of use.                                                                                                |
-| pszProjectionMethod | Name of the projection method for a projected CRS. Might be NULL evenfor projected CRS in some cases.                   |
+| Field               | Note                                                                                                                   |
+| :------------------ | :--------------------------------------------------------------------------------------------------------------------- |
+| pszAuthName         | Authority name.                                                                                                        |
+| pszCode             | Object code.                                                                                                           |
+| pszName             | Object name.                                                                                                           |
+| eType               | Object type.                                                                                                           |
+| bDeprecated         | Whether the object is deprecated                                                                                       |
+| bBboxValid          | Whereas the west\\_lon\\_degree, south\\_lat\\_degree, east\\_lon\\_degree and north\\_lat\\_degree fields are valid.  |
+| dfWestLongitudeDeg  | Western-most longitude of the area of use, in degrees.                                                                 |
+| dfSouthLatitudeDeg  | Southern-most latitude of the area of use, in degrees.                                                                 |
+| dfEastLongitudeDeg  | Eastern-most longitude of the area of use, in degrees.                                                                 |
+| dfNorthLatitudeDeg  | Northern-most latitude of the area of use, in degrees.                                                                 |
+| pszAreaName         | Name of the area of use.                                                                                               |
+| pszProjectionMethod | Name of the projection method for a projected CRS. Might be NULL evenfor projected CRS in some cases.                  |
 """
 struct OSRCRSInfo
     pszAuthName::Cstring
@@ -33295,7 +33681,7 @@ end
 
 const OGRCoordinateTransformationOptions = Cvoid
 
-"Coordinate transformation options. "
+"Coordinate transformation options"
 const OGRCoordinateTransformationOptionsH = Ptr{OGRCoordinateTransformationOptions}
 
 """
@@ -33959,11 +34345,7 @@ const CPL_MULTIPROC_PTHREAD = 1
 
 const GDAL_PREFIX = "/workspace/destdir"
 
-const HAVE_ATOLL = 1
-
 const HAVE_CXX11 = 1
-
-const HAVE_DECL_STRTOF = 1
 
 const HAVE_GCC_ATOMIC_BUILTINS = 1
 
@@ -33973,31 +34355,15 @@ const HAVE_GCC_WARNING_ZERO_AS_NULL_POINTER_CONSTANT = 1
 
 const HAVE_GETCWD = 1
 
-const HAVE_IEEEFP = 1
-
-const HAVE_LONG_LONG = 1
-
 const HAVE_PTHREAD_MUTEX_ADAPTIVE_NP = 1
 
 const HAVE_PTHREAD_MUTEX_RECURSIVE = 1
 
 const HAVE_PTHREAD_SPINLOCK = 1
 
-const HAVE_SNPRINTF = 1
-
 const HAVE_STD_IS_NAN = 1
 
-const HAVE_STRTOF = 1
-
-const HAVE_STRTOLL = 1
-
-const HAVE_STRTOULL = 1
-
 const HAVE_UINT128_T = 1
-
-const HAVE_UINTPTR_T = 1
-
-const HAVE_VPRINTF = 1
 
 const HAVE_VSNPRINTF = 1
 
@@ -34099,9 +34465,9 @@ const VSI_STAT_CACHE_ONLY = 0x10
 
 const GDAL_VERSION_MAJOR = 3
 
-const GDAL_VERSION_MINOR = 4
+const GDAL_VERSION_MINOR = 5
 
-const GDAL_VERSION_REV = 1
+const GDAL_VERSION_REV = 0
 
 const GDAL_VERSION_BUILD = 0
 
@@ -34109,9 +34475,9 @@ const GDAL_VERSION_NUM =
     GDAL_COMPUTE_VERSION(GDAL_VERSION_MAJOR, GDAL_VERSION_MINOR, GDAL_VERSION_REV) +
     GDAL_VERSION_BUILD
 
-const GDAL_RELEASE_DATE = 20211227
+const GDAL_RELEASE_DATE = 20220510
 
-const GDAL_RELEASE_NAME = "3.4.1"
+const GDAL_RELEASE_NAME = "3.5.0"
 
 const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
 
@@ -34194,6 +34560,12 @@ const GDAL_DCAP_FEATURE_STYLES = "DCAP_FEATURE_STYLES"
 const GDAL_DCAP_COORDINATE_EPOCH = "DCAP_COORDINATE_EPOCH"
 
 const GDAL_DCAP_MULTIPLE_VECTOR_LAYERS = "DCAP_MULTIPLE_VECTOR_LAYERS"
+
+const GDAL_DCAP_FIELD_DOMAINS = "DCAP_FIELD_DOMAINS"
+
+const GDAL_DCAP_RENAME_LAYERS = "DCAP_RENAME_LAYERS"
+
+const GDAL_DMD_CREATION_FIELD_DOMAIN_TYPES = "DMD_CREATION_FIELD_DOMAIN_TYPES"
 
 const GDAL_DIM_TYPE_HORIZONTAL_X = "HORIZONTAL_X"
 
@@ -34415,6 +34787,8 @@ const OLCCurveGeometries = "CurveGeometries"
 
 const OLCMeasuredGeometries = "MeasuredGeometries"
 
+const OLCRename = "Rename"
+
 const ODsCCreateLayer = "CreateLayer"
 
 const ODsCDeleteLayer = "DeleteLayer"
@@ -34434,6 +34808,10 @@ const ODsCRandomLayerRead = "RandomLayerRead"
 const ODsCRandomLayerWrite = "RandomLayerWrite "
 
 const ODsCAddFieldDomain = "AddFieldDomain"
+
+const ODsCDeleteFieldDomain = "DeleteFieldDomain"
+
+const ODsCUpdateFieldDomain = "UpdateFieldDomain"
 
 const ODrCCreateDataSource = "CreateDataSource"
 
