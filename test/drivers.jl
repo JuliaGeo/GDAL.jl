@@ -15,14 +15,12 @@ available_drivers = [
     # libcurl raster drivers
     "EEDAI",
     "PLMosaic",
-    "RDA",
     "WCS",
     "WMS",
     "WMTS",
     # webp raster drivers
     # "WEBP",
     # vector drivers
-    "ARCGEN",
     "FlatGeoBuf",
     "GeoJSON",
     "GML",
@@ -44,8 +42,6 @@ available_drivers = [
     # libcurl vector drivers
     "AmigoCloud",
     "Carto",
-    "Cloudant",
-    "CouchDB",
     "CSW",
     "EEDA",
     "ElasticSearch",
