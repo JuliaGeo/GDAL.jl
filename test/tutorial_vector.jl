@@ -100,12 +100,12 @@ map(rm, fileset)
     @test GDAL.ogr_g_ismeasured(point) == 0
     # make it XYZ
     GDAL.ogr_g_set3d(point, true)
-    @test GDAL.ogr_g_is3d(point) > 0
+    @test GDAL.ogr_g_is3d(point) != 0
     @test GDAL.ogr_g_coordinatedimension(point) == 3
     # make it XYZM
     GDAL.ogr_g_setmeasured(point, true)
-    @test GDAL.ogr_g_is3d(point) > 0
-    @test GDAL.ogr_g_ismeasured(point) > 0
+    @test GDAL.ogr_g_is3d(point) != 0
+    @test GDAL.ogr_g_ismeasured(point) != 0
     @test GDAL.ogr_g_coordinatedimension(point) == 4
     # fill the coordinates
     GDAL.ogr_g_setpointzm(point, 0, 1.0, 2.0, 3.0, 4.0)
