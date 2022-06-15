@@ -91,3 +91,26 @@ GDAL.ogr_f_destroy(feature)
 GDAL.gdalclose(dataset)
 
 map(rm, fileset)
+
+@testset "XYZM points" begin
+    # create XY point
+    point = GDAL.ogr_g_creategeometry(GDAL.wkbPoint)
+    @test GDAL.ogr_g_coordinatedimension(point) == 2
+    @test GDAL.ogr_g_is3d(point) == 0
+    @test GDAL.ogr_g_ismeasured(point) == 0
+    # make it XYZ
+    GDAL.ogr_g_set3d(point, true)
+    @test GDAL.ogr_g_is3d(point) > 0
+    @test GDAL.ogr_g_coordinatedimension(point) == 3
+    # make it XYZM
+    GDAL.ogr_g_setmeasured(point, true)
+    @test GDAL.ogr_g_is3d(point) > 0
+    @test GDAL.ogr_g_ismeasured(point) > 0
+    @test GDAL.ogr_g_coordinatedimension(point) == 4
+    # fill the coordinates
+    GDAL.ogr_g_setpointzm(point, 0, 1.0, 2.0, 3.0, 4.0)
+    @test GDAL.ogr_g_getx(point, 0) == 1.0
+    @test GDAL.ogr_g_gety(point, 0) == 2.0
+    @test GDAL.ogr_g_getz(point, 0) == 3.0
+    @test GDAL.ogr_g_getm(point, 0) == 4.0
+end
