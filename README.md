@@ -1,3 +1,5 @@
+Do not merge.
+
 # GDAL.jl
 [![CI](https://github.com/JuliaGeo/GDAL.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/JuliaGeo/GDAL.jl/actions/workflows/CI.yml)
 
