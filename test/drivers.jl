@@ -12,6 +12,8 @@ available_drivers = [
     "MEM",
     "OGCAPI",
     "PCRaster",
+    "HDF5",
+    "netCDF",
     # libcurl raster drivers
     "EEDAI",
     "PLMosaic",
