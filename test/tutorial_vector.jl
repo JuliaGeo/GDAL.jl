@@ -74,6 +74,9 @@ point = GDAL.ogr_g_creategeometry(GDAL.wkbPoint)
 GDAL.ogr_g_setpoint_2d(point, 0, 100.123, 0.123)
 
 # check GEOS support
+geos_major_version = Ref{Cint}(0)
+@test GDAL.ogrgetgeosversion(geos_major_version, C_NULL, C_NULL)
+@test geos_major_version[] == 3
 @test GDAL.ogr_g_isvalid(point) == 1
 @test GDAL.ogr_g_isring(point) == 0
 
