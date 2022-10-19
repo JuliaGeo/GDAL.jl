@@ -34,6 +34,7 @@ available_drivers = [
     "TopoJSON",
     "VRT",
     "SQLite",
+    "PostgreSQL",
     # libexpat vector drivers
     "JML",
     "GML",
