@@ -23,6 +23,8 @@ available_drivers = [
     # webp raster drivers
     # "WEBP",
     # vector drivers
+    "Arrow",
+    "Parquet",
     "FlatGeoBuf",
     "GeoJSON",
     "GML",

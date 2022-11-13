@@ -98,7 +98,7 @@ rm("data/utmtiny-hillshade.prj")
 
 # GDALNearblack
 # not ascii because it doesn't support `create`
-options = GDAL.gdalnearblackoptionsnew(["-of", "GTiff", "-color", "0"], C_NULL)
+options = GDAL.gdalnearblackoptionsnew(["-of", "GTiff", "-near", "100"], C_NULL)
 ds_nearblack = GDAL.gdalnearblack(
     "data/utmtiny-nearblack.tif",
     Ptr{GDAL.GDALDatasetH}(C_NULL),
@@ -111,11 +111,8 @@ GDAL.gdalnearblackoptionsfree(options)
 band = GDAL.gdalgetrasterband(ds_nearblack, 1)
 read_data = zero(tinydata)
 GDAL.gdalrasterio(band, GDAL.GF_Read, 0, 0, 5, 5, read_data, 5, 5, GDAL.GDT_Byte, 0, 0)
-nbdata = read_data'
-# by default the outer two pixels are zeroed
-nbexpected = zero(tinydata)
-nbexpected[3, 3] = tinydata[3, 3]
-@test nbdata == nbexpected
+@test sum(read_data[1:3,2:5]) == 0
+@test sum(read_data) == 2221
 
 GDAL.gdalclose(ds_nearblack)
 rm("data/utmtiny-nearblack.tif")
@@ -130,7 +127,7 @@ ds_grid = GDAL.gdalgrid("data/point-grid.mem", ds_point, options, C_NULL)
 GDAL.gdalgridoptionsfree(options)
 geotransform = fill(0.0, 6)
 GDAL.gdalgetgeotransform(ds_grid, geotransform)
-@test geotransform ≈ [100.0, 0.1, 0.0, 0.0, 0.0, 0.01]
+@test geotransform ≈ [100.0, 0.1, 0.0, 0.1, 0.0, -0.01]
 GDAL.gdalclose(ds_grid)
 
 
