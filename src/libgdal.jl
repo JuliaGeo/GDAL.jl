@@ -94,15 +94,6 @@ function cplsetthreadlocalconfigoption(pszKey, pszValue)
 end
 
 """
-    cplfreeconfig()
-
-Doxygen\\_Suppress
-"""
-function cplfreeconfig()
-    aftercare(ccall((:CPLFreeConfig, libgdal), Cvoid, ()))
-end
-
-"""
     CPLGetConfigOptions(void) -> char **
 
 Return the list of configuration options as KEY=VALUE pairs.
@@ -3404,7 +3395,7 @@ Open file.
 * **pszFilename**: the file to open. UTF-8 encoded.
 * **pszAccess**: access requested (i.e. "r", "r+", "w")
 * **bSetError**: flag determining whether or not this open call should set VSIErrors on failure.
-* **papszOptions**: NULL or NULL-terminated list of strings. The content is highly file system dependent. Currently only MIME headers such as Content-Type and Content-Encoding are supported for the /vsis3/, /vsigs/, /vsiaz/, /vsiadls/ file systems.
+* **papszOptions**: NULL or NULL-terminated list of strings. The content is highly file system dependent. MIME headers such as Content-Type and Content-Encoding are supported for the /vsis3/, /vsigs/, /vsiaz/, /vsiadls/ file systems. Starting with GDAL 3.6, the DISABLE_READDIR_ON_OPEN=YES/NO option is supported for /vsicurl/ and other network-based file systems. By default, directory file listing is done, unless YES is specified.
 
 ### Returns
 NULL on failure, or the file handle.
@@ -3838,6 +3829,71 @@ function vsisupportssparsefiles(pszPath)
 end
 
 """
+    VSIIsLocal(const char * pszPath) -> bool
+
+Returns if the file/filesystem is "local".
+
+### Parameters
+* **pszPath**: the path of the filesystem object to be tested. UTF-8 encoded.
+
+### Returns
+TRUE or FALSE
+"""
+function vsiislocal(pszPath)
+    aftercare(ccall((:VSIIsLocal, libgdal), Bool, (Cstring,), pszPath))
+end
+
+"""
+    VSISupportsSequentialWrite(const char * pszPath,
+                               bool bAllowLocalTempFile) -> bool
+
+Returns if the filesystem supports sequential write.
+
+### Parameters
+* **pszPath**: the path of the filesystem object to be tested. UTF-8 encoded.
+* **bAllowLocalTempFile**: whether the file system is allowed to use a local temporary file before uploading to the target location.
+
+### Returns
+TRUE or FALSE
+"""
+function vsisupportssequentialwrite(pszPath, bAllowLocalTempFile)
+    aftercare(
+        ccall(
+            (:VSISupportsSequentialWrite, libgdal),
+            Bool,
+            (Cstring, Bool),
+            pszPath,
+            bAllowLocalTempFile,
+        ),
+    )
+end
+
+"""
+    VSISupportsRandomWrite(const char * pszPath,
+                           bool bAllowLocalTempFile) -> bool
+
+Returns if the filesystem supports random write.
+
+### Parameters
+* **pszPath**: the path of the filesystem object to be tested. UTF-8 encoded.
+* **bAllowLocalTempFile**: whether the file system is allowed to use a local temporary file before uploading to the target location.
+
+### Returns
+TRUE or FALSE
+"""
+function vsisupportsrandomwrite(pszPath, bAllowLocalTempFile)
+    aftercare(
+        ccall(
+            (:VSISupportsRandomWrite, libgdal),
+            Bool,
+            (Cstring, Bool),
+            pszPath,
+            bAllowLocalTempFile,
+        ),
+    )
+end
+
+"""
     VSIHasOptimizedReadMultiRange(const char * pszPath) -> int
 
 Returns if the filesystem supports efficient multi-range reading.
@@ -4060,16 +4116,71 @@ function vsisetfilemetadata(pszFilename, papszMetadata, pszDomain, papszOptions)
 end
 
 """
-    VSISetCredential(const char * pszPathPrefix,
-                     const char * pszKey,
-                     const char * pszValue) -> void
+    VSISetPathSpecificOption(const char * pszPathPrefix,
+                             const char * pszKey,
+                             const char * pszValue) -> void
 
-Set a credential (or more generally an option related to a virtual file system) for a given path prefix.
+Set a path specific option for a given path prefix.
 
 ### Parameters
 * **pszPathPrefix**: a path prefix of a virtual file system handler. Typically of the form "/vsiXXX/bucket". Must NOT be NULL.
 * **pszKey**: Option name. Must NOT be NULL.
 * **pszValue**: Option value. May be NULL to erase it.
+"""
+function vsisetpathspecificoption(pszPathPrefix, pszKey, pszValue)
+    aftercare(
+        ccall(
+            (:VSISetPathSpecificOption, libgdal),
+            Cvoid,
+            (Cstring, Cstring, Cstring),
+            pszPathPrefix,
+            pszKey,
+            pszValue,
+        ),
+    )
+end
+
+"""
+    VSIClearPathSpecificOptions(const char * pszPathPrefix) -> void
+
+Clear path specific options set with VSISetPathSpecificOption()
+
+### Parameters
+* **pszPathPrefix**: If set to NULL, all path specific options are cleared. If set to not-NULL, only those set with VSISetPathSpecificOption(pszPathPrefix, ...) will be cleared.
+"""
+function vsiclearpathspecificoptions(pszPathPrefix)
+    aftercare(
+        ccall((:VSIClearPathSpecificOptions, libgdal), Cvoid, (Cstring,), pszPathPrefix),
+    )
+end
+
+"""
+    VSIGetPathSpecificOption(const char * pszPath,
+                             const char * pszKey,
+                             const char * pszDefault) -> const char *
+
+Get the value a path specific option.
+"""
+function vsigetpathspecificoption(pszPath, pszKey, pszDefault)
+    aftercare(
+        ccall(
+            (:VSIGetPathSpecificOption, libgdal),
+            Cstring,
+            (Cstring, Cstring, Cstring),
+            pszPath,
+            pszKey,
+            pszDefault,
+        ),
+        false,
+    )
+end
+
+"""
+    VSISetCredential(const char * pszPathPrefix,
+                     const char * pszKey,
+                     const char * pszValue) -> void
+
+Set a credential (or more generally an option related to a virtual file system) for a given path prefix.
 """
 function vsisetcredential(pszPathPrefix, pszKey, pszValue)
     aftercare(
@@ -4087,10 +4198,7 @@ end
 """
     VSIClearCredentials(const char * pszPathPrefix) -> void
 
-Clear credentials set with VSISetCredential()
-
-### Parameters
-* **pszPathPrefix**: If set to NULL, all credentials are cleared. If set to not-NULL, only those set with VSISetCredential(pszPathPrefix, ...) will be cleared.
+Clear path specific options set with VSISetPathSpecificOption()
 """
 function vsiclearcredentials(pszPathPrefix)
     aftercare(ccall((:VSIClearCredentials, libgdal), Cvoid, (Cstring,), pszPathPrefix))
@@ -4101,7 +4209,7 @@ end
                      const char * pszKey,
                      const char * pszDefault) -> const char *
 
-Get a credential option for a given path.
+Get the value of a credential (or more generally an option related to a virtual file system) for a given path.
 """
 function vsigetcredential(pszPath, pszKey, pszDefault)
     aftercare(
@@ -4933,7 +5041,7 @@ end
 Create memory "file" from a buffer.
 
 ### Parameters
-* **pszFilename**: the filename to be created.
+* **pszFilename**: the filename to be created, or nullptr
 * **pabyData**: the data buffer for the file.
 * **nDataLength**: the length of buffer in bytes.
 * **bTakeOwnership**: TRUE to transfer "ownership" of buffer or FALSE.
@@ -5338,31 +5446,6 @@ struct GDALRPCInfoV2
     dfMAX_LAT::Cdouble
     dfERR_BIAS::Cdouble
     dfERR_RAND::Cdouble
-end
-
-"""
-    GDALExtractRPCInfoV2(CSLConstList papszMD,
-                         GDALRPCInfoV2 * psRPC) -> int
-
-Extract RPC info from metadata, and apply to an RPCInfo structure.
-
-### Parameters
-* **papszMD**: Dictionary of metadata representing RPC
-* **psRPC**: (output) Pointer to structure to hold the RPC values.
-
-### Returns
-TRUE in case of success. FALSE in case of failure.
-"""
-function gdalextractrpcinfov2(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALExtractRPCInfoV2, libgdal),
-            Cint,
-            (CSLConstList, Ptr{GDALRPCInfoV2}),
-            arg1,
-            arg2,
-        ),
-    )
 end
 
 """
@@ -6021,6 +6104,13 @@ const GDALRasterAttributeTableH = Ptr{Cvoid}
 
 "Opaque type used for the C bindings of the C++ GDALAsyncReader class"
 const GDALAsyncReaderH = Ptr{Cvoid}
+
+"""
+Opaque type used for the C bindings of the C++ GDALRelationship class
+
+\\since GDAL 3.6
+"""
+const GDALRelationshipH = Ptr{Cvoid}
 
 "Type to express pixel, line or band spacing. Signed 64 bit integer"
 const GSpacing = GIntBig
@@ -7548,9 +7638,9 @@ end
     GDALBuildOverviews(GDALDatasetH hDataset,
                        const char * pszResampling,
                        int nOverviews,
-                       int * panOverviewList,
+                       const int * panOverviewList,
                        int nListBands,
-                       int * panBandList,
+                       const int * panBandList,
                        GDALProgressFunc pfnProgress,
                        void * pProgressData) -> CPLErr
 
@@ -7579,6 +7669,48 @@ function gdalbuildoverviews(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
             arg6,
             arg7,
             arg8,
+        ),
+    )
+end
+
+"""
+    GDALBuildOverviewsEx(GDALDatasetH hDataset,
+                         const char * pszResampling,
+                         int nOverviews,
+                         const int * panOverviewList,
+                         int nListBands,
+                         const int * panBandList,
+                         GDALProgressFunc pfnProgress,
+                         void * pProgressData,
+                         CSLConstList papszOptions) -> CPLErr
+
+Build raster overview(s)
+"""
+function gdalbuildoverviewsex(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, papszOptions)
+    aftercare(
+        ccall(
+            (:GDALBuildOverviewsEx, libgdal),
+            CPLErr,
+            (
+                GDALDatasetH,
+                Cstring,
+                Cint,
+                Ptr{Cint},
+                Cint,
+                Ptr{Cint},
+                GDALProgressFunc,
+                Ptr{Cvoid},
+                CSLConstList,
+            ),
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            papszOptions,
         ),
     )
 end
@@ -7764,6 +7896,62 @@ function gdalregenerateoverviews(
             pszResampling,
             pfnProgress,
             pProgressData,
+        ),
+    )
+end
+
+"""
+    GDALRegenerateOverviewsEx(GDALRasterBandH hSrcBand,
+                              int nOverviewCount,
+                              GDALRasterBandH * pahOvrBands,
+                              const char * pszResampling,
+                              GDALProgressFunc pfnProgress,
+                              void * pProgressData,
+                              CSLConstList papszOptions) -> CPLErr
+
+Generate downsampled overviews.
+
+### Parameters
+* **hSrcBand**: the source (base level) band.
+* **nOverviewCount**: the number of downsampled bands being generated.
+* **pahOvrBands**: the list of downsampled bands to be generated.
+* **pszResampling**: Resampling algorithm (e.g. "AVERAGE").
+* **pfnProgress**: progress report function.
+* **pProgressData**: progress function callback data.
+* **papszOptions**: NULL terminated list of options as key=value pairs, or NULL
+
+### Returns
+CE_None on success or CE_Failure on failure.
+"""
+function gdalregenerateoverviewsex(
+    hSrcBand,
+    nOverviewCount,
+    pahOverviewBands,
+    pszResampling,
+    pfnProgress,
+    pProgressData,
+    papszOptions,
+)
+    aftercare(
+        ccall(
+            (:GDALRegenerateOverviewsEx, libgdal),
+            CPLErr,
+            (
+                GDALRasterBandH,
+                Cint,
+                Ptr{GDALRasterBandH},
+                Cstring,
+                GDALProgressFunc,
+                Ptr{Cvoid},
+                CSLConstList,
+            ),
+            hSrcBand,
+            nOverviewCount,
+            pahOverviewBands,
+            pszResampling,
+            pfnProgress,
+            pProgressData,
+            papszOptions,
         ),
     )
 end
@@ -8504,6 +8692,140 @@ function gdaldatasetupdatefielddomain(hDS, hFieldDomain, ppszFailureReason)
             (GDALDatasetH, OGRFieldDomainH, Ptr{Cstring}),
             hDS,
             hFieldDomain,
+            ppszFailureReason,
+        ),
+    )
+end
+
+"""
+    GDALDatasetGetRelationshipNames(GDALDatasetH hDS,
+                                    CSLConstList papszOptions) -> char **
+
+Returns a list of the names of all relationships stored in the dataset.
+
+### Parameters
+* **hDS**: Dataset handle.
+* **papszOptions**: Driver specific options determining how relationships should be retrieved. Pass nullptr for default behavior.
+
+### Returns
+list of relationship names, to be freed with CSLDestroy()
+"""
+function gdaldatasetgetrelationshipnames(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALDatasetGetRelationshipNames, libgdal),
+            Ptr{Cstring},
+            (GDALDatasetH, CSLConstList),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
+"""
+    GDALDatasetGetRelationship(GDALDatasetH hDS,
+                               const char * pszName) -> GDALRelationshipH
+
+Get a relationship from its name.
+
+### Parameters
+* **hDS**: Dataset handle.
+* **pszName**: Name of relationship.
+
+### Returns
+the relationship (ownership remains to the dataset), or nullptr if not found.
+"""
+function gdaldatasetgetrelationship(hDS, pszName)
+    aftercare(
+        ccall(
+            (:GDALDatasetGetRelationship, libgdal),
+            GDALRelationshipH,
+            (GDALDatasetH, Cstring),
+            hDS,
+            pszName,
+        ),
+    )
+end
+
+"""
+    GDALDatasetAddRelationship(GDALDatasetH hDS,
+                               GDALRelationshipH hRelationship,
+                               char ** ppszFailureReason) -> bool
+
+Add a relationship to the dataset.
+
+### Parameters
+* **hDS**: Dataset handle.
+* **hRelationship**: The relationship definition. Contrary to the C++ version, the passed object is copied.
+* **ppszFailureReason**: Output parameter. Will contain an error message if an error occurs (*ppszFailureReason to be freed with CPLFree). May be NULL.
+
+### Returns
+true in case of success.
+"""
+function gdaldatasetaddrelationship(hDS, hRelationship, ppszFailureReason)
+    aftercare(
+        ccall(
+            (:GDALDatasetAddRelationship, libgdal),
+            Bool,
+            (GDALDatasetH, GDALRelationshipH, Ptr{Cstring}),
+            hDS,
+            hRelationship,
+            ppszFailureReason,
+        ),
+    )
+end
+
+"""
+    GDALDatasetDeleteRelationship(GDALDatasetH hDS,
+                                  const char * pszName,
+                                  char ** ppszFailureReason) -> bool
+
+Removes a relationship from the dataset.
+
+### Parameters
+* **hDS**: Dataset handle.
+* **pszName**: The relationship name.
+* **ppszFailureReason**: Output parameter. Will contain an error message if an error occurs (*ppszFailureReason to be freed with CPLFree). May be NULL.
+
+### Returns
+true in case of success.
+"""
+function gdaldatasetdeleterelationship(hDS, pszName, ppszFailureReason)
+    aftercare(
+        ccall(
+            (:GDALDatasetDeleteRelationship, libgdal),
+            Bool,
+            (GDALDatasetH, Cstring, Ptr{Cstring}),
+            hDS,
+            pszName,
+            ppszFailureReason,
+        ),
+    )
+end
+
+"""
+    GDALDatasetUpdateRelationship(GDALDatasetH hDS,
+                                  GDALRelationshipH hRelationship,
+                                  char ** ppszFailureReason) -> bool
+
+Updates an existing relationship by replacing its definition.
+
+### Parameters
+* **hDS**: Dataset handle.
+* **hRelationship**: The relationship definition. Contrary to the C++ version, the passed object is copied.
+* **ppszFailureReason**: Output parameter. Will contain an error message if an error occurs (*ppszFailureReason to be freed with CPLFree). May be NULL.
+
+### Returns
+true in case of success.
+"""
+function gdaldatasetupdaterelationship(hDS, hRelationship, ppszFailureReason)
+    aftercare(
+        ccall(
+            (:GDALDatasetUpdateRelationship, libgdal),
+            Bool,
+            (GDALDatasetH, GDALRelationshipH, Ptr{Cstring}),
+            hDS,
+            hRelationship,
             ppszFailureReason,
         ),
     )
@@ -9379,7 +9701,7 @@ end
 """
     GDALComputeRasterMinMax(GDALRasterBandH hBand,
                             int bApproxOK,
-                            double adfMinMax) -> void
+                            double adfMinMax) -> CPLErr
 
 Compute the min/max values for a band.
 """
@@ -9387,7 +9709,7 @@ function gdalcomputerasterminmax(hBand, bApproxOK, adfMinMax)
     aftercare(
         ccall(
             (:GDALComputeRasterMinMax, libgdal),
-            Cvoid,
+            CPLErr,
             (GDALRasterBandH, Cint, Ptr{Cdouble}),
             hBand,
             bApproxOK,
@@ -10309,6 +10631,37 @@ function gdalcopybits(
 end
 
 """
+    GDALDeinterleave(const void * pSourceBuffer,
+                     GDALDataType eSourceDT,
+                     int nComponents,
+                     void ** ppDestBuffer,
+                     GDALDataType eDestDT,
+                     size_t nIters) -> void
+"""
+function gdaldeinterleave(
+    pSourceBuffer,
+    eSourceDT,
+    nComponents,
+    ppDestBuffer,
+    eDestDT,
+    nIters,
+)
+    aftercare(
+        ccall(
+            (:GDALDeinterleave, libgdal),
+            Cvoid,
+            (Ptr{Cvoid}, GDALDataType, Cint, Ptr{Ptr{Cvoid}}, GDALDataType, Csize_t),
+            pSourceBuffer,
+            eSourceDT,
+            nComponents,
+            ppDestBuffer,
+            eDestDT,
+            nIters,
+        ),
+    )
+end
+
+"""
     GDALLoadWorldFile(const char * pszFilename,
                       double * padfGeoTransform) -> int
 
@@ -10601,23 +10954,6 @@ struct GDALRPCInfoV1
     dfMIN_LAT::Cdouble
     dfMAX_LONG::Cdouble
     dfMAX_LAT::Cdouble
-end
-
-"""
-    gdalextractrpcinfov1(arg1, arg2)
-
-Doxygen\\_Suppress
-"""
-function gdalextractrpcinfov1(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALExtractRPCInfoV1, libgdal),
-            Cint,
-            (CSLConstList, Ptr{GDALRPCInfoV1}),
-            arg1,
-            arg2,
-        ),
-    )
 end
 
 """
@@ -11474,6 +11810,529 @@ function gdalratremovestatistics(arg1)
 end
 
 """
+    GDALRelationshipCardinality
+
+Cardinality of relationship.
+
+\\since GDAL 3.6
+
+| Enumerator             | Note          |
+| :--------------------- | :------------ |
+| GRC\\_ONE\\_TO\\_ONE   | One-to-one    |
+| GRC\\_ONE\\_TO\\_MANY  | One-to-many   |
+| GRC\\_MANY\\_TO\\_ONE  | Many-to-one   |
+| GRC\\_MANY\\_TO\\_MANY | Many-to-many  |
+"""
+@cenum GDALRelationshipCardinality::UInt32 begin
+    GRC_ONE_TO_ONE = 0
+    GRC_ONE_TO_MANY = 1
+    GRC_MANY_TO_ONE = 2
+    GRC_MANY_TO_MANY = 3
+end
+
+"""
+    GDALRelationshipType
+
+Type of relationship.
+
+\\since GDAL 3.6
+
+| Enumerator        | Note                      |
+| :---------------- | :------------------------ |
+| GRT\\_COMPOSITE   | Composite relationship    |
+| GRT\\_ASSOCIATION | Association relationship  |
+| GRT\\_AGGREGATION | Aggregation relationship  |
+"""
+@cenum GDALRelationshipType::UInt32 begin
+    GRT_COMPOSITE = 0
+    GRT_ASSOCIATION = 1
+    GRT_AGGREGATION = 2
+end
+
+"""
+    GDALRelationshipCreate(const char * pszName,
+                           const char * pszLeftTableName,
+                           const char * pszRightTableName,
+                           GDALRelationshipCardinality eCardinality) -> GDALRelationshipH
+
+Creates a new relationship.
+
+### Parameters
+* **pszName**: relationship name
+* **pszLeftTableName**: left table name
+* **pszRightTableName**: right table name
+* **eCardinality**: cardinality of relationship
+
+### Returns
+a new handle that should be freed with GDALDestroyRelationship(), or NULL in case of error.
+"""
+function gdalrelationshipcreate(arg1, arg2, arg3, arg4)
+    aftercare(
+        ccall(
+            (:GDALRelationshipCreate, libgdal),
+            GDALRelationshipH,
+            (Cstring, Cstring, Cstring, GDALRelationshipCardinality),
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+        ),
+    )
+end
+
+"""
+    GDALDestroyRelationship(GDALRelationshipH hRelationship) -> void
+
+Destroys a relationship.
+"""
+function gdaldestroyrelationship(arg1)
+    aftercare(ccall((:GDALDestroyRelationship, libgdal), Cvoid, (GDALRelationshipH,), arg1))
+end
+
+"""
+    GDALRelationshipGetName(GDALRelationshipH hRelationship) -> const char *
+
+Get the name of the relationship.
+
+### Returns
+name.
+"""
+function gdalrelationshipgetname(arg1)
+    aftercare(
+        ccall((:GDALRelationshipGetName, libgdal), Cstring, (GDALRelationshipH,), arg1),
+        false,
+    )
+end
+
+"""
+    GDALRelationshipGetCardinality(GDALRelationshipH hRelationship) -> GDALRelationshipCardinality
+
+Get the cardinality of the relationship.
+
+### Returns
+cardinality.
+"""
+function gdalrelationshipgetcardinality(arg1)
+    aftercare(
+        ccall(
+            (:GDALRelationshipGetCardinality, libgdal),
+            GDALRelationshipCardinality,
+            (GDALRelationshipH,),
+            arg1,
+        ),
+    )
+end
+
+"""
+    GDALRelationshipGetLeftTableName(GDALRelationshipH hRelationship) -> const char *
+
+Get the name of the left (or base/origin) table in the relationship.
+
+### Returns
+left table name.
+"""
+function gdalrelationshipgetlefttablename(arg1)
+    aftercare(
+        ccall(
+            (:GDALRelationshipGetLeftTableName, libgdal),
+            Cstring,
+            (GDALRelationshipH,),
+            arg1,
+        ),
+        false,
+    )
+end
+
+"""
+    GDALRelationshipGetRightTableName(GDALRelationshipH hRelationship) -> const char *
+
+Get the name of the right (or related/destination) table in the relationship.
+
+### Returns
+right table name.
+"""
+function gdalrelationshipgetrighttablename(arg1)
+    aftercare(
+        ccall(
+            (:GDALRelationshipGetRightTableName, libgdal),
+            Cstring,
+            (GDALRelationshipH,),
+            arg1,
+        ),
+        false,
+    )
+end
+
+"""
+    GDALRelationshipGetMappingTableName(GDALRelationshipH hRelationship) -> const char *
+
+Get the name of the mapping table for many-to-many relationships.
+
+### Returns
+mapping table name.
+"""
+function gdalrelationshipgetmappingtablename(arg1)
+    aftercare(
+        ccall(
+            (:GDALRelationshipGetMappingTableName, libgdal),
+            Cstring,
+            (GDALRelationshipH,),
+            arg1,
+        ),
+        false,
+    )
+end
+
+"""
+    GDALRelationshipSetMappingTableName(GDALRelationshipH hRelationship,
+                                        const char * pszName) -> void
+
+Sets the name of the mapping table for many-to-many relationships.
+
+### Parameters
+* **hRelationship**: handle to the relationship to apply the new mapping name to.
+* **pszName**: the mapping table name to set.
+"""
+function gdalrelationshipsetmappingtablename(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALRelationshipSetMappingTableName, libgdal),
+            Cvoid,
+            (GDALRelationshipH, Cstring),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
+"""
+    GDALRelationshipGetLeftTableFields(GDALRelationshipH hRelationship) -> char **
+
+Get the names of the participating fields from the left table in the relationship.
+
+### Returns
+the field names, to be freed with CSLDestroy()
+"""
+function gdalrelationshipgetlefttablefields(arg1)
+    aftercare(
+        ccall(
+            (:GDALRelationshipGetLeftTableFields, libgdal),
+            Ptr{Cstring},
+            (GDALRelationshipH,),
+            arg1,
+        ),
+    )
+end
+
+"""
+    GDALRelationshipGetRightTableFields(GDALRelationshipH hRelationship) -> char **
+
+Get the names of the participating fields from the right table in the relationship.
+
+### Returns
+the field names, to be freed with CSLDestroy()
+"""
+function gdalrelationshipgetrighttablefields(arg1)
+    aftercare(
+        ccall(
+            (:GDALRelationshipGetRightTableFields, libgdal),
+            Ptr{Cstring},
+            (GDALRelationshipH,),
+            arg1,
+        ),
+    )
+end
+
+"""
+    GDALRelationshipSetLeftTableFields(GDALRelationshipH hRelationship,
+                                       CSLConstList papszFields) -> void
+
+Sets the names of the participating fields from the left table in the relationship.
+
+### Parameters
+* **hRelationship**: handle to the relationship to apply the left table fields to.
+* **papszFields**: the names of the fields.
+"""
+function gdalrelationshipsetlefttablefields(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALRelationshipSetLeftTableFields, libgdal),
+            Cvoid,
+            (GDALRelationshipH, CSLConstList),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
+"""
+    GDALRelationshipSetRightTableFields(GDALRelationshipH hRelationship,
+                                        CSLConstList papszFields) -> void
+
+Sets the names of the participating fields from the right table in the relationship.
+
+### Parameters
+* **hRelationship**: handle to the relationship to apply the right table fields to.
+* **papszFields**: the names of the fields.
+"""
+function gdalrelationshipsetrighttablefields(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALRelationshipSetRightTableFields, libgdal),
+            Cvoid,
+            (GDALRelationshipH, CSLConstList),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
+"""
+    GDALRelationshipGetLeftMappingTableFields(GDALRelationshipH hRelationship) -> char **
+
+Get the names of the mapping table fields which correspond to the participating fields from the left table in the relationship.
+
+### Returns
+the field names, to be freed with CSLDestroy()
+"""
+function gdalrelationshipgetleftmappingtablefields(arg1)
+    aftercare(
+        ccall(
+            (:GDALRelationshipGetLeftMappingTableFields, libgdal),
+            Ptr{Cstring},
+            (GDALRelationshipH,),
+            arg1,
+        ),
+    )
+end
+
+"""
+    GDALRelationshipGetRightMappingTableFields(GDALRelationshipH hRelationship) -> char **
+
+Get the names of the mapping table fields which correspond to the participating fields from the right table in the relationship.
+
+### Returns
+the field names, to be freed with CSLDestroy()
+"""
+function gdalrelationshipgetrightmappingtablefields(arg1)
+    aftercare(
+        ccall(
+            (:GDALRelationshipGetRightMappingTableFields, libgdal),
+            Ptr{Cstring},
+            (GDALRelationshipH,),
+            arg1,
+        ),
+    )
+end
+
+"""
+    GDALRelationshipSetLeftMappingTableFields(GDALRelationshipH hRelationship,
+                                              CSLConstList papszFields) -> void
+
+Sets the names of the mapping table fields which correspond to the participating fields from the left table in the relationship.
+
+### Parameters
+* **hRelationship**: handle to the relationship to apply the left table fields to.
+* **papszFields**: the names of the fields.
+"""
+function gdalrelationshipsetleftmappingtablefields(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALRelationshipSetLeftMappingTableFields, libgdal),
+            Cvoid,
+            (GDALRelationshipH, CSLConstList),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
+"""
+    GDALRelationshipSetRightMappingTableFields(GDALRelationshipH hRelationship,
+                                               CSLConstList papszFields) -> void
+
+Sets the names of the mapping table fields which correspond to the participating fields from the right table in the relationship.
+
+### Parameters
+* **hRelationship**: handle to the relationship to apply the right table fields to.
+* **papszFields**: the names of the fields.
+"""
+function gdalrelationshipsetrightmappingtablefields(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALRelationshipSetRightMappingTableFields, libgdal),
+            Cvoid,
+            (GDALRelationshipH, CSLConstList),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
+"""
+    GDALRelationshipGetType(GDALRelationshipH hRelationship) -> GDALRelationshipType
+
+Get the type of the relationship.
+
+### Returns
+relationship type.
+"""
+function gdalrelationshipgettype(arg1)
+    aftercare(
+        ccall(
+            (:GDALRelationshipGetType, libgdal),
+            GDALRelationshipType,
+            (GDALRelationshipH,),
+            arg1,
+        ),
+    )
+end
+
+"""
+    GDALRelationshipSetType(GDALRelationshipH hRelationship,
+                            GDALRelationshipType eType) -> void
+
+Sets the type of the relationship.
+"""
+function gdalrelationshipsettype(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALRelationshipSetType, libgdal),
+            Cvoid,
+            (GDALRelationshipH, GDALRelationshipType),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
+"""
+    GDALRelationshipGetForwardPathLabel(GDALRelationshipH hRelationship) -> const char *
+
+Get the label of the forward path for the relationship.
+
+### Returns
+forward path label
+"""
+function gdalrelationshipgetforwardpathlabel(arg1)
+    aftercare(
+        ccall(
+            (:GDALRelationshipGetForwardPathLabel, libgdal),
+            Cstring,
+            (GDALRelationshipH,),
+            arg1,
+        ),
+        false,
+    )
+end
+
+"""
+    GDALRelationshipSetForwardPathLabel(GDALRelationshipH hRelationship,
+                                        const char * pszLabel) -> void
+
+Sets the label of the forward path for the relationship.
+
+### Parameters
+* **hRelationship**: handle to the relationship to apply the new label to.
+* **pszLabel**: the label to set.
+"""
+function gdalrelationshipsetforwardpathlabel(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALRelationshipSetForwardPathLabel, libgdal),
+            Cvoid,
+            (GDALRelationshipH, Cstring),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
+"""
+    GDALRelationshipGetBackwardPathLabel(GDALRelationshipH hRelationship) -> const char *
+
+Get the label of the backward path for the relationship.
+
+### Returns
+backward path label
+"""
+function gdalrelationshipgetbackwardpathlabel(arg1)
+    aftercare(
+        ccall(
+            (:GDALRelationshipGetBackwardPathLabel, libgdal),
+            Cstring,
+            (GDALRelationshipH,),
+            arg1,
+        ),
+        false,
+    )
+end
+
+"""
+    GDALRelationshipSetBackwardPathLabel(GDALRelationshipH hRelationship,
+                                         const char * pszLabel) -> void
+
+Sets the label of the backward path for the relationship.
+
+### Parameters
+* **hRelationship**: handle to the relationship to apply the new label to.
+* **pszLabel**: the label to set.
+"""
+function gdalrelationshipsetbackwardpathlabel(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALRelationshipSetBackwardPathLabel, libgdal),
+            Cvoid,
+            (GDALRelationshipH, Cstring),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
+"""
+    GDALRelationshipGetRelatedTableType(GDALRelationshipH hRelationship) -> const char *
+
+Get the type string of the related table.
+
+### Returns
+related table type
+"""
+function gdalrelationshipgetrelatedtabletype(arg1)
+    aftercare(
+        ccall(
+            (:GDALRelationshipGetRelatedTableType, libgdal),
+            Cstring,
+            (GDALRelationshipH,),
+            arg1,
+        ),
+        false,
+    )
+end
+
+"""
+    GDALRelationshipSetRelatedTableType(GDALRelationshipH hRelationship,
+                                        const char * pszType) -> void
+
+Sets the type string of the related table.
+
+### Parameters
+* **hRelationship**: handle to the relationship to apply the new type to.
+* **pszType**: the type to set.
+"""
+function gdalrelationshipsetrelatedtabletype(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALRelationshipSetRelatedTableType, libgdal),
+            Cvoid,
+            (GDALRelationshipH, Cstring),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
+"""
     GDALSetCacheMax(int nNewSizeInBytes) -> void
 
 Set maximum cache memory.
@@ -12026,7 +12885,7 @@ Dump the structure of a JPEG2000 file as a XML tree.
 
 ### Parameters
 * **pszFilename**: filename.
-* **papszOptions**: NULL terminated list of options, or NULL. Allowed options are BINARY_CONTENT=YES, TEXT_CONTENT=YES, CODESTREAM=YES, ALL=YES.
+* **papszOptions**: NULL terminated list of options, or NULL. Allowed options are BINARY_CONTENT=YES, TEXT_CONTENT=YES, CODESTREAM=YES, ALL=YES, JP2_BOXES=YES, CODESTREAM_MARKERS=list_of_marker_names_comma_separated, STOP_AT_SOD=YES, ALLOW_GET_FILE_SIZE=NO.
 
 ### Returns
 XML tree (to be freed with CPLDestroyXMLNode()) or NULL in case of error
@@ -14629,37 +15488,6 @@ function rpcinfov2tomd(psRPCInfo)
 end
 
 """
-    GDALCreateRPCTransformerV2(const GDALRPCInfoV2 * psRPCInfo,
-                               int bReversed,
-                               double dfPixErrThreshold,
-                               char ** papszOptions) -> void *
-
-Create an RPC based transformer.
-
-### Parameters
-* **psRPCInfo**: Definition of the RPC parameters.
-* **bReversed**: If true "forward" transformation will be lat/long to pixel/line instead of the normal pixel/line to lat/long.
-* **dfPixErrThreshold**: the error (measured in pixels) allowed in the iterative solution of pixel/line to lat/long computations (the other way is always exact given the equations). Starting with GDAL 2.1, this may also be set through the RPC_PIXEL_ERROR_THRESHOLD transformer option. If a negative or null value is provided, then this defaults to 0.1 pixel.
-* **papszOptions**: Other transformer options (i.e. RPC_HEIGHT=z).
-
-### Returns
-transformer callback data (deallocate with GDALDestroyTransformer()).
-"""
-function gdalcreaterpctransformerv2(psRPC, bReversed, dfPixErrThreshold, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALCreateRPCTransformerV2, libgdal),
-            Ptr{Cvoid},
-            (Ptr{GDALRPCInfoV2}, Cint, Cdouble, Ptr{Cstring}),
-            psRPC,
-            bReversed,
-            dfPixErrThreshold,
-            papszOptions,
-        ),
-    )
-end
-
-"""
     GDALComputeMedianCutPCT(GDALRasterBandH hRed,
                             GDALRasterBandH hGreen,
                             GDALRasterBandH hBlue,
@@ -14793,7 +15621,7 @@ Compute checksum for image region.
 * **nYSize**: line size of window to read.
 
 ### Returns
-Checksum value.
+Checksum value, or -1 in case of error (starting with GDAL 3.6)
 """
 function gdalchecksumimage(hBand, nXOff, nYOff, nXSize, nYSize)
     aftercare(
@@ -14854,7 +15682,7 @@ Fill selected raster regions by interpolation from the edges.
 
 ### Parameters
 * **hTargetBand**: the raster band to be modified in place.
-* **hMaskBand**: a mask band indicating pixels to be interpolated (zero valued).
+* **hMaskBand**: a mask band indicating pixels to be interpolated (zero valued). If hMaskBand is set to NULL, this method will internally use the mask band returned by GDALGetMaskBand(hTargetBand).
 * **dfMaxSearchDist**: the maximum number of pixels to search in all directions to find values to interpolate from.
 * **bDeprecatedOption**: unused argument, should be zero.
 * **nSmoothingIterations**: the number of 3x3 smoothing filter passes to run (0 or more).
@@ -15732,26 +16560,6 @@ function rpcinfov1tomd(psRPCInfo)
 end
 
 """
-    GDALCreateRPCTransformerV1(GDALRPCInfoV1 * psRPCInfo,
-                               int bReversed,
-                               double dfPixErrThreshold,
-                               char ** papszOptions) -> void *
-"""
-function gdalcreaterpctransformerv1(psRPC, bReversed, dfPixErrThreshold, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALCreateRPCTransformerV1, libgdal),
-            Ptr{Cvoid},
-            (Ptr{GDALRPCInfoV1}, Cint, Cdouble, Ptr{Cstring}),
-            psRPC,
-            bReversed,
-            dfPixErrThreshold,
-            papszOptions,
-        ),
-    )
-end
-
-"""
     GDALDestroyRPCTransformer(void * pTransformAlg) -> void
 
 Destroy RPC tranformer.
@@ -16079,7 +16887,7 @@ Suggest output file size.
 * **pnPixels**: int in which the suggest pixel width of output is returned.
 * **pnLines**: int in which the suggest pixel height of output is returned.
 * **padfExtent**: Four entry array to return extents as (xmin, ymin, xmax, ymax).
-* **nOptions**: Options, currently always zero.
+* **nOptions**: Options. Zero or GDAL_SWO_ROUND_UP_SIZE to ask *pnPixels and *pnLines to be rounded up instead of being rounded to the closes integer.
 
 ### Returns
 CE_None if successful or CE_Failure otherwise.
@@ -16929,20 +17737,22 @@ end
 
 Inverse distance to a power method control options
 
-| Field             | Note                                                                                                                                                                                         |
-| :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| dfPower           | Weighting power.                                                                                                                                                                             |
-| dfSmoothing       | Smoothing parameter.                                                                                                                                                                         |
-| dfAnisotropyRatio | Reserved for future use.                                                                                                                                                                     |
-| dfAnisotropyAngle |                                                                                                                                                                                              |
-| dfRadius1         | The first radius (X axis if rotation angle is 0) of search ellipse.                                                                                                                          |
-| dfRadius2         | The second radius (Y axis if rotation angle is 0) of search ellipse.                                                                                                                         |
-| dfAngle           | Angle of ellipse rotation in degrees.  Ellipse rotated counter clockwise.                                                                                                                    |
-| nMaxPoints        | Maximum number of data points to use.  Do not search for more points than this number. If less amount of points found the grid node considered empty and will be filled with NODATA marker.  |
-| nMinPoints        | Minimum number of data points to use.  If less amount of points found the grid node considered empty and will be filled with NODATA marker.                                                  |
-| dfNoDataValue     | No data marker to fill empty points.                                                                                                                                                         |
+| Field             | Note                                                                                                                                         |
+| :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
+| nSizeOfStructure  | Added in GDAL 3.6 to detect potential ABI issues. Should be set to sizeof([`GDALGridInverseDistanceToAPowerOptions`](@ref))                  |
+| dfPower           | Weighting power.                                                                                                                             |
+| dfSmoothing       | Smoothing parameter.                                                                                                                         |
+| dfAnisotropyRatio | Reserved for future use.                                                                                                                     |
+| dfAnisotropyAngle |                                                                                                                                              |
+| dfRadius1         | The first radius (X axis if rotation angle is 0) of search ellipse.                                                                          |
+| dfRadius2         | The second radius (Y axis if rotation angle is 0) of search ellipse.                                                                         |
+| dfAngle           | Angle of ellipse rotation in degrees.  Ellipse rotated counter clockwise.                                                                    |
+| nMaxPoints        | Maximum number of data points to use.  Do not search for more points than this number.                                                       |
+| nMinPoints        | Minimum number of data points to use.  If less amount of points found the grid node considered empty and will be filled with NODATA marker.  |
+| dfNoDataValue     | No data marker to fill empty points.                                                                                                         |
 """
 struct GDALGridInverseDistanceToAPowerOptions
+    nSizeOfStructure::Csize_t
     dfPower::Cdouble
     dfSmoothing::Cdouble
     dfAnisotropyRatio::Cdouble
@@ -16960,22 +17770,28 @@ end
 
 Inverse distance to a power, with nearest neighbour search, control options
 
-| Field         | Note                                                                                                                                                                                         |
-| :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| dfPower       | Weighting power.                                                                                                                                                                             |
-| dfRadius      | The radius of search circle.                                                                                                                                                                 |
-| dfSmoothing   | Smoothing parameter.                                                                                                                                                                         |
-| nMaxPoints    | Maximum number of data points to use.  Do not search for more points than this number. If less amount of points found the grid node considered empty and will be filled with NODATA marker.  |
-| nMinPoints    | Minimum number of data points to use.  If less amount of points found the grid node considered empty and will be filled with NODATA marker.                                                  |
-| dfNoDataValue | No data marker to fill empty points.                                                                                                                                                         |
+| Field                 | Note                                                                                                                                                                     |
+| :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| nSizeOfStructure      | Added in GDAL 3.6 to detect potential ABI issues. Should be set to sizeof([`GDALGridInverseDistanceToAPowerNearestNeighborOptions`](@ref))                               |
+| dfPower               | Weighting power.                                                                                                                                                         |
+| dfRadius              | The radius of search circle.                                                                                                                                             |
+| dfSmoothing           | Smoothing parameter.                                                                                                                                                     |
+| nMaxPoints            | Maximum number of data points to use.  Do not search for more points than this number.                                                                                   |
+| nMinPoints            | Minimum number of data points to use.  If less amount of points found the grid node considered empty and will be filled with NODATA marker.                              |
+| dfNoDataValue         | No data marker to fill empty points.                                                                                                                                     |
+| nMaxPointsPerQuadrant | Maximum number of data points to use for each of the 4 quadrants.  Do not search for more points than this number.                                                       |
+| nMinPointsPerQuadrant | Minimum number of data points to use for each of the 4 quadrants.  If less amount of points found the grid node considered empty and will be filled with NODATA marker.  |
 """
 struct GDALGridInverseDistanceToAPowerNearestNeighborOptions
+    nSizeOfStructure::Csize_t
     dfPower::Cdouble
     dfRadius::Cdouble
     dfSmoothing::Cdouble
     nMaxPoints::GUInt32
     nMinPoints::GUInt32
     dfNoDataValue::Cdouble
+    nMaxPointsPerQuadrant::GUInt32
+    nMinPointsPerQuadrant::GUInt32
 end
 
 """
@@ -16983,20 +17799,28 @@ end
 
 Moving average method control options
 
-| Field         | Note                                                                                                                                             |
-| :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------- |
-| dfRadius1     | The first radius (X axis if rotation angle is 0) of search ellipse.                                                                              |
-| dfRadius2     | The second radius (Y axis if rotation angle is 0) of search ellipse.                                                                             |
-| dfAngle       | Angle of ellipse rotation in degrees.  Ellipse rotated counter clockwise.                                                                        |
-| nMinPoints    | Minimum number of data points to average.  If less amount of points found the grid node considered empty and will be filled with NODATA marker.  |
-| dfNoDataValue | No data marker to fill empty points.                                                                                                             |
+| Field                 | Note                                                                                                                                                                     |
+| :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| nSizeOfStructure      | Added in GDAL 3.6 to detect potential ABI issues. Should be set to sizeof([`GDALGridMovingAverageOptions`](@ref))                                                        |
+| dfRadius1             | The first radius (X axis if rotation angle is 0) of search ellipse.                                                                                                      |
+| dfRadius2             | The second radius (Y axis if rotation angle is 0) of search ellipse.                                                                                                     |
+| dfAngle               | Angle of ellipse rotation in degrees.  Ellipse rotated counter clockwise.                                                                                                |
+| nMaxPoints            | Maximum number of data points to use.  Do not search for more points than this number.                                                                                   |
+| nMinPoints            | Minimum number of data points to average.  If less amount of points found the grid node considered empty and will be filled with NODATA marker.                          |
+| dfNoDataValue         | No data marker to fill empty points.                                                                                                                                     |
+| nMaxPointsPerQuadrant | Maximum number of data points to use for each of the 4 quadrants.  Do not search for more points than this number.                                                       |
+| nMinPointsPerQuadrant | Minimum number of data points to use for each of the 4 quadrants.  If less amount of points found the grid node considered empty and will be filled with NODATA marker.  |
 """
 struct GDALGridMovingAverageOptions
+    nSizeOfStructure::Csize_t
     dfRadius1::Cdouble
     dfRadius2::Cdouble
     dfAngle::Cdouble
+    nMaxPoints::GUInt32
     nMinPoints::GUInt32
     dfNoDataValue::Cdouble
+    nMaxPointsPerQuadrant::GUInt32
+    nMinPointsPerQuadrant::GUInt32
 end
 
 """
@@ -17004,14 +17828,16 @@ end
 
 Nearest neighbor method control options
 
-| Field         | Note                                                                       |
-| :------------ | :------------------------------------------------------------------------- |
-| dfRadius1     | The first radius (X axis if rotation angle is 0) of search ellipse.        |
-| dfRadius2     | The second radius (Y axis if rotation angle is 0) of search ellipse.       |
-| dfAngle       | Angle of ellipse rotation in degrees.  Ellipse rotated counter clockwise.  |
-| dfNoDataValue | No data marker to fill empty points.                                       |
+| Field            | Note                                                                                                                 |
+| :--------------- | :------------------------------------------------------------------------------------------------------------------- |
+| nSizeOfStructure | Added in GDAL 3.6 to detect potential ABI issues. Should be set to sizeof([`GDALGridNearestNeighborOptions`](@ref))  |
+| dfRadius1        | The first radius (X axis if rotation angle is 0) of search ellipse.                                                  |
+| dfRadius2        | The second radius (Y axis if rotation angle is 0) of search ellipse.                                                 |
+| dfAngle          | Angle of ellipse rotation in degrees.  Ellipse rotated counter clockwise.                                            |
+| dfNoDataValue    | No data marker to fill empty points.                                                                                 |
 """
 struct GDALGridNearestNeighborOptions
+    nSizeOfStructure::Csize_t
     dfRadius1::Cdouble
     dfRadius2::Cdouble
     dfAngle::Cdouble
@@ -17023,20 +17849,26 @@ end
 
 Data metrics method control options
 
-| Field         | Note                                                                                                                                             |
-| :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------- |
-| dfRadius1     | The first radius (X axis if rotation angle is 0) of search ellipse.                                                                              |
-| dfRadius2     | The second radius (Y axis if rotation angle is 0) of search ellipse.                                                                             |
-| dfAngle       | Angle of ellipse rotation in degrees.  Ellipse rotated counter clockwise.                                                                        |
-| nMinPoints    | Minimum number of data points to average.  If less amount of points found the grid node considered empty and will be filled with NODATA marker.  |
-| dfNoDataValue | No data marker to fill empty points.                                                                                                             |
+| Field                 | Note                                                                                                                                                                     |
+| :-------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| nSizeOfStructure      | Added in GDAL 3.6 to detect potential ABI issues. Should be set to sizeof([`GDALGridDataMetricsOptions`](@ref))                                                          |
+| dfRadius1             | The first radius (X axis if rotation angle is 0) of search ellipse.                                                                                                      |
+| dfRadius2             | The second radius (Y axis if rotation angle is 0) of search ellipse.                                                                                                     |
+| dfAngle               | Angle of ellipse rotation in degrees.  Ellipse rotated counter clockwise.                                                                                                |
+| nMinPoints            | Minimum number of data points to average.  If less amount of points found the grid node considered empty and will be filled with NODATA marker.                          |
+| dfNoDataValue         | No data marker to fill empty points.                                                                                                                                     |
+| nMaxPointsPerQuadrant | Maximum number of data points to use for each of the 4 quadrants.  Do not search for more points than this number.                                                       |
+| nMinPointsPerQuadrant | Minimum number of data points to use for each of the 4 quadrants.  If less amount of points found the grid node considered empty and will be filled with NODATA marker.  |
 """
 struct GDALGridDataMetricsOptions
+    nSizeOfStructure::Csize_t
     dfRadius1::Cdouble
     dfRadius2::Cdouble
     dfAngle::Cdouble
     nMinPoints::GUInt32
     dfNoDataValue::Cdouble
+    nMaxPointsPerQuadrant::GUInt32
+    nMinPointsPerQuadrant::GUInt32
 end
 
 """
@@ -17044,12 +17876,14 @@ end
 
 Linear method control options
 
-| Field         | Note                                                                                                                                                                                                                                                                              |
-| :------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| dfRadius      | In case the point to be interpolated does not fit into a triangle of the Delaunay triangulation, use that maximum distance to search a nearest neighbour, or use nodata otherwise. If set to -1, the search distance is infinite. If set to 0, nodata value will be always used.  |
-| dfNoDataValue | No data marker to fill empty points.                                                                                                                                                                                                                                              |
+| Field            | Note                                                                                                                                                                                                                                                                              |
+| :--------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| nSizeOfStructure | Added in GDAL 3.6 to detect potential ABI issues. Should be set to sizeof([`GDALGridLinearOptions`](@ref))                                                                                                                                                                        |
+| dfRadius         | In case the point to be interpolated does not fit into a triangle of the Delaunay triangulation, use that maximum distance to search a nearest neighbour, or use nodata otherwise. If set to -1, the search distance is infinite. If set to 0, nodata value will be always used.  |
+| dfNoDataValue    | No data marker to fill empty points.                                                                                                                                                                                                                                              |
 """
 struct GDALGridLinearOptions
+    nSizeOfStructure::Csize_t
     dfRadius::Cdouble
     dfNoDataValue::Cdouble
 end
@@ -20446,7 +21280,7 @@ Allocates a GDALMultiDimInfo struct.
 
 ### Parameters
 * **papszArgv**: NULL terminated list of options (potentially including filename and open options too), or NULL. The accepted options are the ones of the gdalmdiminfo utility.
-* **psOptionsForBinary**: (output) may be NULL (and should generally be NULL), otherwise (gdalmultidiminfo_bin.cpp use case) must be allocated with GDALMultiDimInfoOptionsForBinaryNew() prior to this function. Will be filled with potentially present filename, open options, subdataset number...
+* **psOptionsForBinary**: should be nullptr, unless called from gdalmultidiminfo_bin.cpp
 
 ### Returns
 pointer to the allocated GDALMultiDimInfoOptions struct. Must be freed with GDALMultiDimInfoOptionsFree().
@@ -20520,7 +21354,7 @@ Allocates a GDALMultiDimTranslateOptions struct.
 
 ### Parameters
 * **papszArgv**: NULL terminated list of options (potentially including filename and open options too), or NULL. The accepted options are the ones of the gdalmdimtranslate utility.
-* **psOptionsForBinary**: (output) may be NULL (and should generally be NULL), otherwise (gdalmultidimtranslate_bin.cpp use case) must be allocated with GDALTranslateOptionsForBinaryNew() prior to this function. Will be filled with potentially present filename, open options,...
+* **psOptionsForBinary**: should be nullptr, unless called from gdalmultidimtranslate_bin.cpp
 
 ### Returns
 pointer to the allocated GDALMultiDimTranslateOptions struct. Must be freed with GDALMultiDimTranslateOptionsFree().
@@ -22175,6 +23009,34 @@ a handle to a newly allocated geometry now owned by the caller, or NULL on failu
 """
 function ogr_g_convexhull(arg1)
     aftercare(ccall((:OGR_G_ConvexHull, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+end
+
+"""
+    OGR_G_ConcaveHull(OGRGeometryH hTarget,
+                      double dfRatio,
+                      bool bAllowHoles) -> OGRGeometryH
+
+Compute "concave hull" of a geometry.
+
+### Parameters
+* **hTarget**: The Geometry to calculate the concave hull of.
+* **dfRatio**: Ratio of the area of the convex hull and the concave hull.
+* **bAllowHoles**: Whether holes are allowed.
+
+### Returns
+a handle to a newly allocated geometry now owned by the caller, or NULL on failure.
+"""
+function ogr_g_concavehull(arg1, dfRatio, bAllowHoles)
+    aftercare(
+        ccall(
+            (:OGR_G_ConcaveHull, libgdal),
+            OGRGeometryH,
+            (OGRGeometryH, Cdouble, Bool),
+            arg1,
+            dfRatio,
+            bAllowHoles,
+        ),
+    )
 end
 
 """
@@ -25380,13 +26242,13 @@ function Base.getproperty(x::Ptr{OGRField}, f::Symbol)
     f === :Integer64 && return Ptr{GIntBig}(x + 0)
     f === :Real && return Ptr{Cdouble}(x + 0)
     f === :String && return Ptr{Cstring}(x + 0)
-    f === :IntegerList && return Ptr{__JL_Ctag_160}(x + 0)
-    f === :Integer64List && return Ptr{__JL_Ctag_161}(x + 0)
-    f === :RealList && return Ptr{__JL_Ctag_162}(x + 0)
-    f === :StringList && return Ptr{__JL_Ctag_163}(x + 0)
-    f === :Binary && return Ptr{__JL_Ctag_164}(x + 0)
-    f === :Set && return Ptr{__JL_Ctag_165}(x + 0)
-    f === :Date && return Ptr{__JL_Ctag_166}(x + 0)
+    f === :IntegerList && return Ptr{__JL_Ctag_163}(x + 0)
+    f === :Integer64List && return Ptr{__JL_Ctag_164}(x + 0)
+    f === :RealList && return Ptr{__JL_Ctag_165}(x + 0)
+    f === :StringList && return Ptr{__JL_Ctag_166}(x + 0)
+    f === :Binary && return Ptr{__JL_Ctag_167}(x + 0)
+    f === :Set && return Ptr{__JL_Ctag_168}(x + 0)
+    f === :Date && return Ptr{__JL_Ctag_169}(x + 0)
     return getfield(x, f)
 end
 
@@ -27191,6 +28053,65 @@ function ogr_l_getgeomtype(arg1)
 end
 
 """
+    OGRGeometryTypeCounter
+
+Result item of [`OGR_L_GetGeometryTypes`](@ref)
+
+| Field     | Note                                    |
+| :-------- | :-------------------------------------- |
+| eGeomType | Geometry type                           |
+| nCount    | Number of geometries of type eGeomType  |
+"""
+struct OGRGeometryTypeCounter
+    eGeomType::OGRwkbGeometryType
+    nCount::Int64
+end
+
+"""
+    OGR_L_GetGeometryTypes(OGRLayerH hLayer,
+                           int iGeomField,
+                           int nFlags,
+                           int * pnEntryCount,
+                           GDALProgressFunc pfnProgress,
+                           void * pProgressData) -> OGRGeometryTypeCounter *
+
+Get actual geometry types found in features.
+
+### Parameters
+* **hLayer**: Layer.
+* **iGeomField**: Geometry field index.
+* **nFlags**: Hint flags. 0, or combination of OGR_GGT_COUNT_NOT_NEEDED, OGR_GGT_STOP_IF_MIXED, OGR_GGT_GEOMCOLLECTIONZ_TINZ
+* **pnEntryCount**: Pointer to the number of entries in the returned array. Must not be NULL.
+* **pfnProgress**: Cancellation callback. May be NULL.
+* **pProgressData**: User data for the cancellation callback. May be NULL.
+
+### Returns
+an array of *pnEntryCount that must be freed with CPLFree(), or NULL in case of error
+"""
+function ogr_l_getgeometrytypes(
+    hLayer,
+    iGeomField,
+    nFlags,
+    pnEntryCount,
+    pfnProgress,
+    pProgressData,
+)
+    aftercare(
+        ccall(
+            (:OGR_L_GetGeometryTypes, libgdal),
+            Ptr{OGRGeometryTypeCounter},
+            (OGRLayerH, Cint, Cint, Ptr{Cint}, GDALProgressFunc, Ptr{Cvoid}),
+            hLayer,
+            iGeomField,
+            nFlags,
+            pnEntryCount,
+            pfnProgress,
+            pProgressData,
+        ),
+    )
+end
+
+"""
     OGR_L_GetSpatialFilter(OGRLayerH) -> OGRGeometryH
 
 This function returns the current spatial filter for this layer.
@@ -27342,6 +28263,37 @@ function ogr_l_setattributefilter(arg1, arg2)
     )
 end
 
+"Data type for a Arrow C stream Include ogr\\\\_recordbatch.h to get the definition"
+const ArrowArrayStream = Cvoid
+
+"""
+    OGR_L_GetArrowStream(OGRLayerH hLayer,
+                         struct ArrowArrayStream * out_stream,
+                         char ** papszOptions) -> bool
+
+Get a Arrow C stream.
+
+### Parameters
+* **hLayer**: Layer
+* **out_stream**: Output stream. Must not be NULL. The content of the structure does not need to be initialized.
+* **papszOptions**: NULL terminated list of key=value options.
+
+### Returns
+true in case of success.
+"""
+function ogr_l_getarrowstream(hLayer, out_stream, papszOptions)
+    aftercare(
+        ccall(
+            (:OGR_L_GetArrowStream, libgdal),
+            Bool,
+            (OGRLayerH, Ptr{ArrowArrayStream}, Ptr{Cstring}),
+            hLayer,
+            out_stream,
+            papszOptions,
+        ),
+    )
+end
+
 """
     OGR_L_SetNextByIndex(OGRLayerH,
                          GIntBig) -> OGRErr
@@ -27440,6 +28392,31 @@ OGRERR_NONE if the operation works, otherwise an appropriate error code (e.g OGR
 function ogr_l_deletefeature(arg1, arg2)
     aftercare(
         ccall((:OGR_L_DeleteFeature, libgdal), OGRErr, (OGRLayerH, GIntBig), arg1, arg2),
+    )
+end
+
+"""
+    OGR_L_UpsertFeature(OGRLayerH,
+                        OGRFeatureH) -> OGRErr
+
+Rewrite an existing feature or create a new feature within a layer.
+
+### Parameters
+* **hLayer**: handle to the layer to write the feature to.
+* **hFeat**: the handle of the feature to write to disk.
+
+### Returns
+OGRERR_NONE on success.
+"""
+function ogr_l_upsertfeature(arg1, arg2)
+    aftercare(
+        ccall(
+            (:OGR_L_UpsertFeature, libgdal),
+            OGRErr,
+            (OGRLayerH, OGRFeatureH),
+            arg1,
+            arg2,
+        ),
     )
 end
 
@@ -27747,6 +28724,37 @@ function ogr_l_alterfielddefn(arg1, iField, hNewFieldDefn, nFlags)
             arg1,
             iField,
             hNewFieldDefn,
+            nFlags,
+        ),
+    )
+end
+
+"""
+    OGR_L_AlterGeomFieldDefn(OGRLayerH,
+                             int iField,
+                             OGRGeomFieldDefnH hNewGeomFieldDefn,
+                             int nFlags) -> OGRErr
+
+Alter the definition of an existing geometry field on a layer.
+
+### Parameters
+* **hLayer**: handle to the layer.
+* **iGeomField**: index of the field whose definition must be altered.
+* **hNewGeomFieldDefn**: new field definition
+* **nFlags**: combination of ALTER_GEOM_FIELD_DEFN_NAME_FLAG, ALTER_GEOM_FIELD_DEFN_TYPE_FLAG, ALTER_GEOM_FIELD_DEFN_NULLABLE_FLAG, ALTER_GEOM_FIELD_DEFN_SRS_FLAG, ALTER_GEOM_FIELD_DEFN_SRS_COORD_EPOCH_FLAG to indicate which of the name and/or type and/or nullability and/or SRS and/or coordinate epoch from the new field definition must be taken into account. Or ALTER_GEOM_FIELD_DEFN_ALL_FLAG to update all members.
+
+### Returns
+OGRERR_NONE on success.
+"""
+function ogr_l_altergeomfielddefn(arg1, iField, hNewGeomFieldDefn, nFlags)
+    aftercare(
+        ccall(
+            (:OGR_L_AlterGeomFieldDefn, libgdal),
+            OGRErr,
+            (OGRLayerH, Cint, OGRGeomFieldDefnH, Cint),
+            arg1,
+            iField,
+            hNewGeomFieldDefn,
             nFlags,
         ),
     )
@@ -30974,6 +31982,15 @@ function osrmorphfromesri(arg1)
 end
 
 """
+    OSRStripVertical(OGRSpatialReferenceH hSRS) -> OGRErr
+
+Convert a compound cs into a horizontal CS.
+"""
+function osrstripvertical(arg1)
+    aftercare(ccall((:OSRStripVertical, libgdal), OGRErr, (OGRSpatialReferenceH,), arg1))
+end
+
+"""
     OSRConvertToOtherProjection(OGRSpatialReferenceH hSRS,
                                 const char * pszTargetProjection,
                                 const char *const * papszOptions) -> OGRSpatialReferenceH
@@ -34173,80 +35190,14 @@ function octtransformbounds(
     )
 end
 
-struct __JL_Ctag_160
+struct __JL_Ctag_163
     nCount::Cint
     paList::Ptr{Cint}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_160}, f::Symbol)
-    f === :nCount && return Ptr{Cint}(x + 0)
-    f === :paList && return Ptr{Ptr{Cint}}(x + 8)
-    return getfield(x, f)
-end
-
-function Base.getproperty(x::__JL_Ctag_160, f::Symbol)
-    r = Ref{__JL_Ctag_160}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_160}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
-end
-
-function Base.setproperty!(x::Ptr{__JL_Ctag_160}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
-end
-
-struct __JL_Ctag_161
-    nCount::Cint
-    paList::Ptr{GIntBig}
-end
-
-function Base.getproperty(x::Ptr{__JL_Ctag_161}, f::Symbol)
-    f === :nCount && return Ptr{Cint}(x + 0)
-    f === :paList && return Ptr{Ptr{GIntBig}}(x + 8)
-    return getfield(x, f)
-end
-
-function Base.getproperty(x::__JL_Ctag_161, f::Symbol)
-    r = Ref{__JL_Ctag_161}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_161}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
-end
-
-function Base.setproperty!(x::Ptr{__JL_Ctag_161}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
-end
-
-struct __JL_Ctag_162
-    nCount::Cint
-    paList::Ptr{Cdouble}
-end
-
-function Base.getproperty(x::Ptr{__JL_Ctag_162}, f::Symbol)
-    f === :nCount && return Ptr{Cint}(x + 0)
-    f === :paList && return Ptr{Ptr{Cdouble}}(x + 8)
-    return getfield(x, f)
-end
-
-function Base.getproperty(x::__JL_Ctag_162, f::Symbol)
-    r = Ref{__JL_Ctag_162}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_162}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
-end
-
-function Base.setproperty!(x::Ptr{__JL_Ctag_162}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
-end
-
-struct __JL_Ctag_163
-    nCount::Cint
-    paList::Ptr{Cstring}
-end
-
 function Base.getproperty(x::Ptr{__JL_Ctag_163}, f::Symbol)
     f === :nCount && return Ptr{Cint}(x + 0)
-    f === :paList && return Ptr{Ptr{Cstring}}(x + 8)
+    f === :paList && return Ptr{Ptr{Cint}}(x + 8)
     return getfield(x, f)
 end
 
@@ -34263,12 +35214,12 @@ end
 
 struct __JL_Ctag_164
     nCount::Cint
-    paData::Ptr{GByte}
+    paList::Ptr{GIntBig}
 end
 
 function Base.getproperty(x::Ptr{__JL_Ctag_164}, f::Symbol)
     f === :nCount && return Ptr{Cint}(x + 0)
-    f === :paData && return Ptr{Ptr{GByte}}(x + 8)
+    f === :paList && return Ptr{Ptr{GIntBig}}(x + 8)
     return getfield(x, f)
 end
 
@@ -34284,15 +35235,13 @@ function Base.setproperty!(x::Ptr{__JL_Ctag_164}, f::Symbol, v)
 end
 
 struct __JL_Ctag_165
-    nMarker1::Cint
-    nMarker2::Cint
-    nMarker3::Cint
+    nCount::Cint
+    paList::Ptr{Cdouble}
 end
 
 function Base.getproperty(x::Ptr{__JL_Ctag_165}, f::Symbol)
-    f === :nMarker1 && return Ptr{Cint}(x + 0)
-    f === :nMarker2 && return Ptr{Cint}(x + 4)
-    f === :nMarker3 && return Ptr{Cint}(x + 8)
+    f === :nCount && return Ptr{Cint}(x + 0)
+    f === :paList && return Ptr{Ptr{Cdouble}}(x + 8)
     return getfield(x, f)
 end
 
@@ -34308,25 +35257,13 @@ function Base.setproperty!(x::Ptr{__JL_Ctag_165}, f::Symbol, v)
 end
 
 struct __JL_Ctag_166
-    Year::GInt16
-    Month::GByte
-    Day::GByte
-    Hour::GByte
-    Minute::GByte
-    TZFlag::GByte
-    Reserved::GByte
-    Second::Cfloat
+    nCount::Cint
+    paList::Ptr{Cstring}
 end
 
 function Base.getproperty(x::Ptr{__JL_Ctag_166}, f::Symbol)
-    f === :Year && return Ptr{GInt16}(x + 0)
-    f === :Month && return Ptr{GByte}(x + 2)
-    f === :Day && return Ptr{GByte}(x + 3)
-    f === :Hour && return Ptr{GByte}(x + 4)
-    f === :Minute && return Ptr{GByte}(x + 5)
-    f === :TZFlag && return Ptr{GByte}(x + 6)
-    f === :Reserved && return Ptr{GByte}(x + 7)
-    f === :Second && return Ptr{Cfloat}(x + 8)
+    f === :nCount && return Ptr{Cint}(x + 0)
+    f === :paList && return Ptr{Ptr{Cstring}}(x + 8)
     return getfield(x, f)
 end
 
@@ -34341,45 +35278,87 @@ function Base.setproperty!(x::Ptr{__JL_Ctag_166}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
-const CPL_MULTIPROC_PTHREAD = 1
+struct __JL_Ctag_167
+    nCount::Cint
+    paData::Ptr{GByte}
+end
+
+function Base.getproperty(x::Ptr{__JL_Ctag_167}, f::Symbol)
+    f === :nCount && return Ptr{Cint}(x + 0)
+    f === :paData && return Ptr{Ptr{GByte}}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_167, f::Symbol)
+    r = Ref{__JL_Ctag_167}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_167}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_167}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+struct __JL_Ctag_168
+    nMarker1::Cint
+    nMarker2::Cint
+    nMarker3::Cint
+end
+
+function Base.getproperty(x::Ptr{__JL_Ctag_168}, f::Symbol)
+    f === :nMarker1 && return Ptr{Cint}(x + 0)
+    f === :nMarker2 && return Ptr{Cint}(x + 4)
+    f === :nMarker3 && return Ptr{Cint}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_168, f::Symbol)
+    r = Ref{__JL_Ctag_168}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_168}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_168}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+struct __JL_Ctag_169
+    Year::GInt16
+    Month::GByte
+    Day::GByte
+    Hour::GByte
+    Minute::GByte
+    TZFlag::GByte
+    Reserved::GByte
+    Second::Cfloat
+end
+
+function Base.getproperty(x::Ptr{__JL_Ctag_169}, f::Symbol)
+    f === :Year && return Ptr{GInt16}(x + 0)
+    f === :Month && return Ptr{GByte}(x + 2)
+    f === :Day && return Ptr{GByte}(x + 3)
+    f === :Hour && return Ptr{GByte}(x + 4)
+    f === :Minute && return Ptr{GByte}(x + 5)
+    f === :TZFlag && return Ptr{GByte}(x + 6)
+    f === :Reserved && return Ptr{GByte}(x + 7)
+    f === :Second && return Ptr{Cfloat}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_169, f::Symbol)
+    r = Ref{__JL_Ctag_169}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_169}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_169}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
 
 const GDAL_PREFIX = "/workspace/destdir"
-
-const HAVE_CXX11 = 1
-
-const HAVE_GCC_ATOMIC_BUILTINS = 1
-
-const HAVE_GCC_BSWAP = 1
-
-const HAVE_GCC_WARNING_ZERO_AS_NULL_POINTER_CONSTANT = 1
-
-const HAVE_GETCWD = 1
-
-const HAVE_PTHREAD_MUTEX_ADAPTIVE_NP = 1
-
-const HAVE_PTHREAD_MUTEX_RECURSIVE = 1
-
-const HAVE_PTHREAD_SPINLOCK = 1
-
-const HAVE_STD_IS_NAN = 1
-
-const HAVE_UINT128_T = 1
-
-const HAVE_VSNPRINTF = 1
-
-const LT_OBJDIR = ".libs/"
-
-const PACKAGE_BUGREPORT = ""
-
-const PACKAGE_NAME = ""
-
-const PACKAGE_STRING = ""
-
-const PACKAGE_TARNAME = ""
-
-const PACKAGE_URL = ""
-
-const PACKAGE_VERSION = ""
 
 const SIZEOF_INT = 4
 
@@ -34387,7 +35366,15 @@ const SIZEOF_UNSIGNED_LONG = 4
 
 const SIZEOF_VOIDP = 8
 
-const STDC_HEADERS = 1
+const SIZEOF_SIZE_T = 8
+
+const USE_GCC_VISIBILITY_FLAG = 1
+
+const HAVE_GCC_ATOMIC_BUILTINS = 1
+
+const HAVE_GCC_BSWAP = 1
+
+const HAVE_STD_IS_NAN = 1
 
 const CPLE_None = 0
 
@@ -34465,9 +35452,9 @@ const VSI_STAT_CACHE_ONLY = 0x10
 
 const GDAL_VERSION_MAJOR = 3
 
-const GDAL_VERSION_MINOR = 5
+const GDAL_VERSION_MINOR = 6
 
-const GDAL_VERSION_REV = 1
+const GDAL_VERSION_REV = 0
 
 const GDAL_VERSION_BUILD = 0
 
@@ -34475,9 +35462,9 @@ const GDAL_VERSION_NUM =
     GDAL_COMPUTE_VERSION(GDAL_VERSION_MAJOR, GDAL_VERSION_MINOR, GDAL_VERSION_REV) +
     GDAL_VERSION_BUILD
 
-const GDAL_RELEASE_DATE = 20220630
+const GDAL_RELEASE_DATE = 20221106
 
-const GDAL_RELEASE_NAME = "3.5.1"
+const GDAL_RELEASE_NAME = "3.6.0"
 
 const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
 
@@ -34510,6 +35497,8 @@ const GDAL_DMD_MULTIDIM_GROUP_CREATIONOPTIONLIST = "DMD_MULTIDIM_GROUP_CREATIONO
 const GDAL_DMD_MULTIDIM_DIMENSION_CREATIONOPTIONLIST = "DMD_MULTIDIM_DIMENSION_CREATIONOPTIONLIST"
 
 const GDAL_DMD_MULTIDIM_ARRAY_CREATIONOPTIONLIST = "DMD_MULTIDIM_ARRAY_CREATIONOPTIONLIST"
+
+const GDAL_DMD_MULTIDIM_ARRAY_OPENOPTIONLIST = "DMD_MULTIDIM_ARRAY_OPENOPTIONLIST"
 
 const GDAL_DMD_MULTIDIM_ATTRIBUTE_CREATIONOPTIONLIST = "DMD_MULTIDIM_ATTRIBUTE_CREATIONOPTIONLIST"
 
@@ -34545,6 +35534,18 @@ const GDAL_DCAP_VECTOR = "DCAP_VECTOR"
 
 const GDAL_DCAP_GNM = "DCAP_GNM"
 
+const GDAL_DCAP_CREATE_LAYER = "DCAP_CREATE_LAYER"
+
+const GDAL_DCAP_DELETE_LAYER = "DCAP_DELETE_LAYER"
+
+const GDAL_DCAP_CREATE_FIELD = "DCAP_CREATE_FIELD"
+
+const GDAL_DCAP_DELETE_FIELD = "DCAP_DELETE_FIELD"
+
+const GDAL_DCAP_REORDER_FIELDS = "DCAP_REORDER_FIELDS"
+
+const GDAL_DMD_ALTER_FIELD_DEFN_FLAGS = "GDAL_DMD_ALTER_FIELD_DEFN_FLAGS"
+
 const GDAL_DCAP_NOTNULL_FIELDS = "DCAP_NOTNULL_FIELDS"
 
 const GDAL_DCAP_UNIQUE_FIELDS = "DCAP_UNIQUE_FIELDS"
@@ -34555,6 +35556,14 @@ const GDAL_DCAP_NOTNULL_GEOMFIELDS = "DCAP_NOTNULL_GEOMFIELDS"
 
 const GDAL_DCAP_NONSPATIAL = "DCAP_NONSPATIAL"
 
+const GDAL_DCAP_CURVE_GEOMETRIES = "DCAP_CURVE_GEOMETRIES"
+
+const GDAL_DCAP_MEASURED_GEOMETRIES = "DCAP_MEASURED_GEOMETRIES"
+
+const GDAL_DCAP_Z_GEOMETRIES = "DCAP_Z_GEOMETRIES"
+
+const GDAL_DMD_GEOMETRY_FLAGS = "GDAL_DMD_GEOMETRY_FLAGS"
+
 const GDAL_DCAP_FEATURE_STYLES = "DCAP_FEATURE_STYLES"
 
 const GDAL_DCAP_COORDINATE_EPOCH = "DCAP_COORDINATE_EPOCH"
@@ -34563,9 +35572,23 @@ const GDAL_DCAP_MULTIPLE_VECTOR_LAYERS = "DCAP_MULTIPLE_VECTOR_LAYERS"
 
 const GDAL_DCAP_FIELD_DOMAINS = "DCAP_FIELD_DOMAINS"
 
+const GDAL_DCAP_RELATIONSHIPS = "DCAP_RELATIONSHIPS"
+
+const GDAL_DCAP_CREATE_RELATIONSHIP = "DCAP_CREATE_RELATIONSHIP"
+
+const GDAL_DCAP_DELETE_RELATIONSHIP = "DCAP_DELETE_RELATIONSHIP"
+
+const GDAL_DCAP_UPDATE_RELATIONSHIP = "DCAP_UPDATE_RELATIONSHIP"
+
+const GDAL_DMD_RELATIONSHIP_FLAGS = "GDAL_DMD_RELATIONSHIP_FLAGS"
+
 const GDAL_DCAP_RENAME_LAYERS = "DCAP_RENAME_LAYERS"
 
 const GDAL_DMD_CREATION_FIELD_DOMAIN_TYPES = "DMD_CREATION_FIELD_DOMAIN_TYPES"
+
+const GDAL_DMD_ALTER_GEOM_FIELD_DEFN_FLAGS = "DMD_ALTER_GEOM_FIELD_DEFN_FLAGS"
+
+const GDAL_DMD_SUPPORTED_SQL_DIALECTS = "DMD_SUPPORTED_SQL_DIALECTS"
 
 const GDAL_DIM_TYPE_HORIZONTAL_X = "HORIZONTAL_X"
 
@@ -34576,6 +35599,12 @@ const GDAL_DIM_TYPE_VERTICAL = "VERTICAL"
 const GDAL_DIM_TYPE_TEMPORAL = "TEMPORAL"
 
 const GDAL_DIM_TYPE_PARAMETRIC = "PARAMETRIC"
+
+const GDsCAddRelationship = "AddRelationship"
+
+const GDsCDeleteRelationship = "DeleteRelationship"
+
+const GDsCUpdateRelationship = "UpdateRelationship"
 
 const GDAL_OF_READONLY = 0x00
 
@@ -34628,6 +35657,8 @@ const GDAL_DATA_COVERAGE_STATUS_EMPTY = 0x04
 const GDALRPCInfo = GDALRPCInfoV2
 
 const GDAL_GTI2_SIGNATURE = "GTI2"
+
+const GDAL_SWO_ROUND_UP_SIZE = 0x01
 
 const CPLMutex = Cvoid
 
@@ -34685,6 +35716,12 @@ const CTLS_MAX = 32
 
 const VRT_NODATA_UNSET = -1234.56
 
+const OGR_GGT_COUNT_NOT_NEEDED = 0x01
+
+const OGR_GGT_STOP_IF_MIXED = 0x02
+
+const OGR_GGT_GEOMCOLLECTIONZ_TINZ = 0x04
+
 const OGRERR_NONE = 0
 
 const OGRERR_NOT_ENOUGH_DATA = 1
@@ -34733,6 +35770,24 @@ const ALTER_ALL_FLAG =
         ) | ALTER_UNIQUE_FLAG
     ) | ALTER_DOMAIN_FLAG
 
+const ALTER_GEOM_FIELD_DEFN_NAME_FLAG = 0x1000
+
+const ALTER_GEOM_FIELD_DEFN_TYPE_FLAG = 0x2000
+
+const ALTER_GEOM_FIELD_DEFN_NULLABLE_FLAG = 0x4000
+
+const ALTER_GEOM_FIELD_DEFN_SRS_FLAG = 0x8000
+
+const ALTER_GEOM_FIELD_DEFN_SRS_COORD_EPOCH_FLAG = 0x00010000
+
+const ALTER_GEOM_FIELD_DEFN_ALL_FLAG =
+    (
+        (
+            (ALTER_GEOM_FIELD_DEFN_NAME_FLAG | ALTER_GEOM_FIELD_DEFN_TYPE_FLAG) |
+            ALTER_GEOM_FIELD_DEFN_NULLABLE_FLAG
+        ) | ALTER_GEOM_FIELD_DEFN_SRS_FLAG
+    ) | ALTER_GEOM_FIELD_DEFN_SRS_COORD_EPOCH_FLAG
+
 const OGR_F_VAL_NULL = 0x00000001
 
 const OGR_F_VAL_GEOM_TYPE = 0x00000002
@@ -34771,9 +35826,13 @@ const OLCReorderFields = "ReorderFields"
 
 const OLCAlterFieldDefn = "AlterFieldDefn"
 
+const OLCAlterGeomFieldDefn = "AlterGeomFieldDefn"
+
 const OLCTransactions = "Transactions"
 
 const OLCDeleteFeature = "DeleteFeature"
+
+const OLCUpsertFeature = "UpsertFeature"
 
 const OLCFastSetNextByIndex = "FastSetNextByIndex"
 
@@ -34787,7 +35846,11 @@ const OLCCurveGeometries = "CurveGeometries"
 
 const OLCMeasuredGeometries = "MeasuredGeometries"
 
+const OLCZGeometries = "ZGeometries"
+
 const OLCRename = "Rename"
+
+const OLCFastGetArrowStream = "FastGetArrowStream"
 
 const ODsCCreateLayer = "CreateLayer"
 
@@ -34802,6 +35865,8 @@ const ODsCTransactions = "Transactions"
 const ODsCEmulatedTransactions = "EmulatedTransactions"
 
 const ODsCMeasuredGeometries = "MeasuredGeometries"
+
+const ODsCZGeometries = "ZGeometries"
 
 const ODsCRandomLayerRead = "RandomLayerRead"
 

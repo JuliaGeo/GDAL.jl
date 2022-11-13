@@ -111,7 +111,7 @@ GDAL.gdalnearblackoptionsfree(options)
 band = GDAL.gdalgetrasterband(ds_nearblack, 1)
 read_data = zero(tinydata)
 GDAL.gdalrasterio(band, GDAL.GF_Read, 0, 0, 5, 5, read_data, 5, 5, GDAL.GDT_Byte, 0, 0)
-@test sum(read_data[1:3,2:5]) == 0
+@test sum(read_data[1:3, 2:5]) == 0
 @test sum(read_data) == 2221
 
 GDAL.gdalclose(ds_nearblack)
