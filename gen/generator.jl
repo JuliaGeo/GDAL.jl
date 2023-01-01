@@ -103,6 +103,13 @@ function rewriter(x::Expr)
         # lowercase the function name
         f2 = Symbol(lowercase(String(f)))
 
+        # replace Ptr{Cvoid} with Any for callbacks, so Functions are converted by Julia
+        # The callback always follows the GDALProgressFunc type
+        i = findfirst(ex -> ex == :GDALProgressFunc, argtypes.args)
+        if !isnothing(i) && argtypes.args[i+1] == :(Ptr{Cvoid})
+            argtypes.args[i+1] = :(Any)
+        end
+
         # bind the ccall such that we can easily wrap it
         cc = :(ccall($fname, $rettype, $argtypes, $(argvalues...)))
 
