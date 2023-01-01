@@ -104,10 +104,11 @@ function rewriter(x::Expr)
         f2 = Symbol(lowercase(String(f)))
 
         # replace Ptr{Cvoid} with Any for callbacks, so Functions are converted by Julia
+        # https://julialang.org/blog/2013/05/callback/#passing_closures_via_pass-through_pointers
         # The callback always follows the GDALProgressFunc type
-        i = findfirst(ex -> ex == :GDALProgressFunc, argtypes.args)
+        i = findfirst(==(:GDALProgressFunc), argtypes.args)
         if !isnothing(i) && argtypes.args[i+1] == :(Ptr{Cvoid})
-            argtypes.args[i+1] = :(Any)
+            argtypes.args[i+1] = :Any
         end
 
         # bind the ccall such that we can easily wrap it
