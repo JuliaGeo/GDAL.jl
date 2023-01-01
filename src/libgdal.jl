@@ -12,24 +12,16 @@ end
 """
     cplverifyconfiguration()
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function cplverifyconfiguration()
     aftercare(ccall((:CPLVerifyConfiguration, libgdal), Cvoid, ()))
 end
 
 """
-    CPLGetConfigOption(const char * pszKey,
-                       const char * pszDefault) -> const char *
+    cplgetconfigoption(arg1, arg2)
 
-Get the value of a configuration option.
-
-### Parameters
-* **pszKey**: the key of the option to retrieve
-* **pszDefault**: a default value if the key does not match existing defined options (may be NULL)
-
-### Returns
-the value associated to the key, or the default value if not found
+` `
 """
 function cplgetconfigoption(arg1, arg2)
     aftercare(
@@ -94,12 +86,18 @@ function cplsetthreadlocalconfigoption(pszKey, pszValue)
 end
 
 """
-    CPLGetConfigOptions(void) -> char **
+    cplfreeconfig()
 
-Return the list of configuration options as KEY=VALUE pairs.
+` Doxygen_Suppress `
+"""
+function cplfreeconfig()
+    aftercare(ccall((:CPLFreeConfig, libgdal), Cvoid, ()))
+end
 
-### Returns
-a copy of the list, to be freed with CSLDestroy().
+"""
+    cplgetconfigoptions()
+
+` `
 """
 function cplgetconfigoptions()
     aftercare(ccall((:CPLGetConfigOptions, libgdal), Ptr{Cstring}, ()))
@@ -1373,7 +1371,7 @@ function cplfinderclean()
     aftercare(ccall((:CPLFinderClean, libgdal), Cvoid, ()))
 end
 
-"Doxygen\\\\_Suppress"
+"` Doxygen_Suppress `"
 const VSIStatBuf = stat
 
 """
@@ -1479,16 +1477,16 @@ end
 """
     cplcleanupsharedfilemutex()
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function cplcleanupsharedfilemutex()
     aftercare(ccall((:CPLCleanupSharedFileMutex, libgdal), Cvoid, ()))
 end
 
 """
-    CPLDMSToDec(const char * is) -> double
+    cpldmstodec(is)
 
-CPLDMSToDec.
+` `
 """
 function cpldmstodec(is)
     aftercare(ccall((:CPLDMSToDec, libgdal), Cdouble, (Cstring,), is))
@@ -1634,8 +1632,9 @@ function cplsymlink(pszOldPath, pszNewPath, papszOptions)
 end
 
 """
-    CPLCreateZip(const char *,
-                 char **) -> void *
+    cplcreatezip(pszZipFilename, papszOptions)
+
+` `
 """
 function cplcreatezip(pszZipFilename, papszOptions)
     aftercare(
@@ -1809,7 +1808,7 @@ end
 """
     cplcleanupsetlocalemutex()
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function cplcleanupsetlocalemutex()
     aftercare(ccall((:CPLCleanupSetlocaleMutex, libgdal), Cvoid, ()))
@@ -1885,7 +1884,7 @@ end
 """
     cplcleanuperrormutex()
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function cplcleanuperrormutex()
     ccall((:CPLCleanupErrorMutex, libgdal), Cvoid, ())
@@ -2438,7 +2437,7 @@ const GByte = Cuchar
 const GInt16 = Cshort
 
 """
-
+` `
 
 Type for boolean values (alias to int)
 """
@@ -2542,7 +2541,7 @@ function gdalcreatescaledprogress(arg1, arg2, arg3, arg4)
         ccall(
             (:GDALCreateScaledProgress, libgdal),
             Ptr{Cvoid},
-            (Cdouble, Cdouble, GDALProgressFunc, Ptr{Cvoid}),
+            (Cdouble, Cdouble, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -3188,7 +3187,7 @@ end
 """
     vsifopen(arg1, arg2)
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function vsifopen(arg1, arg2)
     aftercare(ccall((:VSIFOpen, libgdal), Ptr{Libc.FILE}, (Cstring, Cstring), arg1, arg2))
@@ -4670,14 +4669,7 @@ function vsisync(
         ccall(
             (:VSISync, libgdal),
             Cint,
-            (
-                Cstring,
-                Cstring,
-                Ptr{Cstring},
-                GDALProgressFunc,
-                Ptr{Cvoid},
-                Ptr{Ptr{Cstring}},
-            ),
+            (Cstring, Cstring, Ptr{Cstring}, GDALProgressFunc, Any, Ptr{Ptr{Cstring}}),
             pszSource,
             pszTarget,
             papszOptions,
@@ -4771,16 +4763,16 @@ end
 """
     vsiinstalllargefilehandler()
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function vsiinstalllargefilehandler()
     aftercare(ccall((:VSIInstallLargeFileHandler, libgdal), Cvoid, ()))
 end
 
 """
-    VSIInstallSubFileHandler() -> void
+    vsiinstallsubfilehandler()
 
-Install /vsisubfile/ virtual file handler.
+` `
 """
 function vsiinstallsubfilehandler()
     aftercare(ccall((:VSIInstallSubFileHandler, libgdal), Cvoid, ()))
@@ -5026,28 +5018,16 @@ end
 """
     vsicleanupfilemanager()
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function vsicleanupfilemanager()
     aftercare(ccall((:VSICleanupFileManager, libgdal), Cvoid, ()))
 end
 
 """
-    VSIFileFromMemBuffer(const char * pszFilename,
-                         GByte * pabyData,
-                         vsi_l_offset nDataLength,
-                         int bTakeOwnership) -> VSILFILE *
+    vsifilefrommembuffer(pszFilename, pabyData, nDataLength, bTakeOwnership)
 
-Create memory "file" from a buffer.
-
-### Parameters
-* **pszFilename**: the filename to be created, or nullptr
-* **pabyData**: the data buffer for the file.
-* **nDataLength**: the length of buffer in bytes.
-* **bTakeOwnership**: TRUE to transfer "ownership" of buffer or FALSE.
-
-### Returns
-open file handle on created file (see VSIFOpenL()).
+` `
 """
 function vsifilefrommembuffer(pszFilename, pabyData, nDataLength, bTakeOwnership)
     aftercare(
@@ -5352,7 +5332,7 @@ end
 """
     vsitime(arg1)
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function vsitime(arg1)
     aftercare(ccall((:VSITime, libgdal), Culong, (Ptr{Culong},), arg1))
@@ -5446,6 +5426,23 @@ struct GDALRPCInfoV2
     dfMAX_LAT::Cdouble
     dfERR_BIAS::Cdouble
     dfERR_RAND::Cdouble
+end
+
+"""
+    gdalextractrpcinfov2(arg1, arg2)
+
+` `
+"""
+function gdalextractrpcinfov2(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALExtractRPCInfoV2, libgdal),
+            Cint,
+            (CSLConstList, Ptr{GDALRPCInfoV2}),
+            arg1,
+            arg2,
+        ),
+    )
 end
 
 """
@@ -5889,20 +5886,20 @@ RasterIO() resampling method.
 
 \\since GDAL 2.0
 
-| Enumerator                | Note                                                                                                                  |
-| :------------------------ | :-------------------------------------------------------------------------------------------------------------------- |
-| GRIORA\\_NearestNeighbour | Nearest neighbour                                                                                                     |
-| GRIORA\\_Bilinear         | Bilinear (2x2 kernel)                                                                                                 |
-| GRIORA\\_Cubic            | Cubic Convolution Approximation (4x4 kernel)                                                                          |
-| GRIORA\\_CubicSpline      | Cubic B-Spline Approximation (4x4 kernel)                                                                             |
-| GRIORA\\_Lanczos          | Lanczos windowed sinc interpolation (6x6 kernel)                                                                      |
-| GRIORA\\_Average          | Average                                                                                                               |
-| GRIORA\\_Mode             | Mode (selects the value which appears most often of all the sampled points)                                           |
-| GRIORA\\_Gauss            | Gauss blurring                                                                                                        |
-| GRIORA\\_RESERVED\\_START | Doxygen\\_Suppress                                                                                                    |
-| GRIORA\\_RESERVED\\_END   |                                                                                                                       |
-| GRIORA\\_RMS              |   RMS: Root Mean Square / Quadratic Mean. For complex numbers, applies on the real and imaginary part independently.  |
-| GRIORA\\_LAST             | Doxygen\\_Suppress                                                                                                    |
+| Enumerator                | Note                                                                                                                     |
+| :------------------------ | :----------------------------------------------------------------------------------------------------------------------- |
+| GRIORA\\_NearestNeighbour | Nearest neighbour                                                                                                        |
+| GRIORA\\_Bilinear         | Bilinear (2x2 kernel)                                                                                                    |
+| GRIORA\\_Cubic            | Cubic Convolution Approximation (4x4 kernel)                                                                             |
+| GRIORA\\_CubicSpline      | Cubic B-Spline Approximation (4x4 kernel)                                                                                |
+| GRIORA\\_Lanczos          | Lanczos windowed sinc interpolation (6x6 kernel)                                                                         |
+| GRIORA\\_Average          | Average                                                                                                                  |
+| GRIORA\\_Mode             | Mode (selects the value which appears most often of all the sampled points)                                              |
+| GRIORA\\_Gauss            | Gauss blurring                                                                                                           |
+| GRIORA\\_RESERVED\\_START | ` Doxygen_Suppress `                                                                                                     |
+| GRIORA\\_RESERVED\\_END   |                                                                                                                          |
+| GRIORA\\_RMS              | ` `  RMS: Root Mean Square / Quadratic Mean. For complex numbers, applies on the real and imaginary part independently.  |
+| GRIORA\\_LAST             | ` Doxygen_Suppress `                                                                                                     |
 """
 @cenum GDALRIOResampleAlg::UInt32 begin
     GRIORA_NearestNeighbour = 0
@@ -6234,15 +6231,7 @@ function gdalcreatecopy(arg1, arg2, arg3, arg4, arg5, arg6, arg7)
         ccall(
             (:GDALCreateCopy, libgdal),
             GDALDatasetH,
-            (
-                GDALDriverH,
-                Cstring,
-                GDALDatasetH,
-                Cint,
-                CSLConstList,
-                GDALProgressFunc,
-                Ptr{Cvoid},
-            ),
+            (GDALDriverH, Cstring, GDALDatasetH, Cint, CSLConstList, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -7659,7 +7648,7 @@ function gdalbuildoverviews(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
                 Cint,
                 Ptr{Cint},
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             arg1,
             arg2,
@@ -7699,7 +7688,7 @@ function gdalbuildoverviewsex(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, pa
                 Cint,
                 Ptr{Cint},
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
                 CSLConstList,
             ),
             arg1,
@@ -7799,7 +7788,7 @@ function gdaldatasetcopywholeraster(
         ccall(
             (:GDALDatasetCopyWholeRaster, libgdal),
             CPLErr,
-            (GDALDatasetH, GDALDatasetH, CSLConstList, GDALProgressFunc, Ptr{Cvoid}),
+            (GDALDatasetH, GDALDatasetH, CSLConstList, GDALProgressFunc, Any),
             hSrcDS,
             hDstDS,
             papszOptions,
@@ -7839,7 +7828,7 @@ function gdalrasterbandcopywholeraster(
         ccall(
             (:GDALRasterBandCopyWholeRaster, libgdal),
             CPLErr,
-            (GDALRasterBandH, GDALRasterBandH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}),
+            (GDALRasterBandH, GDALRasterBandH, Ptr{Cstring}, GDALProgressFunc, Any),
             hSrcBand,
             hDstBand,
             constpapszOptions,
@@ -7882,14 +7871,7 @@ function gdalregenerateoverviews(
         ccall(
             (:GDALRegenerateOverviews, libgdal),
             CPLErr,
-            (
-                GDALRasterBandH,
-                Cint,
-                Ptr{GDALRasterBandH},
-                Cstring,
-                GDALProgressFunc,
-                Ptr{Cvoid},
-            ),
+            (GDALRasterBandH, Cint, Ptr{GDALRasterBandH}, Cstring, GDALProgressFunc, Any),
             hSrcBand,
             nOverviewCount,
             pahOverviewBands,
@@ -7942,7 +7924,7 @@ function gdalregenerateoverviewsex(
                 Ptr{GDALRasterBandH},
                 Cstring,
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
                 CSLConstList,
             ),
             hSrcBand,
@@ -8328,7 +8310,7 @@ function gdaldatasetgetnextfeature(
         ccall(
             (:GDALDatasetGetNextFeature, libgdal),
             OGRFeatureH,
-            (GDALDatasetH, Ptr{OGRLayerH}, Ptr{Cdouble}, GDALProgressFunc, Ptr{Cvoid}),
+            (GDALDatasetH, Ptr{OGRLayerH}, Ptr{Cdouble}, GDALProgressFunc, Any),
             hDS,
             phBelongingLayer,
             pdfProgressPct,
@@ -9544,7 +9526,7 @@ function gdalcomputerasterstatistics(
                 Ptr{Cdouble},
                 Ptr{Cdouble},
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             arg1,
             bApproxOK,
@@ -9764,7 +9746,7 @@ function gdalgetrasterhistogram(
                 Cint,
                 Cint,
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hBand,
             dfMin,
@@ -9816,7 +9798,7 @@ function gdalgetrasterhistogramex(
                 Cint,
                 Cint,
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hBand,
             dfMin,
@@ -9865,7 +9847,7 @@ function gdalgetdefaulthistogram(
                 Ptr{Ptr{Cint}},
                 Cint,
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hBand,
             pdfMin,
@@ -9913,7 +9895,7 @@ function gdalgetdefaulthistogramex(
                 Ptr{Ptr{GUIntBig}},
                 Cint,
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hBand,
             pdfMin,
@@ -10092,14 +10074,7 @@ function gdalcomputebandstats(
         ccall(
             (:GDALComputeBandStats, libgdal),
             CPLErr,
-            (
-                GDALRasterBandH,
-                Cint,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                GDALProgressFunc,
-                Ptr{Cvoid},
-            ),
+            (GDALRasterBandH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, GDALProgressFunc, Any),
             hBand,
             nSampleStep,
             pdfMean,
@@ -10140,7 +10115,7 @@ function gdaloverviewmagnitudecorrection(
         ccall(
             (:GDALOverviewMagnitudeCorrection, libgdal),
             CPLErr,
-            (GDALRasterBandH, Cint, Ptr{GDALRasterBandH}, GDALProgressFunc, Ptr{Cvoid}),
+            (GDALRasterBandH, Cint, Ptr{GDALRasterBandH}, GDALProgressFunc, Any),
             hBaseBand,
             nOverviewCount,
             pahOverviews,
@@ -10954,6 +10929,23 @@ struct GDALRPCInfoV1
     dfMIN_LAT::Cdouble
     dfMAX_LONG::Cdouble
     dfMAX_LAT::Cdouble
+end
+
+"""
+    gdalextractrpcinfov1(arg1, arg2)
+
+` Doxygen_Suppress `
+"""
+function gdalextractrpcinfov1(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALExtractRPCInfoV1, libgdal),
+            Cint,
+            (CSLConstList, Ptr{GDALRPCInfoV1}),
+            arg1,
+            arg2,
+        ),
+    )
 end
 
 """
@@ -14745,7 +14737,7 @@ function gdalmdarraygetstatistics(
                 Ptr{Cdouble},
                 Ptr{GUInt64},
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hArray,
             arg2,
@@ -14802,7 +14794,7 @@ function gdalmdarraycomputestatistics(
                 Ptr{Cdouble},
                 Ptr{GUInt64},
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hArray,
             arg2,
@@ -15488,6 +15480,25 @@ function rpcinfov2tomd(psRPCInfo)
 end
 
 """
+    gdalcreaterpctransformerv2(psRPC, bReversed, dfPixErrThreshold, papszOptions)
+
+` `
+"""
+function gdalcreaterpctransformerv2(psRPC, bReversed, dfPixErrThreshold, papszOptions)
+    aftercare(
+        ccall(
+            (:GDALCreateRPCTransformerV2, libgdal),
+            Ptr{Cvoid},
+            (Ptr{GDALRPCInfoV2}, Cint, Cdouble, Ptr{Cstring}),
+            psRPC,
+            bReversed,
+            dfPixErrThreshold,
+            papszOptions,
+        ),
+    )
+end
+
+"""
     GDALComputeMedianCutPCT(GDALRasterBandH hRed,
                             GDALRasterBandH hGreen,
                             GDALRasterBandH hBlue,
@@ -15534,7 +15545,7 @@ function gdalcomputemediancutpct(
                 Cint,
                 GDALColorTableH,
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hRed,
             hGreen,
@@ -15591,7 +15602,7 @@ function gdalditherrgb2pct(
                 GDALRasterBandH,
                 GDALColorTableH,
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hRed,
             hGreen,
@@ -15658,7 +15669,7 @@ function gdalcomputeproximity(
         ccall(
             (:GDALComputeProximity, libgdal),
             CPLErr,
-            (GDALRasterBandH, GDALRasterBandH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}),
+            (GDALRasterBandH, GDALRasterBandH, Ptr{Cstring}, GDALProgressFunc, Any),
             hSrcBand,
             hProximityBand,
             papszOptions,
@@ -15720,7 +15731,7 @@ function gdalfillnodata(
                 Cint,
                 Ptr{Cstring},
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hTargetBand,
             hMaskBand,
@@ -15779,7 +15790,7 @@ function gdalpolygonize(
                 Cint,
                 Ptr{Cstring},
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hSrcBand,
             hMaskBand,
@@ -15837,7 +15848,7 @@ function gdalfpolygonize(
                 Cint,
                 Ptr{Cstring},
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hSrcBand,
             hMaskBand,
@@ -15897,7 +15908,7 @@ function gdalsievefilter(
                 Cint,
                 Ptr{Cstring},
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hSrcBand,
             hMaskBand,
@@ -15925,7 +15936,7 @@ end
 """
     gdaldestroytransformer(pTransformerArg)
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function gdaldestroytransformer(pTransformerArg)
     aftercare(
@@ -15978,27 +15989,9 @@ function gdalcreatesimilartransformer(psTransformerArg, dfSrcRatioX, dfSrcRatioY
 end
 
 """
-    GDALCreateGenImgProjTransformer(GDALDatasetH hSrcDS,
-                                    const char * pszSrcWKT,
-                                    GDALDatasetH hDstDS,
-                                    const char * pszDstWKT,
-                                    int bGCPUseOK,
-                                    double dfGCPErrorThreshold,
-                                    int nOrder) -> void *
+    gdalcreategenimgprojtransformer(hSrcDS, pszSrcWKT, hDstDS, pszDstWKT, bGCPUseOK, dfGCPErrorThreshold, nOrder)
 
-Create image to image transformer.
-
-### Parameters
-* **hSrcDS**: source dataset, or NULL.
-* **pszSrcWKT**: the coordinate system for the source dataset. If NULL, it will be read from the dataset itself.
-* **hDstDS**: destination dataset (or NULL).
-* **pszDstWKT**: the coordinate system for the destination dataset. If NULL, and hDstDS not NULL, it will be read from the destination dataset.
-* **bGCPUseOK**: TRUE if GCPs should be used if the geotransform is not available on the source dataset (not destination).
-* **dfGCPErrorThreshold**: ignored/deprecated.
-* **nOrder**: the maximum order to use for GCP derived polynomials if possible. Use 0 to autoselect, or -1 for thin plate splines.
-
-### Returns
-handle suitable for use GDALGenImgProjTransform(), and to be deallocated with GDALDestroyGenImgProjTransformer().
+` `
 """
 function gdalcreategenimgprojtransformer(
     hSrcDS,
@@ -16560,6 +16553,26 @@ function rpcinfov1tomd(psRPCInfo)
 end
 
 """
+    GDALCreateRPCTransformerV1(GDALRPCInfoV1 * psRPCInfo,
+                               int bReversed,
+                               double dfPixErrThreshold,
+                               char ** papszOptions) -> void *
+"""
+function gdalcreaterpctransformerv1(psRPC, bReversed, dfPixErrThreshold, papszOptions)
+    aftercare(
+        ccall(
+            (:GDALCreateRPCTransformerV1, libgdal),
+            Ptr{Cvoid},
+            (Ptr{GDALRPCInfoV1}, Cint, Cdouble, Ptr{Cstring}),
+            psRPC,
+            bReversed,
+            dfPixErrThreshold,
+            papszOptions,
+        ),
+    )
+end
+
+"""
     GDALDestroyRPCTransformer(void * pTransformAlg) -> void
 
 Destroy RPC tranformer.
@@ -16800,7 +16813,7 @@ function gdalsimpleimagewarp(
                 GDALTransformerFunc,
                 Ptr{Cvoid},
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
                 Ptr{Cstring},
             ),
             hSrcDS,
@@ -16931,7 +16944,7 @@ end
 """
     gdalserializetransformer(pfnFunc, pTransformArg)
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function gdalserializetransformer(pfnFunc, pTransformArg)
     aftercare(
@@ -16964,29 +16977,9 @@ function gdaldeserializetransformer(psTree, ppfnFunc, ppTransformArg)
 end
 
 """
-    GDALTransformGeolocations(GDALRasterBandH hXBand,
-                              GDALRasterBandH hYBand,
-                              GDALRasterBandH hZBand,
-                              GDALTransformerFunc pfnTransformer,
-                              void * pTransformArg,
-                              GDALProgressFunc pfnProgress,
-                              void * pProgressArg,
-                              char ** papszOptions) -> CPLErr
+    gdaltransformgeolocations(hXBand, hYBand, hZBand, pfnTransformer, pTransformArg, pfnProgress, pProgressArg, papszOptions)
 
-Transform locations held in bands.
-
-### Parameters
-* **hXBand**: the band containing the X locations (usually long/easting).
-* **hYBand**: the band containing the Y locations (usually lat/northing).
-* **hZBand**: the band containing the Z locations (may be NULL).
-* **pfnTransformer**: the transformer function.
-* **pTransformArg**: the callback data for the transformer function.
-* **pfnProgress**: callback for reporting algorithm progress matching the GDALProgressFunc() semantics. May be NULL.
-* **pProgressArg**: callback argument passed to pfnProgress.
-* **papszOptions**: list of name/value options - none currently supported.
-
-### Returns
-CE_None on success or CE_Failure if an error occurs.
+` `
 """
 function gdaltransformgeolocations(
     hXBand,
@@ -17009,7 +17002,7 @@ function gdaltransformgeolocations(
                 GDALTransformerFunc,
                 Ptr{Cvoid},
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
                 Ptr{Cstring},
             ),
             hXBand,
@@ -17099,7 +17092,7 @@ end
 """
     OGRContourWriterInfo
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 struct OGRContourWriterInfo
     hLayer::Ptr{Cvoid}
@@ -17134,37 +17127,9 @@ function ogrcontourwriter(arg1, arg2, arg3, arg4, pInfo)
 end
 
 """
-    GDALContourGenerate(GDALRasterBandH hBand,
-                        double dfContourInterval,
-                        double dfContourBase,
-                        int nFixedLevelCount,
-                        double * padfFixedLevels,
-                        int bUseNoData,
-                        double dfNoDataValue,
-                        void * hLayer,
-                        int iIDField,
-                        int iElevField,
-                        GDALProgressFunc pfnProgress,
-                        void * pProgressArg) -> CPLErr
+    gdalcontourgenerate(hBand, dfContourInterval, dfContourBase, nFixedLevelCount, padfFixedLevels, bUseNoData, dfNoDataValue, hLayer, iIDField, iElevField, pfnProgress, pProgressArg)
 
-Create vector contours from raster DEM.
-
-### Parameters
-* **hBand**: The band to read raster data from. The whole band will be processed.
-* **dfContourInterval**: The elevation interval between contours generated.
-* **dfContourBase**: The "base" relative to which contour intervals are applied. This is normally zero, but could be different. To generate 10m contours at 5, 15, 25, ... the ContourBase would be 5.
-* **nFixedLevelCount**: The number of fixed levels. If this is greater than zero, then fixed levels will be used, and ContourInterval and ContourBase are ignored.
-* **padfFixedLevels**: The list of fixed contour levels at which contours should be generated. It will contain FixedLevelCount entries, and may be NULL if fixed levels are disabled (FixedLevelCount = 0).
-* **bUseNoData**: If TRUE the dfNoDataValue will be used.
-* **dfNoDataValue**: The value to use as a "nodata" value. That is, a pixel value which should be ignored in generating contours as if the value of the pixel were not known.
-* **hLayer**: The layer to which new contour vectors will be written. Each contour will have a LINESTRING geometry attached to it. This is really of type OGRLayerH, but void * is used to avoid pulling the ogr_api.h file in here.
-* **iIDField**: If not -1 this will be used as a field index to indicate where a unique id should be written for each feature (contour) written.
-* **iElevField**: If not -1 this will be used as a field index to indicate where the elevation value of the contour should be written.
-* **pfnProgress**: A GDALProgressFunc that may be used to report progress to the user, or to interrupt the algorithm. May be NULL if not required.
-* **pProgressArg**: The callback data for the pfnProgress function.
-
-### Returns
-CE_None on success or CE_Failure if an error occurs.
+` `
 """
 function gdalcontourgenerate(
     hBand,
@@ -17196,7 +17161,7 @@ function gdalcontourgenerate(
                 Cint,
                 Cint,
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hBand,
             dfContourInterval,
@@ -17238,7 +17203,7 @@ function gdalcontourgenerateex(hBand, hLayer, options, pfnProgress, pProgressArg
         ccall(
             (:GDALContourGenerateEx, libgdal),
             CPLErr,
-            (GDALRasterBandH, Ptr{Cvoid}, CSLConstList, GDALProgressFunc, Ptr{Cvoid}),
+            (GDALRasterBandH, Ptr{Cvoid}, CSLConstList, GDALProgressFunc, Any),
             hBand,
             hLayer,
             options,
@@ -17360,7 +17325,7 @@ function gdalviewshedgenerate(
                 GDALViewshedMode,
                 Cdouble,
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
                 GDALViewshedOutputType,
                 CSLConstList,
             ),
@@ -17420,7 +17385,7 @@ function gdalrasterizegeometries(
                 Ptr{Cdouble},
                 CSLConstList,
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hDS,
             nBandCount,
@@ -17480,7 +17445,7 @@ function gdalrasterizegeometriesint64(
                 Ptr{Int64},
                 CSLConstList,
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hDS,
             nBandCount,
@@ -17570,7 +17535,7 @@ function gdalrasterizelayers(
                 Ptr{Cdouble},
                 Ptr{Cstring},
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             hDS,
             nBandCount,
@@ -17677,7 +17642,7 @@ function gdalrasterizelayersbuf(
                 Cdouble,
                 Ptr{Cstring},
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             pData,
             nBufXSize,
@@ -17967,7 +17932,7 @@ function gdalgridcreate(
                 GDALDataType,
                 Ptr{Cvoid},
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             arg1,
             arg2,
@@ -18120,7 +18085,7 @@ function gdalgridcontextprocess(
                 GDALDataType,
                 Ptr{Cvoid},
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
             ),
             psContext,
             dfXMin,
@@ -18420,17 +18385,9 @@ function gdaltriangulationfree(psDT)
 end
 
 """
-    GDALOpenVerticalShiftGrid(const char * pszProj4Geoidgrids,
-                              int * pbError) -> GDALDatasetH
+    gdalopenverticalshiftgrid(pszProj4Geoidgrids, pbError)
 
-Load proj.4 geoidgrids as GDAL dataset.
-
-### Parameters
-* **pszProj4Geoidgrids**: Value of proj.4 geoidgrids parameter.
-* **pbError**: If not NULL, the pointed value will be set to TRUE if an error occurred.
-
-### Returns
-a dataset. If not NULL, it must be closed with GDALClose().
+` `
 """
 function gdalopenverticalshiftgrid(pszProj4Geoidgrids, pbError)
     aftercare(
@@ -18445,39 +18402,9 @@ function gdalopenverticalshiftgrid(pszProj4Geoidgrids, pbError)
 end
 
 """
-    GDALApplyVerticalShiftGrid(GDALDatasetH hSrcDataset,
-                               GDALDatasetH hGridDataset,
-                               int bInverse,
-                               double dfSrcUnitToMeter,
-                               double dfDstUnitToMeter,
-                               const char *const * papszOptions) -> GDALDatasetH
+    gdalapplyverticalshiftgrid(hSrcDataset, hGridDataset, bInverse, dfSrcUnitToMeter, dfDstUnitToMeter, papszOptions)
 
-Apply a vertical shift grid to a source (DEM typically) dataset.
-
-### Parameters
-* **hSrcDataset**: source (DEM) dataset. Must not be NULL.
-* **hGridDataset**: vertical grid shift dataset. Must not be NULL.
-* **bInverse**: if set to FALSE, hGridDataset values will be added to hSrcDataset. If set to TRUE, they will be subtracted.
-* **dfSrcUnitToMeter**: the factor to convert values from hSrcDataset to meters (1.0 if source values are in meter).
-* **dfDstUnitToMeter**: the factor to convert shifted values from meter (1.0 if output values must be in meter).
-* **papszOptions**: list of options, or NULL. Supported options are: 
-
-RESAMPLING=NEAREST/BILINEAR/CUBIC. Defaults to BILINEAR. 
-
-
-MAX_ERROR=val. Maximum error measured in input pixels that is allowed in approximating the transformation (0.0 for exact calculations). Defaults to 0.125 
-
-
-DATATYPE=Byte/UInt16/Int16/Float32/Float64. Output data type. If not specified will be the same as the one of hSrcDataset. 
-
-
-ERROR_ON_MISSING_VERT_SHIFT=YES/NO. Whether a missing/nodata value in hGridDataset should cause I/O requests to fail. Default is NO (in which case 0 will be used) 
-
-
-SRC_SRS=srs_def. Override projection on hSrcDataset;
-
-### Returns
-a new dataset corresponding to hSrcDataset adjusted with hGridDataset, or NULL. If not NULL, it must be closed with GDALClose().
+` `
 """
 function gdalapplyverticalshiftgrid(
     hSrcDataset,
@@ -18929,7 +18856,7 @@ Warp Resampling Algorithm
 | GRA\\_Q3               | Q3 (selects third quartile of all non-NODATA contributing pixels)                       |
 | GRA\\_Sum              | Sum (weighed sum of all non-NODATA contributing pixels). Added in GDAL 3.1              |
 | GRA\\_RMS              | RMS (weighted root mean square (quadratic mean) of all non-NODATA contributing pixels)  |
-| GRA\\_LAST\\_VALUE     | Doxygen\\_Suppress                                                                      |
+| GRA\\_LAST\\_VALUE     | ` Doxygen_Suppress `                                                                    |
 """
 @cenum GDALResampleAlg::UInt32 begin
     GRA_NearestNeighbour = 0
@@ -18976,7 +18903,7 @@ GWKAverageOrMode Algorithm
     GWKAOM_RMS = 8
 end
 
-"Doxygen\\\\_Suppress"
+"` Doxygen_Suppress `"
 const GDALMaskFunc = Ptr{Cvoid}
 
 """
@@ -19527,7 +19454,7 @@ end
 """
     gdalserializewarpoptions(arg1)
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function gdalserializewarpoptions(arg1)
     aftercare(
@@ -19584,7 +19511,7 @@ function gdalreprojectimage(
                 Cdouble,
                 Cdouble,
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
                 Ptr{GDALWarpOptions},
             ),
             hSrcDS,
@@ -19646,7 +19573,7 @@ function gdalcreateandreprojectimage(
                 Cdouble,
                 Cdouble,
                 GDALProgressFunc,
-                Ptr{Cvoid},
+                Any,
                 Ptr{GDALWarpOptions},
             ),
             hSrcDS,
@@ -19964,7 +19891,7 @@ end
 """
     gwkgetfilterradius(eResampleAlg)
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function gwkgetfilterradius(eResampleAlg)
     aftercare(ccall((:GWKGetFilterRadius, libgdal), Cint, (GDALResampleAlg,), eResampleAlg))
@@ -20005,7 +19932,7 @@ end
 "Type for a function that returns the pixel data in a provided window"
 const VRTImageReadFunc = Ptr{Cvoid}
 
-"Doxygen\\\\_Suppress"
+"` Doxygen_Suppress `"
 const VRTAveragedSourceH = Ptr{Cvoid}
 
 const VRTAverageFilteredSourceH = Ptr{Cvoid}
@@ -20387,7 +20314,7 @@ function gdaltranslateoptionssetprogress(psOptions, pfnProgress, pProgressData)
         ccall(
             (:GDALTranslateOptionsSetProgress, libgdal),
             Cvoid,
-            (Ptr{GDALTranslateOptions}, GDALProgressFunc, Ptr{Cvoid}),
+            (Ptr{GDALTranslateOptions}, GDALProgressFunc, Any),
             psOptions,
             pfnProgress,
             pProgressData,
@@ -20491,7 +20418,7 @@ function gdalwarpappoptionssetprogress(psOptions, pfnProgress, pProgressData)
         ccall(
             (:GDALWarpAppOptionsSetProgress, libgdal),
             Cvoid,
-            (Ptr{GDALWarpAppOptions}, GDALProgressFunc, Ptr{Cvoid}),
+            (Ptr{GDALWarpAppOptions}, GDALProgressFunc, Any),
             psOptions,
             pfnProgress,
             pProgressData,
@@ -20655,7 +20582,7 @@ function gdalvectortranslateoptionssetprogress(psOptions, pfnProgress, pProgress
         ccall(
             (:GDALVectorTranslateOptionsSetProgress, libgdal),
             Cvoid,
-            (Ptr{GDALVectorTranslateOptions}, GDALProgressFunc, Ptr{Cvoid}),
+            (Ptr{GDALVectorTranslateOptions}, GDALProgressFunc, Any),
             psOptions,
             pfnProgress,
             pProgressData,
@@ -20772,7 +20699,7 @@ function gdaldemprocessingoptionssetprogress(psOptions, pfnProgress, pProgressDa
         ccall(
             (:GDALDEMProcessingOptionsSetProgress, libgdal),
             Cvoid,
-            (Ptr{GDALDEMProcessingOptions}, GDALProgressFunc, Ptr{Cvoid}),
+            (Ptr{GDALDEMProcessingOptions}, GDALProgressFunc, Any),
             psOptions,
             pfnProgress,
             pProgressData,
@@ -20896,7 +20823,7 @@ function gdalnearblackoptionssetprogress(psOptions, pfnProgress, pProgressData)
         ccall(
             (:GDALNearblackOptionsSetProgress, libgdal),
             Cvoid,
-            (Ptr{GDALNearblackOptions}, GDALProgressFunc, Ptr{Cvoid}),
+            (Ptr{GDALNearblackOptions}, GDALProgressFunc, Any),
             psOptions,
             pfnProgress,
             pProgressData,
@@ -20998,7 +20925,7 @@ function gdalgridoptionssetprogress(psOptions, pfnProgress, pProgressData)
         ccall(
             (:GDALGridOptionsSetProgress, libgdal),
             Cvoid,
-            (Ptr{GDALGridOptions}, GDALProgressFunc, Ptr{Cvoid}),
+            (Ptr{GDALGridOptions}, GDALProgressFunc, Any),
             psOptions,
             pfnProgress,
             pProgressData,
@@ -21102,7 +21029,7 @@ function gdalrasterizeoptionssetprogress(psOptions, pfnProgress, pProgressData)
         ccall(
             (:GDALRasterizeOptionsSetProgress, libgdal),
             Cvoid,
-            (Ptr{GDALRasterizeOptions}, GDALProgressFunc, Ptr{Cvoid}),
+            (Ptr{GDALRasterizeOptions}, GDALProgressFunc, Any),
             psOptions,
             pfnProgress,
             pProgressData,
@@ -21209,7 +21136,7 @@ function gdalbuildvrtoptionssetprogress(psOptions, pfnProgress, pProgressData)
         ccall(
             (:GDALBuildVRTOptionsSetProgress, libgdal),
             Cvoid,
-            (Ptr{GDALBuildVRTOptions}, GDALProgressFunc, Ptr{Cvoid}),
+            (Ptr{GDALBuildVRTOptions}, GDALProgressFunc, Any),
             psOptions,
             pfnProgress,
             pProgressData,
@@ -21407,7 +21334,7 @@ function gdalmultidimtranslateoptionssetprogress(psOptions, pfnProgress, pProgre
         ccall(
             (:GDALMultiDimTranslateOptionsSetProgress, libgdal),
             Cvoid,
-            (Ptr{GDALMultiDimTranslateOptions}, GDALProgressFunc, Ptr{Cvoid}),
+            (Ptr{GDALMultiDimTranslateOptions}, GDALProgressFunc, Any),
             psOptions,
             pfnProgress,
             pProgressData,
@@ -23462,7 +23389,7 @@ end
 """
     ogr_g_intersect(arg1, arg2)
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function ogr_g_intersect(arg1, arg2)
     aftercare(
@@ -23513,15 +23440,9 @@ function ogr_g_getboundary(arg1)
 end
 
 """
-    OGR_G_GetPointCount(OGRGeometryH hGeom) -> int
+    ogr_g_getpointcount(arg1)
 
-Fetch number of points from a Point or a LineString/LinearRing geometry.
-
-### Parameters
-* **hGeom**: handle to the geometry from which to get the number of points.
-
-### Returns
-the number of points.
+` `
 """
 function ogr_g_getpointcount(arg1)
     aftercare(ccall((:OGR_G_GetPointCount, libgdal), Cint, (OGRGeometryH,), arg1))
@@ -24392,7 +24313,7 @@ end
 """
     ogrsetgenerate_db2_v72_byte_order(bGenerate_DB2_V72_BYTE_ORDER)
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function ogrsetgenerate_db2_v72_byte_order(bGenerate_DB2_V72_BYTE_ORDER)
     aftercare(
@@ -24413,12 +24334,9 @@ function ogrgetgenerate_db2_v72_byte_order()
 end
 
 """
-    OGRSetNonLinearGeometriesEnabledFlag(int bFlag) -> void
+    ogrsetnonlineargeometriesenabledflag(bFlag)
 
-Set flag to enable/disable returning non-linear geometries in the C API.
-
-### Parameters
-* **bFlag**: TRUE if non-linear geometries might be returned (default value). FALSE to ask for non-linear geometries to be approximated as linear geometries.
+` `
 """
 function ogrsetnonlineargeometriesenabledflag(bFlag)
     aftercare(
@@ -28100,7 +28018,7 @@ function ogr_l_getgeometrytypes(
         ccall(
             (:OGR_L_GetGeometryTypes, libgdal),
             Ptr{OGRGeometryTypeCounter},
-            (OGRLayerH, Cint, Cint, Ptr{Cint}, GDALProgressFunc, Ptr{Cvoid}),
+            (OGRLayerH, Cint, Cint, Ptr{Cint}, GDALProgressFunc, Any),
             hLayer,
             iGeomField,
             nFlags,
@@ -28827,7 +28745,7 @@ end
 """
     ogr_l_reference(arg1)
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function ogr_l_reference(arg1)
     aftercare(ccall((:OGR_L_Reference, libgdal), Cint, (OGRLayerH,), arg1))
@@ -28848,15 +28766,9 @@ function ogr_l_getrefcount(arg1)
 end
 
 """
-    OGR_L_SyncToDisk(OGRLayerH) -> OGRErr
+    ogr_l_synctodisk(arg1)
 
-Flush pending changes to disk.
-
-### Parameters
-* **hLayer**: handle to the layer
-
-### Returns
-OGRERR_NONE if no error occurs (even if nothing is done) or an error code.
+` `
 """
 function ogr_l_synctodisk(arg1)
     aftercare(ccall((:OGR_L_SyncToDisk, libgdal), OGRErr, (OGRLayerH,), arg1))
@@ -28865,22 +28777,16 @@ end
 """
     ogr_l_getfeaturesread(arg1)
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function ogr_l_getfeaturesread(arg1)
     aftercare(ccall((:OGR_L_GetFeaturesRead, libgdal), GIntBig, (OGRLayerH,), arg1))
 end
 
 """
-    OGR_L_GetFIDColumn(OGRLayerH) -> const char *
+    ogr_l_getfidcolumn(arg1)
 
-This method returns the name of the underlying database column being used as the FID column, or "" if not supported.
-
-### Parameters
-* **hLayer**: handle to the layer
-
-### Returns
-fid column name.
+` `
 """
 function ogr_l_getfidcolumn(arg1)
     aftercare(ccall((:OGR_L_GetFIDColumn, libgdal), Cstring, (OGRLayerH,), arg1), false)
@@ -28998,7 +28904,7 @@ function ogr_l_intersection(arg1, arg2, arg3, arg4, arg5, arg6)
         ccall(
             (:OGR_L_Intersection, libgdal),
             OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}),
+            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -29035,7 +28941,7 @@ function ogr_l_union(arg1, arg2, arg3, arg4, arg5, arg6)
         ccall(
             (:OGR_L_Union, libgdal),
             OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}),
+            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -29072,7 +28978,7 @@ function ogr_l_symdifference(arg1, arg2, arg3, arg4, arg5, arg6)
         ccall(
             (:OGR_L_SymDifference, libgdal),
             OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}),
+            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -29109,7 +29015,7 @@ function ogr_l_identity(arg1, arg2, arg3, arg4, arg5, arg6)
         ccall(
             (:OGR_L_Identity, libgdal),
             OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}),
+            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -29146,7 +29052,7 @@ function ogr_l_update(arg1, arg2, arg3, arg4, arg5, arg6)
         ccall(
             (:OGR_L_Update, libgdal),
             OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}),
+            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -29183,7 +29089,7 @@ function ogr_l_clip(arg1, arg2, arg3, arg4, arg5, arg6)
         ccall(
             (:OGR_L_Clip, libgdal),
             OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}),
+            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -29220,7 +29126,7 @@ function ogr_l_erase(arg1, arg2, arg3, arg4, arg5, arg6)
         ccall(
             (:OGR_L_Erase, libgdal),
             OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Ptr{Cvoid}),
+            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -29503,7 +29409,7 @@ end
 """
     ogr_ds_reference(arg1)
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function ogr_ds_reference(arg1)
     aftercare(ccall((:OGR_DS_Reference, libgdal), Cint, (OGRDataSourceH,), arg1))
@@ -29533,7 +29439,7 @@ end
 """
     ogr_ds_synctodisk(arg1)
 
-
+` `
 
 Flush pending changes to disk. See GDALDataset::FlushCache()
 """
@@ -29806,7 +29712,7 @@ end
 """
     ogrregisterdriver(arg1)
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function ogrregisterdriver(arg1)
     aftercare(ccall((:OGRRegisterDriver, libgdal), Cvoid, (OGRSFDriverH,), arg1))
@@ -29817,12 +29723,9 @@ function ogrderegisterdriver(arg1)
 end
 
 """
-    OGRGetDriverCount(void) -> int
+    ogrgetdrivercount()
 
-Fetch the number of registered drivers.
-
-### Returns
-the drivers count.
+` `
 """
 function ogrgetdrivercount()
     aftercare(ccall((:OGRGetDriverCount, libgdal), Cint, ()))
@@ -29861,7 +29764,7 @@ end
 """
     ogrgetopendscount()
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function ogrgetopendscount()
     aftercare(ccall((:OGRGetOpenDSCount, libgdal), Cint, ()))
@@ -29872,9 +29775,9 @@ function ogrgetopends(iDS)
 end
 
 """
-    OGRRegisterAll(void) -> void
+    ogrregisterall()
 
-Register all drivers.
+` `
 """
 function ogrregisterall()
     aftercare(ccall((:OGRRegisterAll, libgdal), Cvoid, ()))
@@ -30721,7 +30624,7 @@ end
 """
     ogrmalloc(arg1)
 
-Doxygen\\_Suppress
+` Doxygen_Suppress `
 """
 function ogrmalloc(arg1)
     aftercare(ccall((:OGRMalloc, libgdal), Ptr{Cvoid}, (Csize_t,), arg1))
@@ -35454,7 +35357,7 @@ const GDAL_VERSION_MAJOR = 3
 
 const GDAL_VERSION_MINOR = 6
 
-const GDAL_VERSION_REV = 0
+const GDAL_VERSION_REV = 1
 
 const GDAL_VERSION_BUILD = 0
 
@@ -35462,9 +35365,9 @@ const GDAL_VERSION_NUM =
     GDAL_COMPUTE_VERSION(GDAL_VERSION_MAJOR, GDAL_VERSION_MINOR, GDAL_VERSION_REV) +
     GDAL_VERSION_BUILD
 
-const GDAL_RELEASE_DATE = 20221106
+const GDAL_RELEASE_DATE = 20221214
 
-const GDAL_RELEASE_NAME = "3.6.0"
+const GDAL_RELEASE_NAME = "3.6.1"
 
 const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
 
