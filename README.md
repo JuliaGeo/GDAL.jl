@@ -58,37 +58,30 @@ The bulk of this package is generated automatically by the scripts under
 
 The provided GDAL installation also contains the commonly used utilities such as
 `gdal_translate` and `ogr2ogr`. They can be called from Julia like so:
-```julia
-using GDAL
+```R
+using GDAL_jll
 
 # list information about a raster dataset
-GDAL.gdalinfo_path() do gdalinfo
-    run(`$gdalinfo path/to/raster-file`)
-end
+run(`$(gdalinfo_path()) path/to/raster-file`)
 
 # convert raster data between different formats
-GDAL.gdal_translate_path() do gdal_translate
-    run(`$gdal_translate -of COG input.asc output.tif`)
-end
+run(`$(gdal_translate_path()) -of COG input.asc output.tif`)
 
 # list information about an OGR-supported data source
-GDAL.ogrinfo_path() do ogrinfo
-    run(`$ogrinfo path/to/vector-file`)
-end
+run(`$(ogrinfo_path()) path/to/vector-file`)
 
 # convert simple features data between file formats
-GDAL.ogr2ogr_path() do ogr2ogr
-    run(`$ogr2ogr -f FlatGeobuf output.fgb input.shp`)
-end
+run(`$(ogr2ogr_path()) -f FlatGeobuf output.fgb input.shp`)
 ```
 
-The `GDAL.<util>_path` are defined in the
+The `<util>_path` functions are exported from the
 [`GDAL_jll`](https://github.com/JuliaBinaryWrappers/GDAL_jll.jl) package. If you only wish
-to run the utilities, that package will have all you need. A list of the available utilities
+to run the utilities, that package will have all you need. If you are using the GDAL
+package, they are also available as `GDAL.<util>_path`. A list of the available utilities
 can be found [here](https://github.com/JuliaBinaryWrappers/GDAL_jll.jl#products).
 Documentation for them is available on
 [gdal.org/programs](https://gdal.org/programs/index.html). Note that programs implemented in
-python (ending in .py) are not available, since those would require a python installations.
+Python (ending in .py) are not available, since those would require a Python installation.
 
 Since GDAL 2.1's [RFC59.1](https://trac.osgeo.org/gdal/wiki/rfc59.1_utilities_as_a_library)
 most utilities are also available as functions in the library, they are implemented
