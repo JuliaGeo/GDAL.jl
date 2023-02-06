@@ -6,4 +6,4 @@
 end)
 
 # preferred thread-safe wrapper syntax on Julia 1.6+
-@test success(run(pipeline(`$(gdalinfo_path()) $utmsmall`, devnull)))
+@test success(run(pipeline(`$(GDAL.gdalinfo_path()) $utmsmall`, devnull)))
