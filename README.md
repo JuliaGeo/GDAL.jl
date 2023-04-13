@@ -1,7 +1,7 @@
 # GDAL.jl
 [![CI](https://github.com/JuliaGeo/GDAL.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/JuliaGeo/GDAL.jl/actions/workflows/CI.yml)
 
-don't merge
+don't merge me
 
 Julia wrapper for [GDAL - Geospatial Data Abstraction Library](http://gdal.org/). This
 package is a binding to the C API of GDAL/OGR. It provides only a C style usage, where
