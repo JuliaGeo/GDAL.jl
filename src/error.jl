@@ -32,15 +32,13 @@ checking code decides it should throw.
 function gdaljl_errorhandler(class::CPLErr, errno::Cint, errmsg::Cstring)
     # function signature needs to match the one in __init__, and the signature
     # of the callback for a custom error handler in the GDAL docs
-    if class === CE_Failure
-        throw(GDALError(class, errno, unsafe_string(errmsg)))
-    end
+    # return C_NULL to suppress any error printing by gdal
     return C_NULL
 end
 
 "Check the last error type and throw a GDALError if it is a failure"
 function maybe_throw()
-    if cplgetlasterrortype() === CE_Failure
+    if cplgetlasterrortype() >= CE_Warning
         throw(GDALError())
     end
     nothing
