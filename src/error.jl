@@ -38,7 +38,7 @@ end
 
 "Check the last error type and throw a GDALError if it is a failure"
 function maybe_throw()
-    if cplgetlasterrortype() >= CE_Warning
+    if cplgetlasterrortype() >= CE_Failure
         throw(GDALError())
     end
     nothing
