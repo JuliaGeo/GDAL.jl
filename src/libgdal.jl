@@ -85,6 +85,48 @@ function cplsetthreadlocalconfigoption(pszKey, pszValue)
     )
 end
 
+"Callback for [`CPLSubscribeToSetConfigOption`](@ref)()"
+const CPLSetConfigOptionSubscriber = Ptr{Cvoid}
+
+"""
+    CPLSubscribeToSetConfigOption(CPLSetConfigOptionSubscriber pfnCallback,
+                                  void * pUserData) -> int
+
+Install a callback that will be notified of calls to CPLSetConfigOption()/ CPLSetThreadLocalConfigOption()
+
+### Parameters
+* **pfnCallback**: Callback. Must not be NULL
+* **pUserData**: Callback user data. May be NULL.
+
+### Returns
+subscriber ID that can be used with CPLUnsubscribeToSetConfigOption()
+"""
+function cplsubscribetosetconfigoption(pfnCallback, pUserData)
+    aftercare(
+        ccall(
+            (:CPLSubscribeToSetConfigOption, libgdal),
+            Cint,
+            (CPLSetConfigOptionSubscriber, Ptr{Cvoid}),
+            pfnCallback,
+            pUserData,
+        ),
+    )
+end
+
+"""
+    CPLUnsubscribeToSetConfigOption(int nId) -> void
+
+Remove a subscriber installed with CPLSubscribeToSetConfigOption()
+
+### Parameters
+* **nId**: Subscriber id returned by CPLSubscribeToSetConfigOption()
+"""
+function cplunsubscribetosetconfigoption(nSubscriberId)
+    aftercare(
+        ccall((:CPLUnsubscribeToSetConfigOption, libgdal), Cvoid, (Cint,), nSubscriberId),
+    )
+end
+
 """
     cplfreeconfig()
 
@@ -302,8 +344,10 @@ function cplreadline(arg1)
     aftercare(ccall((:CPLReadLine, libgdal), Cstring, (Ptr{Libc.FILE},), arg1), false)
 end
 
-"Opaque type for a FILE that implements the VSIVirtualHandle API"
-const VSILFILE = Libc.FILE
+const VSIVirtualHandle = Cvoid
+
+"Opaque type for a FILE that implements the [`VSIVirtualHandle`](@ref) API"
+const VSILFILE = VSIVirtualHandle
 
 """
     CPLReadLineL(VSILFILE * fp) -> const char *
@@ -906,7 +950,7 @@ Fetch path of executable.
 
 ### Parameters
 * **pszPathBuf**: the buffer into which the path is placed.
-* **nMaxLength**: the buffer size, MAX_PATH+1 is suggested.
+* **nMaxLength**: the buffer size (including the nul-terminating character). MAX_PATH+1 is suggested.
 
 ### Returns
 FALSE on failure or TRUE on success.
@@ -1308,7 +1352,7 @@ function cplfindfile(pszClass, pszBasename)
 end
 
 """
-    CPLDefaultFindFile(const char *,
+    CPLDefaultFindFile(const char * pszClass,
                        const char * pszBasename) -> const char *
 
 CPLDefaultFindFile.
@@ -1704,6 +1748,64 @@ function cplclosefileinzip(hZip)
     aftercare(ccall((:CPLCloseFileInZip, libgdal), CPLErr, (Ptr{Cvoid},), hZip))
 end
 
+const GDALProgressFunc = Ptr{Cvoid}
+
+"""
+    CPLAddFileInZip(void * hZip,
+                    const char * pszArchiveFilename,
+                    const char * pszInputFilename,
+                    VSILFILE * fpInput,
+                    CSLConstList papszOptions,
+                    GDALProgressFunc pProgressFunc,
+                    void * pProgressData) -> CPLErr
+
+Add a file inside a ZIP file opened/created with CPLCreateZip().
+
+### Parameters
+* **hZip**: ZIP file handle
+* **pszArchiveFilename**: Filename (in UTF-8) stored in the archive.
+* **pszInputFilename**: Filename of the file to add. If NULL, fpInput must not be NULL
+* **fpInput**: File handle opened on the file to add. May be NULL if pszInputFilename is provided.
+* **papszOptions**: Options.
+* **pProgressFunc**: Progress callback, or NULL.
+* **pProgressData**: User data of progress callback, or NULL.
+
+### Returns
+CE_None in case of success.
+"""
+function cpladdfileinzip(
+    hZip,
+    pszArchiveFilename,
+    pszInputFilename,
+    fpInput,
+    papszOptions,
+    pProgressFunc,
+    pProgressData,
+)
+    aftercare(
+        ccall(
+            (:CPLAddFileInZip, libgdal),
+            CPLErr,
+            (
+                Ptr{Cvoid},
+                Cstring,
+                Cstring,
+                Ptr{VSILFILE},
+                CSLConstList,
+                GDALProgressFunc,
+                Any,
+            ),
+            hZip,
+            pszArchiveFilename,
+            pszInputFilename,
+            fpInput,
+            papszOptions,
+            pProgressFunc,
+            pProgressData,
+        ),
+    )
+end
+
 """
     CPLCloseZip(void *) -> CPLErr
 """
@@ -1933,6 +2035,10 @@ Whether failures should be turned into warnings.
 """
 function cplturnfailureintowarning(bOn)
     aftercare(ccall((:CPLTurnFailureIntoWarning, libgdal), Cvoid, (Cint,), bOn))
+end
+
+function cplgeterrorhandler(ppUserData)
+    ccall((:CPLGetErrorHandler, libgdal), CPLErrorHandler, (Ptr{Ptr{Cvoid}},), ppUserData)
 end
 
 function cplseterrorhandler(arg1)
@@ -2436,6 +2542,9 @@ const GByte = Cuchar
 "Int16 type"
 const GInt16 = Cshort
 
+"Signed int8 type"
+const GInt8 = Int8
+
 """
 ` `
 
@@ -2448,8 +2557,6 @@ const GInt64 = GIntBig
 
 "Integer type large enough to hold the difference between 2 addresses"
 const GPtrDiff_t = GIntBig
-
-const GDALProgressFunc = Ptr{Cvoid}
 
 """
     GDALDummyProgress(double,
@@ -4034,7 +4141,10 @@ STATUS: specific to /vsiadls/: returns all system defined properties for a path 
 ACL: specific to /vsiadls/ and /vsigs/: returns the access control list for a path. For /vsigs/, a single XML=xml_content string is returned. Refer to https://cloud.google.com/storage/docs/xml-api/get-object-acls  
 
 
-METADATA: specific to /vsiaz/: to set blob metadata. Refer to https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-metadata. Note: this will be a subset of what pszDomain=HEADERS returns
+METADATA: specific to /vsiaz/: to set blob metadata. Refer to https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-metadata. Note: this will be a subset of what pszDomain=HEADERS returns 
+
+
+ZIP: specific to /vsizip/: to obtain ZIP specific metadata, in particular if a file is SOZIP-enabled (SOZIP_VALID=YES)
 * **papszOptions**: Unused. Should be set to NULL.
 
 ### Returns
@@ -4614,6 +4724,62 @@ function vsirename(oldpath, newpath)
 end
 
 """
+    VSICopyFile(const char * pszSource,
+                const char * pszTarget,
+                VSILFILE * fpSource,
+                vsi_l_offset nSourceSize,
+                const char *const * papszOptions,
+                GDALProgressFunc pProgressFunc,
+                void * pProgressData) -> int
+
+Copy a source file into a target file.
+
+### Parameters
+* **pszSource**: Source filename. UTF-8 encoded. May be NULL if fpSource is not NULL.
+* **pszTarget**: Target filename. UTF-8 encoded. Must not be NULL
+* **fpSource**: File handle on the source file. May be NULL if pszSource is not NULL.
+* **nSourceSize**: Size of the source file. Only used for progress callback. If set to -1, and progress callback is used, VSIStatL() will be used on pszSource to retrieve the source size.
+* **papszOptions**: Null terminated list of options, or NULL.
+* **pProgressFunc**: Progress callback, or NULL.
+* **pProgressData**: User data of progress callback, or NULL.
+
+### Returns
+0 on success.
+"""
+function vsicopyfile(
+    pszSource,
+    pszTarget,
+    fpSource,
+    nSourceSize,
+    papszOptions,
+    pProgressFunc,
+    pProgressData,
+)
+    aftercare(
+        ccall(
+            (:VSICopyFile, libgdal),
+            Cint,
+            (
+                Cstring,
+                Cstring,
+                Ptr{VSILFILE},
+                vsi_l_offset,
+                Ptr{Cstring},
+                GDALProgressFunc,
+                Any,
+            ),
+            pszSource,
+            pszTarget,
+            fpSource,
+            nSourceSize,
+            papszOptions,
+            pProgressFunc,
+            pProgressData,
+        ),
+    )
+end
+
+"""
     VSISync(const char * pszSource,
             const char * pszTarget,
             const char *const * papszOptions,
@@ -4631,7 +4797,8 @@ Synchronize a source file/directory with a target file/directory.
 RECURSIVE=NO (the default is YES) 
 
 
-SYNC_STRATEGY=TIMESTAMP/ETAG/OVERWRITE. Determines which criterion is used to determine if a target file must be replaced when it already exists and has the same file size as the source. Only applies for a source or target being a network filesystem.
+SYNC_STRATEGY=TIMESTAMP/ETAG/OVERWRITE.
+Determines which criterion is used to determine if a target file must be replaced when it already exists and has the same file size as the source. Only applies for a source or target being a network filesystem.
 The default is TIMESTAMP (similarly to how 'aws s3 sync' works), that is to say that for an upload operation, a remote file is replaced if it has a different size or if it is older than the source. For a download operation, a local file is replaced if it has a different size or if it is newer than the remote file.
 The ETAG strategy assumes that the ETag metadata of the remote file is the MD5Sum of the file content, which is only true in the case of /vsis3/ for files not using KMS server side encryption and uploaded in a single PUT operation (so smaller than 50 MB given the default used by GDAL). Only to be used for /vsis3/, /vsigs/ or other filesystems using a MD5Sum as ETAG.
 The OVERWRITE strategy (GDAL >= 3.2) will always overwrite the target file with the source one.  
@@ -4919,6 +5086,24 @@ function vsiinstallswiftstreamingfilehandler()
 end
 
 """
+    VSIInstall7zFileHandler(void) -> void
+
+Install /vsi7z/ 7zip file system handler (requires libarchive)
+"""
+function vsiinstall7zfilehandler()
+    aftercare(ccall((:VSIInstall7zFileHandler, libgdal), Cvoid, ()))
+end
+
+"""
+    VSIInstallRarFileHandler(void) -> void
+
+Install /vsirar/ RAR file system handler (requires libarchive)
+"""
+function vsiinstallrarfilehandler()
+    aftercare(ccall((:VSIInstallRarFileHandler, libgdal), Cvoid, ()))
+end
+
+"""
     VSIInstallGZipFileHandler() -> void
 
 Install GZip file system handler.
@@ -5025,9 +5210,38 @@ function vsicleanupfilemanager()
 end
 
 """
-    vsifilefrommembuffer(pszFilename, pabyData, nDataLength, bTakeOwnership)
+    vsiduplicatefilesystemhandler(pszSourceFSName, pszNewFSName)
 
 ` `
+"""
+function vsiduplicatefilesystemhandler(pszSourceFSName, pszNewFSName)
+    aftercare(
+        ccall(
+            (:VSIDuplicateFileSystemHandler, libgdal),
+            Bool,
+            (Cstring, Cstring),
+            pszSourceFSName,
+            pszNewFSName,
+        ),
+    )
+end
+
+"""
+    VSIFileFromMemBuffer(const char * pszFilename,
+                         GByte * pabyData,
+                         vsi_l_offset nDataLength,
+                         int bTakeOwnership) -> VSILFILE *
+
+Create memory "file" from a buffer.
+
+### Parameters
+* **pszFilename**: the filename to be created, or nullptr
+* **pabyData**: the data buffer for the file.
+* **nDataLength**: the length of buffer in bytes.
+* **bTakeOwnership**: TRUE to transfer "ownership" of buffer or FALSE.
+
+### Returns
+open file handle on created file (see VSIFOpenL()).
 """
 function vsifilefrommembuffer(pszFilename, pabyData, nDataLength, bTakeOwnership)
     aftercare(
@@ -5221,6 +5435,21 @@ Close file handle. Optional
 const VSIFilesystemPluginCloseCallback = Ptr{Cvoid}
 
 """
+This optional method is called when code plans to access soon one or several ranges in a file. Some file systems may be able to use this hint to for example asynchronously start such requests.
+
+Offsets may be given in a non-increasing order, and may potentially overlap.
+
+\\since GDAL 3.7
+
+### Parameters
+* `pFile`: File handle.
+* `nRanges`: Size of the panOffsets and panSizes arrays.
+* `panOffsets`: Array containing the start offset of each range.
+* `panSizes`: Array containing the size (in bytes) of each range.
+"""
+const VSIFilesystemPluginAdviseReadCallback = Ptr{Cvoid}
+
+"""
     VSIFilesystemPluginCallbacksStruct
 
 struct containing callbacks to used by the handler. (rw), (r), (w) or () at the end indicate whether the given callback is mandatory for reading and or writing handlers. A (?) indicates that the callback might be mandatory for certain drivers only.
@@ -5250,6 +5479,7 @@ struct containing callbacks to used by the handler. (rw), (r), (w) or () at the 
 | nBufferSize          | buffer small reads (makes handler read only)                                           |
 | nCacheSize           | max mem to use per file when buffering                                                 |
 | sibling\\_files      | list related files                                                                     |
+| advise\\_read        | AdviseRead()                                                                           |
 """
 struct VSIFilesystemPluginCallbacksStruct
     pUserData::Ptr{Cvoid}
@@ -5273,6 +5503,7 @@ struct VSIFilesystemPluginCallbacksStruct
     nBufferSize::Csize_t
     nCacheSize::Csize_t
     sibling_files::VSIFilesystemPluginSiblingFilesCallback
+    advise_read::VSIFilesystemPluginAdviseReadCallback
 end
 
 """
@@ -5454,6 +5685,7 @@ Pixel data types
 | :-------------- | :------------------------------------- |
 | GDT\\_Unknown   | Unknown or unspecified type            |
 | GDT\\_Byte      | Eight bit unsigned integer             |
+| GDT\\_Int8      | 8-bit signed integer (GDAL >= 3.7)     |
 | GDT\\_UInt16    | Sixteen bit unsigned integer           |
 | GDT\\_Int16     | Sixteen bit signed integer             |
 | GDT\\_UInt32    | Thirty two bit unsigned integer        |
@@ -5471,6 +5703,7 @@ Pixel data types
 @cenum GDALDataType::UInt32 begin
     GDT_Unknown = 0
     GDT_Byte = 1
+    GDT_Int8 = 14
     GDT_UInt16 = 2
     GDT_Int16 = 3
     GDT_UInt32 = 4
@@ -5483,7 +5716,7 @@ Pixel data types
     GDT_CInt32 = 9
     GDT_CFloat32 = 10
     GDT_CFloat64 = 11
-    GDT_TypeCount = 14
+    GDT_TypeCount = 15
 end
 
 """
@@ -6986,15 +7219,18 @@ function gdalgetfilelist(arg1)
 end
 
 """
-    GDALClose(GDALDatasetH hDS) -> void
+    GDALClose(GDALDatasetH hDS) -> CPLErr
 
 Close GDAL dataset.
 
 ### Parameters
 * **hDS**: The dataset to close. May be cast from a "GDALDataset *".
+
+### Returns
+CE_None in case of success (return value since GDAL 3.7). On a shared dataset whose reference count is not dropped below 1, CE_None will be returned.
 """
 function gdalclose(arg1)
-    aftercare(ccall((:GDALClose, libgdal), Cvoid, (GDALDatasetH,), arg1))
+    aftercare(ccall((:GDALClose, libgdal), CPLErr, (GDALDatasetH,), arg1))
 end
 
 """
@@ -7397,6 +7633,130 @@ function gdaldatasetadviseread(
 end
 
 """
+    GDALDatasetGetCompressionFormats(GDALDatasetH hDS,
+                                     int nXOff,
+                                     int nYOff,
+                                     int nXSize,
+                                     int nYSize,
+                                     int nBandCount,
+                                     const int * panBandList) -> char **
+
+Return the compression formats that can be natively obtained for the window of interest and requested bands.
+
+### Parameters
+* **hDS**: Dataset handle.
+* **nXOff**: The pixel offset to the top left corner of the region of the band to be accessed. This would be zero to start from the left side.
+* **nYOff**: The line offset to the top left corner of the region of the band to be accessed. This would be zero to start from the top.
+* **nXSize**: The width of the region of the band to be accessed in pixels.
+* **nYSize**: The height of the region of the band to be accessed in lines.
+* **nBandCount**: the number of bands being requested.
+* **panBandList**: the list of nBandCount band numbers. Note band numbers are 1 based. This may be NULL to select the first nBandCount bands.
+
+### Returns
+a list of compatible formats (which may be empty) that should be freed with CSLDestroy(), or nullptr.
+"""
+function gdaldatasetgetcompressionformats(
+    hDS,
+    nXOff,
+    nYOff,
+    nXSize,
+    nYSize,
+    nBandCount,
+    panBandList,
+)
+    aftercare(
+        ccall(
+            (:GDALDatasetGetCompressionFormats, libgdal),
+            Ptr{Cstring},
+            (GDALDatasetH, Cint, Cint, Cint, Cint, Cint, Ptr{Cint}),
+            hDS,
+            nXOff,
+            nYOff,
+            nXSize,
+            nYSize,
+            nBandCount,
+            panBandList,
+        ),
+    )
+end
+
+"""
+    GDALDatasetReadCompressedData(GDALDatasetH hDS,
+                                  const char * pszFormat,
+                                  int nXOff,
+                                  int nYOff,
+                                  int nXSize,
+                                  int nYSize,
+                                  int nBandCount,
+                                  const int * panBandList,
+                                  void ** ppBuffer,
+                                  size_t * pnBufferSize,
+                                  char ** ppszDetailedFormat) -> CPLErr
+
+Return the compressed content that can be natively obtained for the window of interest and requested bands.
+
+### Parameters
+* **hDS**: Dataset handle.
+* **pszFormat**: Requested compression format (e.g. "JPEG", "WEBP", "JXL"). This is the MIME type of one of the values returned by GetCompressionFormats(). The format string is designed to potentially include at a later point key=value optional parameters separated by a semi-colon character. At time of writing, none are implemented. ReadCompressedData() implementations should verify optional parameters and return CE_Failure if they cannot support one of them.
+* **nXOff**: The pixel offset to the top left corner of the region of the band to be accessed. This would be zero to start from the left side.
+* **nYOff**: The line offset to the top left corner of the region of the band to be accessed. This would be zero to start from the top.
+* **nXSize**: The width of the region of the band to be accessed in pixels.
+* **nYSize**: The height of the region of the band to be accessed in lines.
+* **nBandCount**: the number of bands being requested.
+* **panBandList**: the list of nBandCount band numbers. Note band numbers are 1 based. This may be NULL to select the first nBandCount bands.
+* **ppBuffer**: Pointer to a buffer to store the compressed data or nullptr. If ppBuffer is not nullptr, then pnBufferSize should also not be nullptr. If ppBuffer is not nullptr, and *ppBuffer is not nullptr, then the provided buffer will be filled with the compressed data, provided that pnBufferSize and *pnBufferSize are not nullptr, and *pnBufferSize, indicating the size of *ppBuffer, is sufficiently large to hold the data. If ppBuffer is not nullptr, but *ppBuffer is nullptr, then the method will allocate *ppBuffer using VSIMalloc(), and thus the caller is responsible to free it with VSIFree(). If ppBuffer is nullptr, then the compressed data itself will not be returned, but *pnBufferSize will be updated with an upper bound of the size that would be necessary to hold it (if pnBufferSize != nullptr).
+* **pnBufferSize**: Output buffer size, or nullptr. If ppBuffer != nullptr && *ppBuffer != nullptr, then pnBufferSize should be != nullptr and *pnBufferSize contain the size of *ppBuffer. If the method is successful, *pnBufferSize will be updated with the actual size used.
+* **ppszDetailedFormat**: Pointer to an output string, or nullptr. If ppszDetailedFormat is not nullptr, then, on success, the method will allocate a new string in *ppszDetailedFormat (to be freed with VSIFree()) *ppszDetailedFormat might contain strings like "JPEG;frame_type=SOF0_baseline;bit_depth=8;num_components=3;" "subsampling=4:2:0;colorspace=YCbCr" or simply the MIME type. The string will contain at least as much information as what GetCompressionFormats() returns, and potentially more when ppBuffer != nullptr.
+
+### Returns
+CE_None in case of success, CE_Failure otherwise.
+"""
+function gdaldatasetreadcompresseddata(
+    hDS,
+    pszFormat,
+    nXOff,
+    nYOff,
+    nXSize,
+    nYSize,
+    nBandCount,
+    panBandList,
+    ppBuffer,
+    pnBufferSize,
+    ppszDetailedFormat,
+)
+    aftercare(
+        ccall(
+            (:GDALDatasetReadCompressedData, libgdal),
+            CPLErr,
+            (
+                GDALDatasetH,
+                Cstring,
+                Cint,
+                Cint,
+                Cint,
+                Cint,
+                Cint,
+                Ptr{Cint},
+                Ptr{Ptr{Cvoid}},
+                Ptr{Csize_t},
+                Ptr{Cstring},
+            ),
+            hDS,
+            pszFormat,
+            nXOff,
+            nYOff,
+            nXSize,
+            nYSize,
+            nBandCount,
+            panBandList,
+            ppBuffer,
+            pnBufferSize,
+            ppszDetailedFormat,
+        ),
+    )
+end
+
+"""
     GDALGetProjectionRef(GDALDatasetH hDS) -> const char *
 
 Fetch the projection definition string for this dataset.
@@ -7732,12 +8092,15 @@ function gdalgetaccess(hDS)
 end
 
 """
-    GDALFlushCache(GDALDatasetH hDS) -> void
+    GDALFlushCache(GDALDatasetH hDS) -> CPLErr
 
 Flush all write cached data to disk.
+
+### Returns
+CE_None in case of success (note: return value added in GDAL 3.7)
 """
 function gdalflushcache(hDS)
-    aftercare(ccall((:GDALFlushCache, libgdal), Cvoid, (GDALDatasetH,), hDS))
+    aftercare(ccall((:GDALFlushCache, libgdal), CPLErr, (GDALDatasetH,), hDS))
 end
 
 """
@@ -8059,7 +8422,6 @@ List of well known binary geometry types. These are used within the BLOBs but ar
 | wkbLineString            | 1-dimensional geometric object with linear interpolation between Points, standard WKB                                                 |
 | wkbPolygon               | planar 2-dimensional geometric object defined by 1 exterior boundary and 0 or more interior boundaries, standard WKB                  |
 | wkbMultiPoint            | GeometryCollection of Points, standard WKB                                                                                            |
-| wkbMultiLineString       | GeometryCollection of LineStrings, standard WKB                                                                                       |
 | wkbMultiPolygon          | GeometryCollection of Polygons, standard WKB                                                                                          |
 | wkbGeometryCollection    | geometric object that is a collection of 1 or more geometric objects, standard WKB                                                    |
 | wkbCircularString        | one or more circular arc segments connected end to end, ISO SQL/MM Part 3. GDAL >= 2.0                                                |
@@ -8067,9 +8429,6 @@ List of well known binary geometry types. These are used within the BLOBs but ar
 | wkbCurvePolygon          | planar surface, defined by 1 exterior boundary and zero or more interior boundaries, that are curves. ISO SQL/MM Part 3. GDAL >= 2.0  |
 | wkbMultiCurve            | GeometryCollection of Curves, ISO SQL/MM Part 3. GDAL >= 2.0                                                                          |
 | wkbMultiSurface          | GeometryCollection of Surfaces, ISO SQL/MM Part 3. GDAL >= 2.0                                                                        |
-| wkbCurve                 | Curve (abstract type). ISO SQL/MM Part 3. GDAL >= 2.1                                                                                 |
-| wkbSurface               | Surface (abstract type). ISO SQL/MM Part 3. GDAL >= 2.1                                                                               |
-| wkbPolyhedralSurface     | a contiguous collection of polygons, which share common boundary segments, ISO SQL/MM Part 3. GDAL >= 2.3                             |
 | wkbTIN                   | a PolyhedralSurface consisting only of Triangle patches ISO SQL/MM Part 3. GDAL >= 2.3                                                |
 | wkbTriangle              | a Triangle. ISO SQL/MM Part 3. GDAL >= 2.3                                                                                            |
 | wkbNone                  | non-standard, for pure attribute records                                                                                              |
@@ -8809,6 +9168,44 @@ function gdaldatasetupdaterelationship(hDS, hRelationship, ppszFailureReason)
             hDS,
             hRelationship,
             ppszFailureReason,
+        ),
+    )
+end
+
+"""
+Type of functions to pass to [`GDALDatasetSetQueryLoggerFunc`](@ref)
+
+\\since GDAL 3.7
+"""
+const GDALQueryLoggerFunc = Ptr{Cvoid}
+
+"""
+    gdaldatasetsetqueryloggerfunc(hDS, pfnQueryLoggerFunc, poQueryLoggerArg)
+
+Sets the SQL query logger callback.
+
+When supported by the driver, the callback will be called with the executed SQL text, the error message, the execution time in milliseconds, the number of records fetched/affected and the client status data.
+
+A value of -1 in the execution time or in the number of records indicates that the values are unknown.
+
+\\since GDAL 3.7
+
+### Parameters
+* `hDS`: Dataset handle.
+* `pfnQueryLoggerFunc`: Callback function
+* `poQueryLoggerArg`: Opaque client status data
+### Returns
+true in case of success.
+"""
+function gdaldatasetsetqueryloggerfunc(hDS, pfnQueryLoggerFunc, poQueryLoggerArg)
+    aftercare(
+        ccall(
+            (:GDALDatasetSetQueryLoggerFunc, libgdal),
+            Bool,
+            (GDALDatasetH, GDALQueryLoggerFunc, Ptr{Cvoid}),
+            hDS,
+            pfnQueryLoggerFunc,
+            poQueryLoggerArg,
         ),
     )
 end
@@ -14113,6 +14510,34 @@ function gdalmdarraycreateattribute(
 end
 
 """
+    GDALMDArrayResize(GDALMDArrayH hArray,
+                      const GUInt64 * panNewDimSizes,
+                      CSLConstList papszOptions) -> bool
+
+Resize an array to new dimensions.
+
+### Parameters
+* **hArray**: Array.
+* **panNewDimSizes**: Array of GetDimensionCount() values containing the new size of each indexing dimension.
+* **papszOptions**: Options. (Driver specific)
+
+### Returns
+true in case of success.
+"""
+function gdalmdarrayresize(hArray, panNewDimSizes, papszOptions)
+    aftercare(
+        ccall(
+            (:GDALMDArrayResize, libgdal),
+            Bool,
+            (GDALMDArrayH, Ptr{GUInt64}, CSLConstList),
+            hArray,
+            panNewDimSizes,
+            papszOptions,
+        ),
+    )
+end
+
+"""
     GDALMDArrayGetRawNoDataValue(GDALMDArrayH hArray) -> const void *
 
 Return the nodata value as a "raw" value.
@@ -14522,7 +14947,7 @@ end
     GDALMDArraySetSpatialRef(GDALMDArrayH hArray,
                              OGRSpatialReferenceH hSRS) -> int
 
-Assign a spatial reference system object to the the array.
+Assign a spatial reference system object to the array.
 
 ### Returns
 TRUE in case of success.
@@ -14845,6 +15270,30 @@ function gdalmdarraygetresampled(
             pahNewDims,
             resampleAlg,
             hTargetSRS,
+            papszOptions,
+        ),
+    )
+end
+
+"""
+    GDALMDArrayGetGridded(GDALMDArrayH hArray,
+                          const char * pszGridOptions,
+                          GDALMDArrayH hXArray,
+                          GDALMDArrayH hYArray,
+                          CSLConstList papszOptions) -> GDALMDArrayH
+
+Return a gridded array from scattered point data, that is from an array whose last dimension is the indexing variable of X and Y arrays.
+"""
+function gdalmdarraygetgridded(hArray, pszGridOptions, hXArray, hYArray, papszOptions)
+    aftercare(
+        ccall(
+            (:GDALMDArrayGetGridded, libgdal),
+            GDALMDArrayH,
+            (GDALMDArrayH, Cstring, GDALMDArrayH, GDALMDArrayH, CSLConstList),
+            hArray,
+            pszGridOptions,
+            hXArray,
+            hYArray,
             papszOptions,
         ),
     )
@@ -15763,7 +16212,10 @@ Create polygon coverage from raster data.
 * **iPixValField**: the attribute field index indicating the feature attribute into which the pixel value of the polygon should be written. Or -1 to indicate that the pixel value must not be written.
 * **papszOptions**: a name/value list of additional options 
 
-8CONNECTED=8: May be set to "8" to use 8 connectedness. Otherwise 4 connectedness will be applied to the algorithm
+8CONNECTED=8: May be set to "8" to use 8 connectedness. Otherwise 4 connectedness will be applied to the algorithm 
+
+
+DATASET_FOR_GEOREF=dataset_name: Name of a dataset from which to read the geotransform. This useful if hSrcBand has no related dataset, which is typical for mask bands.
 * **pfnProgress**: callback for reporting algorithm progress matching the GDALProgressFunc() semantics. May be NULL.
 * **pProgressArg**: callback argument passed to pfnProgress.
 
@@ -15821,7 +16273,10 @@ Create polygon coverage from raster data.
 * **iPixValField**: the attribute field index indicating the feature attribute into which the pixel value of the polygon should be written. Or -1 to indicate that the pixel value must not be written.
 * **papszOptions**: a name/value list of additional options 
 
-8CONNECTED=8: May be set to "8" to use 8 connectedness. Otherwise 4 connectedness will be applied to the algorithm
+8CONNECTED=8: May be set to "8" to use 8 connectedness. Otherwise 4 connectedness will be applied to the algorithm 
+
+
+DATASET_FOR_GEOREF=dataset_name: Name of a dataset from which to read the geotransform. This useful if hSrcBand has no related dataset, which is typical for mask bands.
 * **pfnProgress**: callback for reporting algorithm progress matching the GDALProgressFunc() semantics. May be NULL.
 * **pProgressArg**: callback argument passed to pfnProgress.
 
@@ -16840,7 +17295,7 @@ end
 Suggest output file size.
 
 ### Parameters
-* **hSrcDS**: the input image (it is assumed the whole input images is being transformed).
+* **hSrcDS**: the input image (it is assumed the whole input image is being transformed).
 * **pfnTransformer**: the transformer function.
 * **pTransformArg**: the callback data for the transformer function.
 * **padfGeoTransformOut**: the array of six doubles in which the suggested geotransform is returned.
@@ -16893,7 +17348,7 @@ end
 Suggest output file size.
 
 ### Parameters
-* **hSrcDS**: the input image (it is assumed the whole input images is being transformed).
+* **hSrcDS**: the input image (it is assumed the whole input image is being transformed).
 * **pfnTransformer**: the transformer function.
 * **pTransformArg**: the callback data for the transformer function.
 * **padfGeoTransformOut**: the array of six doubles in which the suggested geotransform is returned.
@@ -16912,7 +17367,7 @@ function gdalsuggestedwarpoutput2(
     padfGeoTransformOut,
     pnPixels,
     pnLines,
-    padfExtents,
+    padfExtent,
     nOptions,
 )
     aftercare(
@@ -16935,7 +17390,7 @@ function gdalsuggestedwarpoutput2(
             padfGeoTransformOut,
             pnPixels,
             pnLines,
-            padfExtents,
+            padfExtent,
             nOptions,
         ),
     )
@@ -19132,13 +19587,13 @@ end
 
 """
     GDALWarpCutlineMasker(void * pMaskFuncArg,
-                          int,
-                          GDALDataType,
+                          int nBandCount,
+                          GDALDataType eType,
                           int nXOff,
                           int nYOff,
                           int nXSize,
                           int nYSize,
-                          GByte **,
+                          GByte ** ppImageData,
                           int bMaskIsFloat,
                           void * pValidityMask) -> CPLErr
 """
@@ -19180,6 +19635,64 @@ function gdalwarpcutlinemasker(
             arg8,
             bMaskIsFloat,
             pValidityMask,
+        ),
+    )
+end
+
+"""
+    GDALWarpCutlineMaskerEx(void * pMaskFuncArg,
+                            int,
+                            GDALDataType,
+                            int nXOff,
+                            int nYOff,
+                            int nXSize,
+                            int nYSize,
+                            GByte **,
+                            int bMaskIsFloat,
+                            void * pValidityMask,
+                            int * pnValidityFlag) -> CPLErr
+"""
+function gdalwarpcutlinemaskerex(
+    pMaskFuncArg,
+    nBandCount,
+    eType,
+    nXOff,
+    nYOff,
+    nXSize,
+    nYSize,
+    arg8,
+    bMaskIsFloat,
+    pValidityMask,
+    pnValidityFlag,
+)
+    aftercare(
+        ccall(
+            (:GDALWarpCutlineMaskerEx, libgdal),
+            CPLErr,
+            (
+                Ptr{Cvoid},
+                Cint,
+                GDALDataType,
+                Cint,
+                Cint,
+                Cint,
+                Cint,
+                Ptr{Ptr{GByte}},
+                Cint,
+                Ptr{Cvoid},
+                Ptr{Cint},
+            ),
+            pMaskFuncArg,
+            nBandCount,
+            eType,
+            nXOff,
+            nYOff,
+            nXSize,
+            nYSize,
+            arg8,
+            bMaskIsFloat,
+            pValidityMask,
+            pnValidityFlag,
         ),
     )
 end
@@ -21083,7 +21596,7 @@ Allocates a GDALBuildVRTOptions struct.
 
 ### Parameters
 * **papszArgv**: NULL terminated list of options (potentially including filename and open options too), or NULL. The accepted options are the ones of the gdalbuildvrt utility.
-* **psOptionsForBinary**: (output) may be NULL (and should generally be NULL), otherwise (gdal_translate_bin.cpp use case) must be allocated with GDALBuildVRTOptionsForBinaryNew() prior to this function. Will be filled with potentially present filename, open options,...
+* **psOptionsForBinary**: (output) may be NULL (and should generally be NULL), otherwise (gdalbuildvrt_bin.cpp use case) must be allocated with GDALBuildVRTOptionsForBinaryNew() prior to this function. Will be filled with potentially present filename, open options,...
 
 ### Returns
 pointer to the allocated GDALBuildVRTOptions struct. Must be freed with GDALBuildVRTOptionsFree().
@@ -21281,7 +21794,7 @@ Allocates a GDALMultiDimTranslateOptions struct.
 
 ### Parameters
 * **papszArgv**: NULL terminated list of options (potentially including filename and open options too), or NULL. The accepted options are the ones of the gdalmdimtranslate utility.
-* **psOptionsForBinary**: should be nullptr, unless called from gdalmultidimtranslate_bin.cpp
+* **psOptionsForBinary**: should be nullptr, unless called from gdalmdimtranslate_bin.cpp
 
 ### Returns
 pointer to the allocated GDALMultiDimTranslateOptions struct. Must be freed with GDALMultiDimTranslateOptionsFree().
@@ -21393,8 +21906,82 @@ function gdalmultidimtranslate(
     )
 end
 
+const GDALVectorInfoOptions = Cvoid
+
+const GDALVectorInfoOptionsForBinary = Cvoid
+
 """
-    OGR_L_ResetReading(OGRLayerH) -> void
+    GDALVectorInfoOptionsNew(char ** papszArgv,
+                             GDALVectorInfoOptionsForBinary * psOptionsForBinary) -> GDALVectorInfoOptions *
+
+Allocates a GDALVectorInfoOptions struct.
+
+### Parameters
+* **papszArgv**: NULL terminated list of options (potentially including filename and open options too), or NULL. The accepted options are the ones of the ogrinfo utility.
+* **psOptionsForBinary**: (output) may be NULL (and should generally be NULL), otherwise (ogrinfo_bin.cpp use case) must be allocated with GDALVectorInfoOptionsForBinaryNew() prior to this function. Will be filled with potentially present filename, open options, subdataset number...
+
+### Returns
+pointer to the allocated GDALVectorInfoOptions struct. Must be freed with GDALVectorInfoOptionsFree().
+"""
+function gdalvectorinfooptionsnew(papszArgv, psOptionsForBinary)
+    aftercare(
+        ccall(
+            (:GDALVectorInfoOptionsNew, libgdal),
+            Ptr{GDALVectorInfoOptions},
+            (Ptr{Cstring}, Ptr{GDALVectorInfoOptionsForBinary}),
+            papszArgv,
+            psOptionsForBinary,
+        ),
+    )
+end
+
+"""
+    GDALVectorInfoOptionsFree(GDALVectorInfoOptions * psOptions) -> void
+
+Frees the GDALVectorInfoOptions struct.
+
+### Parameters
+* **psOptions**: the options struct for GDALVectorInfo().
+"""
+function gdalvectorinfooptionsfree(psOptions)
+    aftercare(
+        ccall(
+            (:GDALVectorInfoOptionsFree, libgdal),
+            Cvoid,
+            (Ptr{GDALVectorInfoOptions},),
+            psOptions,
+        ),
+    )
+end
+
+"""
+    GDALVectorInfo(GDALDatasetH hDataset,
+                   const GDALVectorInfoOptions * psOptions) -> char *
+
+Lists various information about a GDAL supported vector dataset.
+
+### Parameters
+* **hDataset**: the dataset handle.
+* **psOptions**: the options structure returned by GDALVectorInfoOptionsNew() or NULL.
+
+### Returns
+string corresponding to the information about the raster dataset (must be freed with CPLFree()), or NULL in case of error.
+"""
+function gdalvectorinfo(hDataset, psOptions)
+    aftercare(
+        ccall(
+            (:GDALVectorInfo, libgdal),
+            Cstring,
+            (GDALDatasetH, Ptr{GDALVectorInfoOptions}),
+            hDataset,
+            psOptions,
+        ),
+        false,
+    )
+end
+
+"""
+    OGR_L_ResetReading(OGRLayerH hLayer) -> void
 
 Reset feature reading to start on the first feature.
 
@@ -21418,7 +22005,7 @@ function ogr_f_destroy(arg1)
 end
 
 """
-    OGR_L_GetNextFeature(OGRLayerH) -> OGRFeatureH
+    OGR_L_GetNextFeature(OGRLayerH hLayer) -> OGRFeatureH
 
 Fetch the next available feature from this layer.
 
@@ -22514,7 +23101,7 @@ Returns spatial reference system for geometry.
 * **hGeom**: handle on the geometry to get spatial reference from.
 
 ### Returns
-a reference to the spatial reference geometry.
+a reference to the spatial reference geometry, which should not be modified.
 """
 function ogr_g_getspatialreference(arg1)
     aftercare(
@@ -23057,6 +23644,21 @@ a new geometry representing the union or NULL if an error occurs.
 """
 function ogr_g_unioncascaded(arg1)
     aftercare(ccall((:OGR_G_UnionCascaded, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+end
+
+"""
+    OGR_G_UnaryUnion(OGRGeometryH hThis) -> OGRGeometryH
+
+Returns the union of all components of a single geometry.
+
+### Parameters
+* **hThis**: the geometry.
+
+### Returns
+a new geometry representing the union or NULL if an error occurs.
+"""
+function ogr_g_unaryunion(arg1)
+    aftercare(ccall((:OGR_G_UnaryUnion, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -25053,6 +25655,40 @@ function ogr_fld_setdomainname(hDefn, arg2)
 end
 
 """
+    OGR_Fld_GetComment(OGRFieldDefnH hDefn) -> const char *
+
+Return the (optional) comment for this field.
+
+### Parameters
+* **hDefn**: handle to the field definition
+
+### Returns
+the comment, or an empty string if there is none.
+"""
+function ogr_fld_getcomment(hDefn)
+    aftercare(
+        ccall((:OGR_Fld_GetComment, libgdal), Cstring, (OGRFieldDefnH,), hDefn),
+        false,
+    )
+end
+
+"""
+    OGR_Fld_SetComment(OGRFieldDefnH hDefn,
+                       const char * pszComment) -> void
+
+Set the comment for this field.
+
+### Parameters
+* **hDefn**: handle to the field definition
+* **pszComment**: Field comment.
+"""
+function ogr_fld_setcomment(hDefn, arg2)
+    aftercare(
+        ccall((:OGR_Fld_SetComment, libgdal), Cvoid, (OGRFieldDefnH, Cstring), hDefn, arg2),
+    )
+end
+
+"""
     OGR_GetFieldTypeName(OGRFieldType eType) -> const char *
 
 Fetch human readable name for a field type.
@@ -25238,7 +25874,7 @@ Fetch spatial reference system of this field.
 * **hDefn**: handle to the geometry field definition
 
 ### Returns
-field spatial reference system.
+a reference to the field spatial reference system. It should not be modified.
 """
 function ogr_gfld_getspatialref(arg1)
     aftercare(
@@ -26333,6 +26969,35 @@ the field value. This string is internal, and should not be modified, or freed. 
 function ogr_f_getfieldasstring(arg1, arg2)
     aftercare(
         ccall((:OGR_F_GetFieldAsString, libgdal), Cstring, (OGRFeatureH, Cint), arg1, arg2),
+        false,
+    )
+end
+
+"""
+    OGR_F_GetFieldAsISO8601DateTime(OGRFeatureH hFeat,
+                                    int iField,
+                                    CSLConstList papszOptions) -> const char *
+
+Fetch OFTDateTime field value as a ISO8601 representation.
+
+### Parameters
+* **hFeat**: handle to the feature that owned the field.
+* **iField**: the field to fetch, from 0 to GetFieldCount()-1.
+* **papszOptions**: NULL terminated list of strings, or NULL. No options are defined currently.
+
+### Returns
+the field value. This string is internal, and should not be modified, or freed. Its lifetime may be very brief.
+"""
+function ogr_f_getfieldasiso8601datetime(arg1, arg2, arg3)
+    aftercare(
+        ccall(
+            (:OGR_F_GetFieldAsISO8601DateTime, libgdal),
+            Cstring,
+            (OGRFeatureH, Cint, CSLConstList),
+            arg1,
+            arg2,
+            arg3,
+        ),
         false,
     )
 end
@@ -27941,7 +28606,7 @@ const OGRDataSourceH = Ptr{Cvoid}
 const OGRSFDriverH = Ptr{Cvoid}
 
 """
-    OGR_L_GetName(OGRLayerH) -> const char *
+    OGR_L_GetName(OGRLayerH hLayer) -> const char *
 
 Return the layer name.
 
@@ -27956,7 +28621,7 @@ function ogr_l_getname(arg1)
 end
 
 """
-    OGR_L_GetGeomType(OGRLayerH) -> OGRwkbGeometryType
+    OGR_L_GetGeomType(OGRLayerH hLayer) -> OGRwkbGeometryType
 
 Return the layer geometry type.
 
@@ -28030,7 +28695,7 @@ function ogr_l_getgeometrytypes(
 end
 
 """
-    OGR_L_GetSpatialFilter(OGRLayerH) -> OGRGeometryH
+    OGR_L_GetSpatialFilter(OGRLayerH hLayer) -> OGRGeometryH
 
 This function returns the current spatial filter for this layer.
 
@@ -28045,8 +28710,8 @@ function ogr_l_getspatialfilter(arg1)
 end
 
 """
-    OGR_L_SetSpatialFilter(OGRLayerH,
-                           OGRGeometryH) -> void
+    OGR_L_SetSpatialFilter(OGRLayerH hLayer,
+                           OGRGeometryH hGeom) -> void
 
 Set a new spatial filter.
 
@@ -28067,11 +28732,11 @@ function ogr_l_setspatialfilter(arg1, arg2)
 end
 
 """
-    OGR_L_SetSpatialFilterRect(OGRLayerH,
-                               double,
-                               double,
-                               double,
-                               double) -> void
+    OGR_L_SetSpatialFilterRect(OGRLayerH hLayer,
+                               double dfMinX,
+                               double dfMinY,
+                               double dfMaxX,
+                               double dfMaxY) -> void
 
 Set a new rectangular spatial filter.
 
@@ -28098,7 +28763,7 @@ function ogr_l_setspatialfilterrect(arg1, arg2, arg3, arg4, arg5)
 end
 
 """
-    OGR_L_SetSpatialFilterEx(OGRLayerH,
+    OGR_L_SetSpatialFilterEx(OGRLayerH hLayer,
                              int iGeomField,
                              OGRGeometryH hGeom) -> void
 
@@ -28123,7 +28788,7 @@ function ogr_l_setspatialfilterex(arg1, iGeomField, hGeom)
 end
 
 """
-    OGR_L_SetSpatialFilterRectEx(OGRLayerH,
+    OGR_L_SetSpatialFilterRectEx(OGRLayerH hLayer,
                                  int iGeomField,
                                  double dfMinX,
                                  double dfMinY,
@@ -28157,8 +28822,8 @@ function ogr_l_setspatialfilterrectex(arg1, iGeomField, dfMinX, dfMinY, dfMaxX, 
 end
 
 """
-    OGR_L_SetAttributeFilter(OGRLayerH,
-                             const char *) -> OGRErr
+    OGR_L_SetAttributeFilter(OGRLayerH hLayer,
+                             const char * pszQuery) -> OGRErr
 
 Set a new attribute query.
 
@@ -28213,8 +28878,8 @@ function ogr_l_getarrowstream(hLayer, out_stream, papszOptions)
 end
 
 """
-    OGR_L_SetNextByIndex(OGRLayerH,
-                         GIntBig) -> OGRErr
+    OGR_L_SetNextByIndex(OGRLayerH hLayer,
+                         GIntBig nIndex) -> OGRErr
 
 Move read cursor to the nIndex'th feature in the current resultset.
 
@@ -28232,8 +28897,8 @@ function ogr_l_setnextbyindex(arg1, arg2)
 end
 
 """
-    OGR_L_GetFeature(OGRLayerH,
-                     GIntBig) -> OGRFeatureH
+    OGR_L_GetFeature(OGRLayerH hLayer,
+                     GIntBig nFeatureId) -> OGRFeatureH
 
 Fetch a feature by its identifier.
 
@@ -28251,10 +28916,10 @@ function ogr_l_getfeature(arg1, arg2)
 end
 
 """
-    OGR_L_SetFeature(OGRLayerH,
-                     OGRFeatureH) -> OGRErr
+    OGR_L_SetFeature(OGRLayerH hLayer,
+                     OGRFeatureH hFeat) -> OGRErr
 
-Rewrite an existing feature.
+Rewrite/replace an existing feature.
 
 ### Parameters
 * **hLayer**: handle to the layer to write the feature.
@@ -28270,8 +28935,8 @@ function ogr_l_setfeature(arg1, arg2)
 end
 
 """
-    OGR_L_CreateFeature(OGRLayerH,
-                        OGRFeatureH) -> OGRErr
+    OGR_L_CreateFeature(OGRLayerH hLayer,
+                        OGRFeatureH hFeat) -> OGRErr
 
 Create and write a new feature within a layer.
 
@@ -28295,8 +28960,8 @@ function ogr_l_createfeature(arg1, arg2)
 end
 
 """
-    OGR_L_DeleteFeature(OGRLayerH,
-                        GIntBig) -> OGRErr
+    OGR_L_DeleteFeature(OGRLayerH hLayer,
+                        GIntBig nFID) -> OGRErr
 
 Delete feature from layer.
 
@@ -28314,10 +28979,10 @@ function ogr_l_deletefeature(arg1, arg2)
 end
 
 """
-    OGR_L_UpsertFeature(OGRLayerH,
-                        OGRFeatureH) -> OGRErr
+    OGR_L_UpsertFeature(OGRLayerH hLayer,
+                        OGRFeatureH hFeat) -> OGRErr
 
-Rewrite an existing feature or create a new feature within a layer.
+Rewrite/replace an existing feature or create a new feature within a layer.
 
 ### Parameters
 * **hLayer**: handle to the layer to write the feature to.
@@ -28339,7 +29004,55 @@ function ogr_l_upsertfeature(arg1, arg2)
 end
 
 """
-    OGR_L_GetLayerDefn(OGRLayerH) -> OGRFeatureDefnH
+    OGR_L_UpdateFeature(OGRLayerH hLayer,
+                        OGRFeatureH hFeat,
+                        int nUpdatedFieldsCount,
+                        const int * panUpdatedFieldsIdx,
+                        int nUpdatedGeomFieldsCount,
+                        const int * panUpdatedGeomFieldsIdx,
+                        bool bUpdateStyleString) -> OGRErr
+
+Update (part of) an existing feature.
+
+### Parameters
+* **hLayer**: handle to the layer to write the feature.
+* **hFeat**: the feature to update.
+* **nUpdatedFieldsCount**: number of attribute fields to update. May be 0
+* **panUpdatedFieldsIdx**: array of nUpdatedFieldsCount values, each between 0 and GetLayerDefn()->GetFieldCount() - 1, indicating which fields of hFeat must be updated in the layer.
+* **nUpdatedGeomFieldsCount**: number of geometry fields to update. May be 0
+* **panUpdatedGeomFieldsIdx**: array of nUpdatedGeomFieldsCount values, each between 0 and GetLayerDefn()->GetGeomFieldCount() - 1, indicating which geometry fields of hFeat must be updated in the layer.
+* **bUpdateStyleString**: whether the feature style string in the layer should be updated with the one of hFeat.
+
+### Returns
+OGRERR_NONE if the operation works, otherwise an appropriate error code (e.g OGRERR_NON_EXISTING_FEATURE if the feature does not exist).
+"""
+function ogr_l_updatefeature(
+    arg1,
+    arg2,
+    nUpdatedFieldsCount,
+    panUpdatedFieldsIdx,
+    nUpdatedGeomFieldsCount,
+    panUpdatedGeomFieldsIdx,
+    bUpdateStyleString,
+)
+    aftercare(
+        ccall(
+            (:OGR_L_UpdateFeature, libgdal),
+            OGRErr,
+            (OGRLayerH, OGRFeatureH, Cint, Ptr{Cint}, Cint, Ptr{Cint}, Bool),
+            arg1,
+            arg2,
+            nUpdatedFieldsCount,
+            panUpdatedFieldsIdx,
+            nUpdatedGeomFieldsCount,
+            panUpdatedGeomFieldsIdx,
+            bUpdateStyleString,
+        ),
+    )
+end
+
+"""
+    OGR_L_GetLayerDefn(OGRLayerH hLayer) -> OGRFeatureDefnH
 
 Fetch the schema information for this layer.
 
@@ -28354,7 +29067,7 @@ function ogr_l_getlayerdefn(arg1)
 end
 
 """
-    OGR_L_GetSpatialRef(OGRLayerH) -> OGRSpatialReferenceH
+    OGR_L_GetSpatialRef(OGRLayerH hLayer) -> OGRSpatialReferenceH
 
 Fetch the spatial reference system for this layer.
 
@@ -28371,8 +29084,64 @@ function ogr_l_getspatialref(arg1)
 end
 
 """
-    OGR_L_FindFieldIndex(OGRLayerH,
-                         const char *,
+    OGR_L_GetSupportedSRSList(OGRLayerH hLayer,
+                              int iGeomField,
+                              int * pnCount) -> OGRSpatialReferenceH *
+
+Get the list of SRS supported.
+
+### Parameters
+* **hLayer**: Layer.
+* **iGeomField**: Geometry field index.
+* **pnCount**: Number of values in returned array. Must not be null.
+
+### Returns
+list of supported SRS, to be freeds with OSRFreeSRSArray(), or nullptr
+"""
+function ogr_l_getsupportedsrslist(hLayer, iGeomField, pnCount)
+    aftercare(
+        ccall(
+            (:OGR_L_GetSupportedSRSList, libgdal),
+            Ptr{OGRSpatialReferenceH},
+            (OGRLayerH, Cint, Ptr{Cint}),
+            hLayer,
+            iGeomField,
+            pnCount,
+        ),
+    )
+end
+
+"""
+    OGR_L_SetActiveSRS(OGRLayerH hLayer,
+                       int iGeomField,
+                       OGRSpatialReferenceH hSRS) -> OGRErr
+
+Change the active SRS.
+
+### Parameters
+* **hLayer**: Layer.
+* **iGeomField**: Geometry field index.
+* **hSRS**: SRS to use
+
+### Returns
+OGRERR_NONE in case of success, OGRERR_FAILURE if the passed SRS is not in GetSupportedSRSList().
+"""
+function ogr_l_setactivesrs(hLayer, iGeomField, hSRS)
+    aftercare(
+        ccall(
+            (:OGR_L_SetActiveSRS, libgdal),
+            OGRErr,
+            (OGRLayerH, Cint, OGRSpatialReferenceH),
+            hLayer,
+            iGeomField,
+            hSRS,
+        ),
+    )
+end
+
+"""
+    OGR_L_FindFieldIndex(OGRLayerH hLayer,
+                         const char * pszFieldName,
                          int bExactMatch) -> int
 
 Find the index of field in a layer.
@@ -28394,8 +29163,8 @@ function ogr_l_findfieldindex(arg1, arg2, bExactMatch)
 end
 
 """
-    OGR_L_GetFeatureCount(OGRLayerH,
-                          int) -> GIntBig
+    OGR_L_GetFeatureCount(OGRLayerH hLayer,
+                          int bForce) -> GIntBig
 
 Fetch the feature count in this layer.
 
@@ -28413,9 +29182,9 @@ function ogr_l_getfeaturecount(arg1, arg2)
 end
 
 """
-    OGR_L_GetExtent(OGRLayerH,
-                    OGREnvelope *,
-                    int) -> OGRErr
+    OGR_L_GetExtent(OGRLayerH hLayer,
+                    OGREnvelope * psExtent,
+                    int bForce) -> OGRErr
 
 Fetch the extent of this layer.
 
@@ -28441,7 +29210,7 @@ function ogr_l_getextent(arg1, arg2, arg3)
 end
 
 """
-    OGR_L_GetExtentEx(OGRLayerH,
+    OGR_L_GetExtentEx(OGRLayerH hLayer,
                       int iGeomField,
                       OGREnvelope * psExtent,
                       int bForce) -> OGRErr
@@ -28472,8 +29241,8 @@ function ogr_l_getextentex(arg1, iGeomField, psExtent, bForce)
 end
 
 """
-    OGR_L_TestCapability(OGRLayerH,
-                         const char *) -> int
+    OGR_L_TestCapability(OGRLayerH hLayer,
+                         const char * pszCap) -> int
 
 Test if this layer supported the named capability.
 
@@ -28491,9 +29260,9 @@ function ogr_l_testcapability(arg1, arg2)
 end
 
 """
-    OGR_L_CreateField(OGRLayerH,
-                      OGRFieldDefnH,
-                      int) -> OGRErr
+    OGR_L_CreateField(OGRLayerH hLayer,
+                      OGRFieldDefnH hField,
+                      int bApproxOK) -> OGRErr
 
 Create a new field on a layer.
 
@@ -28547,7 +29316,7 @@ function ogr_l_creategeomfield(hLayer, hFieldDefn, bForce)
 end
 
 """
-    OGR_L_DeleteField(OGRLayerH,
+    OGR_L_DeleteField(OGRLayerH hLayer,
                       int iField) -> OGRErr
 
 Delete an existing field on a layer.
@@ -28564,7 +29333,7 @@ function ogr_l_deletefield(arg1, iField)
 end
 
 """
-    OGR_L_ReorderFields(OGRLayerH,
+    OGR_L_ReorderFields(OGRLayerH hLayer,
                         int * panMap) -> OGRErr
 
 Reorder all the fields of a layer.
@@ -28589,7 +29358,7 @@ function ogr_l_reorderfields(arg1, panMap)
 end
 
 """
-    OGR_L_ReorderField(OGRLayerH,
+    OGR_L_ReorderField(OGRLayerH hLayer,
                        int iOldFieldPos,
                        int iNewFieldPos) -> OGRErr
 
@@ -28617,7 +29386,7 @@ function ogr_l_reorderfield(arg1, iOldFieldPos, iNewFieldPos)
 end
 
 """
-    OGR_L_AlterFieldDefn(OGRLayerH,
+    OGR_L_AlterFieldDefn(OGRLayerH hLayer,
                          int iField,
                          OGRFieldDefnH hNewFieldDefn,
                          int nFlags) -> OGRErr
@@ -28648,7 +29417,7 @@ function ogr_l_alterfielddefn(arg1, iField, hNewFieldDefn, nFlags)
 end
 
 """
-    OGR_L_AlterGeomFieldDefn(OGRLayerH,
+    OGR_L_AlterGeomFieldDefn(OGRLayerH hLayer,
                              int iField,
                              OGRGeomFieldDefnH hNewGeomFieldDefn,
                              int nFlags) -> OGRErr
@@ -28679,7 +29448,7 @@ function ogr_l_altergeomfielddefn(arg1, iField, hNewGeomFieldDefn, nFlags)
 end
 
 """
-    OGR_L_StartTransaction(OGRLayerH) -> OGRErr
+    OGR_L_StartTransaction(OGRLayerH hLayer) -> OGRErr
 
 For datasources which support transactions, StartTransaction creates a transaction.
 
@@ -28694,7 +29463,7 @@ function ogr_l_starttransaction(arg1)
 end
 
 """
-    OGR_L_CommitTransaction(OGRLayerH) -> OGRErr
+    OGR_L_CommitTransaction(OGRLayerH hLayer) -> OGRErr
 
 For datasources which support transactions, CommitTransaction commits a transaction.
 
@@ -28709,7 +29478,7 @@ function ogr_l_committransaction(arg1)
 end
 
 """
-    OGR_L_RollbackTransaction(OGRLayerH) -> OGRErr
+    OGR_L_RollbackTransaction(OGRLayerH hLayer) -> OGRErr
 
 For datasources which support transactions, RollbackTransaction will roll back a datasource to its state before the start of the current transaction.
 
@@ -28793,7 +29562,7 @@ function ogr_l_getfidcolumn(arg1)
 end
 
 """
-    OGR_L_GetGeometryColumn(OGRLayerH) -> const char *
+    OGR_L_GetGeometryColumn(OGRLayerH hLayer) -> const char *
 
 This method returns the name of the underlying database column being used as the geometry column, or "" if not supported.
 
@@ -28854,8 +29623,8 @@ function ogr_l_setstyletable(arg1, arg2)
 end
 
 """
-    OGR_L_SetIgnoredFields(OGRLayerH,
-                           const char **) -> OGRErr
+    OGR_L_SetIgnoredFields(OGRLayerH hLayer,
+                           const char ** papszFields) -> OGRErr
 
 Set which fields can be omitted when retrieving features from the layer.
 
@@ -29138,7 +29907,7 @@ function ogr_l_erase(arg1, arg2, arg3, arg4, arg5, arg6)
 end
 
 """
-    OGR_DS_Destroy(OGRDataSourceH) -> void
+    OGR_DS_Destroy(OGRDataSourceH hDS) -> void
 
 Closes opened datasource and releases allocated resources.
 
@@ -29150,7 +29919,7 @@ function ogr_ds_destroy(arg1)
 end
 
 """
-    OGR_DS_GetName(OGRDataSourceH) -> const char *
+    OGR_DS_GetName(OGRDataSourceH hDS) -> const char *
 
 Returns the name of the data source.
 
@@ -29165,7 +29934,7 @@ function ogr_ds_getname(arg1)
 end
 
 """
-    OGR_DS_GetLayerCount(OGRDataSourceH) -> int
+    OGR_DS_GetLayerCount(OGRDataSourceH hDS) -> int
 
 Get the number of layers in this data source.
 
@@ -29180,8 +29949,8 @@ function ogr_ds_getlayercount(arg1)
 end
 
 """
-    OGR_DS_GetLayer(OGRDataSourceH,
-                    int) -> OGRLayerH
+    OGR_DS_GetLayer(OGRDataSourceH hDS,
+                    int iLayer) -> OGRLayerH
 
 Fetch a layer by index.
 
@@ -29199,8 +29968,8 @@ function ogr_ds_getlayer(arg1, arg2)
 end
 
 """
-    OGR_DS_GetLayerByName(OGRDataSourceH,
-                          const char *) -> OGRLayerH
+    OGR_DS_GetLayerByName(OGRDataSourceH hDS,
+                          const char * pszLayerName) -> OGRLayerH
 
 Fetch a layer by name.
 
@@ -29224,8 +29993,8 @@ function ogr_ds_getlayerbyname(arg1, arg2)
 end
 
 """
-    OGR_DS_DeleteLayer(OGRDataSourceH,
-                       int) -> OGRErr
+    OGR_DS_DeleteLayer(OGRDataSourceH hDS,
+                       int iLayer) -> OGRErr
 
 Delete the indicated layer from the datasource.
 
@@ -29243,7 +30012,7 @@ function ogr_ds_deletelayer(arg1, arg2)
 end
 
 """
-    OGR_DS_GetDriver(OGRDataSourceH) -> OGRSFDriverH
+    OGR_DS_GetDriver(OGRDataSourceH hDS) -> OGRSFDriverH
 
 Returns the driver that the dataset was opened with.
 
@@ -29258,11 +30027,11 @@ function ogr_ds_getdriver(arg1)
 end
 
 """
-    OGR_DS_CreateLayer(OGRDataSourceH,
-                       const char *,
-                       OGRSpatialReferenceH,
-                       OGRwkbGeometryType,
-                       char **) -> OGRLayerH
+    OGR_DS_CreateLayer(OGRDataSourceH hDS,
+                       const char * pszName,
+                       OGRSpatialReferenceH hSpatialRef,
+                       OGRwkbGeometryType eType,
+                       char ** papszOptions) -> OGRLayerH
 
 This function attempts to create a new layer on the data source with the indicated name, coordinate system, geometry type.
 
@@ -29298,10 +30067,10 @@ function ogr_ds_createlayer(arg1, arg2, arg3, arg4, arg5)
 end
 
 """
-    OGR_DS_CopyLayer(OGRDataSourceH,
-                     OGRLayerH,
-                     const char *,
-                     char **) -> OGRLayerH
+    OGR_DS_CopyLayer(OGRDataSourceH hDS,
+                     OGRLayerH hSrcLayer,
+                     const char * pszNewName,
+                     char ** papszOptions) -> OGRLayerH
 
 Duplicate an existing layer.
 
@@ -29329,8 +30098,8 @@ function ogr_ds_copylayer(arg1, arg2, arg3, arg4)
 end
 
 """
-    OGR_DS_TestCapability(OGRDataSourceH,
-                          const char *) -> int
+    OGR_DS_TestCapability(OGRDataSourceH hDS,
+                          const char * pszCapability) -> int
 
 Test if capability is available.
 
@@ -29354,10 +30123,10 @@ function ogr_ds_testcapability(arg1, arg2)
 end
 
 """
-    OGR_DS_ExecuteSQL(OGRDataSourceH,
-                      const char *,
-                      OGRGeometryH,
-                      const char *) -> OGRLayerH
+    OGR_DS_ExecuteSQL(OGRDataSourceH hDS,
+                      const char * pszStatement,
+                      OGRGeometryH hSpatialFilter,
+                      const char * pszDialect) -> OGRLayerH
 
 Execute an SQL statement against the data store.
 
@@ -29385,8 +30154,8 @@ function ogr_ds_executesql(arg1, arg2, arg3, arg4)
 end
 
 """
-    OGR_DS_ReleaseResultSet(OGRDataSourceH,
-                            OGRLayerH) -> void
+    OGR_DS_ReleaseResultSet(OGRDataSourceH hDS,
+                            OGRLayerH hLayer) -> void
 
 Release results of OGR_DS_ExecuteSQL().
 
@@ -35317,8 +36086,6 @@ const CPLE_AWSError = 17
 
 const VALIDATE_POINTER_ERR = CE_Failure
 
-const __MSVCRT_VERSION__ = 0x0700
-
 const GINTBIG_MIN = CPL_STATIC_CAST(GIntBig, 0x80000000) << 32
 
 const GINTBIG_MAX = CPL_STATIC_CAST(GIntBig, 0x7fffffff) << 32 | Cuint(0xffffffff)
@@ -35355,9 +36122,9 @@ const VSI_STAT_CACHE_ONLY = 0x10
 
 const GDAL_VERSION_MAJOR = 3
 
-const GDAL_VERSION_MINOR = 6
+const GDAL_VERSION_MINOR = 7
 
-const GDAL_VERSION_REV = 1
+const GDAL_VERSION_REV = 2
 
 const GDAL_VERSION_BUILD = 0
 
@@ -35365,9 +36132,9 @@ const GDAL_VERSION_NUM =
     GDAL_COMPUTE_VERSION(GDAL_VERSION_MAJOR, GDAL_VERSION_MINOR, GDAL_VERSION_REV) +
     GDAL_VERSION_BUILD
 
-const GDAL_RELEASE_DATE = 20221214
+const GDAL_RELEASE_DATE = 20230905
 
-const GDAL_RELEASE_NAME = "3.6.1"
+const GDAL_RELEASE_NAME = "3.7.2"
 
 const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
 
@@ -35413,7 +36180,13 @@ const GDAL_DMD_CREATIONFIELDDATATYPES = "DMD_CREATIONFIELDDATATYPES"
 
 const GDAL_DMD_CREATIONFIELDDATASUBTYPES = "DMD_CREATIONFIELDDATASUBTYPES"
 
+const GDAL_DMD_CREATION_FIELD_DEFN_FLAGS = "DMD_CREATION_FIELD_DEFN_FLAGS"
+
 const GDAL_DMD_SUBDATASETS = "DMD_SUBDATASETS"
+
+const GDAL_DMD_NUMERIC_FIELD_WIDTH_INCLUDES_DECIMAL_SEPARATOR = "DMD_NUMERIC_FIELD_WIDTH_INCLUDES_DECIMAL_SEPARATOR"
+
+const GDAL_DMD_NUMERIC_FIELD_WIDTH_INCLUDES_SIGN = "DMD_NUMERIC_FIELD_WIDTH_INCLUDES_SIGN"
 
 const GDAL_DCAP_OPEN = "DCAP_OPEN"
 
@@ -35449,6 +36222,8 @@ const GDAL_DCAP_REORDER_FIELDS = "DCAP_REORDER_FIELDS"
 
 const GDAL_DMD_ALTER_FIELD_DEFN_FLAGS = "GDAL_DMD_ALTER_FIELD_DEFN_FLAGS"
 
+const GDAL_DMD_ILLEGAL_FIELD_NAMES = "GDAL_DMD_ILLEGAL_FIELD_NAMES"
+
 const GDAL_DCAP_NOTNULL_FIELDS = "DCAP_NOTNULL_FIELDS"
 
 const GDAL_DCAP_UNIQUE_FIELDS = "DCAP_UNIQUE_FIELDS"
@@ -35469,6 +36244,10 @@ const GDAL_DMD_GEOMETRY_FLAGS = "GDAL_DMD_GEOMETRY_FLAGS"
 
 const GDAL_DCAP_FEATURE_STYLES = "DCAP_FEATURE_STYLES"
 
+const GDAL_DCAP_FEATURE_STYLES_READ = "DCAP_FEATURE_STYLES_READ"
+
+const GDAL_DCAP_FEATURE_STYLES_WRITE = "DCAP_FEATURE_STYLES_WRITE"
+
 const GDAL_DCAP_COORDINATE_EPOCH = "DCAP_COORDINATE_EPOCH"
 
 const GDAL_DCAP_MULTIPLE_VECTOR_LAYERS = "DCAP_MULTIPLE_VECTOR_LAYERS"
@@ -35484,6 +36263,8 @@ const GDAL_DCAP_DELETE_RELATIONSHIP = "DCAP_DELETE_RELATIONSHIP"
 const GDAL_DCAP_UPDATE_RELATIONSHIP = "DCAP_UPDATE_RELATIONSHIP"
 
 const GDAL_DMD_RELATIONSHIP_FLAGS = "GDAL_DMD_RELATIONSHIP_FLAGS"
+
+const GDAL_DMD_RELATIONSHIP_RELATED_TABLE_TYPES = "GDAL_DMD_RELATIONSHIP_RELATED_TABLE_TYPES"
 
 const GDAL_DCAP_RENAME_LAYERS = "DCAP_RENAME_LAYERS"
 
@@ -35617,6 +36398,12 @@ const CTLS_HTTPFETCHCALLBACK = 20
 
 const CTLS_MAX = 32
 
+const GCMVF_PARTIAL_INTERSECTION = 0
+
+const GCMVF_NO_INTERSECTION = 1
+
+const GCMVF_CHUNK_FULLY_WITHIN_CUTLINE = 2
+
 const VRT_NODATA_UNSET = -1234.56
 
 const OGR_GGT_COUNT_NOT_NEEDED = 0x01
@@ -35663,15 +36450,23 @@ const ALTER_UNIQUE_FLAG = 0x20
 
 const ALTER_DOMAIN_FLAG = 0x40
 
+const ALTER_ALTERNATIVE_NAME_FLAG = 0x80
+
+const ALTER_COMMENT_FLAG = 0x0100
+
 const ALTER_ALL_FLAG =
     (
         (
             (
-                ((ALTER_NAME_FLAG | ALTER_TYPE_FLAG) | ALTER_WIDTH_PRECISION_FLAG) |
-                ALTER_NULLABLE_FLAG
-            ) | ALTER_DEFAULT_FLAG
-        ) | ALTER_UNIQUE_FLAG
-    ) | ALTER_DOMAIN_FLAG
+                (
+                    (
+                        ((ALTER_NAME_FLAG | ALTER_TYPE_FLAG) | ALTER_WIDTH_PRECISION_FLAG) |
+                        ALTER_NULLABLE_FLAG
+                    ) | ALTER_DEFAULT_FLAG
+                ) | ALTER_UNIQUE_FLAG
+            ) | ALTER_DOMAIN_FLAG
+        ) | ALTER_ALTERNATIVE_NAME_FLAG
+    ) | ALTER_COMMENT_FLAG
 
 const ALTER_GEOM_FIELD_DEFN_NAME_FLAG = 0x1000
 
@@ -35737,6 +36532,8 @@ const OLCDeleteFeature = "DeleteFeature"
 
 const OLCUpsertFeature = "UpsertFeature"
 
+const OLCUpdateFeature = "UpdateFeature"
+
 const OLCFastSetNextByIndex = "FastSetNextByIndex"
 
 const OLCStringsAsUTF8 = "StringsAsUTF8"
@@ -35786,8 +36583,6 @@ const ODrCCreateDataSource = "CreateDataSource"
 const ODrCDeleteDataSource = "DeleteDataSource"
 
 const OLMD_FID64 = "OLMD_FID64"
-
-const SRS_WKT_WGS84_LAT_LONG = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]"
 
 const SRS_PT_ALBERS_CONIC_EQUAL_AREA = "Albers_Conic_Equal_Area"
 
