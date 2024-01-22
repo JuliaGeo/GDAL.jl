@@ -19,17 +19,17 @@ options = GDAL.gdaltranslateoptionsnew(optvec, C_NULL)
 ds_tiny_asc = GDAL.gdaltranslate("data/utmtiny.asc", ds_small, options, C_NULL)
 GDAL.gdaltranslateoptionsfree(options)
 GDAL.gdalclose(ds_tiny_asc)
-@test replace(read("data/utmtiny.asc", String), "\r" => "") == """
+@test replace(read("data/utmtiny.asc", String), "\r" => "", " \n" => "\n") == """
     ncols        5
     nrows        5
     xllcorner    440720.000000000000
     yllcorner    3745320.000000000000
     cellsize     1200.000000000000
-     128 126 161 185 193
-     171 164 175 206 205
-     127 148 177 205 209
-     93 114 164 172 181
-     83 101 140 128 122
+    128 126 161 185 193
+    171 164 175 206 205
+    127 148 177 205 209
+    93 114 164 172 181
+    83 101 140 128 122
     """
 # also create a Byte GeoTIFF version for later use
 optvec = ["-r", "cubic", "-tr", "1200", "1200", "-ot", "Byte"]
@@ -79,18 +79,18 @@ ds_dempr = GDAL.gdaldemprocessing(
 )
 GDAL.gdaldemprocessingoptionsfree(options)
 GDAL.gdalclose(ds_dempr)
-@test replace(read("data/utmtiny-hillshade.asc", String), "\r" => "") == """
+@test replace(read("data/utmtiny-hillshade.asc", String), "\r" => "", " \n" => "\n") == """
     ncols        5
     nrows        5
     xllcorner    440720.000000000000
     yllcorner    3745320.000000000000
     cellsize     1200.000000000000
     NODATA_value 0
-     0 0 0 0 0
-     0 183 184 183 0
-     0 180 182 181 0
-     0 181 181 177 0
-     0 0 0 0 0
+    0 0 0 0 0
+    0 183 184 183 0
+    0 180 182 181 0
+    0 181 181 177 0
+    0 0 0 0 0
     """
 rm("data/utmtiny-hillshade.asc")
 rm("data/utmtiny-hillshade.prj")
