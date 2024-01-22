@@ -19,7 +19,7 @@ options = GDAL.gdaltranslateoptionsnew(optvec, C_NULL)
 ds_tiny_asc = GDAL.gdaltranslate("data/utmtiny.asc", ds_small, options, C_NULL)
 GDAL.gdaltranslateoptionsfree(options)
 GDAL.gdalclose(ds_tiny_asc)
-@test replace(read("data/utmtiny.asc", String), "\r" => "", " \n" => "\n") == """
+@test replace(replace(read("data/utmtiny.asc", String), "\r" => ""), " \n" => "\n") == """
     ncols        5
     nrows        5
     xllcorner    440720.000000000000
@@ -79,7 +79,7 @@ ds_dempr = GDAL.gdaldemprocessing(
 )
 GDAL.gdaldemprocessingoptionsfree(options)
 GDAL.gdalclose(ds_dempr)
-@test replace(read("data/utmtiny-hillshade.asc", String), "\r" => "", " \n" => "\n") == """
+@test replace(replace(read("data/utmtiny-hillshade.asc", String), "\r" => ""), " \n" => "\n") == """
     ncols        5
     nrows        5
     xllcorner    440720.000000000000
