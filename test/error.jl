@@ -35,8 +35,8 @@
         GDAL.gdalinfooptionsnew(["-novalidoption"], C_NULL)
     catch err
         @test err.class === GDAL.CE_Failure
-        @test err.code === Cint(6)
-        @test err.msg === "Unknown option name '-novalidoption'"
+        @test err.code === Cint(1)
+        @test err.msg === "Unknown argument: -novalidoption"
     end
 
     @testset "Cstring handling" begin
