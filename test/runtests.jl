@@ -1,5 +1,6 @@
 using GDAL
 using Test
+import Aqua
 
 @testset "GDAL" begin
 
@@ -49,4 +50,5 @@ using Test
 
     GDAL.gdaldestroydrivermanager()
 
+    Aqua.test_all(GDAL)
 end
