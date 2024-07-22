@@ -67,7 +67,7 @@ const string_free_me = Symbol[:gdalinfo]
 """
 Custom rewriter for Clang.jl's C wrapper
 
-Gets called with all expressions in a header file, or all expressiong in a common file.
+Gets called with all expressions in a header file, or all expressions in a common file.
 If available, it adds docstrings before every expression, such that Clang.jl prints them
 on top of the expression. The expressions themselves get sent to `rewriter(::Expr)`` for
 further treatment.
