@@ -50,5 +50,8 @@ import Aqua
 
     GDAL.gdaldestroydrivermanager()
 
-    Aqua.test_all(GDAL)
+    Aqua.test_all(
+        GDAL;
+        stale_deps = (; ignore = [:LERC_jll,])
+    )
 end
