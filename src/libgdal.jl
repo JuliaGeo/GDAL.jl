@@ -1742,9 +1742,11 @@ Error category
 end
 
 """
-    CPLCreateFileInZip(void *,
-                       const char *,
-                       char **) -> CPLErr
+    CPLCreateFileInZip(void * hZip,
+                       const char * pszFilename,
+                       char ** papszOptions) -> CPLErr
+
+Create a file in a ZIP file.
 """
 function cplcreatefileinzip(hZip, pszFilename, papszOptions)
     aftercare(
@@ -1760,9 +1762,11 @@ function cplcreatefileinzip(hZip, pszFilename, papszOptions)
 end
 
 """
-    CPLWriteFileInZip(void *,
-                      const void *,
-                      int) -> CPLErr
+    CPLWriteFileInZip(void * hZip,
+                      const void * pBuffer,
+                      int nBufferSize) -> CPLErr
+
+Write in current file inside a ZIP file.
 """
 function cplwritefileinzip(hZip, pBuffer, nBufferSize)
     aftercare(
@@ -1778,7 +1782,9 @@ function cplwritefileinzip(hZip, pBuffer, nBufferSize)
 end
 
 """
-    CPLCloseFileInZip(void *) -> CPLErr
+    CPLCloseFileInZip(void * hZip) -> CPLErr
+
+Close current file inside ZIP file.
 """
 function cplclosefileinzip(hZip)
     aftercare(ccall((:CPLCloseFileInZip, libgdal), CPLErr, (Ptr{Cvoid},), hZip))
@@ -1843,19 +1849,34 @@ function cpladdfileinzip(
 end
 
 """
-    CPLCloseZip(void *) -> CPLErr
+    CPLCloseZip(void * hZip) -> CPLErr
+
+Close ZIP file.
 """
 function cplclosezip(hZip)
     aftercare(ccall((:CPLCloseZip, libgdal), CPLErr, (Ptr{Cvoid},), hZip))
 end
 
 """
-    CPLZLibDeflate(const void *,
-                   size_t,
-                   int,
-                   void *,
-                   size_t,
+    CPLZLibDeflate(const void * ptr,
+                   size_t nBytes,
+                   int nLevel,
+                   void * outptr,
+                   size_t nOutAvailableBytes,
                    size_t * pnOutBytes) -> void *
+
+Compress a buffer with ZLib compression.
+
+### Parameters
+* **ptr**: input buffer.
+* **nBytes**: size of input buffer in bytes.
+* **nLevel**: ZLib compression level (-1 for default).
+* **outptr**: output buffer, or NULL to let the function allocate it.
+* **nOutAvailableBytes**: size of output buffer if provided, or ignored.
+* **pnOutBytes**: pointer to a size_t, where to store the size of the output buffer.
+
+### Returns
+the output buffer (to be freed with VSIFree() if not provided) or NULL in case of error.
 """
 function cplzlibdeflate(ptr, nBytes, nLevel, outptr, nOutAvailableBytes, pnOutBytes)
     aftercare(
@@ -1874,11 +1895,23 @@ function cplzlibdeflate(ptr, nBytes, nLevel, outptr, nOutAvailableBytes, pnOutBy
 end
 
 """
-    CPLZLibInflate(const void *,
-                   size_t,
-                   void *,
-                   size_t,
+    CPLZLibInflate(const void * ptr,
+                   size_t nBytes,
+                   void * outptr,
+                   size_t nOutAvailableBytes,
                    size_t * pnOutBytes) -> void *
+
+Uncompress a buffer compressed with ZLib compression.
+
+### Parameters
+* **ptr**: input buffer.
+* **nBytes**: size of input buffer in bytes.
+* **outptr**: output buffer, or NULL to let the function allocate it.
+* **nOutAvailableBytes**: size of output buffer if provided, or ignored.
+* **pnOutBytes**: pointer to a size_t, where to store the size of the output buffer.
+
+### Returns
+the output buffer (to be freed with VSIFree() if not provided) or NULL in case of error.
 """
 function cplzlibinflate(ptr, nBytes, outptr, nOutAvailableBytes, pnOutBytes)
     aftercare(
@@ -3972,7 +4005,7 @@ function vsioverwritefile(fpTarget, pszSourceFilename)
 end
 
 "Type for [`VSIStatL`](@ref)()"
-const VSIStatBufL = _stat64
+const VSIStatBufL = stat
 
 """
     VSIStatL(const char * pszFilename,
@@ -19632,7 +19665,7 @@ struct GDALTriangulation
 end
 
 """
-    GDALHasTriangulation() -> int
+    GDALHasTriangulation(void) -> int
 
 Returns if GDAL is built with Delaunay triangulation support.
 
@@ -28514,37 +28547,37 @@ function Base.getproperty(x::Ptr{OGRField}, f::Symbol)
     f === :Real && return Ptr{Cdouble}(x + 0)
     f === :String && return Ptr{Cstring}(x + 0)
     f === :IntegerList && return Ptr{
-        var"struct (unnamed at C:\\\\Users\\\\visser_mn\\\\.julia\\\\artifacts\\\\9a3b4e015ef0d17d283891236e0176acb793b68a\\\\include\\\\ogr_core.h:917:5)",
+        var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:917:5)",
     }(
         x + 0,
     )
     f === :Integer64List && return Ptr{
-        var"struct (unnamed at C:\\\\Users\\\\visser_mn\\\\.julia\\\\artifacts\\\\9a3b4e015ef0d17d283891236e0176acb793b68a\\\\include\\\\ogr_core.h:923:5)",
+        var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:923:5)",
     }(
         x + 0,
     )
     f === :RealList && return Ptr{
-        var"struct (unnamed at C:\\\\Users\\\\visser_mn\\\\.julia\\\\artifacts\\\\9a3b4e015ef0d17d283891236e0176acb793b68a\\\\include\\\\ogr_core.h:929:5)",
+        var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:929:5)",
     }(
         x + 0,
     )
     f === :StringList && return Ptr{
-        var"struct (unnamed at C:\\\\Users\\\\visser_mn\\\\.julia\\\\artifacts\\\\9a3b4e015ef0d17d283891236e0176acb793b68a\\\\include\\\\ogr_core.h:935:5)",
+        var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:935:5)",
     }(
         x + 0,
     )
     f === :Binary && return Ptr{
-        var"struct (unnamed at C:\\\\Users\\\\visser_mn\\\\.julia\\\\artifacts\\\\9a3b4e015ef0d17d283891236e0176acb793b68a\\\\include\\\\ogr_core.h:941:5)",
+        var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:941:5)",
     }(
         x + 0,
     )
     f === :Set && return Ptr{
-        var"struct (unnamed at C:\\\\Users\\\\visser_mn\\\\.julia\\\\artifacts\\\\9a3b4e015ef0d17d283891236e0176acb793b68a\\\\include\\\\ogr_core.h:947:5)",
+        var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:947:5)",
     }(
         x + 0,
     )
     f === :Date && return Ptr{
-        var"struct (unnamed at C:\\\\Users\\\\visser_mn\\\\.julia\\\\artifacts\\\\9a3b4e015ef0d17d283891236e0176acb793b68a\\\\include\\\\ogr_core.h:954:5)",
+        var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:954:5)",
     }(
         x + 0,
     )
@@ -30617,8 +30650,13 @@ function ogr_l_setattributefilter(arg1, arg2)
     )
 end
 
-"Data type for a Arrow C stream. Include ogr\\\\_recordbatch.h to get the definition"
-const ArrowArrayStream = Cvoid
+struct ArrowArrayStream
+    get_schema::Ptr{Cvoid}
+    get_next::Ptr{Cvoid}
+    get_last_error::Ptr{Cvoid}
+    release::Ptr{Cvoid}
+    private_data::Ptr{Cvoid}
+end
 
 """
     OGR_L_GetArrowStream(OGRLayerH hLayer,
@@ -30648,8 +30686,17 @@ function ogr_l_getarrowstream(hLayer, out_stream, papszOptions)
     )
 end
 
-"Data type for a Arrow C schema. Include ogr\\\\_recordbatch.h to get the definition"
-const ArrowSchema = Cvoid
+struct ArrowSchema
+    format::Cstring
+    name::Cstring
+    metadata::Cstring
+    flags::Int64
+    n_children::Int64
+    children::Ptr{Ptr{ArrowSchema}}
+    dictionary::Ptr{ArrowSchema}
+    release::Ptr{Cvoid}
+    private_data::Ptr{Cvoid}
+end
 
 """
     OGR_L_IsArrowSchemaSupported(OGRLayerH hLayer,
@@ -30710,8 +30757,18 @@ function ogr_l_createfieldfromarrowschema(hLayer, schema, papszOptions)
     )
 end
 
-"Data type for a Arrow C array. Include ogr\\\\_recordbatch.h to get the definition"
-const ArrowArray = Cvoid
+struct ArrowArray
+    length::Int64
+    null_count::Int64
+    offset::Int64
+    n_buffers::Int64
+    n_children::Int64
+    buffers::Ptr{Ptr{Cvoid}}
+    children::Ptr{Ptr{ArrowArray}}
+    dictionary::Ptr{ArrowArray}
+    release::Ptr{Cvoid}
+    private_data::Ptr{Cvoid}
+end
 
 """
     OGR_L_WriteArrowBatch(OGRLayerH hLayer,
@@ -37847,38 +37904,38 @@ function octtransformbounds(
     )
 end
 
-struct var"struct (unnamed at C:\\\\Users\\\\visser_mn\\\\.julia\\\\artifacts\\\\9a3b4e015ef0d17d283891236e0176acb793b68a\\\\include\\\\ogr_core.h:917:5)"
+struct var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:917:5)"
     nCount::Cint
     paList::Ptr{Cint}
 end
 
-struct var"struct (unnamed at C:\\\\Users\\\\visser_mn\\\\.julia\\\\artifacts\\\\9a3b4e015ef0d17d283891236e0176acb793b68a\\\\include\\\\ogr_core.h:923:5)"
+struct var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:923:5)"
     nCount::Cint
     paList::Ptr{GIntBig}
 end
 
-struct var"struct (unnamed at C:\\\\Users\\\\visser_mn\\\\.julia\\\\artifacts\\\\9a3b4e015ef0d17d283891236e0176acb793b68a\\\\include\\\\ogr_core.h:929:5)"
+struct var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:929:5)"
     nCount::Cint
     paList::Ptr{Cdouble}
 end
 
-struct var"struct (unnamed at C:\\\\Users\\\\visser_mn\\\\.julia\\\\artifacts\\\\9a3b4e015ef0d17d283891236e0176acb793b68a\\\\include\\\\ogr_core.h:935:5)"
+struct var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:935:5)"
     nCount::Cint
     paList::Ptr{Cstring}
 end
 
-struct var"struct (unnamed at C:\\\\Users\\\\visser_mn\\\\.julia\\\\artifacts\\\\9a3b4e015ef0d17d283891236e0176acb793b68a\\\\include\\\\ogr_core.h:941:5)"
+struct var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:941:5)"
     nCount::Cint
     paData::Ptr{GByte}
 end
 
-struct var"struct (unnamed at C:\\\\Users\\\\visser_mn\\\\.julia\\\\artifacts\\\\9a3b4e015ef0d17d283891236e0176acb793b68a\\\\include\\\\ogr_core.h:947:5)"
+struct var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:947:5)"
     nMarker1::Cint
     nMarker2::Cint
     nMarker3::Cint
 end
 
-struct var"struct (unnamed at C:\\\\Users\\\\visser_mn\\\\.julia\\\\artifacts\\\\9a3b4e015ef0d17d283891236e0176acb793b68a\\\\include\\\\ogr_core.h:954:5)"
+struct var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:954:5)"
     Year::GInt16
     Month::GByte
     Day::GByte
@@ -37893,7 +37950,7 @@ const GDAL_PREFIX = "/workspace/destdir"
 
 const SIZEOF_INT = 4
 
-const SIZEOF_UNSIGNED_LONG = 4
+const SIZEOF_UNSIGNED_LONG = 8
 
 const SIZEOF_VOIDP = 8
 
@@ -37959,7 +38016,7 @@ const GINT64_MAX = GINTBIG_MAX
 
 const GUINT64_MAX = GUINTBIG_MAX
 
-const CPL_FRMT_GB_WITHOUT_PREFIX = "I64"
+const CPL_FRMT_GB_WITHOUT_PREFIX = "ll"
 
 const CPL_IS_LSB = 1
 
@@ -38796,3 +38853,9 @@ const SRS_DN_WGS84 = "WGS_1984"
 const SRS_WGS84_SEMIMAJOR = 6.378137e6
 
 const SRS_WGS84_INVFLATTENING = 298.257223563
+
+const ARROW_FLAG_DICTIONARY_ORDERED = 1
+
+const ARROW_FLAG_NULLABLE = 2
+
+const ARROW_FLAG_MAP_KEYS_SORTED = 4
