@@ -49,6 +49,7 @@ headerfiles =
             "ogr_api.h",
             "ogr_core.h",
             "ogr_srs_api.h",
+            "ogr_recordbatch.h",
         ],
     )
 
