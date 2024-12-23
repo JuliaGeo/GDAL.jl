@@ -79,19 +79,22 @@ ds_dempr = GDAL.gdaldemprocessing(
 )
 GDAL.gdaldemprocessingoptionsfree(options)
 GDAL.gdalclose(ds_dempr)
-@test replace(replace(read("data/utmtiny-hillshade.asc", String), "\r" => ""), " \n" => "\n") == """
-    ncols        5
-    nrows        5
-    xllcorner    440720.000000000000
-    yllcorner    3745320.000000000000
-    cellsize     1200.000000000000
-    NODATA_value 0
-    0 0 0 0 0
-    0 183 184 183 0
-    0 180 182 181 0
-    0 181 181 177 0
-    0 0 0 0 0
-    """
+@test replace(
+    replace(read("data/utmtiny-hillshade.asc", String), "\r" => ""),
+    " \n" => "\n",
+) == """
+ncols        5
+nrows        5
+xllcorner    440720.000000000000
+yllcorner    3745320.000000000000
+cellsize     1200.000000000000
+NODATA_value 0
+0 0 0 0 0
+0 183 184 183 0
+0 180 182 181 0
+0 181 181 177 0
+0 0 0 0 0
+"""
 rm("data/utmtiny-hillshade.asc")
 rm("data/utmtiny-hillshade.prj")
 

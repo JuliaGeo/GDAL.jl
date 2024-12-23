@@ -1742,11 +1742,9 @@ Error category
 end
 
 """
-    CPLCreateFileInZip(void * hZip,
-                       const char * pszFilename,
-                       char ** papszOptions) -> CPLErr
-
-Create a file in a ZIP file.
+    CPLCreateFileInZip(void *,
+                       const char *,
+                       char **) -> CPLErr
 """
 function cplcreatefileinzip(hZip, pszFilename, papszOptions)
     aftercare(
@@ -1762,11 +1760,9 @@ function cplcreatefileinzip(hZip, pszFilename, papszOptions)
 end
 
 """
-    CPLWriteFileInZip(void * hZip,
-                      const void * pBuffer,
-                      int nBufferSize) -> CPLErr
-
-Write in current file inside a ZIP file.
+    CPLWriteFileInZip(void *,
+                      const void *,
+                      int) -> CPLErr
 """
 function cplwritefileinzip(hZip, pBuffer, nBufferSize)
     aftercare(
@@ -1782,9 +1778,7 @@ function cplwritefileinzip(hZip, pBuffer, nBufferSize)
 end
 
 """
-    CPLCloseFileInZip(void * hZip) -> CPLErr
-
-Close current file inside ZIP file.
+    CPLCloseFileInZip(void *) -> CPLErr
 """
 function cplclosefileinzip(hZip)
     aftercare(ccall((:CPLCloseFileInZip, libgdal), CPLErr, (Ptr{Cvoid},), hZip))
@@ -1849,34 +1843,19 @@ function cpladdfileinzip(
 end
 
 """
-    CPLCloseZip(void * hZip) -> CPLErr
-
-Close ZIP file.
+    CPLCloseZip(void *) -> CPLErr
 """
 function cplclosezip(hZip)
     aftercare(ccall((:CPLCloseZip, libgdal), CPLErr, (Ptr{Cvoid},), hZip))
 end
 
 """
-    CPLZLibDeflate(const void * ptr,
-                   size_t nBytes,
-                   int nLevel,
-                   void * outptr,
-                   size_t nOutAvailableBytes,
+    CPLZLibDeflate(const void *,
+                   size_t,
+                   int,
+                   void *,
+                   size_t,
                    size_t * pnOutBytes) -> void *
-
-Compress a buffer with ZLib compression.
-
-### Parameters
-* **ptr**: input buffer.
-* **nBytes**: size of input buffer in bytes.
-* **nLevel**: ZLib compression level (-1 for default).
-* **outptr**: output buffer, or NULL to let the function allocate it.
-* **nOutAvailableBytes**: size of output buffer if provided, or ignored.
-* **pnOutBytes**: pointer to a size_t, where to store the size of the output buffer.
-
-### Returns
-the output buffer (to be freed with VSIFree() if not provided) or NULL in case of error.
 """
 function cplzlibdeflate(ptr, nBytes, nLevel, outptr, nOutAvailableBytes, pnOutBytes)
     aftercare(
@@ -1895,23 +1874,11 @@ function cplzlibdeflate(ptr, nBytes, nLevel, outptr, nOutAvailableBytes, pnOutBy
 end
 
 """
-    CPLZLibInflate(const void * ptr,
-                   size_t nBytes,
-                   void * outptr,
-                   size_t nOutAvailableBytes,
+    CPLZLibInflate(const void *,
+                   size_t,
+                   void *,
+                   size_t,
                    size_t * pnOutBytes) -> void *
-
-Uncompress a buffer compressed with ZLib compression.
-
-### Parameters
-* **ptr**: input buffer.
-* **nBytes**: size of input buffer in bytes.
-* **outptr**: output buffer, or NULL to let the function allocate it.
-* **nOutAvailableBytes**: size of output buffer if provided, or ignored.
-* **pnOutBytes**: pointer to a size_t, where to store the size of the output buffer.
-
-### Returns
-the output buffer (to be freed with VSIFree() if not provided) or NULL in case of error.
 """
 function cplzlibinflate(ptr, nBytes, outptr, nOutAvailableBytes, pnOutBytes)
     aftercare(
@@ -3614,7 +3581,7 @@ end
                 const char * pszAccess,
                 int bSetError) -> VSILFILE *
 
-Open file.
+Open/create file.
 
 ### Parameters
 * **pszFilename**: the file to open. UTF-8 encoded.
@@ -3643,7 +3610,7 @@ end
                  int bSetError,
                  CSLConstList papszOptions) -> VSILFILE *
 
-Open file.
+Open/create file.
 
 ### Parameters
 * **pszFilename**: the file to open. UTF-8 encoded.
@@ -3753,7 +3720,7 @@ Read bytes from file.
 * **fp**: file handle opened with VSIFOpenL().
 
 ### Returns
-number of objects successfully read.
+number of objects successfully read. If that number is less than nCount, VSIFEofL() or VSIFErrorL() can be used to determine the reason for the short read.
 """
 function vsifreadl(arg1, arg2, arg3, arg4)
     aftercare(
@@ -3835,6 +3802,33 @@ function vsifwritel(arg1, arg2, arg3, arg4)
 end
 
 """
+    VSIFClearErrL(VSILFILE * fp) -> void
+
+Reset the error and end-of-file indicators.
+
+### Parameters
+* **fp**: file handle opened with VSIFOpenL().
+"""
+function vsifclearerrl(arg1)
+    aftercare(ccall((:VSIFClearErrL, libgdal), Cvoid, (Ptr{VSILFILE},), arg1))
+end
+
+"""
+    VSIFErrorL(VSILFILE * fp) -> int
+
+Test the error indicator.
+
+### Parameters
+* **fp**: file handle opened with VSIFOpenL().
+
+### Returns
+TRUE if the error indicator is set, else FALSE.
+"""
+function vsiferrorl(arg1)
+    aftercare(ccall((:VSIFErrorL, libgdal), Cint, (Ptr{VSILFILE},), arg1))
+end
+
+"""
     VSIFEofL(VSILFILE * fp) -> int
 
 Test for end of file.
@@ -3843,7 +3837,7 @@ Test for end of file.
 * **fp**: file handle opened with VSIFOpenL().
 
 ### Returns
-TRUE if at EOF else FALSE.
+TRUE if at EOF, else FALSE.
 """
 function vsifeofl(arg1)
     aftercare(ccall((:VSIFEofL, libgdal), Cint, (Ptr{VSILFILE},), arg1))
@@ -4005,7 +3999,7 @@ function vsioverwritefile(fpTarget, pszSourceFilename)
 end
 
 "Type for [`VSIStatL`](@ref)()"
-const VSIStatBufL = stat
+const VSIStatBufL = _stat64
 
 """
     VSIStatL(const char * pszFilename,
@@ -4398,7 +4392,7 @@ end
 Set a path specific option for a given path prefix.
 
 ### Parameters
-* **pszPathPrefix**: a path prefix of a virtual file system handler. Typically of the form "/vsiXXX/bucket". Must NOT be NULL.
+* **pszPathPrefix**: a path prefix of a virtual file system handler. Typically of the form "/vsiXXX/bucket". Must NOT be NULL. Should not include trailing slashes.
 * **pszKey**: Option name. Must NOT be NULL.
 * **pszValue**: Option value. May be NULL to erase it.
 """
@@ -4958,6 +4952,59 @@ function vsicopyfile(
 end
 
 """
+    VSICopyFileRestartable(const char * pszSource,
+                           const char * pszTarget,
+                           const char * pszInputPayload,
+                           char ** ppszOutputPayload,
+                           const char *const * papszOptions,
+                           GDALProgressFunc pProgressFunc,
+                           void * pProgressData) -> int
+
+Copy a source file into a target file in a way that can (potentially) be restarted.
+
+### Parameters
+* **pszSource**: Source filename. UTF-8 encoded. Must not be NULL
+* **pszTarget**: Target filename. UTF-8 encoded. Must not be NULL
+* **pszInputPayload**: NULL at the first invocation. When doing a retry, should be the content of *ppszOutputPayload from a previous invocation.
+* **ppszOutputPayload**: Pointer to an output string that will be set to a value that can be provided as pszInputPayload for a next call to VSICopyFileRestartable(). ppszOutputPayload must not be NULL. The string set in *ppszOutputPayload, if not NULL, is JSON-encoded, and can be re-used in another process instance. It must be freed with VSIFree() when no longer needed.
+* **papszOptions**: Null terminated list of options, or NULL. Currently accepted options are: 
+
+NUM_THREADS=integer or ALL_CPUS. Number of threads to use for parallel file copying. Only use for when /vsis3/, /vsigs/, /vsiaz/ or /vsiadls/ is in source or target. The default is 10.  
+
+
+CHUNK_SIZE=integer. Maximum size of chunk (in bytes) to use to split large objects. For upload to /vsis3/, this chunk size must be set at least to 5 MB. The default is 50 MB.
+* **pProgressFunc**: Progress callback, or NULL.
+* **pProgressData**: User data of progress callback, or NULL.
+
+### Returns
+0 on success, -1 on (non-restartable) failure, 1 if VSICopyFileRestartable() can be called again in a restartable way
+"""
+function vsicopyfilerestartable(
+    pszSource,
+    pszTarget,
+    pszInputPayload,
+    ppszOutputPayload,
+    papszOptions,
+    pProgressFunc,
+    pProgressData,
+)
+    aftercare(
+        ccall(
+            (:VSICopyFileRestartable, libgdal),
+            Cint,
+            (Cstring, Cstring, Cstring, Ptr{Cstring}, Ptr{Cstring}, GDALProgressFunc, Any),
+            pszSource,
+            pszTarget,
+            pszInputPayload,
+            ppszOutputPayload,
+            papszOptions,
+            pProgressFunc,
+            pProgressData,
+        ),
+    )
+end
+
+"""
     VSISync(const char * pszSource,
             const char * pszTarget,
             const char *const * papszOptions,
@@ -5026,9 +5073,212 @@ function vsisync(
 end
 
 """
+    VSIMultipartUploadGetCapabilities(const char * pszFilename,
+                                      int * pbNonSequentialUploadSupported,
+                                      int * pbParallelUploadSupported,
+                                      int * pbAbortSupported,
+                                      size_t * pnMinPartSize,
+                                      size_t * pnMaxPartSize,
+                                      int * pnMaxPartCount) -> int
+
+Return capabilities for multiple part file upload.
+
+### Parameters
+* **pszFilename**: Filename, or virtual file system prefix, onto which capabilities should apply.
+* **pbNonSequentialUploadSupported**: If not null, the pointed value is set if parts can be uploaded in a non-sequential way.
+* **pbParallelUploadSupported**: If not null, the pointed value is set if parts can be uploaded in a parallel way. (implies *pbNonSequentialUploadSupported = true)
+* **pbAbortSupported**: If not null, the pointed value is set if VSIMultipartUploadAbort() is implemented.
+* **pnMinPartSize**: If not null, the pointed value is set to the minimum size of parts (but the last one), in MiB.
+* **pnMaxPartSize**: If not null, the pointed value is set to the maximum size of parts, in MiB.
+* **pnMaxPartCount**: If not null, the pointed value is set to the maximum number of parts that can be uploaded.
+
+### Returns
+TRUE in case of success, FALSE otherwise.
+"""
+function vsimultipartuploadgetcapabilities(
+    pszFilename,
+    pbNonSequentialUploadSupported,
+    pbParallelUploadSupported,
+    pbAbortSupported,
+    pnMinPartSize,
+    pnMaxPartSize,
+    pnMaxPartCount,
+)
+    aftercare(
+        ccall(
+            (:VSIMultipartUploadGetCapabilities, libgdal),
+            Cint,
+            (
+                Cstring,
+                Ptr{Cint},
+                Ptr{Cint},
+                Ptr{Cint},
+                Ptr{Csize_t},
+                Ptr{Csize_t},
+                Ptr{Cint},
+            ),
+            pszFilename,
+            pbNonSequentialUploadSupported,
+            pbParallelUploadSupported,
+            pbAbortSupported,
+            pnMinPartSize,
+            pnMaxPartSize,
+            pnMaxPartCount,
+        ),
+    )
+end
+
+"""
+    VSIMultipartUploadStart(const char * pszFilename,
+                            CSLConstList papszOptions) -> char *
+
+Initiates the upload a (big) file in a piece-wise way.
+
+### Parameters
+* **pszFilename**: Filename to create
+* **papszOptions**: NULL or null-terminated list of options.
+
+### Returns
+an upload ID to pass to other VSIMultipartUploadXXXXX() functions, and to free with CPLFree() once done, or nullptr in case of error.
+"""
+function vsimultipartuploadstart(pszFilename, papszOptions)
+    aftercare(
+        ccall(
+            (:VSIMultipartUploadStart, libgdal),
+            Cstring,
+            (Cstring, CSLConstList),
+            pszFilename,
+            papszOptions,
+        ),
+        false,
+    )
+end
+
+"""
+    VSIMultipartUploadAddPart(const char * pszFilename,
+                              const char * pszUploadId,
+                              int nPartNumber,
+                              vsi_l_offset nFileOffset,
+                              const void * pData,
+                              size_t nDataLength,
+                              CSLConstList papszOptions) -> char *
+
+Uploads a new part to a multi-part uploaded file.
+
+### Parameters
+* **pszFilename**: Filename to which to append the new part. Should be the same as the one used for VSIMultipartUploadStart()
+* **pszUploadId**: Value returned by VSIMultipartUploadStart()
+* **nPartNumber**: Part number, starting at 1.
+* **nFileOffset**: Offset within the file at which (starts at 0) the passed data starts.
+* **pData**: Pointer to an array of nDataLength bytes.
+* **nDataLength**: Size in bytes of pData.
+* **papszOptions**: Unused. Should be nullptr.
+
+### Returns
+a part identifier that must be passed into the apszPartIds[] array of VSIMultipartUploadEnd(), and to free with CPLFree() once done, or nullptr in case of error.
+"""
+function vsimultipartuploadaddpart(
+    pszFilename,
+    pszUploadId,
+    nPartNumber,
+    nFileOffset,
+    pData,
+    nDataLength,
+    papszOptions,
+)
+    aftercare(
+        ccall(
+            (:VSIMultipartUploadAddPart, libgdal),
+            Cstring,
+            (Cstring, Cstring, Cint, vsi_l_offset, Ptr{Cvoid}, Csize_t, CSLConstList),
+            pszFilename,
+            pszUploadId,
+            nPartNumber,
+            nFileOffset,
+            pData,
+            nDataLength,
+            papszOptions,
+        ),
+        false,
+    )
+end
+
+"""
+    VSIMultipartUploadEnd(const char * pszFilename,
+                          const char * pszUploadId,
+                          size_t nPartIdsCount,
+                          const char *const * apszPartIds,
+                          vsi_l_offset nTotalSize,
+                          CSLConstList papszOptions) -> int
+
+Completes a multi-part file upload.
+
+### Parameters
+* **pszFilename**: Filename for which multipart upload should be completed. Should be the same as the one used for VSIMultipartUploadStart()
+* **pszUploadId**: Value returned by VSIMultipartUploadStart()
+* **nPartIdsCount**: Number of parts, andsize of apszPartIds
+* **apszPartIds**: Array of part identifiers (as returned by VSIMultipartUploadAddPart()), that must be ordered in the sequential order of parts, and of size nPartIdsCount.
+* **nTotalSize**: Total size of the file in bytes (must be equal to the sum of nDataLength passed to VSIMultipartUploadAddPart())
+* **papszOptions**: Unused. Should be nullptr.
+
+### Returns
+TRUE in case of success, FALSE in case of failure.
+"""
+function vsimultipartuploadend(
+    pszFilename,
+    pszUploadId,
+    nPartIdsCount,
+    apszPartIds,
+    nTotalSize,
+    papszOptions,
+)
+    aftercare(
+        ccall(
+            (:VSIMultipartUploadEnd, libgdal),
+            Cint,
+            (Cstring, Cstring, Csize_t, Ptr{Cstring}, vsi_l_offset, CSLConstList),
+            pszFilename,
+            pszUploadId,
+            nPartIdsCount,
+            apszPartIds,
+            nTotalSize,
+            papszOptions,
+        ),
+    )
+end
+
+"""
+    VSIMultipartUploadAbort(const char * pszFilename,
+                            const char * pszUploadId,
+                            CSLConstList papszOptions) -> int
+
+Aborts a multi-part file upload.
+
+### Parameters
+* **pszFilename**: Filename for which multipart upload should be completed. Should be the same as the one used for VSIMultipartUploadStart()
+* **pszUploadId**: Value returned by VSIMultipartUploadStart()
+* **papszOptions**: Unused. Should be nullptr.
+
+### Returns
+TRUE in case of success, FALSE in case of failure.
+"""
+function vsimultipartuploadabort(pszFilename, pszUploadId, papszOptions)
+    aftercare(
+        ccall(
+            (:VSIMultipartUploadAbort, libgdal),
+            Cint,
+            (Cstring, Cstring, CSLConstList),
+            pszFilename,
+            pszUploadId,
+            papszOptions,
+        ),
+    )
+end
+
+"""
     VSIAbortPendingUploads(const char * pszFilename) -> int
 
-Abort ongoing multi-part uploads.
+Abort all ongoing multi-part uploads.
 
 ### Parameters
 * **pszFilename**: filename or prefix of a directory into which multipart uploads must be aborted. This can be the root directory of a bucket. UTF-8 encoded.
@@ -5472,6 +5722,24 @@ function vsigetmemfilebuffer(pszFilename, pnDataLength, bUnlinkAndSeize)
     )
 end
 
+"""
+    VSIMemGenerateHiddenFilename(const char * pszFilename) -> const char *
+
+Generates a unique filename that can be used with the /vsimem/ virtual file system.
+
+### Parameters
+* **pszFilename**: the filename to be appended at the end of the returned filename. If not specified, defaults to "unnamed".
+
+### Returns
+pointer to a short-lived string (rotating buffer of strings in thread-local storage). It is recommended to use CPLStrdup() or std::string() immediately on it.
+"""
+function vsimemgeneratehiddenfilename(pszFilename)
+    aftercare(
+        ccall((:VSIMemGenerateHiddenFilename, libgdal), Cstring, (Cstring,), pszFilename),
+        false,
+    )
+end
+
 "Callback used by [`VSIStdoutSetRedirection`](@ref)()"
 const VSIWriteFunction = Ptr{Cvoid}
 
@@ -5637,6 +5905,20 @@ Offsets may be given in a non-increasing order, and may potentially overlap.
 const VSIFilesystemPluginAdviseReadCallback = Ptr{Cvoid}
 
 """
+Has a read error (non end-of-file related) has occurred?
+
+\\since GDAL 3.10
+"""
+const VSIFilesystemPluginErrorCallback = Ptr{Cvoid}
+
+"""
+Clear error and end-of-file flags.
+
+\\since GDAL 3.10
+"""
+const VSIFilesystemPluginClearErrCallback = Ptr{Cvoid}
+
+"""
     VSIFilesystemPluginCallbacksStruct
 
 struct containing callbacks to used by the handler. (rw), (r), (w) or () at the end indicate whether the given callback is mandatory for reading and or writing handlers. A (?) indicates that the callback might be mandatory for certain drivers only.
@@ -5667,6 +5949,8 @@ struct containing callbacks to used by the handler. (rw), (r), (w) or () at the 
 | nCacheSize           | max mem to use per file when buffering                                                 |
 | sibling\\_files      | list related files                                                                     |
 | advise\\_read        | AdviseRead()                                                                           |
+| error                | has read error occurred (r)                                                            |
+| clear\\_err          | clear error flags(r)                                                                   |
 """
 struct VSIFilesystemPluginCallbacksStruct
     pUserData::Ptr{Cvoid}
@@ -5691,6 +5975,8 @@ struct VSIFilesystemPluginCallbacksStruct
     nCacheSize::Csize_t
     sibling_files::VSIFilesystemPluginSiblingFilesCallback
     advise_read::VSIFilesystemPluginAdviseReadCallback
+    error::VSIFilesystemPluginErrorCallback
+    clear_err::VSIFilesystemPluginClearErrCallback
 end
 
 """
@@ -6067,18 +6353,18 @@ end
 
 """
     GDALDataTypeUnionWithValue(GDALDataType eDT,
-                               double dValue,
+                               double dfValue,
                                int bComplex) -> GDALDataType
 
 Union a data type with the one found for a value.
 
 ### Parameters
 * **eDT**: the first data type
-* **dValue**: the value for which to find a data type and union with eDT
+* **dfValue**: the value for which to find a data type and union with eDT
 * **bComplex**: if the value is complex
 
 ### Returns
-a data type able to express eDT and dValue.
+a data type able to express eDT and dfValue.
 """
 function gdaldatatypeunionwithvalue(eDT, dValue, bComplex)
     aftercare(
@@ -6177,6 +6463,25 @@ function gdaladjustvaluetodatatype(eDT, dfValue, pbClamped, pbRounded)
             pbClamped,
             pbRounded,
         ),
+    )
+end
+
+"""
+    GDALIsValueExactAs(double dfValue,
+                       GDALDataType eDT) -> bool
+
+Check whether the provided value can be exactly represented in a data type.
+
+### Parameters
+* **dfValue**: value to check.
+* **eDT**: target data type.
+
+### Returns
+true if the provided value can be exactly represented in the data type.
+"""
+function gdalisvalueexactas(dfValue, eDT)
+    aftercare(
+        ccall((:GDALIsValueExactAs, libgdal), Bool, (Cdouble, GDALDataType), dfValue, eDT),
     )
 end
 
@@ -6383,26 +6688,55 @@ end
 
 Types of color interpretation for raster bands.
 
-| Enumerator           | Note                                                          |
-| :------------------- | :------------------------------------------------------------ |
-| GCI\\_Undefined      | Undefined                                                     |
-| GCI\\_GrayIndex      | Greyscale                                                     |
-| GCI\\_PaletteIndex   | Paletted (see associated color table)                         |
-| GCI\\_RedBand        | Red band of RGBA image                                        |
-| GCI\\_GreenBand      | Green band of RGBA image                                      |
-| GCI\\_BlueBand       | Blue band of RGBA image                                       |
-| GCI\\_AlphaBand      | Alpha (0=transparent, 255=opaque)                             |
-| GCI\\_HueBand        | Hue band of HLS image                                         |
-| GCI\\_SaturationBand | Saturation band of HLS image                                  |
-| GCI\\_LightnessBand  | Lightness band of HLS image                                   |
-| GCI\\_CyanBand       | Cyan band of CMYK image                                       |
-| GCI\\_MagentaBand    | Magenta band of CMYK image                                    |
-| GCI\\_YellowBand     | Yellow band of CMYK image                                     |
-| GCI\\_BlackBand      | Black band of CMYK image                                      |
-| GCI\\_YCbCr\\_YBand  | Y Luminance                                                   |
-| GCI\\_YCbCr\\_CbBand | Cb Chroma                                                     |
-| GCI\\_YCbCr\\_CrBand | Cr Chroma                                                     |
-| GCI\\_Max            | Max current value (equals to GCI\\_YCbCr\\_CrBand currently)  |
+For spectral bands, the wavelength ranges are indicative only, and may vary depending on sensors. The CENTRAL\\_WAVELENGTH\\_UM and FWHM\\_UM metadata items in the IMAGERY metadata domain of the raster band, when present, will give more accurate characteristics.
+
+Values belonging to the IR domain are in the [[`GCI_IR_Start`](@ref), [`GCI_IR_End`](@ref)] range. Values belonging to the SAR domain are in the [[`GCI_SAR_Start`](@ref), [`GCI_SAR_End`](@ref)] range.
+
+Values between GCI\\_PanBand to GCI\\_SAR\\_Reserved\\_2 have been added in GDAL 3.10.
+
+| Enumerator               | Note                                                                 |
+| :----------------------- | :------------------------------------------------------------------- |
+| GCI\\_Undefined          | Undefined                                                            |
+| GCI\\_GrayIndex          | Greyscale                                                            |
+| GCI\\_PaletteIndex       | Paletted (see associated color table)                                |
+| GCI\\_RedBand            | Red band of RGBA image, or red spectral band [0.62 - 0.69 um]        |
+| GCI\\_GreenBand          | Green band of RGBA image, or green spectral band [0.51 - 0.60 um]    |
+| GCI\\_BlueBand           | Blue band of RGBA image, or blue spectral band [0.45 - 0.53 um]      |
+| GCI\\_AlphaBand          | Alpha (0=transparent, 255=opaque)                                    |
+| GCI\\_HueBand            | Hue band of HLS image                                                |
+| GCI\\_SaturationBand     | Saturation band of HLS image                                         |
+| GCI\\_LightnessBand      | Lightness band of HLS image                                          |
+| GCI\\_CyanBand           | Cyan band of CMYK image                                              |
+| GCI\\_MagentaBand        | Magenta band of CMYK image                                           |
+| GCI\\_YellowBand         | Yellow band of CMYK image, or yellow spectral band [0.58 - 0.62 um]  |
+| GCI\\_BlackBand          | Black band of CMYK image                                             |
+| GCI\\_YCbCr\\_YBand      | Y Luminance                                                          |
+| GCI\\_YCbCr\\_CbBand     | Cb Chroma                                                            |
+| GCI\\_YCbCr\\_CrBand     | Cr Chroma                                                            |
+| GCI\\_PanBand            | Panchromatic band [0.40 - 1.00 um]                                   |
+| GCI\\_CoastalBand        | Coastal band [0.40 - 0.45 um]                                        |
+| GCI\\_RedEdgeBand        | Red-edge band [0.69 - 0.79 um]                                       |
+| GCI\\_NIRBand            | Near-InfraRed (NIR) band [0.75 - 1.40 um]                            |
+| GCI\\_SWIRBand           | Short-Wavelength InfraRed (SWIR) band [1.40 - 3.00 um]               |
+| GCI\\_MWIRBand           | Mid-Wavelength InfraRed (MWIR) band [3.00 - 8.00 um]                 |
+| GCI\\_LWIRBand           | Long-Wavelength InfraRed (LWIR) band [8.00 - 15 um]                  |
+| GCI\\_TIRBand            | Thermal InfraRed (TIR) band (MWIR or LWIR) [3 - 15 um]               |
+| GCI\\_OtherIRBand        | Other infrared band [0.75 - 1000 um]                                 |
+| GCI\\_IR\\_Reserved\\_1  | Reserved value. Do not set it !                                      |
+| GCI\\_IR\\_Reserved\\_2  |                                                                      |
+| GCI\\_IR\\_Reserved\\_3  |                                                                      |
+| GCI\\_IR\\_Reserved\\_4  |                                                                      |
+| GCI\\_SAR\\_Ka\\_Band    | Synthetic Aperture Radar (SAR) Ka band [0.8 - 1.1 cm / 27 - 40 GHz]  |
+| GCI\\_SAR\\_K\\_Band     | Synthetic Aperture Radar (SAR) K band [1.1 - 1.7 cm / 18 - 27 GHz]   |
+| GCI\\_SAR\\_Ku\\_Band    | Synthetic Aperture Radar (SAR) Ku band [1.7 - 2.4 cm / 12 - 18 GHz]  |
+| GCI\\_SAR\\_X\\_Band     | Synthetic Aperture Radar (SAR) X band [2.4 - 3.8 cm / 8 - 12 GHz]    |
+| GCI\\_SAR\\_C\\_Band     | Synthetic Aperture Radar (SAR) C band [3.8 - 7.5 cm / 4 - 8 GHz]     |
+| GCI\\_SAR\\_S\\_Band     | Synthetic Aperture Radar (SAR) S band [7.5 - 15 cm / 2 - 4 GHz]      |
+| GCI\\_SAR\\_L\\_Band     | Synthetic Aperture Radar (SAR) L band [15 - 30 cm / 1 - 2 GHz]       |
+| GCI\\_SAR\\_P\\_Band     | Synthetic Aperture Radar (SAR) P band [30 - 100 cm / 0.3 - 1 GHz]    |
+| GCI\\_SAR\\_Reserved\\_1 | Reserved value. Do not set it !                                      |
+| GCI\\_SAR\\_Reserved\\_2 |                                                                      |
+| GCI\\_Max                | Max current value (equals to GCI\\_SAR\\_Reserved\\_2 currently)     |
 """
 @cenum GDALColorInterp::UInt32 begin
     GCI_Undefined = 0
@@ -6422,7 +6756,30 @@ Types of color interpretation for raster bands.
     GCI_YCbCr_YBand = 14
     GCI_YCbCr_CbBand = 15
     GCI_YCbCr_CrBand = 16
-    GCI_Max = 16
+    GCI_PanBand = 17
+    GCI_CoastalBand = 18
+    GCI_RedEdgeBand = 19
+    GCI_NIRBand = 20
+    GCI_SWIRBand = 21
+    GCI_MWIRBand = 22
+    GCI_LWIRBand = 23
+    GCI_TIRBand = 24
+    GCI_OtherIRBand = 25
+    GCI_IR_Reserved_1 = 26
+    GCI_IR_Reserved_2 = 27
+    GCI_IR_Reserved_3 = 28
+    GCI_IR_Reserved_4 = 29
+    GCI_SAR_Ka_Band = 30
+    GCI_SAR_K_Band = 31
+    GCI_SAR_Ku_Band = 32
+    GCI_SAR_X_Band = 33
+    GCI_SAR_C_Band = 34
+    GCI_SAR_S_Band = 35
+    GCI_SAR_L_Band = 36
+    GCI_SAR_P_Band = 37
+    GCI_SAR_Reserved_1 = 38
+    GCI_SAR_Reserved_2 = 39
+    GCI_Max = 39
 end
 
 """
@@ -6824,13 +7181,16 @@ GDAL_OF_VECTOR for vector drivers,
 GDAL_OF_GNM for Geographic Network Model drivers. 
 
 
-GDAL_OF_RASTER and GDAL_OF_MULTIDIM_RASTER are generally mutually exclusive. If none of the value is specified, GDAL_OF_RASTER | GDAL_OF_VECTOR | GDAL_OF_GNM is implied. 
+GDAL_OF_RASTER and GDAL_OF_MULTIDIM_RASTER are generally mutually exclusive. If none of the value is specified, GDAL_OF_RASTER | GDAL_OF_VECTOR | GDAL_OF_GNM is implied.  
 
 
-Access mode: GDAL_OF_READONLY (exclusive)or GDAL_OF_UPDATE. 
+Access mode: GDAL_OF_READONLY (exclusive)or GDAL_OF_UPDATE.  
 
 
-Shared mode: GDAL_OF_SHARED. If set, it allows the sharing of GDALDataset handles for a dataset with other callers that have set GDAL_OF_SHARED. In particular, GDALOpenEx() will first consult its list of currently open and shared GDALDataset's, and if the GetDescription() name for one exactly matches the pszFilename passed to GDALOpenEx() it will be referenced and returned, if GDALOpenEx() is called from the same thread. 
+Shared mode: GDAL_OF_SHARED. If set, it allows the sharing of GDALDataset handles for a dataset with other callers that have set GDAL_OF_SHARED. In particular, GDALOpenEx() will first consult its list of currently open and shared GDALDataset's, and if the GetDescription() name for one exactly matches the pszFilename passed to GDALOpenEx() it will be referenced and returned, if GDALOpenEx() is called from the same thread.  
+
+
+Thread safe mode: GDAL_OF_THREAD_SAFE (added in 3.10). This must be use in combination with GDAL_OF_RASTER, and is mutually exclusive with GDAL_OF_UPDATE, GDAL_OF_VECTOR, GDAL_OF_MULTIDIM_RASTER or GDAL_OF_GNM.  
 
 
 Verbose error: GDAL_OF_VERBOSE_ERROR. If set, a failed attempt to open the file will lead to an error message to be reported.
@@ -6948,6 +7308,8 @@ end
 
 """
     GDALDestroy(void) -> void
+
+Finalize GDAL/OGR library.
 """
 function gdaldestroy()
     aftercare(ccall((:GDALDestroy, libgdal), Cvoid, ()))
@@ -7531,6 +7893,57 @@ function gdalgetrasterband(arg1, arg2)
 end
 
 """
+    GDALDatasetIsThreadSafe(GDALDatasetH hDS,
+                            int nScopeFlags,
+                            CSLConstList papszOptions) -> bool
+
+Return whether this dataset, and its related objects (typically raster bands), can be called for the intended scope.
+
+### Parameters
+* **hDS**: Source dataset
+* **nScopeFlags**: Intended scope of use. Only GDAL_OF_RASTER is supported currently.
+* **papszOptions**: Options. None currently.
+"""
+function gdaldatasetisthreadsafe(arg1, nScopeFlags, papszOptions)
+    aftercare(
+        ccall(
+            (:GDALDatasetIsThreadSafe, libgdal),
+            Bool,
+            (GDALDatasetH, Cint, CSLConstList),
+            arg1,
+            nScopeFlags,
+            papszOptions,
+        ),
+    )
+end
+
+"""
+    GDALGetThreadSafeDataset(std::unique_ptr< GDALDataset > poDS,
+                             int nScopeFlags) -> std::unique_ptr< GDALDataset >
+
+Return a thread-safe dataset.
+
+### Parameters
+* **poDS**: Source dataset
+* **nScopeFlags**: Intended scope of use. Only GDAL_OF_RASTER is supported currently.
+
+### Returns
+a new thread-safe dataset, or nullptr in case of error.
+"""
+function gdalgetthreadsafedataset(arg1, nScopeFlags, papszOptions)
+    aftercare(
+        ccall(
+            (:GDALGetThreadSafeDataset, libgdal),
+            GDALDatasetH,
+            (GDALDatasetH, Cint, CSLConstList),
+            arg1,
+            nScopeFlags,
+            papszOptions,
+        ),
+    )
+end
+
+"""
     GDALAddBand(GDALDatasetH hDataset,
                 GDALDataType eType,
                 CSLConstList papszOptions) -> CPLErr
@@ -7680,7 +8093,7 @@ end
                         int nBufYSize,
                         GDALDataType eBufType,
                         int nBandCount,
-                        int * panBandMap,
+                        const int * panBandMap,
                         int nPixelSpace,
                         int nLineSpace,
                         int nBandSpace) -> CPLErr
@@ -7756,7 +8169,7 @@ end
                           int nBufYSize,
                           GDALDataType eBufType,
                           int nBandCount,
-                          int * panBandMap,
+                          const int * panBandMap,
                           GSpacing nPixelSpace,
                           GSpacing nLineSpace,
                           GSpacing nBandSpace,
@@ -11064,6 +11477,46 @@ function gdaladdderivedbandpixelfuncwithargs(pszName, pfnPixelFunc, pszMetadata)
             pszName,
             pfnPixelFunc,
             pszMetadata,
+        ),
+    )
+end
+
+"""
+    GDALRasterInterpolateAtPoint(GDALRasterBandH hBand,
+                                 double dfPixel,
+                                 double dfLine,
+                                 GDALRIOResampleAlg eInterpolation,
+                                 double * pdfRealValue,
+                                 double * pdfImagValue) -> CPLErr
+
+Interpolates the value between pixels using a resampling algorithm.
+"""
+function gdalrasterinterpolateatpoint(
+    hBand,
+    dfPixel,
+    dfLine,
+    eInterpolation,
+    pdfRealValue,
+    pdfImagValue,
+)
+    aftercare(
+        ccall(
+            (:GDALRasterInterpolateAtPoint, libgdal),
+            CPLErr,
+            (
+                GDALRasterBandH,
+                Cdouble,
+                Cdouble,
+                GDALRIOResampleAlg,
+                Ptr{Cdouble},
+                Ptr{Cdouble},
+            ),
+            hBand,
+            dfPixel,
+            dfLine,
+            eInterpolation,
+            pdfRealValue,
+            pdfImagValue,
         ),
     )
 end
@@ -16182,6 +16635,42 @@ function gdalmdarraygetcoordinatevariables(hArray, pnCount)
 end
 
 """
+    GDALMDArrayGetMeshGrid(const GDALMDArrayH * pahInputArrays,
+                           size_t nCountInputArrays,
+                           size_t * pnCountOutputArrays,
+                           CSLConstList papszOptions) -> GDALMDArrayH *
+
+Return a list of multidimensional arrays from a list of one-dimensional arrays.
+
+### Parameters
+* **pahInputArrays**: Input arrays
+* **nCountInputArrays**: Number of input arrays
+* **pnCountOutputArrays**: Pointer to the number of values returned. Must NOT be NULL.
+* **papszOptions**: NULL, or NULL terminated list of options.
+
+### Returns
+an array of *pnCountOutputArrays arrays.
+"""
+function gdalmdarraygetmeshgrid(
+    pahInputArrays,
+    nCountInputArrays,
+    pnCountOutputArrays,
+    papszOptions,
+)
+    aftercare(
+        ccall(
+            (:GDALMDArrayGetMeshGrid, libgdal),
+            Ptr{GDALMDArrayH},
+            (Ptr{GDALMDArrayH}, Csize_t, Ptr{Csize_t}, CSLConstList),
+            pahInputArrays,
+            nCountInputArrays,
+            pnCountOutputArrays,
+            papszOptions,
+        ),
+    )
+end
+
+"""
     GDALReleaseArrays(GDALMDArrayH * arrays,
                       size_t nCount) -> void
 
@@ -16477,6 +16966,18 @@ function gdalattributereadasint(hAttr)
 end
 
 """
+    GDALAttributeReadAsInt64(GDALAttributeH hAttr) -> int64_t
+
+Return the value of an attribute as a int64_t.
+
+### Returns
+an int64_t, or INT64_MIN in case of error.
+"""
+function gdalattributereadasint64(hAttr)
+    aftercare(ccall((:GDALAttributeReadAsInt64, libgdal), Int64, (GDALAttributeH,), hAttr))
+end
+
+"""
     GDALAttributeReadAsDouble(GDALAttributeH hAttr) -> double
 
 Return the value of an attribute as a double.
@@ -16524,6 +17025,31 @@ function gdalattributereadasintarray(hAttr, pnCount)
         ccall(
             (:GDALAttributeReadAsIntArray, libgdal),
             Ptr{Cint},
+            (GDALAttributeH, Ptr{Csize_t}),
+            hAttr,
+            pnCount,
+        ),
+    )
+end
+
+"""
+    GDALAttributeReadAsInt64Array(GDALAttributeH hAttr,
+                                  size_t * pnCount) -> int64_t *
+
+Return the value of an attribute as an array of int64_t.
+
+### Parameters
+* **hAttr**: Attribute
+* **pnCount**: Pointer to the number of values returned. Must NOT be NULL.
+
+### Returns
+array to be freed with CPLFree(), or nullptr.
+"""
+function gdalattributereadasint64array(hAttr, pnCount)
+    aftercare(
+        ccall(
+            (:GDALAttributeReadAsInt64Array, libgdal),
+            Ptr{Int64},
             (GDALAttributeH, Ptr{Csize_t}),
             hAttr,
             pnCount,
@@ -16650,6 +17176,87 @@ TRUE in case of success.
 function gdalattributewriteint(hAttr, arg2)
     aftercare(
         ccall((:GDALAttributeWriteInt, libgdal), Cint, (GDALAttributeH, Cint), hAttr, arg2),
+    )
+end
+
+"""
+    GDALAttributeWriteIntArray(GDALAttributeH hAttr,
+                               const int * panValues,
+                               size_t nCount) -> int
+
+Write an attribute from an array of int.
+
+### Parameters
+* **hAttr**: Attribute
+* **panValues**: Array of int.
+* **nCount**: Should be equal to GetTotalElementsCount().
+
+### Returns
+TRUE in case of success.
+"""
+function gdalattributewriteintarray(hAttr, arg2, arg3)
+    aftercare(
+        ccall(
+            (:GDALAttributeWriteIntArray, libgdal),
+            Cint,
+            (GDALAttributeH, Ptr{Cint}, Csize_t),
+            hAttr,
+            arg2,
+            arg3,
+        ),
+    )
+end
+
+"""
+    GDALAttributeWriteInt64(GDALAttributeH hAttr,
+                            int64_t nVal) -> int
+
+Write an attribute from an int64_t value.
+
+### Parameters
+* **hAttr**: Attribute
+* **nVal**: Value.
+
+### Returns
+TRUE in case of success.
+"""
+function gdalattributewriteint64(hAttr, arg2)
+    aftercare(
+        ccall(
+            (:GDALAttributeWriteInt64, libgdal),
+            Cint,
+            (GDALAttributeH, Int64),
+            hAttr,
+            arg2,
+        ),
+    )
+end
+
+"""
+    GDALAttributeWriteInt64Array(GDALAttributeH hAttr,
+                                 const int64_t * panValues,
+                                 size_t nCount) -> int
+
+Write an attribute from an array of int64_t.
+
+### Parameters
+* **hAttr**: Attribute
+* **panValues**: Array of int64_t.
+* **nCount**: Should be equal to GetTotalElementsCount().
+
+### Returns
+TRUE in case of success.
+"""
+function gdalattributewriteint64array(hAttr, arg2, arg3)
+    aftercare(
+        ccall(
+            (:GDALAttributeWriteInt64Array, libgdal),
+            Cint,
+            (GDALAttributeH, Ptr{Int64}, Csize_t),
+            hAttr,
+            arg2,
+            arg3,
+        ),
     )
 end
 
@@ -17681,13 +18288,13 @@ AREA_OF_INTEREST=west_long,south_lat,east_long,north_lat: Values in degrees. lon
 COORDINATE_OPERATION=string: PROJ or WKT string representing a coordinate operation, overriding the default computed transformation. 
 
 
-COORDINATE_EPOCH=decimal_year: Coordinate epoch, expressed as a decimal year. Useful for time-dependant coordinate operations. 
+COORDINATE_EPOCH=decimal_year: Coordinate epoch, expressed as a decimal year. Useful for time-dependent coordinate operations. 
 
 
-SRC_COORDINATE_EPOCH: (GDAL >= 3.4) Coordinate epoch of source CRS, expressed as a decimal year. Useful for time-dependant coordinate operations. 
+SRC_COORDINATE_EPOCH: (GDAL >= 3.4) Coordinate epoch of source CRS, expressed as a decimal year. Useful for time-dependent coordinate operations. 
 
 
-DST_COORDINATE_EPOCH: (GDAL >= 3.4) Coordinate epoch of target CRS, expressed as a decimal year. Useful for time-dependant coordinate operations.
+DST_COORDINATE_EPOCH: (GDAL >= 3.4) Coordinate epoch of target CRS, expressed as a decimal year. Useful for time-dependent coordinate operations.
 
 ### Returns
 Handle for use with GDALReprojectionTransform(), or NULL if the system fails to initialize the reprojection.
@@ -17987,7 +18594,7 @@ end
 """
     GDALDestroyRPCTransformer(void * pTransformAlg) -> void
 
-Destroy RPC tranformer.
+Destroy RPC transformer.
 """
 function gdaldestroyrpctransformer(pTransformArg)
     aftercare(
@@ -18097,7 +18704,7 @@ Create an approximating transformer.
 ### Parameters
 * **pfnBaseTransformer**: the high precision transformer which should be approximated.
 * **pBaseTransformArg**: the callback argument for the high precision transformer.
-* **dfMaxError**: the maximum cartesian error in the "output" space that is to be accepted in the linear approximation.
+* **dfMaxError**: the maximum cartesian error in the "output" space that is to be accepted in the linear approximation, evaluated as a Manhattan distance.
 
 ### Returns
 callback pointer suitable for use with GDALApproxTransform(). It should be deallocated with GDALDestroyApproxTransformer().
@@ -18514,6 +19121,8 @@ struct OGRContourWriterInfo
     nElevFieldMax::Cint
     nIDField::Cint
     nNextID::Cint
+    nWrittenFeatureCountSinceLastCommit::GIntBig
+    nTransactionCommitInterval::GIntBig
 end
 
 """
@@ -18977,7 +19586,7 @@ Burn geometries from the specified list of layers into raster.
 "CHUNKYSIZE": The height in lines of the chunk to operate on. The larger the chunk size the less times we need to make a pass through all the shapes. If it is not set or set to zero the default chunk size will be used. Default size will be estimated based on the GDAL cache buffer size using formula: cache_size_bytes/scanline_size_bytes, so the chunk will not exceed the cache. 
 
 
-"ALL_TOUCHED": May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon or that are selected by brezenhams line algorithm. Defaults to FALSE. 
+"ALL_TOUCHED": May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon (behavior is unspecified when the polygon is just touching the pixel center) or that are selected by Brezenham's line algorithm. Defaults to FALSE. 
 
 
 "BURN_VALUE_FROM": May be set to "Z" to use the Z values of the geometries. The value from padfLayerBurnValues or the attribute field value is added to this before burning. In default case dfBurnValue is burned as it is. This is implemented properly only for points and lines for now. Polygons will be burned using the Z value from the first point. The M value may be supported in the future. 
@@ -19074,7 +19683,7 @@ Burn geometries from the specified list of layer into raster.
 "ATTRIBUTE": Identifies an attribute field on the features to be used for a burn in value. The value will be burned into all output bands. If specified, padfLayerBurnValues will not be used and can be a NULL pointer. 
 
 
-"ALL_TOUCHED": May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon or that are selected by brezenhams line algorithm. Defaults to FALSE. 
+"ALL_TOUCHED": May be set to TRUE to set all pixels touched by the line or polygons, not just those whose center is within the polygon (behavior is unspecified when the polygon is just touching the pixel center) or that are selected by Brezenham's line algorithm. Defaults to FALSE. 
 
 
 "BURN_VALUE_FROM": May be set to "Z" to use the Z values of the geometries. dfBurnValue or the attribute field value is added to this before burning. In default case dfBurnValue is burned as it is. This is implemented properly only for points and lines for now. Polygons will be burned using the Z value from the first point. The M value may be supported in the future. 
@@ -19665,7 +20274,7 @@ struct GDALTriangulation
 end
 
 """
-    GDALHasTriangulation(void) -> int
+    GDALHasTriangulation() -> int
 
 Returns if GDAL is built with Delaunay triangulation support.
 
@@ -24879,7 +25488,7 @@ Compute a simplified geometry.
 * **dTolerance**: the distance tolerance for the simplification.
 
 ### Returns
-the simplified geometry or NULL if an error occurs.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_simplify(hThis, tolerance)
     aftercare(
@@ -24904,7 +25513,7 @@ Simplify the geometry while preserving topology.
 * **dTolerance**: the distance tolerance for the simplification.
 
 ### Returns
-the simplified geometry or NULL if an error occurs.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_simplifypreservetopology(hThis, tolerance)
     aftercare(
@@ -24931,7 +25540,7 @@ Return a Delaunay triangulation of the vertices of the geometry.
 * **bOnlyEdges**: if TRUE, will return a MULTILINESTRING, otherwise it will return a GEOMETRYCOLLECTION containing triangular POLYGONs.
 
 ### Returns
-the geometry resulting from the Delaunay triangulation or NULL if an error occurs.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_delaunaytriangulation(hThis, dfTolerance, bOnlyEdges)
     aftercare(
@@ -25129,7 +25738,7 @@ Compute boundary.
 * **hTarget**: The Geometry to calculate the boundary of.
 
 ### Returns
-a handle to a newly allocated geometry now owned by the caller, or NULL on failure.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_boundary(arg1)
     aftercare(ccall((:OGR_G_Boundary, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
@@ -25144,7 +25753,7 @@ Compute convex hull.
 * **hTarget**: The Geometry to calculate the convex hull of.
 
 ### Returns
-a handle to a newly allocated geometry now owned by the caller, or NULL on failure.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_convexhull(arg1)
     aftercare(ccall((:OGR_G_ConvexHull, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
@@ -25163,7 +25772,7 @@ Compute "concave hull" of a geometry.
 * **bAllowHoles**: Whether holes are allowed.
 
 ### Returns
-a handle to a newly allocated geometry now owned by the caller, or NULL on failure.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_concavehull(arg1, dfRatio, bAllowHoles)
     aftercare(
@@ -25191,17 +25800,45 @@ Compute buffer of geometry.
 * **nQuadSegs**: the number of segments used to approximate a 90 degree (quadrant) of curvature.
 
 ### Returns
-the newly created geometry, or NULL if an error occurs.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
-function ogr_g_buffer(arg1, arg2, arg3)
+function ogr_g_buffer(arg1, dfDist, nQuadSegs)
     aftercare(
         ccall(
             (:OGR_G_Buffer, libgdal),
             OGRGeometryH,
             (OGRGeometryH, Cdouble, Cint),
             arg1,
-            arg2,
-            arg3,
+            dfDist,
+            nQuadSegs,
+        ),
+    )
+end
+
+"""
+    OGR_G_BufferEx(OGRGeometryH hTarget,
+                   double dfDist,
+                   CSLConstList papszOptions) -> OGRGeometryH
+
+Compute buffer of geometry.
+
+### Parameters
+* **hTarget**: the geometry.
+* **dfDist**: the buffer distance to be applied. Should be expressed into the same unit as the coordinates of the geometry.
+* **papszOptions**: NULL terminated list of options (may be NULL)
+
+### Returns
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
+"""
+function ogr_g_bufferex(arg1, dfDist, papszOptions)
+    aftercare(
+        ccall(
+            (:OGR_G_BufferEx, libgdal),
+            OGRGeometryH,
+            (OGRGeometryH, Cdouble, CSLConstList),
+            arg1,
+            dfDist,
+            papszOptions,
         ),
     )
 end
@@ -25217,7 +25854,7 @@ Compute intersection.
 * **hOther**: the other geometry.
 
 ### Returns
-a new geometry representing the intersection or NULL if there is no intersection or an error occurs.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if there is not intersection of if an error occurs.
 """
 function ogr_g_intersection(arg1, arg2)
     aftercare(
@@ -25242,7 +25879,7 @@ Compute union.
 * **hOther**: the other geometry.
 
 ### Returns
-a new geometry representing the union or NULL if an error occurs.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_union(arg1, arg2)
     aftercare(
@@ -25265,7 +25902,7 @@ Compute union using cascading.
 * **hThis**: the geometry.
 
 ### Returns
-a new geometry representing the union or NULL if an error occurs.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_unioncascaded(arg1)
     aftercare(ccall((:OGR_G_UnionCascaded, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
@@ -25280,7 +25917,7 @@ Returns the union of all components of a single geometry.
 * **hThis**: the geometry.
 
 ### Returns
-a new geometry representing the union or NULL if an error occurs.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_unaryunion(arg1)
     aftercare(ccall((:OGR_G_UnaryUnion, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
@@ -25295,7 +25932,7 @@ Returns a point guaranteed to lie on the surface.
 * **hGeom**: the geometry to operate on.
 
 ### Returns
-a point guaranteed to lie on the surface or NULL if an error occurred.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_pointonsurface(arg1)
     aftercare(ccall((:OGR_G_PointOnSurface, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
@@ -25312,7 +25949,7 @@ Compute difference.
 * **hOther**: the other geometry.
 
 ### Returns
-a new geometry representing the difference or NULL if the difference is empty or an error occurs.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if the difference is empty or if an error occurs.
 """
 function ogr_g_difference(arg1, arg2)
     aftercare(
@@ -25337,7 +25974,7 @@ Compute symmetric difference.
 * **hOther**: the other geometry.
 
 ### Returns
-a new geometry representing the symmetric difference or NULL if the difference is empty or an error occurs.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if the difference is empty or if an error occurs.
 """
 function ogr_g_symdifference(arg1, arg2)
     aftercare(
@@ -25414,6 +26051,21 @@ the length or 0.0 for unsupported geometry types.
 """
 function ogr_g_length(arg1)
     aftercare(ccall((:OGR_G_Length, libgdal), Cdouble, (OGRGeometryH,), arg1))
+end
+
+"""
+    OGR_G_GeodesicLength(OGRGeometryH hGeom) -> double
+
+Get the length of the curve, considered as a geodesic line on the underlying ellipsoid of the SRS attached to the geometry.
+
+### Parameters
+* **hGeom**: the geometry to operate on.
+
+### Returns
+the length or a negative value for unsupported geometry types.
+"""
+function ogr_g_geodesiclength(arg1)
+    aftercare(ccall((:OGR_G_GeodesicLength, libgdal), Cdouble, (OGRGeometryH,), arg1))
 end
 
 """
@@ -25549,7 +26201,7 @@ Attempts to make an invalid geometry valid without losing vertices.
 * **hGeom**: The Geometry to make valid.
 
 ### Returns
-a newly allocated geometry now owned by the caller, or NULL on failure.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_makevalid(arg1)
     aftercare(ccall((:OGR_G_MakeValid, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
@@ -25566,7 +26218,7 @@ Attempts to make an invalid geometry valid without losing vertices.
 * **papszOptions**: Options.
 
 ### Returns
-a newly allocated geometry now owned by the caller, or NULL on failure.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_makevalidex(arg1, arg2)
     aftercare(
@@ -25589,7 +26241,7 @@ Attempts to bring geometry into normalized/canonical form.
 * **hGeom**: The Geometry to normalize.
 
 ### Returns
-a newly allocated geometry now owned by the caller, or NULL on failure.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_normalize(arg1)
     aftercare(ccall((:OGR_G_Normalize, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
@@ -25638,7 +26290,7 @@ Set the geometry's precision, rounding all its coordinates to the precision grid
 * **nFlags**: The bitwise OR of zero, one or several of OGR_GEOS_PREC_NO_TOPO and OGR_GEOS_PREC_KEEP_COLLAPSED
 
 ### Returns
-a new geometry or NULL if an error occurs.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_setprecision(arg1, dfGridSize, nFlags)
     aftercare(
@@ -25662,7 +26314,7 @@ Polygonizes a set of sparse edges.
 * **hTarget**: The Geometry to be polygonized.
 
 ### Returns
-a handle to a newly allocated geometry now owned by the caller, or NULL on failure.
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_polygonize(arg1)
     aftercare(ccall((:OGR_G_Polygonize, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
@@ -26680,7 +27332,7 @@ end
 Destroys a prepared geometry.
 
 ### Parameters
-* **hPreparedGeom**: preprated geometry.
+* **hPreparedGeom**: prepared geometry.
 """
 function ogrdestroypreparedgeometry(hPreparedGeom)
     aftercare(
@@ -26756,8 +27408,8 @@ List of feature field types. This list is likely to be extended in the future ..
 
 | Enumerator        | Note                             |
 | :---------------- | :------------------------------- |
-| OFTInteger        | Simple 32bit integer             |
-| OFTIntegerList    | List of 32bit integers           |
+| OFTInteger        | Single signed 32bit integer      |
+| OFTIntegerList    | List of signed 32bit integers    |
 | OFTReal           | Double Precision floating point  |
 | OFTRealList       | List of doubles                  |
 | OFTString         | String of ASCII chars            |
@@ -26768,8 +27420,8 @@ List of feature field types. This list is likely to be extended in the future ..
 | OFTDate           | Date                             |
 | OFTTime           | Time                             |
 | OFTDateTime       | Date and Time                    |
-| OFTInteger64      | Single 64bit integer             |
-| OFTInteger64List  | List of 64bit integers           |
+| OFTInteger64      | Single signed 64bit integer      |
+| OFTInteger64List  | List of signed 64bit integers    |
 | OFTMaxType        |                                  |
 """
 @cenum OGRFieldType::UInt32 begin
@@ -28546,41 +29198,13 @@ function Base.getproperty(x::Ptr{OGRField}, f::Symbol)
     f === :Integer64 && return Ptr{GIntBig}(x + 0)
     f === :Real && return Ptr{Cdouble}(x + 0)
     f === :String && return Ptr{Cstring}(x + 0)
-    f === :IntegerList && return Ptr{
-        var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:917:5)",
-    }(
-        x + 0,
-    )
-    f === :Integer64List && return Ptr{
-        var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:923:5)",
-    }(
-        x + 0,
-    )
-    f === :RealList && return Ptr{
-        var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:929:5)",
-    }(
-        x + 0,
-    )
-    f === :StringList && return Ptr{
-        var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:935:5)",
-    }(
-        x + 0,
-    )
-    f === :Binary && return Ptr{
-        var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:941:5)",
-    }(
-        x + 0,
-    )
-    f === :Set && return Ptr{
-        var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:947:5)",
-    }(
-        x + 0,
-    )
-    f === :Date && return Ptr{
-        var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:954:5)",
-    }(
-        x + 0,
-    )
+    f === :IntegerList && return Ptr{__JL_Ctag_164}(x + 0)
+    f === :Integer64List && return Ptr{__JL_Ctag_165}(x + 0)
+    f === :RealList && return Ptr{__JL_Ctag_166}(x + 0)
+    f === :StringList && return Ptr{__JL_Ctag_167}(x + 0)
+    f === :Binary && return Ptr{__JL_Ctag_168}(x + 0)
+    f === :Set && return Ptr{__JL_Ctag_169}(x + 0)
+    f === :Date && return Ptr{__JL_Ctag_170}(x + 0)
     return getfield(x, f)
 end
 
@@ -31020,7 +31644,7 @@ Get the list of SRS supported.
 * **pnCount**: Number of values in returned array. Must not be null.
 
 ### Returns
-list of supported SRS, to be freeds with OSRFreeSRSArray(), or nullptr
+list of supported SRS, to be freed with OSRFreeSRSArray(), or nullptr
 """
 function ogr_l_getsupportedsrslist(hLayer, iGeomField, pnCount)
     aftercare(
@@ -33620,6 +34244,15 @@ function ogr_gt_getlinear(eType)
 end
 
 """
+    ogr_get_ms(fSec)
+
+Return the number of milliseconds from a datetime with decimal seconds
+"""
+function ogr_get_ms(fSec)
+    aftercare(ccall((:OGR_GET_MS, libgdal), Cint, (Cfloat,), fSec))
+end
+
+"""
     OGRParseDate(const char * pszInput,
                  OGRField * psField,
                  int nOptions) -> int
@@ -35806,7 +36439,7 @@ end
 """
     OSREPSGTreatsAsLatLong(OGRSpatialReferenceH hSRS) -> int
 
-This function returns TRUE if EPSG feels this geographic coordinate system should be treated as having lat/long coordinate ordering.
+This function returns TRUE if this geographic coordinate system should be treated as having lat/long coordinate ordering.
 """
 function osrepsgtreatsaslatlong(hSRS)
     aftercare(
@@ -35817,7 +36450,7 @@ end
 """
     OSREPSGTreatsAsNorthingEasting(OGRSpatialReferenceH hSRS) -> int
 
-This function returns TRUE if EPSG feels this projected coordinate system should be treated as having northing/easting coordinate ordering.
+This function returns TRUE if this projected coordinate system should be treated as having northing/easting coordinate ordering.
 """
 function osrepsgtreatsasnorthingeasting(hSRS)
     aftercare(
@@ -37368,6 +38001,18 @@ function osrdestroycrsinfolist(list)
 end
 
 """
+    OSRGetAuthorityListFromDatabase() -> char **
+
+Return the list of CRS authorities used in the PROJ database.
+
+### Returns
+nullptr in case of error, or a NULL terminated list of strings to free with CSLDestroy()
+"""
+function osrgetauthoritylistfromdatabase()
+    aftercare(ccall((:OSRGetAuthorityListFromDatabase, libgdal), Ptr{Cstring}, ()))
+end
+
+"""
     OCTNewCoordinateTransformation(OGRSpatialReferenceH hSourceSRS,
                                    OGRSpatialReferenceH hTargetSRS) -> OGRCoordinateTransformationH
 
@@ -37904,38 +38549,141 @@ function octtransformbounds(
     )
 end
 
-struct var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:917:5)"
+struct __JL_Ctag_164
     nCount::Cint
     paList::Ptr{Cint}
 end
 
-struct var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:923:5)"
+function Base.getproperty(x::Ptr{__JL_Ctag_164}, f::Symbol)
+    f === :nCount && return Ptr{Cint}(x + 0)
+    f === :paList && return Ptr{Ptr{Cint}}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_164, f::Symbol)
+    r = Ref{__JL_Ctag_164}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_164}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_164}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+struct __JL_Ctag_165
     nCount::Cint
     paList::Ptr{GIntBig}
 end
 
-struct var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:929:5)"
+function Base.getproperty(x::Ptr{__JL_Ctag_165}, f::Symbol)
+    f === :nCount && return Ptr{Cint}(x + 0)
+    f === :paList && return Ptr{Ptr{GIntBig}}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_165, f::Symbol)
+    r = Ref{__JL_Ctag_165}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_165}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_165}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+struct __JL_Ctag_166
     nCount::Cint
     paList::Ptr{Cdouble}
 end
 
-struct var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:935:5)"
+function Base.getproperty(x::Ptr{__JL_Ctag_166}, f::Symbol)
+    f === :nCount && return Ptr{Cint}(x + 0)
+    f === :paList && return Ptr{Ptr{Cdouble}}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_166, f::Symbol)
+    r = Ref{__JL_Ctag_166}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_166}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_166}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+struct __JL_Ctag_167
     nCount::Cint
     paList::Ptr{Cstring}
 end
 
-struct var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:941:5)"
+function Base.getproperty(x::Ptr{__JL_Ctag_167}, f::Symbol)
+    f === :nCount && return Ptr{Cint}(x + 0)
+    f === :paList && return Ptr{Ptr{Cstring}}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_167, f::Symbol)
+    r = Ref{__JL_Ctag_167}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_167}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_167}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+struct __JL_Ctag_168
     nCount::Cint
     paData::Ptr{GByte}
 end
 
-struct var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:947:5)"
+function Base.getproperty(x::Ptr{__JL_Ctag_168}, f::Symbol)
+    f === :nCount && return Ptr{Cint}(x + 0)
+    f === :paData && return Ptr{Ptr{GByte}}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_168, f::Symbol)
+    r = Ref{__JL_Ctag_168}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_168}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_168}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+struct __JL_Ctag_169
     nMarker1::Cint
     nMarker2::Cint
     nMarker3::Cint
 end
 
-struct var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2a731bf3b40f2c522b4b2ba/include/ogr_core.h:954:5)"
+function Base.getproperty(x::Ptr{__JL_Ctag_169}, f::Symbol)
+    f === :nMarker1 && return Ptr{Cint}(x + 0)
+    f === :nMarker2 && return Ptr{Cint}(x + 4)
+    f === :nMarker3 && return Ptr{Cint}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_169, f::Symbol)
+    r = Ref{__JL_Ctag_169}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_169}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_169}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+struct __JL_Ctag_170
     Year::GInt16
     Month::GByte
     Day::GByte
@@ -37946,11 +38694,34 @@ struct var"struct (unnamed at /Users/evetion/.julia/artifacts/892de7c7303ac328b2
     Second::Cfloat
 end
 
+function Base.getproperty(x::Ptr{__JL_Ctag_170}, f::Symbol)
+    f === :Year && return Ptr{GInt16}(x + 0)
+    f === :Month && return Ptr{GByte}(x + 2)
+    f === :Day && return Ptr{GByte}(x + 3)
+    f === :Hour && return Ptr{GByte}(x + 4)
+    f === :Minute && return Ptr{GByte}(x + 5)
+    f === :TZFlag && return Ptr{GByte}(x + 6)
+    f === :Reserved && return Ptr{GByte}(x + 7)
+    f === :Second && return Ptr{Cfloat}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_170, f::Symbol)
+    r = Ref{__JL_Ctag_170}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_170}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_170}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
 const GDAL_PREFIX = "/workspace/destdir"
 
 const SIZEOF_INT = 4
 
-const SIZEOF_UNSIGNED_LONG = 8
+const SIZEOF_UNSIGNED_LONG = 4
 
 const SIZEOF_VOIDP = 8
 
@@ -38016,7 +38787,7 @@ const GINT64_MAX = GINTBIG_MAX
 
 const GUINT64_MAX = GUINTBIG_MAX
 
-const CPL_FRMT_GB_WITHOUT_PREFIX = "ll"
+const CPL_FRMT_GB_WITHOUT_PREFIX = "I64"
 
 const CPL_IS_LSB = 1
 
@@ -38038,9 +38809,9 @@ const VSI_STAT_CACHE_ONLY = 0x10
 
 const GDAL_VERSION_MAJOR = 3
 
-const GDAL_VERSION_MINOR = 9
+const GDAL_VERSION_MINOR = 10
 
-const GDAL_VERSION_REV = 1
+const GDAL_VERSION_REV = 0
 
 const GDAL_VERSION_BUILD = 0
 
@@ -38048,11 +38819,19 @@ const GDAL_VERSION_NUM =
     GDAL_COMPUTE_VERSION(GDAL_VERSION_MAJOR, GDAL_VERSION_MINOR, GDAL_VERSION_REV) +
     GDAL_VERSION_BUILD
 
-const GDAL_RELEASE_DATE = 20240623
+const GDAL_RELEASE_DATE = 20241101
 
-const GDAL_RELEASE_NAME = "3.9.1"
+const GDAL_RELEASE_NAME = "3.10.0"
 
 const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
+
+const GCI_IR_Start = 20
+
+const GCI_IR_End = 29
+
+const GCI_SAR_Start = 30
+
+const GCI_SAR_End = 39
 
 const GDALMD_AREA_OR_POINT = "AREA_OR_POINT"
 
@@ -38247,6 +39026,8 @@ const GDAL_OF_RESERVED_1 = 0x0300
 const GDAL_OF_BLOCK_ACCESS_MASK = 0x0300
 
 const GDAL_OF_FROM_GDALOPEN = 0x0400
+
+const GDAL_OF_THREAD_SAFE = 0x0800
 
 const GDAL_DS_LAYER_CREATIONOPTIONLIST = "DS_LAYER_CREATIONOPTIONLIST"
 
