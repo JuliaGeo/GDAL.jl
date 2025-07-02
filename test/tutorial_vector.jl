@@ -1,6 +1,5 @@
 # Tests based on the Vector API tutorial found at http://gdal.org/ogr_apitut.html
 
-
 # Reading From OGR
 
 # TODO: provide a convenient way to construct nOpenFlags
@@ -53,7 +52,6 @@ GDAL.ogrfree(pointer(wkt_ptr[]))
 
 GDAL.ogr_f_destroy(feature)
 GDAL.gdalclose(dataset)
-
 
 # Writing to OGR
 pointshapefile = joinpath("tmp", "point_out")

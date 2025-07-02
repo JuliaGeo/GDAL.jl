@@ -6,7 +6,7 @@ struct GDALError <: Exception
     # reset GDAL's error stack on construction
     function GDALError(class, code, msg)
         cplerrorreset()
-        new(class, code, msg)
+        return new(class, code, msg)
     end
 end
 
@@ -14,12 +14,12 @@ function GDALError()
     class = cplgetlasterrortype()
     code = cplgetlasterrorno()
     msg = cplgetlasterrormsg()
-    GDALError(class, code, msg)
+    return GDALError(class, code, msg)
 end
 
 function Base.showerror(io::IO, err::GDALError)
     err = string("GDALError (", err.class, ", code ", err.code, "):\n\t", err.msg)
-    println(io, err)
+    return println(io, err)
 end
 
 """The custom GDAL error handling function that we set in __init__
@@ -41,7 +41,7 @@ function maybe_throw()
     if cplgetlasterrortype() >= CE_Failure
         throw(GDALError())
     end
-    nothing
+    return nothing
 end
 
 """
@@ -57,7 +57,7 @@ Depending on the return type, we do extra work.
 """
 function aftercare(x)
     maybe_throw()
-    x
+    return x
 end
 
 "For string pointers, load them to String, and free them if we should."
@@ -94,5 +94,5 @@ function aftercare(ptr::Ptr{Cstring})
     # TODO it seems that, like aftercare(::Cstring), we need to
     # free the memory ourselves with CSLDestroy (not currently wrapped)
     # not sure if that is true for some or all functions
-    strings
+    return strings
 end

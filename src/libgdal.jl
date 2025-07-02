@@ -3,10 +3,10 @@
 """
     VSIFree(void * pData) -> void
 
-Analog of free() for data allocated with VSIMalloc(), VSICalloc(), VSIRealloc()
+Analog of free() for data allocated with VSIMalloc(), VSICalloc(), VSIRealloc().
 """
 function vsifree(arg1)
-    aftercare(ccall((:VSIFree, libgdal), Cvoid, (Ptr{Cvoid},), arg1))
+    return aftercare(ccall((:VSIFree, libgdal), Cvoid, (Ptr{Cvoid},), arg1))
 end
 
 """
@@ -15,7 +15,7 @@ end
 ` Doxygen_Suppress `
 """
 function cplverifyconfiguration()
-    aftercare(ccall((:CPLVerifyConfiguration, libgdal), Cvoid, ()))
+    return aftercare(ccall((:CPLVerifyConfiguration, libgdal), Cvoid, ()))
 end
 
 """
@@ -24,10 +24,7 @@ end
 ` `
 """
 function cplgetconfigoption(arg1, arg2)
-    aftercare(
-        ccall((:CPLGetConfigOption, libgdal), Cstring, (Cstring, Cstring), arg1, arg2),
-        false,
-    )
+    return aftercare(ccall((:CPLGetConfigOption, libgdal), Cstring, (Cstring, Cstring), arg1, arg2), false)
 end
 
 """
@@ -37,16 +34,7 @@ end
 Same as CPLGetConfigOption() but only with options set with CPLSetThreadLocalConfigOption()
 """
 function cplgetthreadlocalconfigoption(arg1, arg2)
-    aftercare(
-        ccall(
-            (:CPLGetThreadLocalConfigOption, libgdal),
-            Cstring,
-            (Cstring, Cstring),
-            arg1,
-            arg2,
-        ),
-        false,
-    )
+    return aftercare(ccall((:CPLGetThreadLocalConfigOption, libgdal), Cstring, (Cstring, Cstring), arg1, arg2), false)
 end
 
 """
@@ -56,16 +44,7 @@ end
 Same as CPLGetConfigOption() but excludes environment variables and options set with CPLSetThreadLocalConfigOption().
 """
 function cplgetglobalconfigoption(arg1, arg2)
-    aftercare(
-        ccall(
-            (:CPLGetGlobalConfigOption, libgdal),
-            Cstring,
-            (Cstring, Cstring),
-            arg1,
-            arg2,
-        ),
-        false,
-    )
+    return aftercare(ccall((:CPLGetGlobalConfigOption, libgdal), Cstring, (Cstring, Cstring), arg1, arg2), false)
 end
 
 """
@@ -79,7 +58,7 @@ Set a configuration option for GDAL/OGR use.
 * **pszValue**: the value of the option, or NULL to clear a setting.
 """
 function cplsetconfigoption(arg1, arg2)
-    aftercare(ccall((:CPLSetConfigOption, libgdal), Cvoid, (Cstring, Cstring), arg1, arg2))
+    return aftercare(ccall((:CPLSetConfigOption, libgdal), Cvoid, (Cstring, Cstring), arg1, arg2))
 end
 
 """
@@ -93,15 +72,7 @@ Set a configuration option for GDAL/OGR use.
 * **pszValue**: the value of the option, or NULL to clear a setting.
 """
 function cplsetthreadlocalconfigoption(pszKey, pszValue)
-    aftercare(
-        ccall(
-            (:CPLSetThreadLocalConfigOption, libgdal),
-            Cvoid,
-            (Cstring, Cstring),
-            pszKey,
-            pszValue,
-        ),
-    )
+    return aftercare(ccall((:CPLSetThreadLocalConfigOption, libgdal), Cvoid, (Cstring, Cstring), pszKey, pszValue))
 end
 
 "Callback for [`CPLSubscribeToSetConfigOption`](@ref)()"
@@ -121,15 +92,8 @@ Install a callback that will be notified of calls to CPLSetConfigOption()/ CPLSe
 subscriber ID that can be used with CPLUnsubscribeToSetConfigOption()
 """
 function cplsubscribetosetconfigoption(pfnCallback, pUserData)
-    aftercare(
-        ccall(
-            (:CPLSubscribeToSetConfigOption, libgdal),
-            Cint,
-            (CPLSetConfigOptionSubscriber, Ptr{Cvoid}),
-            pfnCallback,
-            pUserData,
-        ),
-    )
+    return aftercare(ccall((:CPLSubscribeToSetConfigOption, libgdal), Cint, (CPLSetConfigOptionSubscriber, Ptr{Cvoid}), pfnCallback,
+                           pUserData))
 end
 
 """
@@ -141,9 +105,7 @@ Remove a subscriber installed with CPLSubscribeToSetConfigOption()
 * **nId**: Subscriber id returned by CPLSubscribeToSetConfigOption()
 """
 function cplunsubscribetosetconfigoption(nSubscriberId)
-    aftercare(
-        ccall((:CPLUnsubscribeToSetConfigOption, libgdal), Cvoid, (Cint,), nSubscriberId),
-    )
+    return aftercare(ccall((:CPLUnsubscribeToSetConfigOption, libgdal), Cvoid, (Cint,), nSubscriberId))
 end
 
 """
@@ -152,7 +114,7 @@ end
 ` Doxygen_Suppress `
 """
 function cplfreeconfig()
-    aftercare(ccall((:CPLFreeConfig, libgdal), Cvoid, ()))
+    return aftercare(ccall((:CPLFreeConfig, libgdal), Cvoid, ()))
 end
 
 """
@@ -161,7 +123,7 @@ end
 ` `
 """
 function cplgetconfigoptions()
-    aftercare(ccall((:CPLGetConfigOptions, libgdal), Ptr{Cstring}, ()))
+    return aftercare(ccall((:CPLGetConfigOptions, libgdal), Ptr{Cstring}, ()))
 end
 
 """
@@ -173,9 +135,7 @@ Replace the full list of configuration options with the passed list of KEY=VALUE
 * **papszConfigOptions**: the new list (or NULL).
 """
 function cplsetconfigoptions(papszConfigOptions)
-    aftercare(
-        ccall((:CPLSetConfigOptions, libgdal), Cvoid, (Ptr{Cstring},), papszConfigOptions),
-    )
+    return aftercare(ccall((:CPLSetConfigOptions, libgdal), Cvoid, (Ptr{Cstring},), papszConfigOptions))
 end
 
 """
@@ -187,7 +147,7 @@ Return the list of thread local configuration options as KEY=VALUE pairs.
 a copy of the list, to be freed with CSLDestroy().
 """
 function cplgetthreadlocalconfigoptions()
-    aftercare(ccall((:CPLGetThreadLocalConfigOptions, libgdal), Ptr{Cstring}, ()))
+    return aftercare(ccall((:CPLGetThreadLocalConfigOptions, libgdal), Ptr{Cstring}, ()))
 end
 
 """
@@ -199,14 +159,7 @@ Replace the full list of thread local configuration options with the passed list
 * **papszConfigOptions**: the new list (or NULL).
 """
 function cplsetthreadlocalconfigoptions(papszConfigOptions)
-    aftercare(
-        ccall(
-            (:CPLSetThreadLocalConfigOptions, libgdal),
-            Cvoid,
-            (Ptr{Cstring},),
-            papszConfigOptions,
-        ),
-    )
+    return aftercare(ccall((:CPLSetThreadLocalConfigOptions, libgdal), Cvoid, (Ptr{Cstring},), papszConfigOptions))
 end
 
 """
@@ -220,15 +173,7 @@ Load configuration from a given configuration file.
 * **bOverrideEnvVars**: Whether configuration options from the configuration file should override environment variables.
 """
 function cplloadconfigoptionsfromfile(pszFilename, bOverrideEnvVars)
-    aftercare(
-        ccall(
-            (:CPLLoadConfigOptionsFromFile, libgdal),
-            Cvoid,
-            (Cstring, Cint),
-            pszFilename,
-            bOverrideEnvVars,
-        ),
-    )
+    return aftercare(ccall((:CPLLoadConfigOptionsFromFile, libgdal), Cvoid, (Cstring, Cint), pszFilename, bOverrideEnvVars))
 end
 
 """
@@ -237,7 +182,7 @@ end
 Load configuration from a set of predefined files.
 """
 function cplloadconfigoptionsfrompredefinedfiles()
-    aftercare(ccall((:CPLLoadConfigOptionsFromPredefinedFiles, libgdal), Cvoid, ()))
+    return aftercare(ccall((:CPLLoadConfigOptionsFromPredefinedFiles, libgdal), Cvoid, ()))
 end
 
 """
@@ -252,7 +197,7 @@ Safe version of malloc().
 pointer to newly allocated memory, only NULL if nSize is zero.
 """
 function cplmalloc(arg1)
-    aftercare(ccall((:CPLMalloc, libgdal), Ptr{Cvoid}, (Csize_t,), arg1))
+    return aftercare(ccall((:CPLMalloc, libgdal), Ptr{Cvoid}, (Csize_t,), arg1))
 end
 
 """
@@ -269,7 +214,7 @@ Safe version of calloc().
 pointer to newly allocated memory, only NULL if nSize * nCount is NULL.
 """
 function cplcalloc(arg1, arg2)
-    aftercare(ccall((:CPLCalloc, libgdal), Ptr{Cvoid}, (Csize_t, Csize_t), arg1, arg2))
+    return aftercare(ccall((:CPLCalloc, libgdal), Ptr{Cvoid}, (Csize_t, Csize_t), arg1, arg2))
 end
 
 """
@@ -286,7 +231,7 @@ Safe version of realloc().
 pointer to allocated memory, only NULL if nNewSize is zero.
 """
 function cplrealloc(arg1, arg2)
-    aftercare(ccall((:CPLRealloc, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t), arg1, arg2))
+    return aftercare(ccall((:CPLRealloc, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t), arg1, arg2))
 end
 
 """
@@ -301,7 +246,7 @@ Safe version of strdup() function.
 pointer to a newly allocated copy of the string. Free with CPLFree() or VSIFree().
 """
 function cplstrdup(arg1)
-    aftercare(ccall((:CPLStrdup, libgdal), Cstring, (Cstring,), arg1), false)
+    return aftercare(ccall((:CPLStrdup, libgdal), Cstring, (Cstring,), arg1), false)
 end
 
 """
@@ -316,7 +261,7 @@ Convert each characters of the string to lower case.
 pointer to the same string, pszString.
 """
 function cplstrlwr(arg1)
-    aftercare(ccall((:CPLStrlwr, libgdal), Cstring, (Cstring,), arg1), false)
+    return aftercare(ccall((:CPLStrlwr, libgdal), Cstring, (Cstring,), arg1), false)
 end
 
 """
@@ -335,17 +280,7 @@ Reads in at most one less than nBufferSize characters from the fp stream and sto
 pointer to the pszBuffer containing a string read from the file or NULL if the error or end of file was encountered.
 """
 function cplfgets(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:CPLFGets, libgdal),
-            Cstring,
-            (Cstring, Cint, Ptr{Libc.FILE}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-        false,
-    )
+    return aftercare(ccall((:CPLFGets, libgdal), Cstring, (Cstring, Cint, Ptr{Libc.FILE}), arg1, arg2, arg3), false)
 end
 
 """
@@ -360,7 +295,7 @@ Simplified line reading from text file.
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered.
 """
 function cplreadline(arg1)
-    aftercare(ccall((:CPLReadLine, libgdal), Cstring, (Ptr{Libc.FILE},), arg1), false)
+    return aftercare(ccall((:CPLReadLine, libgdal), Cstring, (Ptr{Libc.FILE},), arg1), false)
 end
 
 const VSIVirtualHandle = Cvoid
@@ -380,7 +315,7 @@ Simplified line reading from text file.
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered.
 """
 function cplreadlinel(arg1)
-    aftercare(ccall((:CPLReadLineL, libgdal), Cstring, (Ptr{VSILFILE},), arg1), false)
+    return aftercare(ccall((:CPLReadLineL, libgdal), Cstring, (Ptr{VSILFILE},), arg1), false)
 end
 
 "Type of a constant null-terminated list of nul terminated strings. Seen as char** from C and const char* const* from C++"
@@ -402,17 +337,7 @@ Simplified line reading from text file.
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered or the maximum number of characters allowed reached.
 """
 function cplreadline2l(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:CPLReadLine2L, libgdal),
-            Cstring,
-            (Ptr{VSILFILE}, Cint, CSLConstList),
-            arg1,
-            arg2,
-            arg3,
-        ),
-        false,
-    )
+    return aftercare(ccall((:CPLReadLine2L, libgdal), Cstring, (Ptr{VSILFILE}, Cint, CSLConstList), arg1, arg2, arg3), false)
 end
 
 """
@@ -433,18 +358,8 @@ Simplified line reading from text file.
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered or the maximum number of characters allowed reached.
 """
 function cplreadline3l(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:CPLReadLine3L, libgdal),
-            Cstring,
-            (Ptr{VSILFILE}, Cint, Ptr{Cint}, CSLConstList),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-        false,
-    )
+    return aftercare(ccall((:CPLReadLine3L, libgdal), Cstring, (Ptr{VSILFILE}, Cint, Ptr{Cint}, CSLConstList), arg1, arg2, arg3,
+                           arg4), false)
 end
 
 """
@@ -459,7 +374,7 @@ Converts ASCII string to floating point number.
 Converted value, if any.
 """
 function cplatof(arg1)
-    aftercare(ccall((:CPLAtof, libgdal), Cdouble, (Cstring,), arg1))
+    return aftercare(ccall((:CPLAtof, libgdal), Cdouble, (Cstring,), arg1))
 end
 
 """
@@ -476,7 +391,7 @@ Converts ASCII string to floating point number.
 Converted value, if any.
 """
 function cplatofdelim(arg1, arg2)
-    aftercare(ccall((:CPLAtofDelim, libgdal), Cdouble, (Cstring, Cchar), arg1, arg2))
+    return aftercare(ccall((:CPLAtofDelim, libgdal), Cdouble, (Cstring, Cchar), arg1, arg2))
 end
 
 """
@@ -493,7 +408,7 @@ Converts ASCII string to floating point number.
 Converted value, if any.
 """
 function cplstrtod(arg1, arg2)
-    aftercare(ccall((:CPLStrtod, libgdal), Cdouble, (Cstring, Ptr{Cstring}), arg1, arg2))
+    return aftercare(ccall((:CPLStrtod, libgdal), Cdouble, (Cstring, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -510,7 +425,7 @@ Converts ASCII string to floating point number.
 Converted value, if any.
 """
 function cplstrtodm(arg1, arg2)
-    aftercare(ccall((:CPLStrtodM, libgdal), Cdouble, (Cstring, Ptr{Cstring}), arg1, arg2))
+    return aftercare(ccall((:CPLStrtodM, libgdal), Cdouble, (Cstring, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -529,16 +444,7 @@ Converts ASCII string to floating point number using specified delimiter.
 Converted value, if any.
 """
 function cplstrtoddelim(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:CPLStrtodDelim, libgdal),
-            Cdouble,
-            (Cstring, Ptr{Cstring}, Cchar),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:CPLStrtodDelim, libgdal), Cdouble, (Cstring, Ptr{Cstring}, Cchar), arg1, arg2, arg3))
 end
 
 """
@@ -555,7 +461,7 @@ Converts ASCII string to floating point number.
 Converted value, if any.
 """
 function cplstrtof(arg1, arg2)
-    aftercare(ccall((:CPLStrtof, libgdal), Cfloat, (Cstring, Ptr{Cstring}), arg1, arg2))
+    return aftercare(ccall((:CPLStrtof, libgdal), Cfloat, (Cstring, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -574,16 +480,7 @@ Converts ASCII string to floating point number using specified delimiter.
 Converted value, if any.
 """
 function cplstrtofdelim(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:CPLStrtofDelim, libgdal),
-            Cfloat,
-            (Cstring, Ptr{Cstring}, Cchar),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:CPLStrtofDelim, libgdal), Cfloat, (Cstring, Ptr{Cstring}, Cchar), arg1, arg2, arg3))
 end
 
 """
@@ -598,7 +495,7 @@ Converts ASCII string to floating point number using any numeric locale.
 Converted value, if any. Zero on failure.
 """
 function cplatofm(arg1)
-    aftercare(ccall((:CPLAtofM, libgdal), Cdouble, (Cstring,), arg1))
+    return aftercare(ccall((:CPLAtofM, libgdal), Cdouble, (Cstring,), arg1))
 end
 
 """
@@ -619,18 +516,7 @@ Scan up to a maximum number of characters from a given string, allocate a buffer
 Pointer to the resulting string buffer. Caller responsible to free this buffer with CPLFree().
 """
 function cplscanstring(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:CPLScanString, libgdal),
-            Cstring,
-            (Cstring, Cint, Cint, Cint),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-        false,
-    )
+    return aftercare(ccall((:CPLScanString, libgdal), Cstring, (Cstring, Cint, Cint, Cint), arg1, arg2, arg3, arg4), false)
 end
 
 """
@@ -647,7 +533,7 @@ Extract double from string.
 Double value, converted from its ASCII form.
 """
 function cplscandouble(arg1, arg2)
-    aftercare(ccall((:CPLScanDouble, libgdal), Cdouble, (Cstring, Cint), arg1, arg2))
+    return aftercare(ccall((:CPLScanDouble, libgdal), Cdouble, (Cstring, Cint), arg1, arg2))
 end
 
 """
@@ -664,7 +550,7 @@ Scan up to a maximum number of characters from a string and convert the result t
 Long value, converted from its ASCII form.
 """
 function cplscanlong(arg1, arg2)
-    aftercare(ccall((:CPLScanLong, libgdal), Clong, (Cstring, Cint), arg1, arg2))
+    return aftercare(ccall((:CPLScanLong, libgdal), Clong, (Cstring, Cint), arg1, arg2))
 end
 
 """
@@ -681,7 +567,7 @@ Scan up to a maximum number of characters from a string and convert the result t
 Unsigned long value, converted from its ASCII form.
 """
 function cplscanulong(arg1, arg2)
-    aftercare(ccall((:CPLScanULong, libgdal), Culong, (Cstring, Cint), arg1, arg2))
+    return aftercare(ccall((:CPLScanULong, libgdal), Culong, (Cstring, Cint), arg1, arg2))
 end
 
 "Large unsigned integer type (generally 64-bit unsigned integer type). Use [`GUInt64`](@ref) when exactly 64 bit is needed"
@@ -701,7 +587,7 @@ Extract big integer from string.
 GUIntBig value, converted from its ASCII form.
 """
 function cplscanuintbig(arg1, arg2)
-    aftercare(ccall((:CPLScanUIntBig, libgdal), GUIntBig, (Cstring, Cint), arg1, arg2))
+    return aftercare(ccall((:CPLScanUIntBig, libgdal), GUIntBig, (Cstring, Cint), arg1, arg2))
 end
 
 "Large signed integer type (generally 64-bit integer type). Use [`GInt64`](@ref) when exactly 64 bit is needed"
@@ -719,7 +605,7 @@ Convert a string to a 64 bit signed integer.
 64 bit signed integer.
 """
 function cplatogintbig(pszString)
-    aftercare(ccall((:CPLAtoGIntBig, libgdal), GIntBig, (Cstring,), pszString))
+    return aftercare(ccall((:CPLAtoGIntBig, libgdal), GIntBig, (Cstring,), pszString))
 end
 
 """
@@ -738,16 +624,7 @@ Convert a string to a 64 bit signed integer.
 64 bit signed integer.
 """
 function cplatogintbigex(pszString, bWarn, pbOverflow)
-    aftercare(
-        ccall(
-            (:CPLAtoGIntBigEx, libgdal),
-            GIntBig,
-            (Cstring, Cint, Ptr{Cint}),
-            pszString,
-            bWarn,
-            pbOverflow,
-        ),
-    )
+    return aftercare(ccall((:CPLAtoGIntBigEx, libgdal), GIntBig, (Cstring, Cint, Ptr{Cint}), pszString, bWarn, pbOverflow))
 end
 
 """
@@ -764,7 +641,7 @@ Extract pointer from string.
 pointer value, converted from its ASCII form.
 """
 function cplscanpointer(arg1, arg2)
-    aftercare(ccall((:CPLScanPointer, libgdal), Ptr{Cvoid}, (Cstring, Cint), arg1, arg2))
+    return aftercare(ccall((:CPLScanPointer, libgdal), Ptr{Cvoid}, (Cstring, Cint), arg1, arg2))
 end
 
 """
@@ -783,9 +660,7 @@ Copy the string pointed to by pszSrc, NOT including the terminating \\0 characte
 Number of characters printed.
 """
 function cplprintstring(arg1, arg2, arg3)
-    aftercare(
-        ccall((:CPLPrintString, libgdal), Cint, (Cstring, Cstring, Cint), arg1, arg2, arg3),
-    )
+    return aftercare(ccall((:CPLPrintString, libgdal), Cint, (Cstring, Cstring, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -804,16 +679,7 @@ Copy the string pointed to by pszSrc, NOT including the terminating \\0 characte
 Number of characters printed.
 """
 function cplprintstringfill(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:CPLPrintStringFill, libgdal),
-            Cint,
-            (Cstring, Cstring, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:CPLPrintStringFill, libgdal), Cint, (Cstring, Cstring, Cint), arg1, arg2, arg3))
 end
 
 "Int32 type"
@@ -835,9 +701,7 @@ Print GInt32 value into specified string buffer.
 Number of characters printed.
 """
 function cplprintint32(arg1, arg2, arg3)
-    aftercare(
-        ccall((:CPLPrintInt32, libgdal), Cint, (Cstring, GInt32, Cint), arg1, arg2, arg3),
-    )
+    return aftercare(ccall((:CPLPrintInt32, libgdal), Cint, (Cstring, GInt32, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -856,16 +720,7 @@ Print GUIntBig value into specified string buffer.
 Number of characters printed.
 """
 function cplprintuintbig(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:CPLPrintUIntBig, libgdal),
-            Cint,
-            (Cstring, GUIntBig, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:CPLPrintUIntBig, libgdal), Cint, (Cstring, GUIntBig, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -886,17 +741,7 @@ Print double value into specified string buffer.
 Number of characters printed.
 """
 function cplprintdouble(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:CPLPrintDouble, libgdal),
-            Cint,
-            (Cstring, Cstring, Cdouble, Cstring),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:CPLPrintDouble, libgdal), Cint, (Cstring, Cstring, Cdouble, Cstring), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -919,18 +764,8 @@ Print specified time value accordingly to the format options and specified local
 Number of characters printed.
 """
 function cplprinttime(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:CPLPrintTime, libgdal),
-            Cint,
-            (Cstring, Cint, Cstring, Ptr{Cvoid}, Cstring),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:CPLPrintTime, libgdal), Cint, (Cstring, Cint, Cstring, Ptr{Cvoid}, Cstring), arg1, arg2, arg3, arg4,
+                           arg5))
 end
 
 """
@@ -949,16 +784,7 @@ Print pointer value into specified string buffer.
 Number of characters printed.
 """
 function cplprintpointer(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:CPLPrintPointer, libgdal),
-            Cint,
-            (Cstring, Ptr{Cvoid}, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:CPLPrintPointer, libgdal), Cint, (Cstring, Ptr{Cvoid}, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -975,7 +801,7 @@ Fetch a function pointer from a shared library / DLL.
 A pointer to the function if found, or NULL if the function isn't found, or the shared library can't be loaded.
 """
 function cplgetsymbol(arg1, arg2)
-    aftercare(ccall((:CPLGetSymbol, libgdal), Ptr{Cvoid}, (Cstring, Cstring), arg1, arg2))
+    return aftercare(ccall((:CPLGetSymbol, libgdal), Ptr{Cvoid}, (Cstring, Cstring), arg1, arg2))
 end
 
 """
@@ -992,9 +818,7 @@ Fetch path of executable.
 FALSE on failure or TRUE on success.
 """
 function cplgetexecpath(pszPathBuf, nMaxLength)
-    aftercare(
-        ccall((:CPLGetExecPath, libgdal), Cint, (Cstring, Cint), pszPathBuf, nMaxLength),
-    )
+    return aftercare(ccall((:CPLGetExecPath, libgdal), Cint, (Cstring, Cint), pszPathBuf, nMaxLength))
 end
 
 """
@@ -1009,7 +833,7 @@ Extract directory path portion of filename.
 Path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call. The returned will generally not contain a trailing path separator.
 """
 function cplgetpath(arg1)
-    aftercare(ccall((:CPLGetPath, libgdal), Cstring, (Cstring,), arg1), false)
+    return aftercare(ccall((:CPLGetPath, libgdal), Cstring, (Cstring,), arg1), false)
 end
 
 """
@@ -1024,7 +848,7 @@ Extract directory path portion of filename.
 Path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call. The returned will generally not contain a trailing path separator.
 """
 function cplgetdirname(arg1)
-    aftercare(ccall((:CPLGetDirname, libgdal), Cstring, (Cstring,), arg1), false)
+    return aftercare(ccall((:CPLGetDirname, libgdal), Cstring, (Cstring,), arg1), false)
 end
 
 """
@@ -1039,7 +863,7 @@ Extract non-directory portion of filename.
 just the non-directory portion of the path (points back into original string).
 """
 function cplgetfilename(arg1)
-    aftercare(ccall((:CPLGetFilename, libgdal), Cstring, (Cstring,), arg1), false)
+    return aftercare(ccall((:CPLGetFilename, libgdal), Cstring, (Cstring,), arg1), false)
 end
 
 """
@@ -1054,7 +878,7 @@ Extract basename (non-directory, non-extension) portion of filename.
 just the non-directory, non-extension portion of the path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call.
 """
 function cplgetbasename(arg1)
-    aftercare(ccall((:CPLGetBasename, libgdal), Cstring, (Cstring,), arg1), false)
+    return aftercare(ccall((:CPLGetBasename, libgdal), Cstring, (Cstring,), arg1), false)
 end
 
 """
@@ -1069,7 +893,7 @@ Extract filename extension from full filename.
 just the extension portion of the path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call.
 """
 function cplgetextension(arg1)
-    aftercare(ccall((:CPLGetExtension, libgdal), Cstring, (Cstring,), arg1), false)
+    return aftercare(ccall((:CPLGetExtension, libgdal), Cstring, (Cstring,), arg1), false)
 end
 
 """
@@ -1081,7 +905,7 @@ Get the current working directory name.
 a pointer to buffer, containing current working directory path or NULL in case of error. User is responsible to free that buffer after usage with CPLFree() function. If HAVE_GETCWD macro is not defined, the function returns NULL.
 """
 function cplgetcurrentdir()
-    aftercare(ccall((:CPLGetCurrentDir, libgdal), Cstring, ()), false)
+    return aftercare(ccall((:CPLGetCurrentDir, libgdal), Cstring, ()), false)
 end
 
 """
@@ -1100,17 +924,8 @@ Build a full file path from a passed path, file basename and extension.
 a fully formed filename in an internal static string. Do not modify or free the returned string. The string may be destroyed by the next CPL call.
 """
 function cplformfilename(pszPath, pszBasename, pszExtension)
-    aftercare(
-        ccall(
-            (:CPLFormFilename, libgdal),
-            Cstring,
-            (Cstring, Cstring, Cstring),
-            pszPath,
-            pszBasename,
-            pszExtension,
-        ),
-        false,
-    )
+    return aftercare(ccall((:CPLFormFilename, libgdal), Cstring, (Cstring, Cstring, Cstring), pszPath, pszBasename, pszExtension),
+                     false)
 end
 
 """
@@ -1129,17 +944,8 @@ Case insensitive file searching, returning full path.
 a fully formed filename in an internal static string. Do not modify or free the returned string. The string may be destroyed by the next CPL call.
 """
 function cplformcifilename(pszPath, pszBasename, pszExtension)
-    aftercare(
-        ccall(
-            (:CPLFormCIFilename, libgdal),
-            Cstring,
-            (Cstring, Cstring, Cstring),
-            pszPath,
-            pszBasename,
-            pszExtension,
-        ),
-        false,
-    )
+    return aftercare(ccall((:CPLFormCIFilename, libgdal), Cstring, (Cstring, Cstring, Cstring), pszPath, pszBasename, pszExtension),
+                     false)
 end
 
 """
@@ -1156,10 +962,7 @@ Replace the extension with the provided one.
 an altered filename with the new extension. Do not modify or free the returned string. The string may be destroyed by the next CPL call.
 """
 function cplresetextension(arg1, arg2)
-    aftercare(
-        ccall((:CPLResetExtension, libgdal), Cstring, (Cstring, Cstring), arg1, arg2),
-        false,
-    )
+    return aftercare(ccall((:CPLResetExtension, libgdal), Cstring, (Cstring, Cstring), arg1, arg2), false)
 end
 
 """
@@ -1176,16 +979,8 @@ Find a file relative to a project file.
 a composed path to the secondary file. The returned string is internal and should not be altered, freed, or depending on past the next CPL call.
 """
 function cplprojectrelativefilename(pszProjectDir, pszSecondaryFilename)
-    aftercare(
-        ccall(
-            (:CPLProjectRelativeFilename, libgdal),
-            Cstring,
-            (Cstring, Cstring),
-            pszProjectDir,
-            pszSecondaryFilename,
-        ),
-        false,
-    )
+    return aftercare(ccall((:CPLProjectRelativeFilename, libgdal), Cstring, (Cstring, Cstring), pszProjectDir,
+                           pszSecondaryFilename), false)
 end
 
 """
@@ -1200,7 +995,7 @@ Is filename relative or absolute?
 TRUE if the filename is relative or FALSE if it is absolute.
 """
 function cplisfilenamerelative(pszFilename)
-    aftercare(ccall((:CPLIsFilenameRelative, libgdal), Cint, (Cstring,), pszFilename))
+    return aftercare(ccall((:CPLIsFilenameRelative, libgdal), Cint, (Cstring,), pszFilename))
 end
 
 """
@@ -1219,17 +1014,7 @@ Get relative path from directory to target file.
 an adjusted path or the original if it could not be made relative to the pszBaseFile's path.
 """
 function cplextractrelativepath(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:CPLExtractRelativePath, libgdal),
-            Cstring,
-            (Cstring, Cstring, Ptr{Cint}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-        false,
-    )
+    return aftercare(ccall((:CPLExtractRelativePath, libgdal), Cstring, (Cstring, Cstring, Ptr{Cint}), arg1, arg2, arg3), false)
 end
 
 """
@@ -1244,7 +1029,7 @@ Remove trailing forward/backward slash from the path for UNIX/Windows resp.
 Path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call.
 """
 function cplcleantrailingslash(arg1)
-    aftercare(ccall((:CPLCleanTrailingSlash, libgdal), Cstring, (Cstring,), arg1), false)
+    return aftercare(ccall((:CPLCleanTrailingSlash, libgdal), Cstring, (Cstring,), arg1), false)
 end
 
 """
@@ -1263,16 +1048,8 @@ Identify corresponding paths.
 a list of files corresponding to papszFileList but renamed to correspond to pszNewFilename.
 """
 function cplcorrespondingpaths(pszOldFilename, pszNewFilename, papszFileList)
-    aftercare(
-        ccall(
-            (:CPLCorrespondingPaths, libgdal),
-            Ptr{Cstring},
-            (Cstring, Cstring, Ptr{Cstring}),
-            pszOldFilename,
-            pszNewFilename,
-            papszFileList,
-        ),
-    )
+    return aftercare(ccall((:CPLCorrespondingPaths, libgdal), Ptr{Cstring}, (Cstring, Cstring, Ptr{Cstring}), pszOldFilename,
+                           pszNewFilename, papszFileList))
 end
 
 """
@@ -1289,15 +1066,7 @@ Check for file existence.
 TRUE if a match is found, or FALSE if not.
 """
 function cplcheckforfile(pszFilename, papszSiblingList)
-    aftercare(
-        ccall(
-            (:CPLCheckForFile, libgdal),
-            Cint,
-            (Cstring, Ptr{Cstring}),
-            pszFilename,
-            papszSiblingList,
-        ),
-    )
+    return aftercare(ccall((:CPLCheckForFile, libgdal), Cint, (Cstring, Ptr{Cstring}), pszFilename, papszSiblingList))
 end
 
 """
@@ -1312,10 +1081,7 @@ Generate temporary file name.
 a filename which is valid till the next CPL call in this thread.
 """
 function cplgeneratetempfilename(pszStem)
-    aftercare(
-        ccall((:CPLGenerateTempFilename, libgdal), Cstring, (Cstring,), pszStem),
-        false,
-    )
+    return aftercare(ccall((:CPLGenerateTempFilename, libgdal), Cstring, (Cstring,), pszStem), false)
 end
 
 """
@@ -1330,7 +1096,7 @@ Expands ~/ at start of filename.
 an expanded filename.
 """
 function cplexpandtilde(pszFilename)
-    aftercare(ccall((:CPLExpandTilde, libgdal), Cstring, (Cstring,), pszFilename), false)
+    return aftercare(ccall((:CPLExpandTilde, libgdal), Cstring, (Cstring,), pszFilename), false)
 end
 
 """
@@ -1342,7 +1108,7 @@ Return the path to the home directory.
 the home directory, or NULL.
 """
 function cplgethomedir()
-    aftercare(ccall((:CPLGetHomeDir, libgdal), Cstring, ()), false)
+    return aftercare(ccall((:CPLGetHomeDir, libgdal), Cstring, ()), false)
 end
 
 """
@@ -1359,16 +1125,7 @@ Launder a string to be compatible of a filename.
 the laundered name.
 """
 function cpllaunderforfilename(pszName, pszOutputPath)
-    aftercare(
-        ccall(
-            (:CPLLaunderForFilename, libgdal),
-            Cstring,
-            (Cstring, Cstring),
-            pszName,
-            pszOutputPath,
-        ),
-        false,
-    )
+    return aftercare(ccall((:CPLLaunderForFilename, libgdal), Cstring, (Cstring, Cstring), pszName, pszOutputPath), false)
 end
 
 "Callback for [`CPLPushFileFinder`](@ref)"
@@ -1381,10 +1138,7 @@ const CPLFileFinder = Ptr{Cvoid}
 CPLFindFile.
 """
 function cplfindfile(pszClass, pszBasename)
-    aftercare(
-        ccall((:CPLFindFile, libgdal), Cstring, (Cstring, Cstring), pszClass, pszBasename),
-        false,
-    )
+    return aftercare(ccall((:CPLFindFile, libgdal), Cstring, (Cstring, Cstring), pszClass, pszBasename), false)
 end
 
 """
@@ -1394,16 +1148,7 @@ end
 CPLDefaultFindFile.
 """
 function cpldefaultfindfile(pszClass, pszBasename)
-    aftercare(
-        ccall(
-            (:CPLDefaultFindFile, libgdal),
-            Cstring,
-            (Cstring, Cstring),
-            pszClass,
-            pszBasename,
-        ),
-        false,
-    )
+    return aftercare(ccall((:CPLDefaultFindFile, libgdal), Cstring, (Cstring, Cstring), pszClass, pszBasename), false)
 end
 
 """
@@ -1412,7 +1157,7 @@ end
 CPLPushFileFinder.
 """
 function cplpushfilefinder(pfnFinder)
-    aftercare(ccall((:CPLPushFileFinder, libgdal), Cvoid, (CPLFileFinder,), pfnFinder))
+    return aftercare(ccall((:CPLPushFileFinder, libgdal), Cvoid, (CPLFileFinder,), pfnFinder))
 end
 
 """
@@ -1421,7 +1166,7 @@ end
 CPLPopFileFinder.
 """
 function cplpopfilefinder()
-    aftercare(ccall((:CPLPopFileFinder, libgdal), CPLFileFinder, ()))
+    return aftercare(ccall((:CPLPopFileFinder, libgdal), CPLFileFinder, ()))
 end
 
 """
@@ -1430,7 +1175,7 @@ end
 CPLPushFinderLocation.
 """
 function cplpushfinderlocation(arg1)
-    aftercare(ccall((:CPLPushFinderLocation, libgdal), Cvoid, (Cstring,), arg1))
+    return aftercare(ccall((:CPLPushFinderLocation, libgdal), Cvoid, (Cstring,), arg1))
 end
 
 """
@@ -1439,7 +1184,7 @@ end
 CPLPopFinderLocation.
 """
 function cplpopfinderlocation()
-    aftercare(ccall((:CPLPopFinderLocation, libgdal), Cvoid, ()))
+    return aftercare(ccall((:CPLPopFinderLocation, libgdal), Cvoid, ()))
 end
 
 """
@@ -1448,7 +1193,7 @@ end
 CPLFinderClean.
 """
 function cplfinderclean()
-    aftercare(ccall((:CPLFinderClean, libgdal), Cvoid, ()))
+    return aftercare(ccall((:CPLFinderClean, libgdal), Cvoid, ()))
 end
 
 "` Doxygen_Suppress `"
@@ -1461,7 +1206,7 @@ const VSIStatBuf = stat
 Same as VSIStat() except it works on "C:" as if it were "C:\\".
 """
 function cplstat(arg1, arg2)
-    aftercare(ccall((:CPLStat, libgdal), Cint, (Cstring, Ptr{VSIStatBuf}), arg1, arg2))
+    return aftercare(ccall((:CPLStat, libgdal), Cint, (Cstring, Ptr{VSIStatBuf}), arg1, arg2))
 end
 
 """
@@ -1501,16 +1246,7 @@ Open a shared file handle.
 a file handle or NULL if opening fails.
 """
 function cplopenshared(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:CPLOpenShared, libgdal),
-            Ptr{Libc.FILE},
-            (Cstring, Cstring, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:CPLOpenShared, libgdal), Ptr{Libc.FILE}, (Cstring, Cstring, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -1522,7 +1258,7 @@ Close shared file.
 * **fp**: file handle from CPLOpenShared() to deaccess.
 """
 function cplcloseshared(arg1)
-    aftercare(ccall((:CPLCloseShared, libgdal), Cvoid, (Ptr{Libc.FILE},), arg1))
+    return aftercare(ccall((:CPLCloseShared, libgdal), Cvoid, (Ptr{Libc.FILE},), arg1))
 end
 
 """
@@ -1537,9 +1273,7 @@ Fetch list of open shared files.
 the pointer to the first in the array of shared file info structures.
 """
 function cplgetsharedlist(arg1)
-    aftercare(
-        ccall((:CPLGetSharedList, libgdal), Ptr{CPLSharedFileInfo}, (Ptr{Cint},), arg1),
-    )
+    return aftercare(ccall((:CPLGetSharedList, libgdal), Ptr{CPLSharedFileInfo}, (Ptr{Cint},), arg1))
 end
 
 """
@@ -1551,7 +1285,7 @@ Report open shared files.
 * **fp**: File handle to write to.
 """
 function cpldumpsharedlist(arg1)
-    aftercare(ccall((:CPLDumpSharedList, libgdal), Cvoid, (Ptr{Libc.FILE},), arg1))
+    return aftercare(ccall((:CPLDumpSharedList, libgdal), Cvoid, (Ptr{Libc.FILE},), arg1))
 end
 
 """
@@ -1560,7 +1294,7 @@ end
 ` Doxygen_Suppress `
 """
 function cplcleanupsharedfilemutex()
-    aftercare(ccall((:CPLCleanupSharedFileMutex, libgdal), Cvoid, ()))
+    return aftercare(ccall((:CPLCleanupSharedFileMutex, libgdal), Cvoid, ()))
 end
 
 """
@@ -1569,7 +1303,7 @@ end
 ` `
 """
 function cpldmstodec(is)
-    aftercare(ccall((:CPLDMSToDec, libgdal), Cdouble, (Cstring,), is))
+    return aftercare(ccall((:CPLDMSToDec, libgdal), Cdouble, (Cstring,), is))
 end
 
 """
@@ -1580,17 +1314,7 @@ end
 Translate a decimal degrees value to a DMS string with hemisphere.
 """
 function cpldectodms(dfAngle, pszAxis, nPrecision)
-    aftercare(
-        ccall(
-            (:CPLDecToDMS, libgdal),
-            Cstring,
-            (Cdouble, Cstring, Cint),
-            dfAngle,
-            pszAxis,
-            nPrecision,
-        ),
-        false,
-    )
+    return aftercare(ccall((:CPLDecToDMS, libgdal), Cstring, (Cdouble, Cstring, Cint), dfAngle, pszAxis, nPrecision), false)
 end
 
 """
@@ -1605,7 +1329,7 @@ Convert a packed DMS value (DDDMMMSSS.SS) into decimal degrees.
 Angle in decimal degrees.
 """
 function cplpackeddmstodec(arg1)
-    aftercare(ccall((:CPLPackedDMSToDec, libgdal), Cdouble, (Cdouble,), arg1))
+    return aftercare(ccall((:CPLPackedDMSToDec, libgdal), Cdouble, (Cdouble,), arg1))
 end
 
 """
@@ -1620,27 +1344,19 @@ Convert decimal degrees into packed DMS value (DDDMMMSSS.SS).
 Angle in packed DMS format.
 """
 function cpldectopackeddms(dfDec)
-    aftercare(ccall((:CPLDecToPackedDMS, libgdal), Cdouble, (Cdouble,), dfDec))
+    return aftercare(ccall((:CPLDecToPackedDMS, libgdal), Cdouble, (Cdouble,), dfDec))
 end
 
 """
     CPLStringToComplex(const char * pszString,
                        double * pdfReal,
-                       double * pdfImag) -> void
+                       double * pdfImag) -> CPLErr
 
 Fetch the real and imaginary part of a serialized complex number.
 """
 function cplstringtocomplex(pszString, pdfReal, pdfImag)
-    aftercare(
-        ccall(
-            (:CPLStringToComplex, libgdal),
-            Cvoid,
-            (Cstring, Ptr{Cdouble}, Ptr{Cdouble}),
-            pszString,
-            pdfReal,
-            pdfImag,
-        ),
-    )
+    return aftercare(ccall((:CPLStringToComplex, libgdal), Cvoid, (Cstring, Ptr{Cdouble}, Ptr{Cdouble}), pszString, pdfReal,
+                           pdfImag))
 end
 
 """
@@ -1652,7 +1368,7 @@ Recursively unlink a directory.
 0 on successful completion, -1 if function fails.
 """
 function cplunlinktree(arg1)
-    aftercare(ccall((:CPLUnlinkTree, libgdal), Cint, (Cstring,), arg1))
+    return aftercare(ccall((:CPLUnlinkTree, libgdal), Cint, (Cstring,), arg1))
 end
 
 """
@@ -1662,9 +1378,7 @@ end
 Copy a file.
 """
 function cplcopyfile(pszNewPath, pszOldPath)
-    aftercare(
-        ccall((:CPLCopyFile, libgdal), Cint, (Cstring, Cstring), pszNewPath, pszOldPath),
-    )
+    return aftercare(ccall((:CPLCopyFile, libgdal), Cint, (Cstring, Cstring), pszNewPath, pszOldPath))
 end
 
 """
@@ -1674,9 +1388,7 @@ end
 Recursively copy a tree.
 """
 function cplcopytree(pszNewPath, pszOldPath)
-    aftercare(
-        ccall((:CPLCopyTree, libgdal), Cint, (Cstring, Cstring), pszNewPath, pszOldPath),
-    )
+    return aftercare(ccall((:CPLCopyTree, libgdal), Cint, (Cstring, Cstring), pszNewPath, pszOldPath))
 end
 
 """
@@ -1686,9 +1398,7 @@ end
 Move a file.
 """
 function cplmovefile(pszNewPath, pszOldPath)
-    aftercare(
-        ccall((:CPLMoveFile, libgdal), Cint, (Cstring, Cstring), pszNewPath, pszOldPath),
-    )
+    return aftercare(ccall((:CPLMoveFile, libgdal), Cint, (Cstring, Cstring), pszNewPath, pszOldPath))
 end
 
 """
@@ -1699,16 +1409,7 @@ end
 Create a symbolic link.
 """
 function cplsymlink(pszOldPath, pszNewPath, papszOptions)
-    aftercare(
-        ccall(
-            (:CPLSymlink, libgdal),
-            Cint,
-            (Cstring, Cstring, CSLConstList),
-            pszOldPath,
-            pszNewPath,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:CPLSymlink, libgdal), Cint, (Cstring, Cstring, CSLConstList), pszOldPath, pszNewPath, papszOptions))
 end
 
 """
@@ -1717,15 +1418,7 @@ end
 ` `
 """
 function cplcreatezip(pszZipFilename, papszOptions)
-    aftercare(
-        ccall(
-            (:CPLCreateZip, libgdal),
-            Ptr{Cvoid},
-            (Cstring, Ptr{Cstring}),
-            pszZipFilename,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:CPLCreateZip, libgdal), Ptr{Cvoid}, (Cstring, Ptr{Cstring}), pszZipFilename, papszOptions))
 end
 
 """
@@ -1742,46 +1435,35 @@ Error category
 end
 
 """
-    CPLCreateFileInZip(void *,
-                       const char *,
-                       char **) -> CPLErr
+    CPLCreateFileInZip(void * hZip,
+                       const char * pszFilename,
+                       char ** papszOptions) -> CPLErr
+
+Create a file in a ZIP file.
 """
 function cplcreatefileinzip(hZip, pszFilename, papszOptions)
-    aftercare(
-        ccall(
-            (:CPLCreateFileInZip, libgdal),
-            CPLErr,
-            (Ptr{Cvoid}, Cstring, Ptr{Cstring}),
-            hZip,
-            pszFilename,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:CPLCreateFileInZip, libgdal), CPLErr, (Ptr{Cvoid}, Cstring, Ptr{Cstring}), hZip, pszFilename,
+                           papszOptions))
 end
 
 """
-    CPLWriteFileInZip(void *,
-                      const void *,
-                      int) -> CPLErr
+    CPLWriteFileInZip(void * hZip,
+                      const void * pBuffer,
+                      int nBufferSize) -> CPLErr
+
+Write in current file inside a ZIP file.
 """
 function cplwritefileinzip(hZip, pBuffer, nBufferSize)
-    aftercare(
-        ccall(
-            (:CPLWriteFileInZip, libgdal),
-            CPLErr,
-            (Ptr{Cvoid}, Ptr{Cvoid}, Cint),
-            hZip,
-            pBuffer,
-            nBufferSize,
-        ),
-    )
+    return aftercare(ccall((:CPLWriteFileInZip, libgdal), CPLErr, (Ptr{Cvoid}, Ptr{Cvoid}, Cint), hZip, pBuffer, nBufferSize))
 end
 
 """
-    CPLCloseFileInZip(void *) -> CPLErr
+    CPLCloseFileInZip(void * hZip) -> CPLErr
+
+Close current file inside ZIP file.
 """
 function cplclosefileinzip(hZip)
-    aftercare(ccall((:CPLCloseFileInZip, libgdal), CPLErr, (Ptr{Cvoid},), hZip))
+    return aftercare(ccall((:CPLCloseFileInZip, libgdal), CPLErr, (Ptr{Cvoid},), hZip))
 end
 
 const GDALProgressFunc = Ptr{Cvoid}
@@ -1809,90 +1491,69 @@ Add a file inside a ZIP file opened/created with CPLCreateZip().
 ### Returns
 CE_None in case of success.
 """
-function cpladdfileinzip(
-    hZip,
-    pszArchiveFilename,
-    pszInputFilename,
-    fpInput,
-    papszOptions,
-    pProgressFunc,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:CPLAddFileInZip, libgdal),
-            CPLErr,
-            (
-                Ptr{Cvoid},
-                Cstring,
-                Cstring,
-                Ptr{VSILFILE},
-                CSLConstList,
-                GDALProgressFunc,
-                Any,
-            ),
-            hZip,
-            pszArchiveFilename,
-            pszInputFilename,
-            fpInput,
-            papszOptions,
-            pProgressFunc,
-            pProgressData,
-        ),
-    )
+function cpladdfileinzip(hZip, pszArchiveFilename, pszInputFilename, fpInput, papszOptions, pProgressFunc, pProgressData)
+    return aftercare(ccall((:CPLAddFileInZip, libgdal), CPLErr,
+                           (Ptr{Cvoid}, Cstring, Cstring, Ptr{VSILFILE}, CSLConstList, GDALProgressFunc, Any), hZip,
+                           pszArchiveFilename, pszInputFilename, fpInput, papszOptions, pProgressFunc, pProgressData))
 end
 
 """
-    CPLCloseZip(void *) -> CPLErr
+    CPLCloseZip(void * hZip) -> CPLErr
+
+Close ZIP file.
 """
 function cplclosezip(hZip)
-    aftercare(ccall((:CPLCloseZip, libgdal), CPLErr, (Ptr{Cvoid},), hZip))
+    return aftercare(ccall((:CPLCloseZip, libgdal), CPLErr, (Ptr{Cvoid},), hZip))
 end
 
 """
-    CPLZLibDeflate(const void *,
-                   size_t,
-                   int,
-                   void *,
-                   size_t,
+    CPLZLibDeflate(const void * ptr,
+                   size_t nBytes,
+                   int nLevel,
+                   void * outptr,
+                   size_t nOutAvailableBytes,
                    size_t * pnOutBytes) -> void *
+
+Compress a buffer with ZLib compression.
+
+### Parameters
+* **ptr**: input buffer.
+* **nBytes**: size of input buffer in bytes.
+* **nLevel**: ZLib compression level (-1 for default).
+* **outptr**: output buffer, or NULL to let the function allocate it.
+* **nOutAvailableBytes**: size of output buffer if provided, or ignored.
+* **pnOutBytes**: pointer to a size_t, where to store the size of the output buffer.
+
+### Returns
+the output buffer (to be freed with VSIFree() if not provided) or NULL in case of error.
 """
 function cplzlibdeflate(ptr, nBytes, nLevel, outptr, nOutAvailableBytes, pnOutBytes)
-    aftercare(
-        ccall(
-            (:CPLZLibDeflate, libgdal),
-            Ptr{Cvoid},
-            (Ptr{Cvoid}, Csize_t, Cint, Ptr{Cvoid}, Csize_t, Ptr{Csize_t}),
-            ptr,
-            nBytes,
-            nLevel,
-            outptr,
-            nOutAvailableBytes,
-            pnOutBytes,
-        ),
-    )
+    return aftercare(ccall((:CPLZLibDeflate, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t, Cint, Ptr{Cvoid}, Csize_t, Ptr{Csize_t}),
+                           ptr, nBytes, nLevel, outptr, nOutAvailableBytes, pnOutBytes))
 end
 
 """
-    CPLZLibInflate(const void *,
-                   size_t,
-                   void *,
-                   size_t,
+    CPLZLibInflate(const void * ptr,
+                   size_t nBytes,
+                   void * outptr,
+                   size_t nOutAvailableBytes,
                    size_t * pnOutBytes) -> void *
+
+Uncompress a buffer compressed with ZLib compression.
+
+### Parameters
+* **ptr**: input buffer.
+* **nBytes**: size of input buffer in bytes.
+* **outptr**: output buffer, or NULL to let the function allocate it.
+* **nOutAvailableBytes**: size of output buffer if provided, or ignored.
+* **pnOutBytes**: pointer to a size_t, where to store the size of the output buffer.
+
+### Returns
+the output buffer (to be freed with VSIFree() if not provided) or NULL in case of error.
 """
 function cplzlibinflate(ptr, nBytes, outptr, nOutAvailableBytes, pnOutBytes)
-    aftercare(
-        ccall(
-            (:CPLZLibInflate, libgdal),
-            Ptr{Cvoid},
-            (Ptr{Cvoid}, Csize_t, Ptr{Cvoid}, Csize_t, Ptr{Csize_t}),
-            ptr,
-            nBytes,
-            outptr,
-            nOutAvailableBytes,
-            pnOutBytes,
-        ),
-    )
+    return aftercare(ccall((:CPLZLibInflate, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t, Ptr{Cvoid}, Csize_t, Ptr{Csize_t}), ptr,
+                           nBytes, outptr, nOutAvailableBytes, pnOutBytes))
 end
 
 """
@@ -1916,27 +1577,9 @@ Uncompress a buffer compressed with ZLib compression.
 ### Returns
 the output buffer (to be freed with VSIFree() if not provided) or NULL in case of error. If bAllowResizeOutptr is set to true, only the returned pointer should be freed by the caller, as outptr might have been reallocated or freed.
 """
-function cplzlibinflateex(
-    ptr,
-    nBytes,
-    outptr,
-    nOutAvailableBytes,
-    bAllowResizeOutptr,
-    pnOutBytes,
-)
-    aftercare(
-        ccall(
-            (:CPLZLibInflateEx, libgdal),
-            Ptr{Cvoid},
-            (Ptr{Cvoid}, Csize_t, Ptr{Cvoid}, Csize_t, Bool, Ptr{Csize_t}),
-            ptr,
-            nBytes,
-            outptr,
-            nOutAvailableBytes,
-            bAllowResizeOutptr,
-            pnOutBytes,
-        ),
-    )
+function cplzlibinflateex(ptr, nBytes, outptr, nOutAvailableBytes, bAllowResizeOutptr, pnOutBytes)
+    return aftercare(ccall((:CPLZLibInflateEx, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t, Ptr{Cvoid}, Csize_t, Bool, Ptr{Csize_t}),
+                           ptr, nBytes, outptr, nOutAvailableBytes, bAllowResizeOutptr, pnOutBytes))
 end
 
 """
@@ -1955,16 +1598,8 @@ Validate a XML file against a XML schema.
 TRUE if the XML file validates against the XML schema.
 """
 function cplvalidatexml(pszXMLFilename, pszXSDFilename, papszOptions)
-    aftercare(
-        ccall(
-            (:CPLValidateXML, libgdal),
-            Cint,
-            (Cstring, Cstring, CSLConstList),
-            pszXMLFilename,
-            pszXSDFilename,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:CPLValidateXML, libgdal), Cint, (Cstring, Cstring, CSLConstList), pszXMLFilename, pszXSDFilename,
+                           papszOptions))
 end
 
 """
@@ -1981,10 +1616,7 @@ Prevents parallel executions of setlocale().
 See your compiler's documentation on setlocale.
 """
 function cplsetlocale(category, locale)
-    aftercare(
-        ccall((:CPLsetlocale, libgdal), Cstring, (Cint, Cstring), category, locale),
-        false,
-    )
+    return aftercare(ccall((:CPLsetlocale, libgdal), Cstring, (Cint, Cstring), category, locale), false)
 end
 
 """
@@ -1993,7 +1625,7 @@ end
 ` Doxygen_Suppress `
 """
 function cplcleanupsetlocalemutex()
-    aftercare(ccall((:CPLCleanupSetlocaleMutex, libgdal), Cvoid, ()))
+    return aftercare(ccall((:CPLCleanupSetlocaleMutex, libgdal), Cvoid, ()))
 end
 
 """
@@ -2007,26 +1639,26 @@ end
 [`TRUE`](@ref) if i is power of two otherwise return [`FALSE`](@ref)
 """
 function cplispoweroftwo(i)
-    aftercare(ccall((:CPLIsPowerOfTwo, libgdal), Cint, (Cuint,), i))
+    return aftercare(ccall((:CPLIsPowerOfTwo, libgdal), Cint, (Cuint,), i))
 end
 
 "Error number"
 const CPLErrorNum = Cint
 
 function cplemergencyerror(arg1)
-    ccall((:CPLEmergencyError, libgdal), Cvoid, (Cstring,), arg1)
+    return ccall((:CPLEmergencyError, libgdal), Cvoid, (Cstring,), arg1)
 end
 
 function cplerrorreset()
-    ccall((:CPLErrorReset, libgdal), Cvoid, ())
+    return ccall((:CPLErrorReset, libgdal), Cvoid, ())
 end
 
 function cplgetlasterrorno()
-    ccall((:CPLGetLastErrorNo, libgdal), CPLErrorNum, ())
+    return ccall((:CPLGetLastErrorNo, libgdal), CPLErrorNum, ())
 end
 
 function cplgetlasterrortype()
-    ccall((:CPLGetLastErrorType, libgdal), CPLErr, ())
+    return ccall((:CPLGetLastErrorType, libgdal), CPLErr, ())
 end
 
 """
@@ -2038,29 +1670,22 @@ Get the last error message.
 the last error message, or an empty string ("") if there is no posted error message.
 """
 function cplgetlasterrormsg()
-    unsafe_string(ccall((:CPLGetLastErrorMsg, libgdal), Cstring, ()))
+    return unsafe_string(ccall((:CPLGetLastErrorMsg, libgdal), Cstring, ()))
 end
 
 "Unsigned int32 type"
 const GUInt32 = Cuint
 
 function cplgeterrorcounter()
-    ccall((:CPLGetErrorCounter, libgdal), GUInt32, ())
+    return ccall((:CPLGetErrorCounter, libgdal), GUInt32, ())
 end
 
 function cplgeterrorhandleruserdata()
-    ccall((:CPLGetErrorHandlerUserData, libgdal), Ptr{Cvoid}, ())
+    return ccall((:CPLGetErrorHandlerUserData, libgdal), Ptr{Cvoid}, ())
 end
 
 function cplerrorsetstate(eErrClass, err_no, pszMsg)
-    ccall(
-        (:CPLErrorSetState, libgdal),
-        Cvoid,
-        (CPLErr, CPLErrorNum, Cstring),
-        eErrClass,
-        err_no,
-        pszMsg,
-    )
+    return ccall((:CPLErrorSetState, libgdal), Cvoid, (CPLErr, CPLErrorNum, Cstring), eErrClass, err_no, pszMsg)
 end
 
 """
@@ -2071,16 +1696,7 @@ end
 Call the previously installed error handler in the error handler stack.
 """
 function cplcallprevioushandler(eErrClass, err_no, pszMsg)
-    aftercare(
-        ccall(
-            (:CPLCallPreviousHandler, libgdal),
-            Cvoid,
-            (CPLErr, CPLErrorNum, Cstring),
-            eErrClass,
-            err_no,
-            pszMsg,
-        ),
-    )
+    return aftercare(ccall((:CPLCallPreviousHandler, libgdal), Cvoid, (CPLErr, CPLErrorNum, Cstring), eErrClass, err_no, pszMsg))
 end
 
 """
@@ -2089,43 +1705,22 @@ end
 ` Doxygen_Suppress `
 """
 function cplcleanuperrormutex()
-    ccall((:CPLCleanupErrorMutex, libgdal), Cvoid, ())
+    return ccall((:CPLCleanupErrorMutex, libgdal), Cvoid, ())
 end
 
 "Callback for a custom error handler"
 const CPLErrorHandler = Ptr{Cvoid}
 
 function cplloggingerrorhandler(arg1, arg2, arg3)
-    ccall(
-        (:CPLLoggingErrorHandler, libgdal),
-        Cvoid,
-        (CPLErr, CPLErrorNum, Cstring),
-        arg1,
-        arg2,
-        arg3,
-    )
+    return ccall((:CPLLoggingErrorHandler, libgdal), Cvoid, (CPLErr, CPLErrorNum, Cstring), arg1, arg2, arg3)
 end
 
 function cpldefaulterrorhandler(arg1, arg2, arg3)
-    ccall(
-        (:CPLDefaultErrorHandler, libgdal),
-        Cvoid,
-        (CPLErr, CPLErrorNum, Cstring),
-        arg1,
-        arg2,
-        arg3,
-    )
+    return ccall((:CPLDefaultErrorHandler, libgdal), Cvoid, (CPLErr, CPLErrorNum, Cstring), arg1, arg2, arg3)
 end
 
 function cplquieterrorhandler(arg1, arg2, arg3)
-    ccall(
-        (:CPLQuietErrorHandler, libgdal),
-        Cvoid,
-        (CPLErr, CPLErrorNum, Cstring),
-        arg1,
-        arg2,
-        arg3,
-    )
+    return ccall((:CPLQuietErrorHandler, libgdal), Cvoid, (CPLErr, CPLErrorNum, Cstring), arg1, arg2, arg3)
 end
 
 """
@@ -2134,47 +1729,35 @@ end
 Whether failures should be turned into warnings.
 """
 function cplturnfailureintowarning(bOn)
-    aftercare(ccall((:CPLTurnFailureIntoWarning, libgdal), Cvoid, (Cint,), bOn))
+    return aftercare(ccall((:CPLTurnFailureIntoWarning, libgdal), Cvoid, (Cint,), bOn))
 end
 
 function cplgeterrorhandler(ppUserData)
-    ccall((:CPLGetErrorHandler, libgdal), CPLErrorHandler, (Ptr{Ptr{Cvoid}},), ppUserData)
+    return ccall((:CPLGetErrorHandler, libgdal), CPLErrorHandler, (Ptr{Ptr{Cvoid}},), ppUserData)
 end
 
 function cplseterrorhandler(arg1)
-    ccall((:CPLSetErrorHandler, libgdal), CPLErrorHandler, (CPLErrorHandler,), arg1)
+    return ccall((:CPLSetErrorHandler, libgdal), CPLErrorHandler, (CPLErrorHandler,), arg1)
 end
 
 function cplseterrorhandlerex(arg1, arg2)
-    ccall(
-        (:CPLSetErrorHandlerEx, libgdal),
-        CPLErrorHandler,
-        (CPLErrorHandler, Ptr{Cvoid}),
-        arg1,
-        arg2,
-    )
+    return ccall((:CPLSetErrorHandlerEx, libgdal), CPLErrorHandler, (CPLErrorHandler, Ptr{Cvoid}), arg1, arg2)
 end
 
 function cplpusherrorhandler(arg1)
-    ccall((:CPLPushErrorHandler, libgdal), Cvoid, (CPLErrorHandler,), arg1)
+    return ccall((:CPLPushErrorHandler, libgdal), Cvoid, (CPLErrorHandler,), arg1)
 end
 
 function cplpusherrorhandlerex(arg1, arg2)
-    ccall(
-        (:CPLPushErrorHandlerEx, libgdal),
-        Cvoid,
-        (CPLErrorHandler, Ptr{Cvoid}),
-        arg1,
-        arg2,
-    )
+    return ccall((:CPLPushErrorHandlerEx, libgdal), Cvoid, (CPLErrorHandler, Ptr{Cvoid}), arg1, arg2)
 end
 
 function cplsetcurrenterrorhandlercatchdebug(bCatchDebug)
-    ccall((:CPLSetCurrentErrorHandlerCatchDebug, libgdal), Cvoid, (Cint,), bCatchDebug)
+    return ccall((:CPLSetCurrentErrorHandlerCatchDebug, libgdal), Cvoid, (Cint,), bCatchDebug)
 end
 
 function cplpoperrorhandler()
-    ccall((:CPLPopErrorHandler, libgdal), Cvoid, ())
+    return ccall((:CPLPopErrorHandler, libgdal), Cvoid, ())
 end
 
 """
@@ -2185,9 +1768,7 @@ end
 Report failure of a logical assertion.
 """
 function _cplassert(arg1, arg2, arg3)
-    aftercare(
-        ccall((:_CPLAssert, libgdal), Cvoid, (Cstring, Cstring, Cint), arg1, arg2, arg3),
-    )
+    return aftercare(ccall((:_CPLAssert, libgdal), Cvoid, (Cstring, Cstring, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -2246,7 +1827,7 @@ Parse an XML string into tree form.
 parsed tree or NULL on error.
 """
 function cplparsexmlstring(arg1)
-    aftercare(ccall((:CPLParseXMLString, libgdal), Ptr{CPLXMLNode}, (Cstring,), arg1))
+    return aftercare(ccall((:CPLParseXMLString, libgdal), Ptr{CPLXMLNode}, (Cstring,), arg1))
 end
 
 """
@@ -2258,7 +1839,7 @@ Destroy a tree.
 * **psNode**: the tree to free.
 """
 function cpldestroyxmlnode(arg1)
-    aftercare(ccall((:CPLDestroyXMLNode, libgdal), Cvoid, (Ptr{CPLXMLNode},), arg1))
+    return aftercare(ccall((:CPLDestroyXMLNode, libgdal), Cvoid, (Ptr{CPLXMLNode},), arg1))
 end
 
 """
@@ -2275,15 +1856,7 @@ Find node by path.
 the requested element node, or NULL if not found.
 """
 function cplgetxmlnode(poRoot, pszPath)
-    aftercare(
-        ccall(
-            (:CPLGetXMLNode, libgdal),
-            Ptr{CPLXMLNode},
-            (Ptr{CPLXMLNode}, Cstring),
-            poRoot,
-            pszPath,
-        ),
-    )
+    return aftercare(ccall((:CPLGetXMLNode, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, Cstring), poRoot, pszPath))
 end
 
 """
@@ -2300,15 +1873,7 @@ Search for a node in document.
 The matching node or NULL on failure.
 """
 function cplsearchxmlnode(poRoot, pszTarget)
-    aftercare(
-        ccall(
-            (:CPLSearchXMLNode, libgdal),
-            Ptr{CPLXMLNode},
-            (Ptr{CPLXMLNode}, Cstring),
-            poRoot,
-            pszTarget,
-        ),
-    )
+    return aftercare(ccall((:CPLSearchXMLNode, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, Cstring), poRoot, pszTarget))
 end
 
 """
@@ -2327,17 +1892,8 @@ Fetch element/attribute value.
 the requested value or pszDefault if not found.
 """
 function cplgetxmlvalue(poRoot, pszPath, pszDefault)
-    aftercare(
-        ccall(
-            (:CPLGetXMLValue, libgdal),
-            Cstring,
-            (Ptr{CPLXMLNode}, Cstring, Cstring),
-            poRoot,
-            pszPath,
-            pszDefault,
-        ),
-        false,
-    )
+    return aftercare(ccall((:CPLGetXMLValue, libgdal), Cstring, (Ptr{CPLXMLNode}, Cstring, Cstring), poRoot, pszPath, pszDefault),
+                     false)
 end
 
 """
@@ -2356,16 +1912,8 @@ Create an document tree item.
 the newly created node, now owned by the caller (or parent node).
 """
 function cplcreatexmlnode(poParent, eType, pszText)
-    aftercare(
-        ccall(
-            (:CPLCreateXMLNode, libgdal),
-            Ptr{CPLXMLNode},
-            (Ptr{CPLXMLNode}, CPLXMLNodeType, Cstring),
-            poParent,
-            eType,
-            pszText,
-        ),
-    )
+    return aftercare(ccall((:CPLCreateXMLNode, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, CPLXMLNodeType, Cstring), poParent,
+                           eType, pszText))
 end
 
 """
@@ -2380,10 +1928,7 @@ Convert tree into string document.
 the document on success or NULL on failure.
 """
 function cplserializexmltree(psNode)
-    aftercare(
-        ccall((:CPLSerializeXMLTree, libgdal), Cstring, (Ptr{CPLXMLNode},), psNode),
-        false,
-    )
+    return aftercare(ccall((:CPLSerializeXMLTree, libgdal), Cstring, (Ptr{CPLXMLNode},), psNode), false)
 end
 
 """
@@ -2397,15 +1942,7 @@ Add child node to parent.
 * **psChild**: the child to add to the parent. May not be NULL. Should not be a child of any other parent.
 """
 function cpladdxmlchild(psParent, psChild)
-    aftercare(
-        ccall(
-            (:CPLAddXMLChild, libgdal),
-            Cvoid,
-            (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}),
-            psParent,
-            psChild,
-        ),
-    )
+    return aftercare(ccall((:CPLAddXMLChild, libgdal), Cvoid, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psParent, psChild))
 end
 
 """
@@ -2422,15 +1959,7 @@ Remove child node from parent.
 TRUE on success or FALSE if the child was not found.
 """
 function cplremovexmlchild(psParent, psChild)
-    aftercare(
-        ccall(
-            (:CPLRemoveXMLChild, libgdal),
-            Cint,
-            (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}),
-            psParent,
-            psChild,
-        ),
-    )
+    return aftercare(ccall((:CPLRemoveXMLChild, libgdal), Cint, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psParent, psChild))
 end
 
 """
@@ -2444,15 +1973,7 @@ Add new sibling.
 * **psNewSibling**: the node to add at the end of psOlderSiblings psNext chain.
 """
 function cpladdxmlsibling(psOlderSibling, psNewSibling)
-    aftercare(
-        ccall(
-            (:CPLAddXMLSibling, libgdal),
-            Cvoid,
-            (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}),
-            psOlderSibling,
-            psNewSibling,
-        ),
-    )
+    return aftercare(ccall((:CPLAddXMLSibling, libgdal), Cvoid, (Ptr{CPLXMLNode}, Ptr{CPLXMLNode}), psOlderSibling, psNewSibling))
 end
 
 """
@@ -2471,16 +1992,8 @@ Create an element and text value.
 the pointer to the new element node.
 """
 function cplcreatexmlelementandvalue(psParent, pszName, pszValue)
-    aftercare(
-        ccall(
-            (:CPLCreateXMLElementAndValue, libgdal),
-            Ptr{CPLXMLNode},
-            (Ptr{CPLXMLNode}, Cstring, Cstring),
-            psParent,
-            pszName,
-            pszValue,
-        ),
-    )
+    return aftercare(ccall((:CPLCreateXMLElementAndValue, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode}, Cstring, Cstring), psParent,
+                           pszName, pszValue))
 end
 
 """
@@ -2496,16 +2009,8 @@ Create an attribute and text value.
 * **pszValue**: the text to attach to the attribute. Must not be NULL.
 """
 function cpladdxmlattributeandvalue(psParent, pszName, pszValue)
-    aftercare(
-        ccall(
-            (:CPLAddXMLAttributeAndValue, libgdal),
-            Cvoid,
-            (Ptr{CPLXMLNode}, Cstring, Cstring),
-            psParent,
-            pszName,
-            pszValue,
-        ),
-    )
+    return aftercare(ccall((:CPLAddXMLAttributeAndValue, libgdal), Cvoid, (Ptr{CPLXMLNode}, Cstring, Cstring), psParent, pszName,
+                           pszValue))
 end
 
 """
@@ -2520,9 +2025,7 @@ Copy tree.
 a copy of the whole tree.
 """
 function cplclonexmltree(psTree)
-    aftercare(
-        ccall((:CPLCloneXMLTree, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode},), psTree),
-    )
+    return aftercare(ccall((:CPLCloneXMLTree, libgdal), Ptr{CPLXMLNode}, (Ptr{CPLXMLNode},), psTree))
 end
 
 """
@@ -2541,16 +2044,7 @@ Set element value by path.
 TRUE on success.
 """
 function cplsetxmlvalue(psRoot, pszPath, pszValue)
-    aftercare(
-        ccall(
-            (:CPLSetXMLValue, libgdal),
-            Cint,
-            (Ptr{CPLXMLNode}, Cstring, Cstring),
-            psRoot,
-            pszPath,
-            pszValue,
-        ),
-    )
+    return aftercare(ccall((:CPLSetXMLValue, libgdal), Cint, (Ptr{CPLXMLNode}, Cstring, Cstring), psRoot, pszPath, pszValue))
 end
 
 """
@@ -2566,16 +2060,8 @@ Strip indicated namespaces.
 * **bRecurse**: TRUE to recurse over whole document, or FALSE to only operate on the passed node.
 """
 function cplstripxmlnamespace(psRoot, pszNameSpace, bRecurse)
-    aftercare(
-        ccall(
-            (:CPLStripXMLNamespace, libgdal),
-            Cvoid,
-            (Ptr{CPLXMLNode}, Cstring, Cint),
-            psRoot,
-            pszNameSpace,
-            bRecurse,
-        ),
-    )
+    return aftercare(ccall((:CPLStripXMLNamespace, libgdal), Cvoid, (Ptr{CPLXMLNode}, Cstring, Cint), psRoot, pszNameSpace,
+                           bRecurse))
 end
 
 """
@@ -2587,7 +2073,7 @@ Make string into safe XML token.
 * **pszTarget**: the string to be adjusted. It is altered in place.
 """
 function cplcleanxmlelementname(arg1)
-    aftercare(ccall((:CPLCleanXMLElementName, libgdal), Cvoid, (Cstring,), arg1))
+    return aftercare(ccall((:CPLCleanXMLElementName, libgdal), Cvoid, (Cstring,), arg1))
 end
 
 """
@@ -2602,7 +2088,7 @@ Parse XML file into tree.
 NULL on failure, or the document tree on success.
 """
 function cplparsexmlfile(pszFilename)
-    aftercare(ccall((:CPLParseXMLFile, libgdal), Ptr{CPLXMLNode}, (Cstring,), pszFilename))
+    return aftercare(ccall((:CPLParseXMLFile, libgdal), Ptr{CPLXMLNode}, (Cstring,), pszFilename))
 end
 
 """
@@ -2619,15 +2105,7 @@ Write document tree to a file.
 TRUE on success, FALSE otherwise.
 """
 function cplserializexmltreetofile(psTree, pszFilename)
-    aftercare(
-        ccall(
-            (:CPLSerializeXMLTreeToFile, libgdal),
-            Cint,
-            (Ptr{CPLXMLNode}, Cstring),
-            psTree,
-            pszFilename,
-        ),
-    )
+    return aftercare(ccall((:CPLSerializeXMLTreeToFile, libgdal), Cint, (Ptr{CPLXMLNode}, Cstring), psTree, pszFilename))
 end
 
 """
@@ -2635,14 +2113,7 @@ end
                                   bool bVisitSiblings) -> size_t
 """
 function cplxmlnodegetramusageestimate(psNode)
-    aftercare(
-        ccall(
-            (:CPLXMLNodeGetRAMUsageEstimate, libgdal),
-            Csize_t,
-            (Ptr{CPLXMLNode},),
-            psNode,
-        ),
-    )
+    return aftercare(ccall((:CPLXMLNodeGetRAMUsageEstimate, libgdal), Csize_t, (Ptr{CPLXMLNode},), psNode))
 end
 
 "Unsigned int16 type"
@@ -2681,16 +2152,7 @@ const GPtrDiff_t = GIntBig
 Stub progress function.
 """
 function gdaldummyprogress(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALDummyProgress, libgdal),
-            Cint,
-            (Cdouble, Cstring, Ptr{Cvoid}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALDummyProgress, libgdal), Cint, (Cdouble, Cstring, Ptr{Cvoid}), arg1, arg2, arg3))
 end
 
 """
@@ -2709,16 +2171,7 @@ Simple progress report to terminal.
 Always returns TRUE indicating the process should continue.
 """
 function gdaltermprogress(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALTermProgress, libgdal),
-            Cint,
-            (Cdouble, Cstring, Ptr{Cvoid}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALTermProgress, libgdal), Cint, (Cdouble, Cstring, Ptr{Cvoid}), arg1, arg2, arg3))
 end
 
 """
@@ -2729,16 +2182,7 @@ end
 Scaled progress transformer.
 """
 function gdalscaledprogress(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALScaledProgress, libgdal),
-            Cint,
-            (Cdouble, Cstring, Ptr{Cvoid}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALScaledProgress, libgdal), Cint, (Cdouble, Cstring, Ptr{Cvoid}), arg1, arg2, arg3))
 end
 
 """
@@ -2759,17 +2203,8 @@ Create scaled progress transformer.
 pointer to pass as pProgressArg to sub functions. Should be freed with GDALDestroyScaledProgress().
 """
 function gdalcreatescaledprogress(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:GDALCreateScaledProgress, libgdal),
-            Ptr{Cvoid},
-            (Cdouble, Cdouble, GDALProgressFunc, Any),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateScaledProgress, libgdal), Ptr{Cvoid}, (Cdouble, Cdouble, GDALProgressFunc, Any), arg1, arg2,
+                           arg3, arg4))
 end
 
 """
@@ -2781,7 +2216,7 @@ Cleanup scaled progress handle.
 * **pData**: scaled progress handle returned by GDALCreateScaledProgress().
 """
 function gdaldestroyscaledprogress(arg1)
-    aftercare(ccall((:GDALDestroyScaledProgress, libgdal), Cvoid, (Ptr{Cvoid},), arg1))
+    return aftercare(ccall((:GDALDestroyScaledProgress, libgdal), Cvoid, (Ptr{Cvoid},), arg1))
 end
 
 const CPLVirtualMem = Cvoid
@@ -2846,7 +2281,7 @@ Return the size of a page of virtual memory.
 the page size.
 """
 function cplgetpagesize()
-    aftercare(ccall((:CPLGetPageSize, libgdal), Csize_t, ()))
+    return aftercare(ccall((:CPLGetPageSize, libgdal), Csize_t, ()))
 end
 
 """
@@ -2877,43 +2312,12 @@ Note that on Linux, this function will install a SIGSEGV handler. The original h
 # Returns
 a virtual memory object that must be freed by [`CPLVirtualMemFree`](@ref)(), or NULL in case of failure.
 """
-function cplvirtualmemnew(
-    nSize,
-    nCacheSize,
-    nPageSizeHint,
-    bSingleThreadUsage,
-    eAccessMode,
-    pfnCachePage,
-    pfnUnCachePage,
-    pfnFreeUserData,
-    pCbkUserData,
-)
-    aftercare(
-        ccall(
-            (:CPLVirtualMemNew, libgdal),
-            Ptr{CPLVirtualMem},
-            (
-                Csize_t,
-                Csize_t,
-                Csize_t,
-                Cint,
-                CPLVirtualMemAccessMode,
-                CPLVirtualMemCachePageCbk,
-                CPLVirtualMemUnCachePageCbk,
-                CPLVirtualMemFreeUserData,
-                Ptr{Cvoid},
-            ),
-            nSize,
-            nCacheSize,
-            nPageSizeHint,
-            bSingleThreadUsage,
-            eAccessMode,
-            pfnCachePage,
-            pfnUnCachePage,
-            pfnFreeUserData,
-            pCbkUserData,
-        ),
-    )
+function cplvirtualmemnew(nSize, nCacheSize, nPageSizeHint, bSingleThreadUsage, eAccessMode, pfnCachePage, pfnUnCachePage,
+                          pfnFreeUserData, pCbkUserData)
+    return aftercare(ccall((:CPLVirtualMemNew, libgdal), Ptr{CPLVirtualMem},
+                           (Csize_t, Csize_t, Csize_t, Cint, CPLVirtualMemAccessMode, CPLVirtualMemCachePageCbk,
+                            CPLVirtualMemUnCachePageCbk, CPLVirtualMemFreeUserData, Ptr{Cvoid}), nSize, nCacheSize, nPageSizeHint,
+                           bSingleThreadUsage, eAccessMode, pfnCachePage, pfnUnCachePage, pfnFreeUserData, pCbkUserData))
 end
 
 """
@@ -2927,7 +2331,7 @@ Return if virtual memory mapping of a file is available.
 [`TRUE`](@ref) if virtual memory mapping of a file is available.
 """
 function cplisvirtualmemfilemapavailable()
-    aftercare(ccall((:CPLIsVirtualMemFileMapAvailable, libgdal), Cint, ()))
+    return aftercare(ccall((:CPLIsVirtualMemFileMapAvailable, libgdal), Cint, ()))
 end
 
 "Type for a file offset"
@@ -2958,34 +2362,10 @@ Supported on Linux only in GDAL <= 2.0, and all POSIX systems supporting mmap() 
 # Returns
 a virtual memory object that must be freed by [`CPLVirtualMemFree`](@ref)(), or NULL in case of failure.
 """
-function cplvirtualmemfilemapnew(
-    fp,
-    nOffset,
-    nLength,
-    eAccessMode,
-    pfnFreeUserData,
-    pCbkUserData,
-)
-    aftercare(
-        ccall(
-            (:CPLVirtualMemFileMapNew, libgdal),
-            Ptr{CPLVirtualMem},
-            (
-                Ptr{VSILFILE},
-                vsi_l_offset,
-                vsi_l_offset,
-                CPLVirtualMemAccessMode,
-                CPLVirtualMemFreeUserData,
-                Ptr{Cvoid},
-            ),
-            fp,
-            nOffset,
-            nLength,
-            eAccessMode,
-            pfnFreeUserData,
-            pCbkUserData,
-        ),
-    )
+function cplvirtualmemfilemapnew(fp, nOffset, nLength, eAccessMode, pfnFreeUserData, pCbkUserData)
+    return aftercare(ccall((:CPLVirtualMemFileMapNew, libgdal), Ptr{CPLVirtualMem},
+                           (Ptr{VSILFILE}, vsi_l_offset, vsi_l_offset, CPLVirtualMemAccessMode, CPLVirtualMemFreeUserData,
+                            Ptr{Cvoid}), fp, nOffset, nLength, eAccessMode, pfnFreeUserData, pCbkUserData))
 end
 
 """
@@ -3009,24 +2389,9 @@ The new mapping takes a reference on the base mapping.
 a virtual memory object that must be freed by [`CPLVirtualMemFree`](@ref)(), or NULL in case of failure.
 """
 function cplvirtualmemderivednew(pVMemBase, nOffset, nSize, pfnFreeUserData, pCbkUserData)
-    aftercare(
-        ccall(
-            (:CPLVirtualMemDerivedNew, libgdal),
-            Ptr{CPLVirtualMem},
-            (
-                Ptr{CPLVirtualMem},
-                vsi_l_offset,
-                vsi_l_offset,
-                CPLVirtualMemFreeUserData,
-                Ptr{Cvoid},
-            ),
-            pVMemBase,
-            nOffset,
-            nSize,
-            pfnFreeUserData,
-            pCbkUserData,
-        ),
-    )
+    return aftercare(ccall((:CPLVirtualMemDerivedNew, libgdal), Ptr{CPLVirtualMem},
+                           (Ptr{CPLVirtualMem}, vsi_l_offset, vsi_l_offset, CPLVirtualMemFreeUserData, Ptr{Cvoid}), pVMemBase,
+                           nOffset, nSize, pfnFreeUserData, pCbkUserData))
 end
 
 """
@@ -3042,7 +2407,7 @@ The pointer returned by [`CPLVirtualMemGetAddr`](@ref)() will no longer be valid
 * `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
 """
 function cplvirtualmemfree(ctxt)
-    aftercare(ccall((:CPLVirtualMemFree, libgdal), Cvoid, (Ptr{CPLVirtualMem},), ctxt))
+    return aftercare(ccall((:CPLVirtualMemFree, libgdal), Cvoid, (Ptr{CPLVirtualMem},), ctxt))
 end
 
 """
@@ -3062,9 +2427,7 @@ Note that if a range of bytes used as an argument of a system call (such as read
 the pointer to the start of a virtual memory mapping.
 """
 function cplvirtualmemgetaddr(ctxt)
-    aftercare(
-        ccall((:CPLVirtualMemGetAddr, libgdal), Ptr{Cvoid}, (Ptr{CPLVirtualMem},), ctxt),
-    )
+    return aftercare(ccall((:CPLVirtualMemGetAddr, libgdal), Ptr{Cvoid}, (Ptr{CPLVirtualMem},), ctxt))
 end
 
 """
@@ -3080,7 +2443,7 @@ Return the size of the virtual memory mapping.
 the size of the virtual memory mapping.
 """
 function cplvirtualmemgetsize(ctxt)
-    aftercare(ccall((:CPLVirtualMemGetSize, libgdal), Csize_t, (Ptr{CPLVirtualMem},), ctxt))
+    return aftercare(ccall((:CPLVirtualMemGetSize, libgdal), Csize_t, (Ptr{CPLVirtualMem},), ctxt))
 end
 
 """
@@ -3096,9 +2459,7 @@ Return if the virtual memory mapping is a direct file mapping.
 [`TRUE`](@ref) if the virtual memory mapping is a direct file mapping.
 """
 function cplvirtualmemisfilemapping(ctxt)
-    aftercare(
-        ccall((:CPLVirtualMemIsFileMapping, libgdal), Cint, (Ptr{CPLVirtualMem},), ctxt),
-    )
+    return aftercare(ccall((:CPLVirtualMemIsFileMapping, libgdal), Cint, (Ptr{CPLVirtualMem},), ctxt))
 end
 
 """
@@ -3114,14 +2475,7 @@ Return the access mode of the virtual memory mapping.
 the access mode of the virtual memory mapping.
 """
 function cplvirtualmemgetaccessmode(ctxt)
-    aftercare(
-        ccall(
-            (:CPLVirtualMemGetAccessMode, libgdal),
-            CPLVirtualMemAccessMode,
-            (Ptr{CPLVirtualMem},),
-            ctxt,
-        ),
-    )
+    return aftercare(ccall((:CPLVirtualMemGetAccessMode, libgdal), CPLVirtualMemAccessMode, (Ptr{CPLVirtualMem},), ctxt))
 end
 
 """
@@ -3139,9 +2493,7 @@ The value returned will be at least [`CPLGetPageSize`](@ref)(), but potentially 
 the page size
 """
 function cplvirtualmemgetpagesize(ctxt)
-    aftercare(
-        ccall((:CPLVirtualMemGetPageSize, libgdal), Csize_t, (Ptr{CPLVirtualMem},), ctxt),
-    )
+    return aftercare(ccall((:CPLVirtualMemGetPageSize, libgdal), Csize_t, (Ptr{CPLVirtualMem},), ctxt))
 end
 
 """
@@ -3163,14 +2515,7 @@ On Linux, this will always return [`TRUE`](@ref) if bSingleThreadUsage = [`FALSE
 [`TRUE`](@ref) if this memory mapping can be accessed safely from concurrent threads.
 """
 function cplvirtualmemisaccessthreadsafe(ctxt)
-    aftercare(
-        ccall(
-            (:CPLVirtualMemIsAccessThreadSafe, libgdal),
-            Cint,
-            (Ptr{CPLVirtualMem},),
-            ctxt,
-        ),
-    )
+    return aftercare(ccall((:CPLVirtualMemIsAccessThreadSafe, libgdal), Cint, (Ptr{CPLVirtualMem},), ctxt))
 end
 
 """
@@ -3188,9 +2533,7 @@ This function must be paired with [`CPLVirtualMemUnDeclareThread`](@ref)().
 * `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
 """
 function cplvirtualmemdeclarethread(ctxt)
-    aftercare(
-        ccall((:CPLVirtualMemDeclareThread, libgdal), Cvoid, (Ptr{CPLVirtualMem},), ctxt),
-    )
+    return aftercare(ccall((:CPLVirtualMemDeclareThread, libgdal), Cvoid, (Ptr{CPLVirtualMem},), ctxt))
 end
 
 """
@@ -3208,9 +2551,7 @@ This function must be paired with [`CPLVirtualMemDeclareThread`](@ref)().
 * `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
 """
 function cplvirtualmemundeclarethread(ctxt)
-    aftercare(
-        ccall((:CPLVirtualMemUnDeclareThread, libgdal), Cvoid, (Ptr{CPLVirtualMem},), ctxt),
-    )
+    return aftercare(ccall((:CPLVirtualMemUnDeclareThread, libgdal), Cvoid, (Ptr{CPLVirtualMem},), ctxt))
 end
 
 """
@@ -3231,17 +2572,8 @@ It is also needed when wanting to provide part of virtual memory mapping to a sy
 * `bWriteOp`: set to [`TRUE`](@ref) if the memory are will be accessed in write mode.
 """
 function cplvirtualmempin(ctxt, pAddr, nSize, bWriteOp)
-    aftercare(
-        ccall(
-            (:CPLVirtualMemPin, libgdal),
-            Cvoid,
-            (Ptr{CPLVirtualMem}, Ptr{Cvoid}, Csize_t, Cint),
-            ctxt,
-            pAddr,
-            nSize,
-            bWriteOp,
-        ),
-    )
+    return aftercare(ccall((:CPLVirtualMemPin, libgdal), Cvoid, (Ptr{CPLVirtualMem}, Ptr{Cvoid}, Csize_t, Cint), ctxt, pAddr, nSize,
+                           bWriteOp))
 end
 
 """
@@ -3254,7 +2586,7 @@ This function must be called after the last [`CPLVirtualMem`](@ref) object has b
 \\since GDAL 2.0
 """
 function cplvirtualmemmanagerterminate()
-    aftercare(ccall((:CPLVirtualMemManagerTerminate, libgdal), Cvoid, ()))
+    return aftercare(ccall((:CPLVirtualMemManagerTerminate, libgdal), Cvoid, ()))
 end
 
 """
@@ -3265,16 +2597,7 @@ end
 See VSIMallocAlignedAuto()
 """
 function vsimallocalignedautoverbose(nSize, pszFile, nLine)
-    aftercare(
-        ccall(
-            (:VSIMallocAlignedAutoVerbose, libgdal),
-            Ptr{Cvoid},
-            (Csize_t, Cstring, Cint),
-            nSize,
-            pszFile,
-            nLine,
-        ),
-    )
+    return aftercare(ccall((:VSIMallocAlignedAutoVerbose, libgdal), Ptr{Cvoid}, (Csize_t, Cstring, Cint), nSize, pszFile, nLine))
 end
 
 """
@@ -3283,16 +2606,7 @@ end
 [`VSIMallocVerbose`](@ref)
 """
 function vsimallocverbose(nSize, pszFile, nLine)
-    aftercare(
-        ccall(
-            (:VSIMallocVerbose, libgdal),
-            Ptr{Cvoid},
-            (Csize_t, Cstring, Cint),
-            nSize,
-            pszFile,
-            nLine,
-        ),
-    )
+    return aftercare(ccall((:VSIMallocVerbose, libgdal), Ptr{Cvoid}, (Csize_t, Cstring, Cint), nSize, pszFile, nLine))
 end
 
 """
@@ -3301,17 +2615,8 @@ end
 [`VSIMalloc2Verbose`](@ref)
 """
 function vsimalloc2verbose(nSize1, nSize2, pszFile, nLine)
-    aftercare(
-        ccall(
-            (:VSIMalloc2Verbose, libgdal),
-            Ptr{Cvoid},
-            (Csize_t, Csize_t, Cstring, Cint),
-            nSize1,
-            nSize2,
-            pszFile,
-            nLine,
-        ),
-    )
+    return aftercare(ccall((:VSIMalloc2Verbose, libgdal), Ptr{Cvoid}, (Csize_t, Csize_t, Cstring, Cint), nSize1, nSize2, pszFile,
+                           nLine))
 end
 
 """
@@ -3320,18 +2625,8 @@ end
 [`VSIMalloc3Verbose`](@ref)
 """
 function vsimalloc3verbose(nSize1, nSize2, nSize3, pszFile, nLine)
-    aftercare(
-        ccall(
-            (:VSIMalloc3Verbose, libgdal),
-            Ptr{Cvoid},
-            (Csize_t, Csize_t, Csize_t, Cstring, Cint),
-            nSize1,
-            nSize2,
-            nSize3,
-            pszFile,
-            nLine,
-        ),
-    )
+    return aftercare(ccall((:VSIMalloc3Verbose, libgdal), Ptr{Cvoid}, (Csize_t, Csize_t, Csize_t, Cstring, Cint), nSize1, nSize2,
+                           nSize3, pszFile, nLine))
 end
 
 """
@@ -3340,17 +2635,8 @@ end
 [`VSICallocVerbose`](@ref)
 """
 function vsicallocverbose(nCount, nSize, pszFile, nLine)
-    aftercare(
-        ccall(
-            (:VSICallocVerbose, libgdal),
-            Ptr{Cvoid},
-            (Csize_t, Csize_t, Cstring, Cint),
-            nCount,
-            nSize,
-            pszFile,
-            nLine,
-        ),
-    )
+    return aftercare(ccall((:VSICallocVerbose, libgdal), Ptr{Cvoid}, (Csize_t, Csize_t, Cstring, Cint), nCount, nSize, pszFile,
+                           nLine))
 end
 
 """
@@ -3359,17 +2645,8 @@ end
 [`VSIReallocVerbose`](@ref)
 """
 function vsireallocverbose(pOldPtr, nNewSize, pszFile, nLine)
-    aftercare(
-        ccall(
-            (:VSIReallocVerbose, libgdal),
-            Ptr{Cvoid},
-            (Ptr{Cvoid}, Csize_t, Cstring, Cint),
-            pOldPtr,
-            nNewSize,
-            pszFile,
-            nLine,
-        ),
-    )
+    return aftercare(ccall((:VSIReallocVerbose, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t, Cstring, Cint), pOldPtr, nNewSize,
+                           pszFile, nLine))
 end
 
 """
@@ -3378,17 +2655,7 @@ end
 [`VSIStrdupVerbose`](@ref)
 """
 function vsistrdupverbose(pszStr, pszFile, nLine)
-    aftercare(
-        ccall(
-            (:VSIStrdupVerbose, libgdal),
-            Cstring,
-            (Cstring, Cstring, Cint),
-            pszStr,
-            pszFile,
-            nLine,
-        ),
-        false,
-    )
+    return aftercare(ccall((:VSIStrdupVerbose, libgdal), Cstring, (Cstring, Cstring, Cint), pszStr, pszFile, nLine), false)
 end
 
 """
@@ -3403,7 +2670,7 @@ Read names in a directory.
 The list of entries in the directory, or NULL if the directory doesn't exist. Filenames are returned in UTF-8 encoding.
 """
 function vsireaddir(arg1)
-    aftercare(ccall((:VSIReadDir, libgdal), Ptr{Cstring}, (Cstring,), arg1))
+    return aftercare(ccall((:VSIReadDir, libgdal), Ptr{Cstring}, (Cstring,), arg1))
 end
 
 """
@@ -3412,14 +2679,14 @@ end
 ` Doxygen_Suppress `
 """
 function vsifopen(arg1, arg2)
-    aftercare(ccall((:VSIFOpen, libgdal), Ptr{Libc.FILE}, (Cstring, Cstring), arg1, arg2))
+    return aftercare(ccall((:VSIFOpen, libgdal), Ptr{Libc.FILE}, (Cstring, Cstring), arg1, arg2))
 end
 
 """
     VSIFClose(FILE * fp) -> int
 """
 function vsifclose(arg1)
-    aftercare(ccall((:VSIFClose, libgdal), Cint, (Ptr{Libc.FILE},), arg1))
+    return aftercare(ccall((:VSIFClose, libgdal), Cint, (Ptr{Libc.FILE},), arg1))
 end
 
 """
@@ -3428,30 +2695,28 @@ end
              int nWhence) -> int
 """
 function vsifseek(arg1, arg2, arg3)
-    aftercare(
-        ccall((:VSIFSeek, libgdal), Cint, (Ptr{Libc.FILE}, Clong, Cint), arg1, arg2, arg3),
-    )
+    return aftercare(ccall((:VSIFSeek, libgdal), Cint, (Ptr{Libc.FILE}, Clong, Cint), arg1, arg2, arg3))
 end
 
 """
     VSIFTell(FILE * fp) -> long
 """
 function vsiftell(arg1)
-    aftercare(ccall((:VSIFTell, libgdal), Clong, (Ptr{Libc.FILE},), arg1))
+    return aftercare(ccall((:VSIFTell, libgdal), Clong, (Ptr{Libc.FILE},), arg1))
 end
 
 """
     VSIRewind(FILE * fp) -> void
 """
 function vsirewind(arg1)
-    aftercare(ccall((:VSIRewind, libgdal), Cvoid, (Ptr{Libc.FILE},), arg1))
+    return aftercare(ccall((:VSIRewind, libgdal), Cvoid, (Ptr{Libc.FILE},), arg1))
 end
 
 """
     VSIFFlush(FILE * fp) -> void
 """
 function vsifflush(arg1)
-    aftercare(ccall((:VSIFFlush, libgdal), Cvoid, (Ptr{Libc.FILE},), arg1))
+    return aftercare(ccall((:VSIFFlush, libgdal), Cvoid, (Ptr{Libc.FILE},), arg1))
 end
 
 """
@@ -3461,17 +2726,7 @@ end
              FILE * fp) -> size_t
 """
 function vsifread(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:VSIFRead, libgdal),
-            Csize_t,
-            (Ptr{Cvoid}, Csize_t, Csize_t, Ptr{Libc.FILE}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:VSIFRead, libgdal), Csize_t, (Ptr{Cvoid}, Csize_t, Csize_t, Ptr{Libc.FILE}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -3481,17 +2736,7 @@ end
               FILE * fp) -> size_t
 """
 function vsifwrite(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:VSIFWrite, libgdal),
-            Csize_t,
-            (Ptr{Cvoid}, Csize_t, Csize_t, Ptr{Libc.FILE}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:VSIFWrite, libgdal), Csize_t, (Ptr{Cvoid}, Csize_t, Csize_t, Ptr{Libc.FILE}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -3500,17 +2745,7 @@ end
              FILE * fp) -> char *
 """
 function vsifgets(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:VSIFGets, libgdal),
-            Cstring,
-            (Cstring, Cint, Ptr{Libc.FILE}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-        false,
-    )
+    return aftercare(ccall((:VSIFGets, libgdal), Cstring, (Cstring, Cint, Ptr{Libc.FILE}), arg1, arg2, arg3), false)
 end
 
 """
@@ -3518,14 +2753,14 @@ end
              FILE * fp) -> int
 """
 function vsifputs(arg1, arg2)
-    aftercare(ccall((:VSIFPuts, libgdal), Cint, (Cstring, Ptr{Libc.FILE}), arg1, arg2))
+    return aftercare(ccall((:VSIFPuts, libgdal), Cint, (Cstring, Ptr{Libc.FILE}), arg1, arg2))
 end
 
 """
     VSIFGetc(FILE * fp) -> int
 """
 function vsifgetc(arg1)
-    aftercare(ccall((:VSIFGetc, libgdal), Cint, (Ptr{Libc.FILE},), arg1))
+    return aftercare(ccall((:VSIFGetc, libgdal), Cint, (Ptr{Libc.FILE},), arg1))
 end
 
 """
@@ -3533,7 +2768,7 @@ end
              FILE * fp) -> int
 """
 function vsifputc(arg1, arg2)
-    aftercare(ccall((:VSIFPutc, libgdal), Cint, (Cint, Ptr{Libc.FILE}), arg1, arg2))
+    return aftercare(ccall((:VSIFPutc, libgdal), Cint, (Cint, Ptr{Libc.FILE}), arg1, arg2))
 end
 
 """
@@ -3541,14 +2776,14 @@ end
               FILE * fp) -> int
 """
 function vsiungetc(arg1, arg2)
-    aftercare(ccall((:VSIUngetc, libgdal), Cint, (Cint, Ptr{Libc.FILE}), arg1, arg2))
+    return aftercare(ccall((:VSIUngetc, libgdal), Cint, (Cint, Ptr{Libc.FILE}), arg1, arg2))
 end
 
 """
     VSIFEof(FILE * fp) -> int
 """
 function vsifeof(arg1)
-    aftercare(ccall((:VSIFEof, libgdal), Cint, (Ptr{Libc.FILE},), arg1))
+    return aftercare(ccall((:VSIFEof, libgdal), Cint, (Ptr{Libc.FILE},), arg1))
 end
 
 """
@@ -3556,7 +2791,7 @@ end
             VSIStatBuf * pStatBuf) -> int
 """
 function vsistat(arg1, arg2)
-    aftercare(ccall((:VSIStat, libgdal), Cint, (Cstring, Ptr{VSIStatBuf}), arg1, arg2))
+    return aftercare(ccall((:VSIStat, libgdal), Cint, (Cstring, Ptr{VSIStatBuf}), arg1, arg2))
 end
 
 """
@@ -3573,7 +2808,7 @@ Open file.
 NULL on failure, or the file handle.
 """
 function vsifopenl(arg1, arg2)
-    aftercare(ccall((:VSIFOpenL, libgdal), Ptr{VSILFILE}, (Cstring, Cstring), arg1, arg2))
+    return aftercare(ccall((:VSIFOpenL, libgdal), Ptr{VSILFILE}, (Cstring, Cstring), arg1, arg2))
 end
 
 """
@@ -3592,16 +2827,7 @@ Open/create file.
 NULL on failure, or the file handle.
 """
 function vsifopenexl(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:VSIFOpenExL, libgdal),
-            Ptr{VSILFILE},
-            (Cstring, Cstring, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:VSIFOpenExL, libgdal), Ptr{VSILFILE}, (Cstring, Cstring, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -3622,17 +2848,7 @@ Open/create file.
 NULL on failure, or the file handle.
 """
 function vsifopenex2l(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:VSIFOpenEx2L, libgdal),
-            Ptr{VSILFILE},
-            (Cstring, Cstring, Cint, CSLConstList),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:VSIFOpenEx2L, libgdal), Ptr{VSILFILE}, (Cstring, Cstring, Cint, CSLConstList), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -3647,7 +2863,7 @@ Close file.
 0 on success or -1 on failure.
 """
 function vsifclosel(arg1)
-    aftercare(ccall((:VSIFCloseL, libgdal), Cint, (Ptr{VSILFILE},), arg1))
+    return aftercare(ccall((:VSIFCloseL, libgdal), Cint, (Ptr{VSILFILE},), arg1))
 end
 
 """
@@ -3666,16 +2882,7 @@ Seek to requested offset.
 0 on success or -1 one failure.
 """
 function vsifseekl(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:VSIFSeekL, libgdal),
-            Cint,
-            (Ptr{VSILFILE}, vsi_l_offset, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:VSIFSeekL, libgdal), Cint, (Ptr{VSILFILE}, vsi_l_offset, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -3690,7 +2897,7 @@ Tell current file offset.
 file offset in bytes.
 """
 function vsiftelll(arg1)
-    aftercare(ccall((:VSIFTellL, libgdal), vsi_l_offset, (Ptr{VSILFILE},), arg1))
+    return aftercare(ccall((:VSIFTellL, libgdal), vsi_l_offset, (Ptr{VSILFILE},), arg1))
 end
 
 """
@@ -3702,7 +2909,7 @@ Rewind the file pointer to the beginning of the file.
 * **fp**: file handle opened with VSIFOpenL().
 """
 function vsirewindl(arg1)
-    aftercare(ccall((:VSIRewindL, libgdal), Cvoid, (Ptr{VSILFILE},), arg1))
+    return aftercare(ccall((:VSIRewindL, libgdal), Cvoid, (Ptr{VSILFILE},), arg1))
 end
 
 """
@@ -3723,17 +2930,7 @@ Read bytes from file.
 number of objects successfully read. If that number is less than nCount, VSIFEofL() or VSIFErrorL() can be used to determine the reason for the short read.
 """
 function vsifreadl(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:VSIFReadL, libgdal),
-            Csize_t,
-            (Ptr{Cvoid}, Csize_t, Csize_t, Ptr{VSILFILE}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:VSIFReadL, libgdal), Csize_t, (Ptr{Cvoid}, Csize_t, Csize_t, Ptr{VSILFILE}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -3756,18 +2953,9 @@ Read several ranges of bytes from file.
 0 in case of success, -1 otherwise.
 """
 function vsifreadmultirangel(nRanges, ppData, panOffsets, panSizes, arg5)
-    aftercare(
-        ccall(
-            (:VSIFReadMultiRangeL, libgdal),
-            Cint,
-            (Cint, Ptr{Ptr{Cvoid}}, Ptr{vsi_l_offset}, Ptr{Csize_t}, Ptr{VSILFILE}),
-            nRanges,
-            ppData,
-            panOffsets,
-            panSizes,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:VSIFReadMultiRangeL, libgdal), Cint,
+                           (Cint, Ptr{Ptr{Cvoid}}, Ptr{vsi_l_offset}, Ptr{Csize_t}, Ptr{VSILFILE}), nRanges, ppData, panOffsets,
+                           panSizes, arg5))
 end
 
 """
@@ -3788,17 +2976,7 @@ Write bytes to file.
 number of objects successfully written.
 """
 function vsifwritel(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:VSIFWriteL, libgdal),
-            Csize_t,
-            (Ptr{Cvoid}, Csize_t, Csize_t, Ptr{VSILFILE}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:VSIFWriteL, libgdal), Csize_t, (Ptr{Cvoid}, Csize_t, Csize_t, Ptr{VSILFILE}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -3810,7 +2988,7 @@ Reset the error and end-of-file indicators.
 * **fp**: file handle opened with VSIFOpenL().
 """
 function vsifclearerrl(arg1)
-    aftercare(ccall((:VSIFClearErrL, libgdal), Cvoid, (Ptr{VSILFILE},), arg1))
+    return aftercare(ccall((:VSIFClearErrL, libgdal), Cvoid, (Ptr{VSILFILE},), arg1))
 end
 
 """
@@ -3825,7 +3003,7 @@ Test the error indicator.
 TRUE if the error indicator is set, else FALSE.
 """
 function vsiferrorl(arg1)
-    aftercare(ccall((:VSIFErrorL, libgdal), Cint, (Ptr{VSILFILE},), arg1))
+    return aftercare(ccall((:VSIFErrorL, libgdal), Cint, (Ptr{VSILFILE},), arg1))
 end
 
 """
@@ -3840,7 +3018,7 @@ Test for end of file.
 TRUE if at EOF, else FALSE.
 """
 function vsifeofl(arg1)
-    aftercare(ccall((:VSIFEofL, libgdal), Cint, (Ptr{VSILFILE},), arg1))
+    return aftercare(ccall((:VSIFEofL, libgdal), Cint, (Ptr{VSILFILE},), arg1))
 end
 
 """
@@ -3857,9 +3035,7 @@ Truncate/expand the file to the specified size.
 0 on success
 """
 function vsiftruncatel(arg1, arg2)
-    aftercare(
-        ccall((:VSIFTruncateL, libgdal), Cint, (Ptr{VSILFILE}, vsi_l_offset), arg1, arg2),
-    )
+    return aftercare(ccall((:VSIFTruncateL, libgdal), Cint, (Ptr{VSILFILE}, vsi_l_offset), arg1, arg2))
 end
 
 """
@@ -3874,7 +3050,7 @@ Flush pending writes to disk.
 0 on success or -1 on error.
 """
 function vsifflushl(arg1)
-    aftercare(ccall((:VSIFFlushL, libgdal), Cint, (Ptr{VSILFILE},), arg1))
+    return aftercare(ccall((:VSIFFlushL, libgdal), Cint, (Ptr{VSILFILE},), arg1))
 end
 
 """
@@ -3891,7 +3067,7 @@ Write a single byte to the file.
 1 in case of success, 0 on error.
 """
 function vsifputcl(arg1, arg2)
-    aftercare(ccall((:VSIFPutcL, libgdal), Cint, (Cint, Ptr{VSILFILE}), arg1, arg2))
+    return aftercare(ccall((:VSIFPutcL, libgdal), Cint, (Cint, Ptr{VSILFILE}), arg1, arg2))
 end
 
 """
@@ -3927,16 +3103,8 @@ Return if a given file range contains data or holes filled with zeroes.
 extent status: VSI_RANGE_STATUS_UNKNOWN, VSI_RANGE_STATUS_DATA or VSI_RANGE_STATUS_HOLE
 """
 function vsifgetrangestatusl(fp, nStart, nLength)
-    aftercare(
-        ccall(
-            (:VSIFGetRangeStatusL, libgdal),
-            VSIRangeStatus,
-            (Ptr{VSILFILE}, vsi_l_offset, vsi_l_offset),
-            fp,
-            nStart,
-            nLength,
-        ),
-    )
+    return aftercare(ccall((:VSIFGetRangeStatusL, libgdal), VSIRangeStatus, (Ptr{VSILFILE}, vsi_l_offset, vsi_l_offset), fp, nStart,
+                           nLength))
 end
 
 """
@@ -3959,18 +3127,8 @@ Ingest a file into memory.
 TRUE in case of success.
 """
 function vsiingestfile(fp, pszFilename, ppabyRet, pnSize, nMaxSize)
-    aftercare(
-        ccall(
-            (:VSIIngestFile, libgdal),
-            Cint,
-            (Ptr{VSILFILE}, Cstring, Ptr{Ptr{GByte}}, Ptr{vsi_l_offset}, GIntBig),
-            fp,
-            pszFilename,
-            ppabyRet,
-            pnSize,
-            nMaxSize,
-        ),
-    )
+    return aftercare(ccall((:VSIIngestFile, libgdal), Cint, (Ptr{VSILFILE}, Cstring, Ptr{Ptr{GByte}}, Ptr{vsi_l_offset}, GIntBig),
+                           fp, pszFilename, ppabyRet, pnSize, nMaxSize))
 end
 
 """
@@ -3987,19 +3145,11 @@ Overwrite an existing file with content from another one.
 TRUE in case of success.
 """
 function vsioverwritefile(fpTarget, pszSourceFilename)
-    aftercare(
-        ccall(
-            (:VSIOverwriteFile, libgdal),
-            Cint,
-            (Ptr{VSILFILE}, Cstring),
-            fpTarget,
-            pszSourceFilename,
-        ),
-    )
+    return aftercare(ccall((:VSIOverwriteFile, libgdal), Cint, (Ptr{VSILFILE}, Cstring), fpTarget, pszSourceFilename))
 end
 
 "Type for [`VSIStatL`](@ref)()"
-const VSIStatBufL = _stat64
+const VSIStatBufL = stat
 
 """
     VSIStatL(const char * pszFilename,
@@ -4015,7 +3165,7 @@ Get filesystem object info.
 0 on success or -1 on an error.
 """
 function vsistatl(arg1, arg2)
-    aftercare(ccall((:VSIStatL, libgdal), Cint, (Cstring, Ptr{VSIStatBufL}), arg1, arg2))
+    return aftercare(ccall((:VSIStatL, libgdal), Cint, (Cstring, Ptr{VSIStatBufL}), arg1, arg2))
 end
 
 """
@@ -4034,16 +3184,7 @@ Get filesystem object info.
 0 on success or -1 on an error.
 """
 function vsistatexl(pszFilename, psStatBuf, nFlags)
-    aftercare(
-        ccall(
-            (:VSIStatExL, libgdal),
-            Cint,
-            (Cstring, Ptr{VSIStatBufL}, Cint),
-            pszFilename,
-            psStatBuf,
-            nFlags,
-        ),
-    )
+    return aftercare(ccall((:VSIStatExL, libgdal), Cint, (Cstring, Ptr{VSIStatBufL}, Cint), pszFilename, psStatBuf, nFlags))
 end
 
 """
@@ -4058,7 +3199,7 @@ Returns if the filenames of the filesystem are case sensitive.
 TRUE if the filenames of the filesystem are case sensitive.
 """
 function vsiiscasesensitivefs(pszFilename)
-    aftercare(ccall((:VSIIsCaseSensitiveFS, libgdal), Cint, (Cstring,), pszFilename))
+    return aftercare(ccall((:VSIIsCaseSensitiveFS, libgdal), Cint, (Cstring,), pszFilename))
 end
 
 """
@@ -4073,7 +3214,7 @@ Returns if the filesystem supports sparse files.
 TRUE if the file system is known to support sparse files. FALSE may be returned both in cases where it is known to not support them, or when it is unknown.
 """
 function vsisupportssparsefiles(pszPath)
-    aftercare(ccall((:VSISupportsSparseFiles, libgdal), Cint, (Cstring,), pszPath))
+    return aftercare(ccall((:VSISupportsSparseFiles, libgdal), Cint, (Cstring,), pszPath))
 end
 
 """
@@ -4088,7 +3229,7 @@ Returns if the file/filesystem is "local".
 TRUE or FALSE
 """
 function vsiislocal(pszPath)
-    aftercare(ccall((:VSIIsLocal, libgdal), Bool, (Cstring,), pszPath))
+    return aftercare(ccall((:VSIIsLocal, libgdal), Bool, (Cstring,), pszPath))
 end
 
 """
@@ -4103,10 +3244,7 @@ Returns the canonical filename.
 UTF-8 encoded string, to free with VSIFree()
 """
 function vsigetcanonicalfilename(pszPath)
-    aftercare(
-        ccall((:VSIGetCanonicalFilename, libgdal), Cstring, (Cstring,), pszPath),
-        false,
-    )
+    return aftercare(ccall((:VSIGetCanonicalFilename, libgdal), Cstring, (Cstring,), pszPath), false)
 end
 
 """
@@ -4123,15 +3261,7 @@ Returns if the filesystem supports sequential write.
 TRUE or FALSE
 """
 function vsisupportssequentialwrite(pszPath, bAllowLocalTempFile)
-    aftercare(
-        ccall(
-            (:VSISupportsSequentialWrite, libgdal),
-            Bool,
-            (Cstring, Bool),
-            pszPath,
-            bAllowLocalTempFile,
-        ),
-    )
+    return aftercare(ccall((:VSISupportsSequentialWrite, libgdal), Bool, (Cstring, Bool), pszPath, bAllowLocalTempFile))
 end
 
 """
@@ -4148,15 +3278,7 @@ Returns if the filesystem supports random write.
 TRUE or FALSE
 """
 function vsisupportsrandomwrite(pszPath, bAllowLocalTempFile)
-    aftercare(
-        ccall(
-            (:VSISupportsRandomWrite, libgdal),
-            Bool,
-            (Cstring, Bool),
-            pszPath,
-            bAllowLocalTempFile,
-        ),
-    )
+    return aftercare(ccall((:VSISupportsRandomWrite, libgdal), Bool, (Cstring, Bool), pszPath, bAllowLocalTempFile))
 end
 
 """
@@ -4171,7 +3293,7 @@ Returns if the filesystem supports efficient multi-range reading.
 TRUE if the file system is known to have an efficient multi-range reading.
 """
 function vsihasoptimizedreadmultirange(pszPath)
-    aftercare(ccall((:VSIHasOptimizedReadMultiRange, libgdal), Cint, (Cstring,), pszPath))
+    return aftercare(ccall((:VSIHasOptimizedReadMultiRange, libgdal), Cint, (Cstring,), pszPath))
 end
 
 """
@@ -4186,7 +3308,7 @@ Returns the actual URL of a supplied filename.
 the actual URL corresponding to the supplied filename, or NULL. Should not be freed.
 """
 function vsigetactualurl(pszFilename)
-    aftercare(ccall((:VSIGetActualURL, libgdal), Cstring, (Cstring,), pszFilename), false)
+    return aftercare(ccall((:VSIGetActualURL, libgdal), Cstring, (Cstring,), pszFilename), false)
 end
 
 """
@@ -4211,16 +3333,7 @@ VERB=GET/HEAD/DELETE/PUT/POST: HTTP VERB for which the request will be used. Def
 a signed URL, or NULL. Should be freed with CPLFree().
 """
 function vsigetsignedurl(pszFilename, papszOptions)
-    aftercare(
-        ccall(
-            (:VSIGetSignedURL, libgdal),
-            Cstring,
-            (Cstring, CSLConstList),
-            pszFilename,
-            papszOptions,
-        ),
-        false,
-    )
+    return aftercare(ccall((:VSIGetSignedURL, libgdal), Cstring, (Cstring, CSLConstList), pszFilename, papszOptions), false)
 end
 
 """
@@ -4235,10 +3348,7 @@ Return the list of options associated with a virtual file system handler as a se
 a string, which must not be freed, or NULL if no options is declared.
 """
 function vsigetfilesystemoptions(pszFilename)
-    aftercare(
-        ccall((:VSIGetFileSystemOptions, libgdal), Cstring, (Cstring,), pszFilename),
-        false,
-    )
+    return aftercare(ccall((:VSIGetFileSystemOptions, libgdal), Cstring, (Cstring,), pszFilename), false)
 end
 
 """
@@ -4250,7 +3360,7 @@ Return the list of prefixes for virtual file system handlers currently registere
 a NULL terminated list of prefixes. Must be freed with CSLDestroy()
 """
 function vsigetfilesystemsprefixes()
-    aftercare(ccall((:VSIGetFileSystemsPrefixes, libgdal), Ptr{Cstring}, ()))
+    return aftercare(ccall((:VSIGetFileSystemsPrefixes, libgdal), Ptr{Cstring}, ()))
 end
 
 """
@@ -4265,9 +3375,7 @@ Returns the "native" file descriptor for the virtual handle.
 the native file descriptor, or NULL.
 """
 function vsifgetnativefiledescriptorl(arg1)
-    aftercare(
-        ccall((:VSIFGetNativeFileDescriptorL, libgdal), Ptr{Cvoid}, (Ptr{VSILFILE},), arg1),
-    )
+    return aftercare(ccall((:VSIFGetNativeFileDescriptorL, libgdal), Ptr{Cvoid}, (Ptr{VSILFILE},), arg1))
 end
 
 """
@@ -4279,7 +3387,7 @@ Get metadata on files.
 
 ### Parameters
 * **pszFilename**: the path of the filesystem object to be queried. UTF-8 encoded.
-* **pszDomain**: Metadata domain to query. Depends on the file system. The following are supported: 
+* **pszDomain**: Metadata domain to query. Depends on the file system. The following ones are supported: 
 
 HEADERS: to get HTTP headers for network-like filesystems (/vsicurl/, /vsis3/, /vsgis/, etc) 
 
@@ -4289,7 +3397,7 @@ TAGS:
 /vsis3/: to get S3 Object tagging information 
 
 
-/vsiaz/: to get blob tags. Refer to https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-tags 
+/vsiaz/: to get blob tags. Refer to https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-tags  
 
 
 
@@ -4301,7 +3409,7 @@ STATUS: specific to /vsiadls/: returns all system defined properties for a path 
 ACL: specific to /vsiadls/ and /vsigs/: returns the access control list for a path. For /vsigs/, a single XML=xml_content string is returned. Refer to https://cloud.google.com/storage/docs/xml-api/get-object-acls  
 
 
-METADATA: specific to /vsiaz/: to set blob metadata. Refer to https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-metadata. Note: this will be a subset of what pszDomain=HEADERS returns 
+METADATA: specific to /vsiaz/: to get blob metadata. Refer to https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-metadata. Note: this will be a subset of what pszDomain=HEADERS returns 
 
 
 ZIP: specific to /vsizip/: to obtain ZIP specific metadata, in particular if a file is SOZIP-enabled (SOZIP_VALID=YES)
@@ -4311,16 +3419,8 @@ ZIP: specific to /vsizip/: to obtain ZIP specific metadata, in particular if a f
 a NULL-terminated list of key=value strings, to be freed with CSLDestroy() or NULL in case of error / empty list.
 """
 function vsigetfilemetadata(pszFilename, pszDomain, papszOptions)
-    aftercare(
-        ccall(
-            (:VSIGetFileMetadata, libgdal),
-            Ptr{Cstring},
-            (Cstring, Cstring, CSLConstList),
-            pszFilename,
-            pszDomain,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:VSIGetFileMetadata, libgdal), Ptr{Cstring}, (Cstring, Cstring, CSLConstList), pszFilename, pszDomain,
+                           papszOptions))
 end
 
 """
@@ -4371,17 +3471,8 @@ METADATA: specific to /vsiaz/: to set blob metadata. Refer to https://docs.micro
 TRUE in case of success.
 """
 function vsisetfilemetadata(pszFilename, papszMetadata, pszDomain, papszOptions)
-    aftercare(
-        ccall(
-            (:VSISetFileMetadata, libgdal),
-            Cint,
-            (Cstring, CSLConstList, Cstring, CSLConstList),
-            pszFilename,
-            papszMetadata,
-            pszDomain,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:VSISetFileMetadata, libgdal), Cint, (Cstring, CSLConstList, Cstring, CSLConstList), pszFilename,
+                           papszMetadata, pszDomain, papszOptions))
 end
 
 """
@@ -4397,16 +3488,8 @@ Set a path specific option for a given path prefix.
 * **pszValue**: Option value. May be NULL to erase it.
 """
 function vsisetpathspecificoption(pszPathPrefix, pszKey, pszValue)
-    aftercare(
-        ccall(
-            (:VSISetPathSpecificOption, libgdal),
-            Cvoid,
-            (Cstring, Cstring, Cstring),
-            pszPathPrefix,
-            pszKey,
-            pszValue,
-        ),
-    )
+    return aftercare(ccall((:VSISetPathSpecificOption, libgdal), Cvoid, (Cstring, Cstring, Cstring), pszPathPrefix, pszKey,
+                           pszValue))
 end
 
 """
@@ -4418,9 +3501,7 @@ Clear path specific options set with VSISetPathSpecificOption()
 * **pszPathPrefix**: If set to NULL, all path specific options are cleared. If set to not-NULL, only those set with VSISetPathSpecificOption(pszPathPrefix, ...) will be cleared.
 """
 function vsiclearpathspecificoptions(pszPathPrefix)
-    aftercare(
-        ccall((:VSIClearPathSpecificOptions, libgdal), Cvoid, (Cstring,), pszPathPrefix),
-    )
+    return aftercare(ccall((:VSIClearPathSpecificOptions, libgdal), Cvoid, (Cstring,), pszPathPrefix))
 end
 
 """
@@ -4431,17 +3512,8 @@ end
 Get the value a path specific option.
 """
 function vsigetpathspecificoption(pszPath, pszKey, pszDefault)
-    aftercare(
-        ccall(
-            (:VSIGetPathSpecificOption, libgdal),
-            Cstring,
-            (Cstring, Cstring, Cstring),
-            pszPath,
-            pszKey,
-            pszDefault,
-        ),
-        false,
-    )
+    return aftercare(ccall((:VSIGetPathSpecificOption, libgdal), Cstring, (Cstring, Cstring, Cstring), pszPath, pszKey, pszDefault),
+                     false)
 end
 
 """
@@ -4452,16 +3524,7 @@ end
 Set a credential (or more generally an option related to a virtual file system) for a given path prefix.
 """
 function vsisetcredential(pszPathPrefix, pszKey, pszValue)
-    aftercare(
-        ccall(
-            (:VSISetCredential, libgdal),
-            Cvoid,
-            (Cstring, Cstring, Cstring),
-            pszPathPrefix,
-            pszKey,
-            pszValue,
-        ),
-    )
+    return aftercare(ccall((:VSISetCredential, libgdal), Cvoid, (Cstring, Cstring, Cstring), pszPathPrefix, pszKey, pszValue))
 end
 
 """
@@ -4470,7 +3533,7 @@ end
 Clear path specific options set with VSISetPathSpecificOption()
 """
 function vsiclearcredentials(pszPathPrefix)
-    aftercare(ccall((:VSIClearCredentials, libgdal), Cvoid, (Cstring,), pszPathPrefix))
+    return aftercare(ccall((:VSIClearCredentials, libgdal), Cvoid, (Cstring,), pszPathPrefix))
 end
 
 """
@@ -4481,17 +3544,7 @@ end
 Get the value of a credential (or more generally an option related to a virtual file system) for a given path.
 """
 function vsigetcredential(pszPath, pszKey, pszDefault)
-    aftercare(
-        ccall(
-            (:VSIGetCredential, libgdal),
-            Cstring,
-            (Cstring, Cstring, Cstring),
-            pszPath,
-            pszKey,
-            pszDefault,
-        ),
-        false,
-    )
+    return aftercare(ccall((:VSIGetCredential, libgdal), Cstring, (Cstring, Cstring, Cstring), pszPath, pszKey, pszDefault), false)
 end
 
 """
@@ -4501,7 +3554,7 @@ end
 Analog of calloc().
 """
 function vsicalloc(arg1, arg2)
-    aftercare(ccall((:VSICalloc, libgdal), Ptr{Cvoid}, (Csize_t, Csize_t), arg1, arg2))
+    return aftercare(ccall((:VSICalloc, libgdal), Ptr{Cvoid}, (Csize_t, Csize_t), arg1, arg2))
 end
 
 """
@@ -4510,7 +3563,7 @@ end
 Analog of malloc().
 """
 function vsimalloc(arg1)
-    aftercare(ccall((:VSIMalloc, libgdal), Ptr{Cvoid}, (Csize_t,), arg1))
+    return aftercare(ccall((:VSIMalloc, libgdal), Ptr{Cvoid}, (Csize_t,), arg1))
 end
 
 """
@@ -4520,7 +3573,7 @@ end
 Analog of realloc().
 """
 function vsirealloc(arg1, arg2)
-    aftercare(ccall((:VSIRealloc, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t), arg1, arg2))
+    return aftercare(ccall((:VSIRealloc, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t), arg1, arg2))
 end
 
 """
@@ -4529,7 +3582,7 @@ end
 Analog of strdup().
 """
 function vsistrdup(arg1)
-    aftercare(ccall((:VSIStrdup, libgdal), Cstring, (Cstring,), arg1), false)
+    return aftercare(ccall((:VSIStrdup, libgdal), Cstring, (Cstring,), arg1), false)
 end
 
 """
@@ -4546,15 +3599,7 @@ Allocates a buffer with an alignment constraint.
 a buffer aligned on nAlignment and of size nSize, or NULL
 """
 function vsimallocaligned(nAlignment, nSize)
-    aftercare(
-        ccall(
-            (:VSIMallocAligned, libgdal),
-            Ptr{Cvoid},
-            (Csize_t, Csize_t),
-            nAlignment,
-            nSize,
-        ),
-    )
+    return aftercare(ccall((:VSIMallocAligned, libgdal), Ptr{Cvoid}, (Csize_t, Csize_t), nAlignment, nSize))
 end
 
 """
@@ -4569,7 +3614,7 @@ Allocates a buffer with an alignment constraint such that it can be used by the 
 an aligned buffer of size nSize, or NULL
 """
 function vsimallocalignedauto(nSize)
-    aftercare(ccall((:VSIMallocAlignedAuto, libgdal), Ptr{Cvoid}, (Csize_t,), nSize))
+    return aftercare(ccall((:VSIMallocAlignedAuto, libgdal), Ptr{Cvoid}, (Csize_t,), nSize))
 end
 
 """
@@ -4581,7 +3626,7 @@ Free a buffer allocated with VSIMallocAligned().
 * **ptr**: Buffer to free.
 """
 function vsifreealigned(ptr)
-    aftercare(ccall((:VSIFreeAligned, libgdal), Cvoid, (Ptr{Cvoid},), ptr))
+    return aftercare(ccall((:VSIFreeAligned, libgdal), Cvoid, (Ptr{Cvoid},), ptr))
 end
 
 """
@@ -4590,7 +3635,7 @@ end
 [`VSIMalloc2`](@ref) allocates (nSize1 * nSize2) bytes. In case of overflow of the multiplication, or if memory allocation fails, a NULL pointer is returned and a CE\\_Failure error is raised with [`CPLError`](@ref)(). If nSize1 == 0 || nSize2 == 0, a NULL pointer will also be returned. [`CPLFree`](@ref)() or [`VSIFree`](@ref)() can be used to free memory allocated by this function.
 """
 function vsimalloc2(nSize1, nSize2)
-    aftercare(ccall((:VSIMalloc2, libgdal), Ptr{Cvoid}, (Csize_t, Csize_t), nSize1, nSize2))
+    return aftercare(ccall((:VSIMalloc2, libgdal), Ptr{Cvoid}, (Csize_t, Csize_t), nSize1, nSize2))
 end
 
 """
@@ -4599,16 +3644,7 @@ end
 [`VSIMalloc3`](@ref) allocates (nSize1 * nSize2 * nSize3) bytes. In case of overflow of the multiplication, or if memory allocation fails, a NULL pointer is returned and a CE\\_Failure error is raised with [`CPLError`](@ref)(). If nSize1 == 0 || nSize2 == 0 || nSize3 == 0, a NULL pointer will also be returned. [`CPLFree`](@ref)() or [`VSIFree`](@ref)() can be used to free memory allocated by this function.
 """
 function vsimalloc3(nSize1, nSize2, nSize3)
-    aftercare(
-        ccall(
-            (:VSIMalloc3, libgdal),
-            Ptr{Cvoid},
-            (Csize_t, Csize_t, Csize_t),
-            nSize1,
-            nSize2,
-            nSize3,
-        ),
-    )
+    return aftercare(ccall((:VSIMalloc3, libgdal), Ptr{Cvoid}, (Csize_t, Csize_t, Csize_t), nSize1, nSize2, nSize3))
 end
 
 """
@@ -4620,7 +3656,7 @@ Return the total physical RAM in bytes.
 the total physical RAM in bytes (or 0 in case of failure).
 """
 function cplgetphysicalram()
-    aftercare(ccall((:CPLGetPhysicalRAM, libgdal), GIntBig, ()))
+    return aftercare(ccall((:CPLGetPhysicalRAM, libgdal), GIntBig, ()))
 end
 
 """
@@ -4632,7 +3668,7 @@ Return the total physical RAM, usable by a process, in bytes.
 the total physical RAM, usable by a process, in bytes (or 0 in case of failure).
 """
 function cplgetusablephysicalram()
-    aftercare(ccall((:CPLGetUsablePhysicalRAM, libgdal), GIntBig, ()))
+    return aftercare(ccall((:CPLGetUsablePhysicalRAM, libgdal), GIntBig, ()))
 end
 
 """
@@ -4647,7 +3683,7 @@ Read names in a directory recursively.
 The list of entries in the directory and subdirectories or NULL if the directory doesn't exist. Filenames are returned in UTF-8 encoding.
 """
 function vsireaddirrecursive(pszPath)
-    aftercare(ccall((:VSIReadDirRecursive, libgdal), Ptr{Cstring}, (Cstring,), pszPath))
+    return aftercare(ccall((:VSIReadDirRecursive, libgdal), Ptr{Cstring}, (Cstring,), pszPath))
 end
 
 """
@@ -4664,9 +3700,7 @@ Read names in a directory.
 The list of entries in the directory, or NULL if the directory doesn't exist. Filenames are returned in UTF-8 encoding.
 """
 function vsireaddirex(pszPath, nMaxFiles)
-    aftercare(
-        ccall((:VSIReadDirEx, libgdal), Ptr{Cstring}, (Cstring, Cint), pszPath, nMaxFiles),
-    )
+    return aftercare(ccall((:VSIReadDirEx, libgdal), Ptr{Cstring}, (Cstring, Cint), pszPath, nMaxFiles))
 end
 
 """
@@ -4681,7 +3715,7 @@ Return related filenames.
 The list of entries, relative to the directory, of all sidecar files available or NULL if the list is not known. Filenames are returned in UTF-8 encoding. Most implementations will return NULL, and a subsequent ReadDir will list all files available in the file's directory. This function will be overridden by VSI FilesystemHandlers that wish to force e.g. an empty list to avoid opening non-existent files on slow filesystems. The return value shall be destroyed with CSLDestroy()
 """
 function vsisiblingfiles(pszPath)
-    aftercare(ccall((:VSISiblingFiles, libgdal), Ptr{Cstring}, (Cstring,), pszPath))
+    return aftercare(ccall((:VSISiblingFiles, libgdal), Ptr{Cstring}, (Cstring,), pszPath))
 end
 
 """
@@ -4690,10 +3724,7 @@ end
 Return the directory separator for the specified path.
 """
 function vsigetdirectoryseparator(pszPath)
-    aftercare(
-        ccall((:VSIGetDirectorySeparator, libgdal), Cstring, (Cstring,), pszPath),
-        false,
-    )
+    return aftercare(ccall((:VSIGetDirectorySeparator, libgdal), Cstring, (Cstring,), pszPath), false)
 end
 
 const VSIDIR = Cvoid
@@ -4719,16 +3750,8 @@ NAME_AND_TYPE_ONLY=YES/NO: (GDAL >= 3.4) Defaults to NO. If set to YES, only the
 a handle, or NULL in case of error
 """
 function vsiopendir(pszPath, nRecurseDepth, papszOptions)
-    aftercare(
-        ccall(
-            (:VSIOpenDir, libgdal),
-            Ptr{VSIDIR},
-            (Cstring, Cint, Ptr{Cstring}),
-            pszPath,
-            nRecurseDepth,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:VSIOpenDir, libgdal), Ptr{VSIDIR}, (Cstring, Cint, Ptr{Cstring}), pszPath, nRecurseDepth,
+                           papszOptions))
 end
 
 """
@@ -4770,7 +3793,7 @@ Return the next entry of the directory.
 a entry, or NULL if there is no more entry in the directory. This return value must not be freed.
 """
 function vsigetnextdirentry(dir)
-    aftercare(ccall((:VSIGetNextDirEntry, libgdal), Ptr{VSIDIREntry}, (Ptr{VSIDIR},), dir))
+    return aftercare(ccall((:VSIGetNextDirEntry, libgdal), Ptr{VSIDIREntry}, (Ptr{VSIDIR},), dir))
 end
 
 """
@@ -4782,7 +3805,7 @@ Close a directory.
 * **dir**: Directory handled returned by VSIOpenDir().
 """
 function vsiclosedir(dir)
-    aftercare(ccall((:VSICloseDir, libgdal), Cvoid, (Ptr{VSIDIR},), dir))
+    return aftercare(ccall((:VSICloseDir, libgdal), Cvoid, (Ptr{VSIDIR},), dir))
 end
 
 """
@@ -4799,7 +3822,7 @@ Create a directory.
 0 on success or -1 on an error.
 """
 function vsimkdir(pszPathname, mode)
-    aftercare(ccall((:VSIMkdir, libgdal), Cint, (Cstring, Clong), pszPathname, mode))
+    return aftercare(ccall((:VSIMkdir, libgdal), Cint, (Cstring, Clong), pszPathname, mode))
 end
 
 """
@@ -4816,9 +3839,7 @@ Create a directory and all its ancestors.
 0 on success or -1 on an error.
 """
 function vsimkdirrecursive(pszPathname, mode)
-    aftercare(
-        ccall((:VSIMkdirRecursive, libgdal), Cint, (Cstring, Clong), pszPathname, mode),
-    )
+    return aftercare(ccall((:VSIMkdirRecursive, libgdal), Cint, (Cstring, Clong), pszPathname, mode))
 end
 
 """
@@ -4833,7 +3854,7 @@ Delete a directory.
 0 on success or -1 on an error.
 """
 function vsirmdir(pszDirname)
-    aftercare(ccall((:VSIRmdir, libgdal), Cint, (Cstring,), pszDirname))
+    return aftercare(ccall((:VSIRmdir, libgdal), Cint, (Cstring,), pszDirname))
 end
 
 """
@@ -4845,7 +3866,7 @@ Delete a directory recursively.
 0 on success or -1 on an error.
 """
 function vsirmdirrecursive(pszDirname)
-    aftercare(ccall((:VSIRmdirRecursive, libgdal), Cint, (Cstring,), pszDirname))
+    return aftercare(ccall((:VSIRmdirRecursive, libgdal), Cint, (Cstring,), pszDirname))
 end
 
 """
@@ -4860,7 +3881,7 @@ Delete a file.
 0 on success or -1 on an error.
 """
 function vsiunlink(pszFilename)
-    aftercare(ccall((:VSIUnlink, libgdal), Cint, (Cstring,), pszFilename))
+    return aftercare(ccall((:VSIUnlink, libgdal), Cint, (Cstring,), pszFilename))
 end
 
 """
@@ -4875,7 +3896,7 @@ Delete several files, possibly in a batch.
 an array of size CSLCount(papszFiles), whose values are TRUE or FALSE depending on the success of deletion of the corresponding file. The array should be freed with VSIFree(). NULL might be return in case of a more general error (for example, files belonging to different file system handlers)
 """
 function vsiunlinkbatch(papszFiles)
-    aftercare(ccall((:VSIUnlinkBatch, libgdal), Ptr{Cint}, (CSLConstList,), papszFiles))
+    return aftercare(ccall((:VSIUnlinkBatch, libgdal), Ptr{Cint}, (CSLConstList,), papszFiles))
 end
 
 """
@@ -4892,7 +3913,7 @@ Rename a file.
 0 on success or -1 on an error.
 """
 function vsirename(oldpath, newpath)
-    aftercare(ccall((:VSIRename, libgdal), Cint, (Cstring, Cstring), oldpath, newpath))
+    return aftercare(ccall((:VSIRename, libgdal), Cint, (Cstring, Cstring), oldpath, newpath))
 end
 
 """
@@ -4918,37 +3939,10 @@ Copy a source file into a target file.
 ### Returns
 0 on success.
 """
-function vsicopyfile(
-    pszSource,
-    pszTarget,
-    fpSource,
-    nSourceSize,
-    papszOptions,
-    pProgressFunc,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:VSICopyFile, libgdal),
-            Cint,
-            (
-                Cstring,
-                Cstring,
-                Ptr{VSILFILE},
-                vsi_l_offset,
-                Ptr{Cstring},
-                GDALProgressFunc,
-                Any,
-            ),
-            pszSource,
-            pszTarget,
-            fpSource,
-            nSourceSize,
-            papszOptions,
-            pProgressFunc,
-            pProgressData,
-        ),
-    )
+function vsicopyfile(pszSource, pszTarget, fpSource, nSourceSize, papszOptions, pProgressFunc, pProgressData)
+    return aftercare(ccall((:VSICopyFile, libgdal), Cint,
+                           (Cstring, Cstring, Ptr{VSILFILE}, vsi_l_offset, Ptr{Cstring}, GDALProgressFunc, Any), pszSource,
+                           pszTarget, fpSource, nSourceSize, papszOptions, pProgressFunc, pProgressData))
 end
 
 """
@@ -4979,29 +3973,11 @@ CHUNK_SIZE=integer. Maximum size of chunk (in bytes) to use to split large objec
 ### Returns
 0 on success, -1 on (non-restartable) failure, 1 if VSICopyFileRestartable() can be called again in a restartable way
 """
-function vsicopyfilerestartable(
-    pszSource,
-    pszTarget,
-    pszInputPayload,
-    ppszOutputPayload,
-    papszOptions,
-    pProgressFunc,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:VSICopyFileRestartable, libgdal),
-            Cint,
-            (Cstring, Cstring, Cstring, Ptr{Cstring}, Ptr{Cstring}, GDALProgressFunc, Any),
-            pszSource,
-            pszTarget,
-            pszInputPayload,
-            ppszOutputPayload,
-            papszOptions,
-            pProgressFunc,
-            pProgressData,
-        ),
-    )
+function vsicopyfilerestartable(pszSource, pszTarget, pszInputPayload, ppszOutputPayload, papszOptions, pProgressFunc,
+                                pProgressData)
+    return aftercare(ccall((:VSICopyFileRestartable, libgdal), Cint,
+                           (Cstring, Cstring, Cstring, Ptr{Cstring}, Ptr{Cstring}, GDALProgressFunc, Any), pszSource, pszTarget,
+                           pszInputPayload, ppszOutputPayload, papszOptions, pProgressFunc, pProgressData))
 end
 
 """
@@ -5049,27 +4025,9 @@ x-ms-KEY=value. (GDAL >= 3.5) MIME header to pass during creation of a /vsiaz/ o
 ### Returns
 TRUE on success or FALSE on an error.
 """
-function vsisync(
-    pszSource,
-    pszTarget,
-    papszOptions,
-    pProgressFunc,
-    pProgressData,
-    ppapszOutputs,
-)
-    aftercare(
-        ccall(
-            (:VSISync, libgdal),
-            Cint,
-            (Cstring, Cstring, Ptr{Cstring}, GDALProgressFunc, Any, Ptr{Ptr{Cstring}}),
-            pszSource,
-            pszTarget,
-            papszOptions,
-            pProgressFunc,
-            pProgressData,
-            ppapszOutputs,
-        ),
-    )
+function vsisync(pszSource, pszTarget, papszOptions, pProgressFunc, pProgressData, ppapszOutputs)
+    return aftercare(ccall((:VSISync, libgdal), Cint, (Cstring, Cstring, Ptr{Cstring}, GDALProgressFunc, Any, Ptr{Ptr{Cstring}}),
+                           pszSource, pszTarget, papszOptions, pProgressFunc, pProgressData, ppapszOutputs))
 end
 
 """
@@ -5095,37 +4053,12 @@ Return capabilities for multiple part file upload.
 ### Returns
 TRUE in case of success, FALSE otherwise.
 """
-function vsimultipartuploadgetcapabilities(
-    pszFilename,
-    pbNonSequentialUploadSupported,
-    pbParallelUploadSupported,
-    pbAbortSupported,
-    pnMinPartSize,
-    pnMaxPartSize,
-    pnMaxPartCount,
-)
-    aftercare(
-        ccall(
-            (:VSIMultipartUploadGetCapabilities, libgdal),
-            Cint,
-            (
-                Cstring,
-                Ptr{Cint},
-                Ptr{Cint},
-                Ptr{Cint},
-                Ptr{Csize_t},
-                Ptr{Csize_t},
-                Ptr{Cint},
-            ),
-            pszFilename,
-            pbNonSequentialUploadSupported,
-            pbParallelUploadSupported,
-            pbAbortSupported,
-            pnMinPartSize,
-            pnMaxPartSize,
-            pnMaxPartCount,
-        ),
-    )
+function vsimultipartuploadgetcapabilities(pszFilename, pbNonSequentialUploadSupported, pbParallelUploadSupported, pbAbortSupported,
+                                           pnMinPartSize, pnMaxPartSize, pnMaxPartCount)
+    return aftercare(ccall((:VSIMultipartUploadGetCapabilities, libgdal), Cint,
+                           (Cstring, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Csize_t}, Ptr{Csize_t}, Ptr{Cint}), pszFilename,
+                           pbNonSequentialUploadSupported, pbParallelUploadSupported, pbAbortSupported, pnMinPartSize,
+                           pnMaxPartSize, pnMaxPartCount))
 end
 
 """
@@ -5142,16 +4075,7 @@ Initiates the upload a (big) file in a piece-wise way.
 an upload ID to pass to other VSIMultipartUploadXXXXX() functions, and to free with CPLFree() once done, or nullptr in case of error.
 """
 function vsimultipartuploadstart(pszFilename, papszOptions)
-    aftercare(
-        ccall(
-            (:VSIMultipartUploadStart, libgdal),
-            Cstring,
-            (Cstring, CSLConstList),
-            pszFilename,
-            papszOptions,
-        ),
-        false,
-    )
+    return aftercare(ccall((:VSIMultipartUploadStart, libgdal), Cstring, (Cstring, CSLConstList), pszFilename, papszOptions), false)
 end
 
 """
@@ -5177,30 +4101,10 @@ Uploads a new part to a multi-part uploaded file.
 ### Returns
 a part identifier that must be passed into the apszPartIds[] array of VSIMultipartUploadEnd(), and to free with CPLFree() once done, or nullptr in case of error.
 """
-function vsimultipartuploadaddpart(
-    pszFilename,
-    pszUploadId,
-    nPartNumber,
-    nFileOffset,
-    pData,
-    nDataLength,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:VSIMultipartUploadAddPart, libgdal),
-            Cstring,
-            (Cstring, Cstring, Cint, vsi_l_offset, Ptr{Cvoid}, Csize_t, CSLConstList),
-            pszFilename,
-            pszUploadId,
-            nPartNumber,
-            nFileOffset,
-            pData,
-            nDataLength,
-            papszOptions,
-        ),
-        false,
-    )
+function vsimultipartuploadaddpart(pszFilename, pszUploadId, nPartNumber, nFileOffset, pData, nDataLength, papszOptions)
+    return aftercare(ccall((:VSIMultipartUploadAddPart, libgdal), Cstring,
+                           (Cstring, Cstring, Cint, vsi_l_offset, Ptr{Cvoid}, Csize_t, CSLConstList), pszFilename, pszUploadId,
+                           nPartNumber, nFileOffset, pData, nDataLength, papszOptions), false)
 end
 
 """
@@ -5224,27 +4128,10 @@ Completes a multi-part file upload.
 ### Returns
 TRUE in case of success, FALSE in case of failure.
 """
-function vsimultipartuploadend(
-    pszFilename,
-    pszUploadId,
-    nPartIdsCount,
-    apszPartIds,
-    nTotalSize,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:VSIMultipartUploadEnd, libgdal),
-            Cint,
-            (Cstring, Cstring, Csize_t, Ptr{Cstring}, vsi_l_offset, CSLConstList),
-            pszFilename,
-            pszUploadId,
-            nPartIdsCount,
-            apszPartIds,
-            nTotalSize,
-            papszOptions,
-        ),
-    )
+function vsimultipartuploadend(pszFilename, pszUploadId, nPartIdsCount, apszPartIds, nTotalSize, papszOptions)
+    return aftercare(ccall((:VSIMultipartUploadEnd, libgdal), Cint,
+                           (Cstring, Cstring, Csize_t, Ptr{Cstring}, vsi_l_offset, CSLConstList), pszFilename, pszUploadId,
+                           nPartIdsCount, apszPartIds, nTotalSize, papszOptions))
 end
 
 """
@@ -5263,16 +4150,8 @@ Aborts a multi-part file upload.
 TRUE in case of success, FALSE in case of failure.
 """
 function vsimultipartuploadabort(pszFilename, pszUploadId, papszOptions)
-    aftercare(
-        ccall(
-            (:VSIMultipartUploadAbort, libgdal),
-            Cint,
-            (Cstring, Cstring, CSLConstList),
-            pszFilename,
-            pszUploadId,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:VSIMultipartUploadAbort, libgdal), Cint, (Cstring, Cstring, CSLConstList), pszFilename, pszUploadId,
+                           papszOptions))
 end
 
 """
@@ -5287,7 +4166,7 @@ Abort all ongoing multi-part uploads.
 TRUE on success or FALSE on an error.
 """
 function vsiabortpendinguploads(pszFilename)
-    aftercare(ccall((:VSIAbortPendingUploads, libgdal), Cint, (Cstring,), pszFilename))
+    return aftercare(ccall((:VSIAbortPendingUploads, libgdal), Cint, (Cstring,), pszFilename))
 end
 
 """
@@ -5296,7 +4175,7 @@ end
 Return the error string corresponding to the error number.
 """
 function vsistrerror(arg1)
-    aftercare(ccall((:VSIStrerror, libgdal), Cstring, (Cint,), arg1), false)
+    return aftercare(ccall((:VSIStrerror, libgdal), Cstring, (Cint,), arg1), false)
 end
 
 """
@@ -5311,7 +4190,7 @@ Return free disk space available on the filesystem.
 The free space in bytes. Or -1 in case of error.
 """
 function vsigetdiskfreespace(pszDirname)
-    aftercare(ccall((:VSIGetDiskFreeSpace, libgdal), GIntBig, (Cstring,), pszDirname))
+    return aftercare(ccall((:VSIGetDiskFreeSpace, libgdal), GIntBig, (Cstring,), pszDirname))
 end
 
 """
@@ -5320,7 +4199,7 @@ end
 Clear network related statistics.
 """
 function vsinetworkstatsreset()
-    aftercare(ccall((:VSINetworkStatsReset, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSINetworkStatsReset, libgdal), Cvoid, ()))
 end
 
 """
@@ -5335,15 +4214,7 @@ Return network related statistics, as a JSON serialized object.
 a JSON serialized string to free with VSIFree(), or nullptr
 """
 function vsinetworkstatsgetasserializedjson(papszOptions)
-    aftercare(
-        ccall(
-            (:VSINetworkStatsGetAsSerializedJSON, libgdal),
-            Cstring,
-            (Ptr{Cstring},),
-            papszOptions,
-        ),
-        false,
-    )
+    return aftercare(ccall((:VSINetworkStatsGetAsSerializedJSON, libgdal), Cstring, (Ptr{Cstring},), papszOptions), false)
 end
 
 """
@@ -5352,7 +4223,7 @@ end
 Install "memory" file system handler.
 """
 function vsiinstallmemfilehandler()
-    aftercare(ccall((:VSIInstallMemFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallMemFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5361,7 +4232,7 @@ end
 ` Doxygen_Suppress `
 """
 function vsiinstalllargefilehandler()
-    aftercare(ccall((:VSIInstallLargeFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallLargeFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5370,7 +4241,7 @@ end
 ` `
 """
 function vsiinstallsubfilehandler()
-    aftercare(ccall((:VSIInstallSubFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallSubFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5379,7 +4250,7 @@ end
 Install /vsicurl/ HTTP/FTP file system handler (requires libcurl)
 """
 function vsiinstallcurlfilehandler()
-    aftercare(ccall((:VSIInstallCurlFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallCurlFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5388,7 +4259,7 @@ end
 Clean local cache associated with /vsicurl/ (and related file systems)
 """
 function vsicurlclearcache()
-    aftercare(ccall((:VSICurlClearCache, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSICurlClearCache, libgdal), Cvoid, ()))
 end
 
 """
@@ -5400,9 +4271,7 @@ Clean local cache associated with /vsicurl/ (and related file systems) for a giv
 * **pszFilenamePrefix**: Filename prefix
 """
 function vsicurlpartialclearcache(pszFilenamePrefix)
-    aftercare(
-        ccall((:VSICurlPartialClearCache, libgdal), Cvoid, (Cstring,), pszFilenamePrefix),
-    )
+    return aftercare(ccall((:VSICurlPartialClearCache, libgdal), Cvoid, (Cstring,), pszFilenamePrefix))
 end
 
 """
@@ -5411,7 +4280,7 @@ end
 Install /vsicurl_streaming/ HTTP/FTP file system handler (requires libcurl).
 """
 function vsiinstallcurlstreamingfilehandler()
-    aftercare(ccall((:VSIInstallCurlStreamingFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallCurlStreamingFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5420,7 +4289,7 @@ end
 Install /vsis3/ Amazon S3 file system handler (requires libcurl)
 """
 function vsiinstalls3filehandler()
-    aftercare(ccall((:VSIInstallS3FileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallS3FileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5429,7 +4298,7 @@ end
 Install /vsis3_streaming/ Amazon S3 file system handler (requires libcurl).
 """
 function vsiinstalls3streamingfilehandler()
-    aftercare(ccall((:VSIInstallS3StreamingFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallS3StreamingFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5438,7 +4307,7 @@ end
 Install /vsigs/ Google Cloud Storage file system handler (requires libcurl)
 """
 function vsiinstallgsfilehandler()
-    aftercare(ccall((:VSIInstallGSFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallGSFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5447,7 +4316,7 @@ end
 Install /vsigs_streaming/ Google Cloud Storage file system handler (requires libcurl)
 """
 function vsiinstallgsstreamingfilehandler()
-    aftercare(ccall((:VSIInstallGSStreamingFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallGSStreamingFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5456,7 +4325,7 @@ end
 Install /vsiaz/ Microsoft Azure Blob file system handler (requires libcurl)
 """
 function vsiinstallazurefilehandler()
-    aftercare(ccall((:VSIInstallAzureFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallAzureFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5465,7 +4334,7 @@ end
 Install /vsiaz_streaming/ Microsoft Azure Blob file system handler (requires libcurl)
 """
 function vsiinstallazurestreamingfilehandler()
-    aftercare(ccall((:VSIInstallAzureStreamingFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallAzureStreamingFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5474,7 +4343,7 @@ end
 Install /vsiaz/ Microsoft Azure Data Lake Storage Gen2 file system handler (requires libcurl)
 """
 function vsiinstalladlsfilehandler()
-    aftercare(ccall((:VSIInstallADLSFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallADLSFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5483,7 +4352,7 @@ end
 Install /vsioss/ Alibaba Cloud Object Storage Service (OSS) file system handler (requires libcurl)
 """
 function vsiinstallossfilehandler()
-    aftercare(ccall((:VSIInstallOSSFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallOSSFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5492,7 +4361,7 @@ end
 Install /vsiaz_streaming/ Alibaba Cloud Object Storage Service (OSS) (requires libcurl)
 """
 function vsiinstallossstreamingfilehandler()
-    aftercare(ccall((:VSIInstallOSSStreamingFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallOSSStreamingFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5501,7 +4370,7 @@ end
 Install /vsiswift/ OpenStack Swif Object Storage (Swift) file system handler (requires libcurl)
 """
 function vsiinstallswiftfilehandler()
-    aftercare(ccall((:VSIInstallSwiftFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallSwiftFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5510,7 +4379,7 @@ end
 Install /vsiswift_streaming/ OpenStack Swif Object Storage (Swift) file system handler (requires libcurl)
 """
 function vsiinstallswiftstreamingfilehandler()
-    aftercare(ccall((:VSIInstallSwiftStreamingFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallSwiftStreamingFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5519,7 +4388,7 @@ end
 Install /vsi7z/ 7zip file system handler (requires libarchive)
 """
 function vsiinstall7zfilehandler()
-    aftercare(ccall((:VSIInstall7zFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstall7zFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5528,7 +4397,7 @@ end
 Install /vsirar/ RAR file system handler (requires libarchive)
 """
 function vsiinstallrarfilehandler()
-    aftercare(ccall((:VSIInstallRarFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallRarFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5537,7 +4406,7 @@ end
 Install GZip file system handler.
 """
 function vsiinstallgzipfilehandler()
-    aftercare(ccall((:VSIInstallGZipFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallGZipFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5546,7 +4415,7 @@ end
 Install ZIP file system handler.
 """
 function vsiinstallzipfilehandler()
-    aftercare(ccall((:VSIInstallZipFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallZipFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5555,7 +4424,7 @@ end
 Install /vsistdin/ file system handler.
 """
 function vsiinstallstdinhandler()
-    aftercare(ccall((:VSIInstallStdinHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallStdinHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5564,7 +4433,7 @@ end
 Install /vsihdfs/ file system handler (requires JVM and HDFS support)
 """
 function vsiinstallhdfshandler()
-    aftercare(ccall((:VSIInstallHdfsHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallHdfsHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5573,7 +4442,7 @@ end
 Install /vsiwebhdfs/ WebHDFS (Hadoop File System) REST API file system handler (requires libcurl)
 """
 function vsiinstallwebhdfshandler()
-    aftercare(ccall((:VSIInstallWebHdfsHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallWebHdfsHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5582,7 +4451,7 @@ end
 Install /vsistdout/ file system handler.
 """
 function vsiinstallstdouthandler()
-    aftercare(ccall((:VSIInstallStdoutHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallStdoutHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5591,7 +4460,7 @@ end
 Install /vsisparse/ virtual file handler.
 """
 function vsiinstallsparsefilehandler()
-    aftercare(ccall((:VSIInstallSparseFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallSparseFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5600,7 +4469,7 @@ end
 Install /vsitar/ file system handler.
 """
 function vsiinstalltarfilehandler()
-    aftercare(ccall((:VSIInstallTarFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallTarFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5609,7 +4478,7 @@ end
 Install /vsicached? file system handler.
 """
 function vsiinstallcachedfilehandler()
-    aftercare(ccall((:VSIInstallCachedFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallCachedFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5618,7 +4487,7 @@ end
 Install /vsicrypt/ encrypted file system handler (requires libcrypto++)
 """
 function vsiinstallcryptfilehandler()
-    aftercare(ccall((:VSIInstallCryptFileHandler, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSIInstallCryptFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -5632,9 +4501,7 @@ Installs the encryption/decryption key.
 * **nKeySize**: length of the key in bytes. Might be 0 to clear previously set key.
 """
 function vsisetcryptkey(pabyKey, nKeySize)
-    aftercare(
-        ccall((:VSISetCryptKey, libgdal), Cvoid, (Ptr{GByte}, Cint), pabyKey, nKeySize),
-    )
+    return aftercare(ccall((:VSISetCryptKey, libgdal), Cvoid, (Ptr{GByte}, Cint), pabyKey, nKeySize))
 end
 
 """
@@ -5643,7 +4510,7 @@ end
 ` Doxygen_Suppress `
 """
 function vsicleanupfilemanager()
-    aftercare(ccall((:VSICleanupFileManager, libgdal), Cvoid, ()))
+    return aftercare(ccall((:VSICleanupFileManager, libgdal), Cvoid, ()))
 end
 
 """
@@ -5652,15 +4519,7 @@ end
 ` `
 """
 function vsiduplicatefilesystemhandler(pszSourceFSName, pszNewFSName)
-    aftercare(
-        ccall(
-            (:VSIDuplicateFileSystemHandler, libgdal),
-            Bool,
-            (Cstring, Cstring),
-            pszSourceFSName,
-            pszNewFSName,
-        ),
-    )
+    return aftercare(ccall((:VSIDuplicateFileSystemHandler, libgdal), Bool, (Cstring, Cstring), pszSourceFSName, pszNewFSName))
 end
 
 """
@@ -5681,17 +4540,8 @@ Create memory "file" from a buffer.
 open file handle on created file (see VSIFOpenL()).
 """
 function vsifilefrommembuffer(pszFilename, pabyData, nDataLength, bTakeOwnership)
-    aftercare(
-        ccall(
-            (:VSIFileFromMemBuffer, libgdal),
-            Ptr{VSILFILE},
-            (Cstring, Ptr{GByte}, vsi_l_offset, Cint),
-            pszFilename,
-            pabyData,
-            nDataLength,
-            bTakeOwnership,
-        ),
-    )
+    return aftercare(ccall((:VSIFileFromMemBuffer, libgdal), Ptr{VSILFILE}, (Cstring, Ptr{GByte}, vsi_l_offset, Cint), pszFilename,
+                           pabyData, nDataLength, bTakeOwnership))
 end
 
 """
@@ -5710,16 +4560,8 @@ Fetch buffer underlying memory file.
 pointer to memory buffer or NULL on failure.
 """
 function vsigetmemfilebuffer(pszFilename, pnDataLength, bUnlinkAndSeize)
-    aftercare(
-        ccall(
-            (:VSIGetMemFileBuffer, libgdal),
-            Ptr{GByte},
-            (Cstring, Ptr{vsi_l_offset}, Cint),
-            pszFilename,
-            pnDataLength,
-            bUnlinkAndSeize,
-        ),
-    )
+    return aftercare(ccall((:VSIGetMemFileBuffer, libgdal), Ptr{GByte}, (Cstring, Ptr{vsi_l_offset}, Cint), pszFilename,
+                           pnDataLength, bUnlinkAndSeize))
 end
 
 """
@@ -5734,10 +4576,7 @@ Generates a unique filename that can be used with the /vsimem/ virtual file syst
 pointer to a short-lived string (rotating buffer of strings in thread-local storage). It is recommended to use CPLStrdup() or std::string() immediately on it.
 """
 function vsimemgeneratehiddenfilename(pszFilename)
-    aftercare(
-        ccall((:VSIMemGenerateHiddenFilename, libgdal), Cstring, (Cstring,), pszFilename),
-        false,
-    )
+    return aftercare(ccall((:VSIMemGenerateHiddenFilename, libgdal), Cstring, (Cstring,), pszFilename), false)
 end
 
 "Callback used by [`VSIStdoutSetRedirection`](@ref)()"
@@ -5754,15 +4593,7 @@ Set an alternative write function and output file handle instead of fwrite() / s
 * **stream**: File handle on which to output. Passed to pFct.
 """
 function vsistdoutsetredirection(pFct, stream)
-    aftercare(
-        ccall(
-            (:VSIStdoutSetRedirection, libgdal),
-            Cvoid,
-            (VSIWriteFunction, Ptr{Libc.FILE}),
-            pFct,
-            stream,
-        ),
-    )
+    return aftercare(ccall((:VSIStdoutSetRedirection, libgdal), Cvoid, (VSIWriteFunction, Ptr{Libc.FILE}), pFct, stream))
 end
 
 """
@@ -5987,13 +4818,7 @@ return a [`VSIFilesystemPluginCallbacksStruct`](@ref) to be populated at runtime
 \\since GDAL 3.0
 """
 function vsiallocfilesystemplugincallbacksstruct()
-    aftercare(
-        ccall(
-            (:VSIAllocFilesystemPluginCallbacksStruct, libgdal),
-            Ptr{VSIFilesystemPluginCallbacksStruct},
-            (),
-        ),
-    )
+    return aftercare(ccall((:VSIAllocFilesystemPluginCallbacksStruct, libgdal), Ptr{VSIFilesystemPluginCallbacksStruct}, ()))
 end
 
 """
@@ -6004,14 +4829,8 @@ free resources allocated by [`VSIAllocFilesystemPluginCallbacksStruct`](@ref)
 \\since GDAL 3.0
 """
 function vsifreefilesystemplugincallbacksstruct(poCb)
-    aftercare(
-        ccall(
-            (:VSIFreeFilesystemPluginCallbacksStruct, libgdal),
-            Cvoid,
-            (Ptr{VSIFilesystemPluginCallbacksStruct},),
-            poCb,
-        ),
-    )
+    return aftercare(ccall((:VSIFreeFilesystemPluginCallbacksStruct, libgdal), Cvoid, (Ptr{VSIFilesystemPluginCallbacksStruct},),
+                           poCb))
 end
 
 """
@@ -6022,15 +4841,8 @@ register a handler on the given prefix. All IO on datasets opened with the filen
 \\since GDAL 3.0
 """
 function vsiinstallpluginhandler(pszPrefix, poCb)
-    aftercare(
-        ccall(
-            (:VSIInstallPluginHandler, libgdal),
-            Cint,
-            (Cstring, Ptr{VSIFilesystemPluginCallbacksStruct}),
-            pszPrefix,
-            poCb,
-        ),
-    )
+    return aftercare(ccall((:VSIInstallPluginHandler, libgdal), Cint, (Cstring, Ptr{VSIFilesystemPluginCallbacksStruct}), pszPrefix,
+                           poCb))
 end
 
 """
@@ -6041,7 +4853,7 @@ Unregister a handler previously installed with [`VSIInstallPluginHandler`](@ref)
 \\since GDAL 3.9
 """
 function vsiremovepluginhandler(pszPrefix)
-    aftercare(ccall((:VSIRemovePluginHandler, libgdal), Cint, (Cstring,), pszPrefix))
+    return aftercare(ccall((:VSIRemovePluginHandler, libgdal), Cint, (Cstring,), pszPrefix))
 end
 
 """
@@ -6050,14 +4862,14 @@ end
 ` Doxygen_Suppress `
 """
 function vsitime(arg1)
-    aftercare(ccall((:VSITime, libgdal), Culong, (Ptr{Culong},), arg1))
+    return aftercare(ccall((:VSITime, libgdal), Culong, (Ptr{Culong},), arg1))
 end
 
 """
     VSICTime(unsigned long nTime) -> const char *
 """
 function vsictime(arg1)
-    aftercare(ccall((:VSICTime, libgdal), Cstring, (Culong,), arg1), false)
+    return aftercare(ccall((:VSICTime, libgdal), Cstring, (Culong,), arg1), false)
 end
 
 """
@@ -6065,15 +4877,7 @@ end
               struct tm * poBrokenTime) -> struct tm *
 """
 function vsigmtime(pnTime, poBrokenTime)
-    aftercare(
-        ccall(
-            (:VSIGMTime, libgdal),
-            Ptr{Cvoid},
-            (Ptr{time_t}, Ptr{Cvoid}),
-            pnTime,
-            poBrokenTime,
-        ),
-    )
+    return aftercare(ccall((:VSIGMTime, libgdal), Ptr{Cvoid}, (Ptr{time_t}, Ptr{Cvoid}), pnTime, poBrokenTime))
 end
 
 """
@@ -6081,15 +4885,7 @@ end
                  struct tm * poBrokenTime) -> struct tm *
 """
 function vsilocaltime(pnTime, poBrokenTime)
-    aftercare(
-        ccall(
-            (:VSILocalTime, libgdal),
-            Ptr{Cvoid},
-            (Ptr{time_t}, Ptr{Cvoid}),
-            pnTime,
-            poBrokenTime,
-        ),
-    )
+    return aftercare(ccall((:VSILocalTime, libgdal), Ptr{Cvoid}, (Ptr{time_t}, Ptr{Cvoid}), pnTime, poBrokenTime))
 end
 
 """
@@ -6149,15 +4945,7 @@ end
 ` `
 """
 function gdalextractrpcinfov2(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALExtractRPCInfoV2, libgdal),
-            Cint,
-            (CSLConstList, Ptr{GDALRPCInfoV2}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALExtractRPCInfoV2, libgdal), Cint, (CSLConstList, Ptr{GDALRPCInfoV2}), arg1, arg2))
 end
 
 """
@@ -6215,7 +5003,7 @@ Get data type size in bits.
 the number of bits or zero if it is not recognised.
 """
 function gdalgetdatatypesize(arg1)
-    aftercare(ccall((:GDALGetDataTypeSize, libgdal), Cint, (GDALDataType,), arg1))
+    return aftercare(ccall((:GDALGetDataTypeSize, libgdal), Cint, (GDALDataType,), arg1))
 end
 
 """
@@ -6230,7 +5018,7 @@ Get data type size in bits.
 the number of bits or zero if it is not recognised.
 """
 function gdalgetdatatypesizebits(eDataType)
-    aftercare(ccall((:GDALGetDataTypeSizeBits, libgdal), Cint, (GDALDataType,), eDataType))
+    return aftercare(ccall((:GDALGetDataTypeSizeBits, libgdal), Cint, (GDALDataType,), eDataType))
 end
 
 """
@@ -6245,7 +5033,7 @@ Get data type size in bytes.
 the number of bytes or zero if it is not recognised.
 """
 function gdalgetdatatypesizebytes(arg1)
-    aftercare(ccall((:GDALGetDataTypeSizeBytes, libgdal), Cint, (GDALDataType,), arg1))
+    return aftercare(ccall((:GDALGetDataTypeSizeBytes, libgdal), Cint, (GDALDataType,), arg1))
 end
 
 """
@@ -6257,7 +5045,7 @@ Is data type complex?
 TRUE if the passed type is complex (one of GDT_CInt16, GDT_CInt32, GDT_CFloat32 or GDT_CFloat64), that is it consists of a real and imaginary component.
 """
 function gdaldatatypeiscomplex(arg1)
-    aftercare(ccall((:GDALDataTypeIsComplex, libgdal), Cint, (GDALDataType,), arg1))
+    return aftercare(ccall((:GDALDataTypeIsComplex, libgdal), Cint, (GDALDataType,), arg1))
 end
 
 """
@@ -6269,7 +5057,7 @@ Is data type integer? (might be complex)
 TRUE if the passed type is integer (one of GDT_Byte, GDT_Int16, GDT_UInt16, GDT_Int32, GDT_UInt32, GDT_CInt16, GDT_CInt32).
 """
 function gdaldatatypeisinteger(arg1)
-    aftercare(ccall((:GDALDataTypeIsInteger, libgdal), Cint, (GDALDataType,), arg1))
+    return aftercare(ccall((:GDALDataTypeIsInteger, libgdal), Cint, (GDALDataType,), arg1))
 end
 
 """
@@ -6278,10 +5066,10 @@ end
 Is data type floating? (might be complex)
 
 ### Returns
-TRUE if the passed type is floating (one of GDT_Float32, GDT_Float64, GDT_CFloat32, GDT_CFloat64)
+TRUE if the passed type is floating (one of GDT_Float32, GDT_Float16, GDT_Float64, GDT_CFloat16, GDT_CFloat32, GDT_CFloat64)
 """
 function gdaldatatypeisfloating(arg1)
-    aftercare(ccall((:GDALDataTypeIsFloating, libgdal), Cint, (GDALDataType,), arg1))
+    return aftercare(ccall((:GDALDataTypeIsFloating, libgdal), Cint, (GDALDataType,), arg1))
 end
 
 """
@@ -6293,7 +5081,7 @@ Is data type signed?
 TRUE if the passed type is signed.
 """
 function gdaldatatypeissigned(arg1)
-    aftercare(ccall((:GDALDataTypeIsSigned, libgdal), Cint, (GDALDataType,), arg1))
+    return aftercare(ccall((:GDALDataTypeIsSigned, libgdal), Cint, (GDALDataType,), arg1))
 end
 
 """
@@ -6308,7 +5096,7 @@ Get name of data type.
 string corresponding to existing data type or NULL pointer if invalid type given.
 """
 function gdalgetdatatypename(arg1)
-    aftercare(ccall((:GDALGetDataTypeName, libgdal), Cstring, (GDALDataType,), arg1), false)
+    return aftercare(ccall((:GDALGetDataTypeName, libgdal), Cstring, (GDALDataType,), arg1), false)
 end
 
 """
@@ -6323,7 +5111,7 @@ Get data type by symbolic name.
 GDAL data type.
 """
 function gdalgetdatatypebyname(arg1)
-    aftercare(ccall((:GDALGetDataTypeByName, libgdal), GDALDataType, (Cstring,), arg1))
+    return aftercare(ccall((:GDALGetDataTypeByName, libgdal), GDALDataType, (Cstring,), arg1))
 end
 
 """
@@ -6340,15 +5128,7 @@ Return the smallest data type that can fully express both input data types.
 a data type able to express eType1 and eType2.
 """
 function gdaldatatypeunion(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALDataTypeUnion, libgdal),
-            GDALDataType,
-            (GDALDataType, GDALDataType),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALDataTypeUnion, libgdal), GDALDataType, (GDALDataType, GDALDataType), arg1, arg2))
 end
 
 """
@@ -6367,16 +5147,8 @@ Union a data type with the one found for a value.
 a data type able to express eDT and dfValue.
 """
 function gdaldatatypeunionwithvalue(eDT, dValue, bComplex)
-    aftercare(
-        ccall(
-            (:GDALDataTypeUnionWithValue, libgdal),
-            GDALDataType,
-            (GDALDataType, Cdouble, Cint),
-            eDT,
-            dValue,
-            bComplex,
-        ),
-    )
+    return aftercare(ccall((:GDALDataTypeUnionWithValue, libgdal), GDALDataType, (GDALDataType, Cdouble, Cint), eDT, dValue,
+                           bComplex))
 end
 
 """
@@ -6397,17 +5169,8 @@ Finds the smallest data type able to support the given requirements.
 a best fit GDALDataType for supporting the requirements
 """
 function gdalfinddatatype(nBits, bSigned, bFloating, bComplex)
-    aftercare(
-        ccall(
-            (:GDALFindDataType, libgdal),
-            GDALDataType,
-            (Cint, Cint, Cint, Cint),
-            nBits,
-            bSigned,
-            bFloating,
-            bComplex,
-        ),
-    )
+    return aftercare(ccall((:GDALFindDataType, libgdal), GDALDataType, (Cint, Cint, Cint, Cint), nBits, bSigned, bFloating,
+                           bComplex))
 end
 
 """
@@ -6424,15 +5187,7 @@ Finds the smallest data type able to support the provided value.
 a best fit GDALDataType for supporting the value
 """
 function gdalfinddatatypeforvalue(dValue, bComplex)
-    aftercare(
-        ccall(
-            (:GDALFindDataTypeForValue, libgdal),
-            GDALDataType,
-            (Cdouble, Cint),
-            dValue,
-            bComplex,
-        ),
-    )
+    return aftercare(ccall((:GDALFindDataTypeForValue, libgdal), GDALDataType, (Cdouble, Cint), dValue, bComplex))
 end
 
 """
@@ -6453,17 +5208,8 @@ Adjust a value to the output data type.
 adjusted value
 """
 function gdaladjustvaluetodatatype(eDT, dfValue, pbClamped, pbRounded)
-    aftercare(
-        ccall(
-            (:GDALAdjustValueToDataType, libgdal),
-            Cdouble,
-            (GDALDataType, Cdouble, Ptr{Cint}, Ptr{Cint}),
-            eDT,
-            dfValue,
-            pbClamped,
-            pbRounded,
-        ),
-    )
+    return aftercare(ccall((:GDALAdjustValueToDataType, libgdal), Cdouble, (GDALDataType, Cdouble, Ptr{Cint}, Ptr{Cint}), eDT,
+                           dfValue, pbClamped, pbRounded))
 end
 
 """
@@ -6480,9 +5226,7 @@ Check whether the provided value can be exactly represented in a data type.
 true if the provided value can be exactly represented in the data type.
 """
 function gdalisvalueexactas(dfValue, eDT)
-    aftercare(
-        ccall((:GDALIsValueExactAs, libgdal), Bool, (Cdouble, GDALDataType), dfValue, eDT),
-    )
+    return aftercare(ccall((:GDALIsValueExactAs, libgdal), Bool, (Cdouble, GDALDataType), dfValue, eDT))
 end
 
 """
@@ -6497,9 +5241,7 @@ Return the base data type for the specified input.
 GDAL data type.
 """
 function gdalgetnoncomplexdatatype(arg1)
-    aftercare(
-        ccall((:GDALGetNonComplexDataType, libgdal), GDALDataType, (GDALDataType,), arg1),
-    )
+    return aftercare(ccall((:GDALGetNonComplexDataType, libgdal), GDALDataType, (GDALDataType,), arg1))
 end
 
 """
@@ -6516,15 +5258,7 @@ Is conversion from eTypeFrom to eTypeTo potentially lossy.
 TRUE if conversion from eTypeFrom to eTypeTo potentially lossy.
 """
 function gdaldatatypeisconversionlossy(eTypeFrom, eTypeTo)
-    aftercare(
-        ccall(
-            (:GDALDataTypeIsConversionLossy, libgdal),
-            Cint,
-            (GDALDataType, GDALDataType),
-            eTypeFrom,
-            eTypeTo,
-        ),
-    )
+    return aftercare(ccall((:GDALDataTypeIsConversionLossy, libgdal), Cint, (GDALDataType, GDALDataType), eTypeFrom, eTypeTo))
 end
 
 """
@@ -6552,15 +5286,7 @@ Get name of AsyncStatus data type.
 string corresponding to type.
 """
 function gdalgetasyncstatustypename(arg1)
-    aftercare(
-        ccall(
-            (:GDALGetAsyncStatusTypeName, libgdal),
-            Cstring,
-            (GDALAsyncStatusType,),
-            arg1,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALGetAsyncStatusTypeName, libgdal), Cstring, (GDALAsyncStatusType,), arg1), false)
 end
 
 """
@@ -6575,14 +5301,7 @@ Get AsyncStatusType by symbolic name.
 GDAL AsyncStatus type.
 """
 function gdalgetasyncstatustypebyname(arg1)
-    aftercare(
-        ccall(
-            (:GDALGetAsyncStatusTypeByName, libgdal),
-            GDALAsyncStatusType,
-            (Cstring,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALGetAsyncStatusTypeByName, libgdal), GDALAsyncStatusType, (Cstring,), arg1))
 end
 
 """
@@ -6794,15 +5513,7 @@ Get name of color interpretation.
 string corresponding to color interpretation or NULL pointer if invalid enumerator given.
 """
 function gdalgetcolorinterpretationname(arg1)
-    aftercare(
-        ccall(
-            (:GDALGetColorInterpretationName, libgdal),
-            Cstring,
-            (GDALColorInterp,),
-            arg1,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALGetColorInterpretationName, libgdal), Cstring, (GDALColorInterp,), arg1), false)
 end
 
 """
@@ -6817,14 +5528,7 @@ Get color interpretation by symbolic name.
 GDAL color interpretation.
 """
 function gdalgetcolorinterpretationbyname(pszName)
-    aftercare(
-        ccall(
-            (:GDALGetColorInterpretationByName, libgdal),
-            GDALColorInterp,
-            (Cstring,),
-            pszName,
-        ),
-    )
+    return aftercare(ccall((:GDALGetColorInterpretationByName, libgdal), GDALColorInterp, (Cstring,), pszName))
 end
 
 """
@@ -6858,15 +5562,7 @@ Get name of palette interpretation.
 string corresponding to palette interpretation.
 """
 function gdalgetpaletteinterpretationname(arg1)
-    aftercare(
-        ccall(
-            (:GDALGetPaletteInterpretationName, libgdal),
-            Cstring,
-            (GDALPaletteInterp,),
-            arg1,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALGetPaletteInterpretationName, libgdal), Cstring, (GDALPaletteInterp,), arg1), false)
 end
 
 "Opaque type used for the C bindings of the C++ GDALMajorObject class"
@@ -6972,7 +5668,7 @@ const GDALDimensionH = Ptr{GDALDimensionHS}
 Register all known configured GDAL drivers.
 """
 function gdalallregister()
-    aftercare(ccall((:GDALAllRegister, libgdal), Cvoid, ()))
+    return aftercare(ccall((:GDALAllRegister, libgdal), Cvoid, ()))
 end
 
 """
@@ -6981,7 +5677,7 @@ end
 Register drivers and support code available as a plugin.
 """
 function gdalregisterplugins()
-    aftercare(ccall((:GDALRegisterPlugins, libgdal), Cvoid, ()))
+    return aftercare(ccall((:GDALRegisterPlugins, libgdal), Cvoid, ()))
 end
 
 """
@@ -6990,7 +5686,7 @@ end
 Register a plugin by name, returning an error if not found.
 """
 function gdalregisterplugin(name)
-    aftercare(ccall((:GDALRegisterPlugin, libgdal), CPLErr, (Cstring,), name))
+    return aftercare(ccall((:GDALRegisterPlugin, libgdal), CPLErr, (Cstring,), name))
 end
 
 """
@@ -7005,20 +5701,9 @@ end
 Create a new dataset with this driver.
 """
 function gdalcreate(hDriver, arg2, arg3, arg4, arg5, arg6, arg7)
-    aftercare(
-        ccall(
-            (:GDALCreate, libgdal),
-            GDALDatasetH,
-            (GDALDriverH, Cstring, Cint, Cint, Cint, GDALDataType, CSLConstList),
-            hDriver,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-            arg7,
-        ),
-    )
+    return aftercare(ccall((:GDALCreate, libgdal), GDALDatasetH,
+                           (GDALDriverH, Cstring, Cint, Cint, Cint, GDALDataType, CSLConstList), hDriver, arg2, arg3, arg4, arg5,
+                           arg6, arg7))
 end
 
 """
@@ -7033,20 +5718,9 @@ end
 Create a copy of a dataset.
 """
 function gdalcreatecopy(arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-    aftercare(
-        ccall(
-            (:GDALCreateCopy, libgdal),
-            GDALDatasetH,
-            (GDALDriverH, Cstring, GDALDatasetH, Cint, CSLConstList, GDALProgressFunc, Any),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-            arg7,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateCopy, libgdal), GDALDatasetH,
+                           (GDALDriverH, Cstring, GDALDatasetH, Cint, CSLConstList, GDALProgressFunc, Any), arg1, arg2, arg3, arg4,
+                           arg5, arg6, arg7))
 end
 
 """
@@ -7063,15 +5737,7 @@ Identify the driver that can open a dataset.
 A GDALDriverH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDriver *.
 """
 function gdalidentifydriver(pszFilename, papszFileList)
-    aftercare(
-        ccall(
-            (:GDALIdentifyDriver, libgdal),
-            GDALDriverH,
-            (Cstring, CSLConstList),
-            pszFilename,
-            papszFileList,
-        ),
-    )
+    return aftercare(ccall((:GDALIdentifyDriver, libgdal), GDALDriverH, (Cstring, CSLConstList), pszFilename, papszFileList))
 end
 
 """
@@ -7091,23 +5757,9 @@ Identify the driver that can open a dataset.
 ### Returns
 A GDALDriverH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDriver *.
 """
-function gdalidentifydriverex(
-    pszFilename,
-    nIdentifyFlags,
-    papszAllowedDrivers,
-    papszFileList,
-)
-    aftercare(
-        ccall(
-            (:GDALIdentifyDriverEx, libgdal),
-            GDALDriverH,
-            (Cstring, Cuint, Ptr{Cstring}, Ptr{Cstring}),
-            pszFilename,
-            nIdentifyFlags,
-            papszAllowedDrivers,
-            papszFileList,
-        ),
-    )
+function gdalidentifydriverex(pszFilename, nIdentifyFlags, papszAllowedDrivers, papszFileList)
+    return aftercare(ccall((:GDALIdentifyDriverEx, libgdal), GDALDriverH, (Cstring, Cuint, Ptr{Cstring}, Ptr{Cstring}), pszFilename,
+                           nIdentifyFlags, papszAllowedDrivers, papszFileList))
 end
 
 """
@@ -7124,15 +5776,7 @@ Open a raster file as a GDALDataset.
 A GDALDatasetH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDataset *.
 """
 function gdalopen(pszFilename, eAccess)
-    aftercare(
-        ccall(
-            (:GDALOpen, libgdal),
-            GDALDatasetH,
-            (Cstring, GDALAccess),
-            pszFilename,
-            eAccess,
-        ),
-    )
+    return aftercare(ccall((:GDALOpen, libgdal), GDALDatasetH, (Cstring, GDALAccess), pszFilename, eAccess))
 end
 
 """
@@ -7149,9 +5793,7 @@ Open a raster file as a GDALDataset.
 A GDALDatasetH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDataset *.
 """
 function gdalopenshared(arg1, arg2)
-    aftercare(
-        ccall((:GDALOpenShared, libgdal), GDALDatasetH, (Cstring, GDALAccess), arg1, arg2),
-    )
+    return aftercare(ccall((:GDALOpenShared, libgdal), GDALDatasetH, (Cstring, GDALAccess), arg1, arg2))
 end
 
 """
@@ -7201,25 +5843,9 @@ Verbose error: GDAL_OF_VERBOSE_ERROR. If set, a failed attempt to open the file 
 ### Returns
 A GDALDatasetH handle or NULL on failure. For C++ applications this handle can be cast to a GDALDataset *.
 """
-function gdalopenex(
-    pszFilename,
-    nOpenFlags,
-    papszAllowedDrivers,
-    papszOpenOptions,
-    papszSiblingFiles,
-)
-    aftercare(
-        ccall(
-            (:GDALOpenEx, libgdal),
-            GDALDatasetH,
-            (Cstring, Cuint, Ptr{Cstring}, Ptr{Cstring}, Ptr{Cstring}),
-            pszFilename,
-            nOpenFlags,
-            papszAllowedDrivers,
-            papszOpenOptions,
-            papszSiblingFiles,
-        ),
-    )
+function gdalopenex(pszFilename, nOpenFlags, papszAllowedDrivers, papszOpenOptions, papszSiblingFiles)
+    return aftercare(ccall((:GDALOpenEx, libgdal), GDALDatasetH, (Cstring, Cuint, Ptr{Cstring}, Ptr{Cstring}, Ptr{Cstring}),
+                           pszFilename, nOpenFlags, papszAllowedDrivers, papszOpenOptions, papszSiblingFiles))
 end
 
 """
@@ -7228,7 +5854,7 @@ end
 List open datasets.
 """
 function gdaldumpopendatasets(arg1)
-    aftercare(ccall((:GDALDumpOpenDatasets, libgdal), Cint, (Ptr{Libc.FILE},), arg1))
+    return aftercare(ccall((:GDALDumpOpenDatasets, libgdal), Cint, (Ptr{Libc.FILE},), arg1))
 end
 
 """
@@ -7237,7 +5863,7 @@ end
 Fetch a driver based on the short name.
 """
 function gdalgetdriverbyname(arg1)
-    aftercare(ccall((:GDALGetDriverByName, libgdal), GDALDriverH, (Cstring,), arg1))
+    return aftercare(ccall((:GDALGetDriverByName, libgdal), GDALDriverH, (Cstring,), arg1))
 end
 
 """
@@ -7246,7 +5872,7 @@ end
 Fetch the number of registered drivers.
 """
 function gdalgetdrivercount()
-    aftercare(ccall((:GDALGetDriverCount, libgdal), Cint, ()))
+    return aftercare(ccall((:GDALGetDriverCount, libgdal), Cint, ()))
 end
 
 """
@@ -7255,7 +5881,7 @@ end
 Fetch driver by index.
 """
 function gdalgetdriver(arg1)
-    aftercare(ccall((:GDALGetDriver, libgdal), GDALDriverH, (Cint,), arg1))
+    return aftercare(ccall((:GDALGetDriver, libgdal), GDALDriverH, (Cint,), arg1))
 end
 
 """
@@ -7264,7 +5890,7 @@ end
 Create a GDALDriver.
 """
 function gdalcreatedriver()
-    aftercare(ccall((:GDALCreateDriver, libgdal), GDALDriverH, ()))
+    return aftercare(ccall((:GDALCreateDriver, libgdal), GDALDriverH, ()))
 end
 
 """
@@ -7276,7 +5902,7 @@ Destroy a GDALDriver.
 * **hDriver**: the driver to destroy.
 """
 function gdaldestroydriver(arg1)
-    aftercare(ccall((:GDALDestroyDriver, libgdal), Cvoid, (GDALDriverH,), arg1))
+    return aftercare(ccall((:GDALDestroyDriver, libgdal), Cvoid, (GDALDriverH,), arg1))
 end
 
 """
@@ -7285,7 +5911,7 @@ end
 Register a driver for use.
 """
 function gdalregisterdriver(arg1)
-    aftercare(ccall((:GDALRegisterDriver, libgdal), Cint, (GDALDriverH,), arg1))
+    return aftercare(ccall((:GDALRegisterDriver, libgdal), Cint, (GDALDriverH,), arg1))
 end
 
 """
@@ -7294,7 +5920,7 @@ end
 Deregister the passed driver.
 """
 function gdalderegisterdriver(arg1)
-    aftercare(ccall((:GDALDeregisterDriver, libgdal), Cvoid, (GDALDriverH,), arg1))
+    return aftercare(ccall((:GDALDeregisterDriver, libgdal), Cvoid, (GDALDriverH,), arg1))
 end
 
 """
@@ -7303,7 +5929,7 @@ end
 Destroy the driver manager.
 """
 function gdaldestroydrivermanager()
-    aftercare(ccall((:GDALDestroyDriverManager, libgdal), Cvoid, ()))
+    return aftercare(ccall((:GDALDestroyDriverManager, libgdal), Cvoid, ()))
 end
 
 """
@@ -7312,7 +5938,7 @@ end
 Finalize GDAL/OGR library.
 """
 function gdaldestroy()
-    aftercare(ccall((:GDALDestroy, libgdal), Cvoid, ()))
+    return aftercare(ccall((:GDALDestroy, libgdal), Cvoid, ()))
 end
 
 """
@@ -7322,9 +5948,7 @@ end
 Delete named dataset.
 """
 function gdaldeletedataset(arg1, arg2)
-    aftercare(
-        ccall((:GDALDeleteDataset, libgdal), CPLErr, (GDALDriverH, Cstring), arg1, arg2),
-    )
+    return aftercare(ccall((:GDALDeleteDataset, libgdal), CPLErr, (GDALDriverH, Cstring), arg1, arg2))
 end
 
 """
@@ -7335,16 +5959,7 @@ end
 Rename a dataset.
 """
 function gdalrenamedataset(arg1, pszNewName, pszOldName)
-    aftercare(
-        ccall(
-            (:GDALRenameDataset, libgdal),
-            CPLErr,
-            (GDALDriverH, Cstring, Cstring),
-            arg1,
-            pszNewName,
-            pszOldName,
-        ),
-    )
+    return aftercare(ccall((:GDALRenameDataset, libgdal), CPLErr, (GDALDriverH, Cstring, Cstring), arg1, pszNewName, pszOldName))
 end
 
 """
@@ -7355,16 +5970,7 @@ end
 Copy the files of a dataset.
 """
 function gdalcopydatasetfiles(arg1, pszNewName, pszOldName)
-    aftercare(
-        ccall(
-            (:GDALCopyDatasetFiles, libgdal),
-            CPLErr,
-            (GDALDriverH, Cstring, Cstring),
-            arg1,
-            pszNewName,
-            pszOldName,
-        ),
-    )
+    return aftercare(ccall((:GDALCopyDatasetFiles, libgdal), CPLErr, (GDALDriverH, Cstring, Cstring), arg1, pszNewName, pszOldName))
 end
 
 """
@@ -7381,15 +5987,7 @@ Validate the list of creation options that are handled by a driver.
 TRUE if the list of creation options is compatible with the Create() and CreateCopy() method of the driver, FALSE otherwise.
 """
 function gdalvalidatecreationoptions(arg1, papszCreationOptions)
-    aftercare(
-        ccall(
-            (:GDALValidateCreationOptions, libgdal),
-            Cint,
-            (GDALDriverH, CSLConstList),
-            arg1,
-            papszCreationOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALValidateCreationOptions, libgdal), Cint, (GDALDriverH, CSLConstList), arg1, papszCreationOptions))
 end
 
 """
@@ -7409,23 +6007,9 @@ Return a list of driver short names that are likely candidates for the provided 
 ### Returns
 NULL terminated list of driver short names. To be freed with CSLDestroy()
 """
-function gdalgetoutputdriversfordatasetname(
-    pszDestFilename,
-    nFlagRasterVector,
-    bSingleMatch,
-    bEmitWarning,
-)
-    aftercare(
-        ccall(
-            (:GDALGetOutputDriversForDatasetName, libgdal),
-            Ptr{Cstring},
-            (Cstring, Cint, Bool, Bool),
-            pszDestFilename,
-            nFlagRasterVector,
-            bSingleMatch,
-            bEmitWarning,
-        ),
-    )
+function gdalgetoutputdriversfordatasetname(pszDestFilename, nFlagRasterVector, bSingleMatch, bEmitWarning)
+    return aftercare(ccall((:GDALGetOutputDriversForDatasetName, libgdal), Ptr{Cstring}, (Cstring, Cint, Bool, Bool),
+                           pszDestFilename, nFlagRasterVector, bSingleMatch, bEmitWarning))
 end
 
 """
@@ -7440,10 +6024,7 @@ Return the short name of a driver.
 the short name of the driver. The returned string should not be freed and is owned by the driver.
 """
 function gdalgetdrivershortname(arg1)
-    aftercare(
-        ccall((:GDALGetDriverShortName, libgdal), Cstring, (GDALDriverH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:GDALGetDriverShortName, libgdal), Cstring, (GDALDriverH,), arg1), false)
 end
 
 """
@@ -7458,10 +6039,7 @@ Return the long name of a driver.
 the long name of the driver or empty string. The returned string should not be freed and is owned by the driver.
 """
 function gdalgetdriverlongname(arg1)
-    aftercare(
-        ccall((:GDALGetDriverLongName, libgdal), Cstring, (GDALDriverH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:GDALGetDriverLongName, libgdal), Cstring, (GDALDriverH,), arg1), false)
 end
 
 """
@@ -7476,10 +6054,7 @@ Return the URL to the help that describes the driver.
 the URL to the help that describes the driver or NULL. The returned string should not be freed and is owned by the driver.
 """
 function gdalgetdriverhelptopic(arg1)
-    aftercare(
-        ccall((:GDALGetDriverHelpTopic, libgdal), Cstring, (GDALDriverH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:GDALGetDriverHelpTopic, libgdal), Cstring, (GDALDriverH,), arg1), false)
 end
 
 """
@@ -7494,10 +6069,7 @@ Return the list of creation options of the driver.
 an XML string that describes the list of creation options or empty string. The returned string should not be freed and is owned by the driver.
 """
 function gdalgetdrivercreationoptionlist(arg1)
-    aftercare(
-        ccall((:GDALGetDriverCreationOptionList, libgdal), Cstring, (GDALDriverH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:GDALGetDriverCreationOptionList, libgdal), Cstring, (GDALDriverH,), arg1), false)
 end
 
 """
@@ -7536,7 +6108,7 @@ Initialize an array of GCPs.
 * **psGCP**: array of GCPs of size nCount.
 """
 function gdalinitgcps(arg1, arg2)
-    aftercare(ccall((:GDALInitGCPs, libgdal), Cvoid, (Cint, Ptr{GDAL_GCP}), arg1, arg2))
+    return aftercare(ccall((:GDALInitGCPs, libgdal), Cvoid, (Cint, Ptr{GDAL_GCP}), arg1, arg2))
 end
 
 """
@@ -7550,7 +6122,7 @@ De-initialize an array of GCPs (initialized with GDALInitGCPs())
 * **psGCP**: array of GCPs of size nCount.
 """
 function gdaldeinitgcps(arg1, arg2)
-    aftercare(ccall((:GDALDeinitGCPs, libgdal), Cvoid, (Cint, Ptr{GDAL_GCP}), arg1, arg2))
+    return aftercare(ccall((:GDALDeinitGCPs, libgdal), Cvoid, (Cint, Ptr{GDAL_GCP}), arg1, arg2))
 end
 
 """
@@ -7564,15 +6136,7 @@ Duplicate an array of GCPs.
 * **pasGCPList**: array of GCPs of size nCount.
 """
 function gdalduplicategcps(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALDuplicateGCPs, libgdal),
-            Ptr{GDAL_GCP},
-            (Cint, Ptr{GDAL_GCP}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALDuplicateGCPs, libgdal), Ptr{GDAL_GCP}, (Cint, Ptr{GDAL_GCP}), arg1, arg2))
 end
 
 """
@@ -7593,17 +6157,8 @@ Generate Geotransform from GCPs.
 TRUE on success or FALSE if there aren't enough points to prepare a geotransform, the pointers are ill-determined or if bApproxOK is FALSE and the fit is poor.
 """
 function gdalgcpstogeotransform(nGCPCount, pasGCPs, padfGeoTransform, bApproxOK)
-    aftercare(
-        ccall(
-            (:GDALGCPsToGeoTransform, libgdal),
-            Cint,
-            (Cint, Ptr{GDAL_GCP}, Ptr{Cdouble}, Cint),
-            nGCPCount,
-            pasGCPs,
-            padfGeoTransform,
-            bApproxOK,
-        ),
-    )
+    return aftercare(ccall((:GDALGCPsToGeoTransform, libgdal), Cint, (Cint, Ptr{GDAL_GCP}, Ptr{Cdouble}, Cint), nGCPCount, pasGCPs,
+                           padfGeoTransform, bApproxOK))
 end
 
 """
@@ -7620,15 +6175,8 @@ Invert Geotransform.
 TRUE on success or FALSE if the equation is uninvertable.
 """
 function gdalinvgeotransform(padfGeoTransformIn, padfInvGeoTransformOut)
-    aftercare(
-        ccall(
-            (:GDALInvGeoTransform, libgdal),
-            Cint,
-            (Ptr{Cdouble}, Ptr{Cdouble}),
-            padfGeoTransformIn,
-            padfInvGeoTransformOut,
-        ),
-    )
+    return aftercare(ccall((:GDALInvGeoTransform, libgdal), Cint, (Ptr{Cdouble}, Ptr{Cdouble}), padfGeoTransformIn,
+                           padfInvGeoTransformOut))
 end
 
 """
@@ -7648,18 +6196,8 @@ Apply GeoTransform to x/y coordinate.
 * **pdfGeoY**: output location where geo_y (northing/latitude) location is placed.
 """
 function gdalapplygeotransform(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:GDALApplyGeoTransform, libgdal),
-            Cvoid,
-            (Ptr{Cdouble}, Cdouble, Cdouble, Ptr{Cdouble}, Ptr{Cdouble}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:GDALApplyGeoTransform, libgdal), Cvoid, (Ptr{Cdouble}, Cdouble, Cdouble, Ptr{Cdouble}, Ptr{Cdouble}),
+                           arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -7675,16 +6213,8 @@ Compose two geotransforms.
 * **padfGTOut**: the output geotransform, six values, may safely be the same array as padfGT1 or padfGT2.
 """
 function gdalcomposegeotransforms(padfGeoTransform1, padfGeoTransform2, padfGeoTransformOut)
-    aftercare(
-        ccall(
-            (:GDALComposeGeoTransforms, libgdal),
-            Cvoid,
-            (Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}),
-            padfGeoTransform1,
-            padfGeoTransform2,
-            padfGeoTransformOut,
-        ),
-    )
+    return aftercare(ccall((:GDALComposeGeoTransforms, libgdal), Cvoid, (Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}),
+                           padfGeoTransform1, padfGeoTransform2, padfGeoTransformOut))
 end
 
 """
@@ -7693,14 +6223,7 @@ end
 Fetch list of metadata domains.
 """
 function gdalgetmetadatadomainlist(hObject)
-    aftercare(
-        ccall(
-            (:GDALGetMetadataDomainList, libgdal),
-            Ptr{Cstring},
-            (GDALMajorObjectH,),
-            hObject,
-        ),
-    )
+    return aftercare(ccall((:GDALGetMetadataDomainList, libgdal), Ptr{Cstring}, (GDALMajorObjectH,), hObject))
 end
 
 """
@@ -7710,15 +6233,7 @@ end
 Fetch metadata.
 """
 function gdalgetmetadata(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALGetMetadata, libgdal),
-            Ptr{Cstring},
-            (GDALMajorObjectH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALGetMetadata, libgdal), Ptr{Cstring}, (GDALMajorObjectH, Cstring), arg1, arg2))
 end
 
 """
@@ -7729,16 +6244,7 @@ end
 Set metadata.
 """
 function gdalsetmetadata(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALSetMetadata, libgdal),
-            CPLErr,
-            (GDALMajorObjectH, CSLConstList, Cstring),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALSetMetadata, libgdal), CPLErr, (GDALMajorObjectH, CSLConstList, Cstring), arg1, arg2, arg3))
 end
 
 """
@@ -7749,17 +6255,7 @@ end
 Fetch single metadata item.
 """
 function gdalgetmetadataitem(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALGetMetadataItem, libgdal),
-            Cstring,
-            (GDALMajorObjectH, Cstring, Cstring),
-            arg1,
-            arg2,
-            arg3,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALGetMetadataItem, libgdal), Cstring, (GDALMajorObjectH, Cstring, Cstring), arg1, arg2, arg3), false)
 end
 
 """
@@ -7771,17 +6267,8 @@ end
 Set single metadata item.
 """
 function gdalsetmetadataitem(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:GDALSetMetadataItem, libgdal),
-            CPLErr,
-            (GDALMajorObjectH, Cstring, Cstring, Cstring),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:GDALSetMetadataItem, libgdal), CPLErr, (GDALMajorObjectH, Cstring, Cstring, Cstring), arg1, arg2, arg3,
+                           arg4))
 end
 
 """
@@ -7790,10 +6277,7 @@ end
 Fetch object description.
 """
 function gdalgetdescription(arg1)
-    aftercare(
-        ccall((:GDALGetDescription, libgdal), Cstring, (GDALMajorObjectH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:GDALGetDescription, libgdal), Cstring, (GDALMajorObjectH,), arg1), false)
 end
 
 """
@@ -7803,15 +6287,7 @@ end
 Set object description.
 """
 function gdalsetdescription(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALSetDescription, libgdal),
-            Cvoid,
-            (GDALMajorObjectH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALSetDescription, libgdal), Cvoid, (GDALMajorObjectH, Cstring), arg1, arg2))
 end
 
 """
@@ -7820,7 +6296,7 @@ end
 Fetch the driver to which this dataset relates.
 """
 function gdalgetdatasetdriver(arg1)
-    aftercare(ccall((:GDALGetDatasetDriver, libgdal), GDALDriverH, (GDALDatasetH,), arg1))
+    return aftercare(ccall((:GDALGetDatasetDriver, libgdal), GDALDriverH, (GDALDatasetH,), arg1))
 end
 
 """
@@ -7829,7 +6305,7 @@ end
 Fetch files forming dataset.
 """
 function gdalgetfilelist(arg1)
-    aftercare(ccall((:GDALGetFileList, libgdal), Ptr{Cstring}, (GDALDatasetH,), arg1))
+    return aftercare(ccall((:GDALGetFileList, libgdal), Ptr{Cstring}, (GDALDatasetH,), arg1))
 end
 
 """
@@ -7844,7 +6320,7 @@ Close GDAL dataset.
 CE_None in case of success (return value since GDAL 3.7). On a shared dataset whose reference count is not dropped below 1, CE_None will be returned.
 """
 function gdalclose(arg1)
-    aftercare(ccall((:GDALClose, libgdal), CPLErr, (GDALDatasetH,), arg1))
+    return aftercare(ccall((:GDALClose, libgdal), CPLErr, (GDALDatasetH,), arg1))
 end
 
 """
@@ -7853,7 +6329,7 @@ end
 Fetch raster width in pixels.
 """
 function gdalgetrasterxsize(arg1)
-    aftercare(ccall((:GDALGetRasterXSize, libgdal), Cint, (GDALDatasetH,), arg1))
+    return aftercare(ccall((:GDALGetRasterXSize, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 """
@@ -7862,7 +6338,7 @@ end
 Fetch raster height in pixels.
 """
 function gdalgetrasterysize(arg1)
-    aftercare(ccall((:GDALGetRasterYSize, libgdal), Cint, (GDALDatasetH,), arg1))
+    return aftercare(ccall((:GDALGetRasterYSize, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 """
@@ -7871,7 +6347,7 @@ end
 Fetch the number of raster bands on this dataset.
 """
 function gdalgetrastercount(arg1)
-    aftercare(ccall((:GDALGetRasterCount, libgdal), Cint, (GDALDatasetH,), arg1))
+    return aftercare(ccall((:GDALGetRasterCount, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 """
@@ -7881,15 +6357,7 @@ end
 Fetch a band object for a dataset.
 """
 function gdalgetrasterband(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALGetRasterBand, libgdal),
-            GDALRasterBandH,
-            (GDALDatasetH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALGetRasterBand, libgdal), GDALRasterBandH, (GDALDatasetH, Cint), arg1, arg2))
 end
 
 """
@@ -7905,16 +6373,8 @@ Return whether this dataset, and its related objects (typically raster bands), c
 * **papszOptions**: Options. None currently.
 """
 function gdaldatasetisthreadsafe(arg1, nScopeFlags, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALDatasetIsThreadSafe, libgdal),
-            Bool,
-            (GDALDatasetH, Cint, CSLConstList),
-            arg1,
-            nScopeFlags,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetIsThreadSafe, libgdal), Bool, (GDALDatasetH, Cint, CSLConstList), arg1, nScopeFlags,
+                           papszOptions))
 end
 
 """
@@ -7931,16 +6391,8 @@ Return a thread-safe dataset.
 a new thread-safe dataset, or nullptr in case of error.
 """
 function gdalgetthreadsafedataset(arg1, nScopeFlags, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGetThreadSafeDataset, libgdal),
-            GDALDatasetH,
-            (GDALDatasetH, Cint, CSLConstList),
-            arg1,
-            nScopeFlags,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGetThreadSafeDataset, libgdal), GDALDatasetH, (GDALDatasetH, Cint, CSLConstList), arg1,
+                           nScopeFlags, papszOptions))
 end
 
 """
@@ -7951,16 +6403,7 @@ end
 Add a band to a dataset.
 """
 function gdaladdband(hDS, eType, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALAddBand, libgdal),
-            CPLErr,
-            (GDALDatasetH, GDALDataType, CSLConstList),
-            hDS,
-            eType,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALAddBand, libgdal), CPLErr, (GDALDatasetH, GDALDataType, CSLConstList), hDS, eType, papszOptions))
 end
 
 """
@@ -8002,61 +6445,12 @@ Sets up an asynchronous data request.
 ### Returns
 handle representing the request.
 """
-function gdalbeginasyncreader(
-    hDS,
-    nXOff,
-    nYOff,
-    nXSize,
-    nYSize,
-    pBuf,
-    nBufXSize,
-    nBufYSize,
-    eBufType,
-    nBandCount,
-    panBandMap,
-    nPixelSpace,
-    nLineSpace,
-    nBandSpace,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALBeginAsyncReader, libgdal),
-            GDALAsyncReaderH,
-            (
-                GDALDatasetH,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Ptr{Cvoid},
-                Cint,
-                Cint,
-                GDALDataType,
-                Cint,
-                Ptr{Cint},
-                Cint,
-                Cint,
-                Cint,
-                CSLConstList,
-            ),
-            hDS,
-            nXOff,
-            nYOff,
-            nXSize,
-            nYSize,
-            pBuf,
-            nBufXSize,
-            nBufYSize,
-            eBufType,
-            nBandCount,
-            panBandMap,
-            nPixelSpace,
-            nLineSpace,
-            nBandSpace,
-            papszOptions,
-        ),
-    )
+function gdalbeginasyncreader(hDS, nXOff, nYOff, nXSize, nYSize, pBuf, nBufXSize, nBufYSize, eBufType, nBandCount, panBandMap,
+                              nPixelSpace, nLineSpace, nBandSpace, papszOptions)
+    return aftercare(ccall((:GDALBeginAsyncReader, libgdal), GDALAsyncReaderH,
+                           (GDALDatasetH, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, Cint, Cint,
+                            Cint, CSLConstList), hDS, nXOff, nYOff, nXSize, nYSize, pBuf, nBufXSize, nBufYSize, eBufType,
+                           nBandCount, panBandMap, nPixelSpace, nLineSpace, nBandSpace, papszOptions))
 end
 
 """
@@ -8070,15 +6464,7 @@ End asynchronous request.
 * **hAsyncReaderH**: handle returned by GDALBeginAsyncReader()
 """
 function gdalendasyncreader(hDS, hAsynchReaderH)
-    aftercare(
-        ccall(
-            (:GDALEndAsyncReader, libgdal),
-            Cvoid,
-            (GDALDatasetH, GDALAsyncReaderH),
-            hDS,
-            hAsynchReaderH,
-        ),
-    )
+    return aftercare(ccall((:GDALEndAsyncReader, libgdal), Cvoid, (GDALDatasetH, GDALAsyncReaderH), hDS, hAsynchReaderH))
 end
 
 """
@@ -8100,61 +6486,12 @@ end
 
 Read/write a region of image data from multiple bands.
 """
-function gdaldatasetrasterio(
-    hDS,
-    eRWFlag,
-    nDSXOff,
-    nDSYOff,
-    nDSXSize,
-    nDSYSize,
-    pBuffer,
-    nBXSize,
-    nBYSize,
-    eBDataType,
-    nBandCount,
-    panBandCount,
-    nPixelSpace,
-    nLineSpace,
-    nBandSpace,
-)
-    aftercare(
-        ccall(
-            (:GDALDatasetRasterIO, libgdal),
-            CPLErr,
-            (
-                GDALDatasetH,
-                GDALRWFlag,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Ptr{Cvoid},
-                Cint,
-                Cint,
-                GDALDataType,
-                Cint,
-                Ptr{Cint},
-                Cint,
-                Cint,
-                Cint,
-            ),
-            hDS,
-            eRWFlag,
-            nDSXOff,
-            nDSYOff,
-            nDSXSize,
-            nDSYSize,
-            pBuffer,
-            nBXSize,
-            nBYSize,
-            eBDataType,
-            nBandCount,
-            panBandCount,
-            nPixelSpace,
-            nLineSpace,
-            nBandSpace,
-        ),
-    )
+function gdaldatasetrasterio(hDS, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nBandCount,
+                             panBandCount, nPixelSpace, nLineSpace, nBandSpace)
+    return aftercare(ccall((:GDALDatasetRasterIO, libgdal), CPLErr,
+                           (GDALDatasetH, GDALRWFlag, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, Cint, Ptr{Cint},
+                            Cint, Cint, Cint), hDS, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize,
+                           eBDataType, nBandCount, panBandCount, nPixelSpace, nLineSpace, nBandSpace))
 end
 
 """
@@ -8177,64 +6514,13 @@ end
 
 Read/write a region of image data from multiple bands.
 """
-function gdaldatasetrasterioex(
-    hDS,
-    eRWFlag,
-    nDSXOff,
-    nDSYOff,
-    nDSXSize,
-    nDSYSize,
-    pBuffer,
-    nBXSize,
-    nBYSize,
-    eBDataType,
-    nBandCount,
-    panBandCount,
-    nPixelSpace,
-    nLineSpace,
-    nBandSpace,
-    psExtraArg,
-)
-    aftercare(
-        ccall(
-            (:GDALDatasetRasterIOEx, libgdal),
-            CPLErr,
-            (
-                GDALDatasetH,
-                GDALRWFlag,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Ptr{Cvoid},
-                Cint,
-                Cint,
-                GDALDataType,
-                Cint,
-                Ptr{Cint},
-                GSpacing,
-                GSpacing,
-                GSpacing,
-                Ptr{GDALRasterIOExtraArg},
-            ),
-            hDS,
-            eRWFlag,
-            nDSXOff,
-            nDSYOff,
-            nDSXSize,
-            nDSYSize,
-            pBuffer,
-            nBXSize,
-            nBYSize,
-            eBDataType,
-            nBandCount,
-            panBandCount,
-            nPixelSpace,
-            nLineSpace,
-            nBandSpace,
-            psExtraArg,
-        ),
-    )
+function gdaldatasetrasterioex(hDS, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType,
+                               nBandCount, panBandCount, nPixelSpace, nLineSpace, nBandSpace, psExtraArg)
+    return aftercare(ccall((:GDALDatasetRasterIOEx, libgdal), CPLErr,
+                           (GDALDatasetH, GDALRWFlag, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, Cint, Ptr{Cint},
+                            GSpacing, GSpacing, GSpacing, Ptr{GDALRasterIOExtraArg}), hDS, eRWFlag, nDSXOff, nDSYOff, nDSXSize,
+                           nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nBandCount, panBandCount, nPixelSpace, nLineSpace,
+                           nBandSpace, psExtraArg))
 end
 
 """
@@ -8252,49 +6538,12 @@ end
 
 Advise driver of upcoming read requests.
 """
-function gdaldatasetadviseread(
-    hDS,
-    nDSXOff,
-    nDSYOff,
-    nDSXSize,
-    nDSYSize,
-    nBXSize,
-    nBYSize,
-    eBDataType,
-    nBandCount,
-    panBandCount,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALDatasetAdviseRead, libgdal),
-            CPLErr,
-            (
-                GDALDatasetH,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                GDALDataType,
-                Cint,
-                Ptr{Cint},
-                CSLConstList,
-            ),
-            hDS,
-            nDSXOff,
-            nDSYOff,
-            nDSXSize,
-            nDSYSize,
-            nBXSize,
-            nBYSize,
-            eBDataType,
-            nBandCount,
-            panBandCount,
-            papszOptions,
-        ),
-    )
+function gdaldatasetadviseread(hDS, nDSXOff, nDSYOff, nDSXSize, nDSYSize, nBXSize, nBYSize, eBDataType, nBandCount, panBandCount,
+                               papszOptions)
+    return aftercare(ccall((:GDALDatasetAdviseRead, libgdal), CPLErr,
+                           (GDALDatasetH, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, CSLConstList), hDS,
+                           nDSXOff, nDSYOff, nDSXSize, nDSYSize, nBXSize, nBYSize, eBDataType, nBandCount, panBandCount,
+                           papszOptions))
 end
 
 """
@@ -8320,29 +6569,10 @@ Return the compression formats that can be natively obtained for the window of i
 ### Returns
 a list of compatible formats (which may be empty) that should be freed with CSLDestroy(), or nullptr.
 """
-function gdaldatasetgetcompressionformats(
-    hDS,
-    nXOff,
-    nYOff,
-    nXSize,
-    nYSize,
-    nBandCount,
-    panBandList,
-)
-    aftercare(
-        ccall(
-            (:GDALDatasetGetCompressionFormats, libgdal),
-            Ptr{Cstring},
-            (GDALDatasetH, Cint, Cint, Cint, Cint, Cint, Ptr{Cint}),
-            hDS,
-            nXOff,
-            nYOff,
-            nXSize,
-            nYSize,
-            nBandCount,
-            panBandList,
-        ),
-    )
+function gdaldatasetgetcompressionformats(hDS, nXOff, nYOff, nXSize, nYSize, nBandCount, panBandList)
+    return aftercare(ccall((:GDALDatasetGetCompressionFormats, libgdal), Ptr{Cstring},
+                           (GDALDatasetH, Cint, Cint, Cint, Cint, Cint, Ptr{Cint}), hDS, nXOff, nYOff, nXSize, nYSize, nBandCount,
+                           panBandList))
 end
 
 """
@@ -8376,49 +6606,12 @@ Return the compressed content that can be natively obtained for the window of in
 ### Returns
 CE_None in case of success, CE_Failure otherwise.
 """
-function gdaldatasetreadcompresseddata(
-    hDS,
-    pszFormat,
-    nXOff,
-    nYOff,
-    nXSize,
-    nYSize,
-    nBandCount,
-    panBandList,
-    ppBuffer,
-    pnBufferSize,
-    ppszDetailedFormat,
-)
-    aftercare(
-        ccall(
-            (:GDALDatasetReadCompressedData, libgdal),
-            CPLErr,
-            (
-                GDALDatasetH,
-                Cstring,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Ptr{Cint},
-                Ptr{Ptr{Cvoid}},
-                Ptr{Csize_t},
-                Ptr{Cstring},
-            ),
-            hDS,
-            pszFormat,
-            nXOff,
-            nYOff,
-            nXSize,
-            nYSize,
-            nBandCount,
-            panBandList,
-            ppBuffer,
-            pnBufferSize,
-            ppszDetailedFormat,
-        ),
-    )
+function gdaldatasetreadcompresseddata(hDS, pszFormat, nXOff, nYOff, nXSize, nYSize, nBandCount, panBandList, ppBuffer,
+                                       pnBufferSize, ppszDetailedFormat)
+    return aftercare(ccall((:GDALDatasetReadCompressedData, libgdal), CPLErr,
+                           (GDALDatasetH, Cstring, Cint, Cint, Cint, Cint, Cint, Ptr{Cint}, Ptr{Ptr{Cvoid}}, Ptr{Csize_t},
+                            Ptr{Cstring}), hDS, pszFormat, nXOff, nYOff, nXSize, nYSize, nBandCount, panBandList, ppBuffer,
+                           pnBufferSize, ppszDetailedFormat))
 end
 
 """
@@ -8427,10 +6620,7 @@ end
 Fetch the projection definition string for this dataset.
 """
 function gdalgetprojectionref(arg1)
-    aftercare(
-        ccall((:GDALGetProjectionRef, libgdal), Cstring, (GDALDatasetH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:GDALGetProjectionRef, libgdal), Cstring, (GDALDatasetH,), arg1), false)
 end
 
 "Opaque type for a spatial reference system"
@@ -8442,9 +6632,7 @@ const OGRSpatialReferenceH = Ptr{Cvoid}
 Fetch the spatial reference for this dataset.
 """
 function gdalgetspatialref(arg1)
-    aftercare(
-        ccall((:GDALGetSpatialRef, libgdal), OGRSpatialReferenceH, (GDALDatasetH,), arg1),
-    )
+    return aftercare(ccall((:GDALGetSpatialRef, libgdal), OGRSpatialReferenceH, (GDALDatasetH,), arg1))
 end
 
 """
@@ -8454,9 +6642,7 @@ end
 Set the projection reference string for this dataset.
 """
 function gdalsetprojection(arg1, arg2)
-    aftercare(
-        ccall((:GDALSetProjection, libgdal), CPLErr, (GDALDatasetH, Cstring), arg1, arg2),
-    )
+    return aftercare(ccall((:GDALSetProjection, libgdal), CPLErr, (GDALDatasetH, Cstring), arg1, arg2))
 end
 
 """
@@ -8466,15 +6652,7 @@ end
 Set the spatial reference system for this dataset.
 """
 function gdalsetspatialref(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALSetSpatialRef, libgdal),
-            CPLErr,
-            (GDALDatasetH, OGRSpatialReferenceH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALSetSpatialRef, libgdal), CPLErr, (GDALDatasetH, OGRSpatialReferenceH), arg1, arg2))
 end
 
 """
@@ -8484,15 +6662,7 @@ end
 Fetch the affine transformation coefficients.
 """
 function gdalgetgeotransform(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALGetGeoTransform, libgdal),
-            CPLErr,
-            (GDALDatasetH, Ptr{Cdouble}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALGetGeoTransform, libgdal), CPLErr, (GDALDatasetH, Ptr{Cdouble}), arg1, arg2))
 end
 
 """
@@ -8502,15 +6672,7 @@ end
 Set the affine transformation coefficients.
 """
 function gdalsetgeotransform(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALSetGeoTransform, libgdal),
-            CPLErr,
-            (GDALDatasetH, Ptr{Cdouble}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALSetGeoTransform, libgdal), CPLErr, (GDALDatasetH, Ptr{Cdouble}), arg1, arg2))
 end
 
 """
@@ -8519,7 +6681,7 @@ end
 Get number of GCPs.
 """
 function gdalgetgcpcount(arg1)
-    aftercare(ccall((:GDALGetGCPCount, libgdal), Cint, (GDALDatasetH,), arg1))
+    return aftercare(ccall((:GDALGetGCPCount, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 """
@@ -8528,10 +6690,7 @@ end
 Get output projection for GCPs.
 """
 function gdalgetgcpprojection(arg1)
-    aftercare(
-        ccall((:GDALGetGCPProjection, libgdal), Cstring, (GDALDatasetH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:GDALGetGCPProjection, libgdal), Cstring, (GDALDatasetH,), arg1), false)
 end
 
 """
@@ -8540,14 +6699,7 @@ end
 Get output spatial reference system for GCPs.
 """
 function gdalgetgcpspatialref(arg1)
-    aftercare(
-        ccall(
-            (:GDALGetGCPSpatialRef, libgdal),
-            OGRSpatialReferenceH,
-            (GDALDatasetH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALGetGCPSpatialRef, libgdal), OGRSpatialReferenceH, (GDALDatasetH,), arg1))
 end
 
 """
@@ -8556,7 +6708,7 @@ end
 Fetch GCPs.
 """
 function gdalgetgcps(arg1)
-    aftercare(ccall((:GDALGetGCPs, libgdal), Ptr{GDAL_GCP}, (GDALDatasetH,), arg1))
+    return aftercare(ccall((:GDALGetGCPs, libgdal), Ptr{GDAL_GCP}, (GDALDatasetH,), arg1))
 end
 
 """
@@ -8568,17 +6720,7 @@ end
 Assign GCPs.
 """
 function gdalsetgcps(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:GDALSetGCPs, libgdal),
-            CPLErr,
-            (GDALDatasetH, Cint, Ptr{GDAL_GCP}, Cstring),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:GDALSetGCPs, libgdal), CPLErr, (GDALDatasetH, Cint, Ptr{GDAL_GCP}, Cstring), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -8590,17 +6732,8 @@ end
 Assign GCPs.
 """
 function gdalsetgcps2(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:GDALSetGCPs2, libgdal),
-            CPLErr,
-            (GDALDatasetH, Cint, Ptr{GDAL_GCP}, OGRSpatialReferenceH),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:GDALSetGCPs2, libgdal), CPLErr, (GDALDatasetH, Cint, Ptr{GDAL_GCP}, OGRSpatialReferenceH), arg1, arg2,
+                           arg3, arg4))
 end
 
 """
@@ -8610,15 +6743,7 @@ end
 Fetch a format specific internally meaningful handle.
 """
 function gdalgetinternalhandle(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALGetInternalHandle, libgdal),
-            Ptr{Cvoid},
-            (GDALDatasetH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALGetInternalHandle, libgdal), Ptr{Cvoid}, (GDALDatasetH, Cstring), arg1, arg2))
 end
 
 """
@@ -8627,7 +6752,7 @@ end
 Add one to dataset reference count.
 """
 function gdalreferencedataset(arg1)
-    aftercare(ccall((:GDALReferenceDataset, libgdal), Cint, (GDALDatasetH,), arg1))
+    return aftercare(ccall((:GDALReferenceDataset, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 """
@@ -8636,7 +6761,7 @@ end
 Subtract one from dataset reference count.
 """
 function gdaldereferencedataset(arg1)
-    aftercare(ccall((:GDALDereferenceDataset, libgdal), Cint, (GDALDatasetH,), arg1))
+    return aftercare(ccall((:GDALDereferenceDataset, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 """
@@ -8645,7 +6770,7 @@ end
 Drop a reference to this object, and destroy if no longer referenced.
 """
 function gdalreleasedataset(arg1)
-    aftercare(ccall((:GDALReleaseDataset, libgdal), Cint, (GDALDatasetH,), arg1))
+    return aftercare(ccall((:GDALReleaseDataset, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 """
@@ -8661,30 +6786,9 @@ end
 Build raster overview(s)
 """
 function gdalbuildoverviews(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
-    aftercare(
-        ccall(
-            (:GDALBuildOverviews, libgdal),
-            CPLErr,
-            (
-                GDALDatasetH,
-                Cstring,
-                Cint,
-                Ptr{Cint},
-                Cint,
-                Ptr{Cint},
-                GDALProgressFunc,
-                Any,
-            ),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-            arg7,
-            arg8,
-        ),
-    )
+    return aftercare(ccall((:GDALBuildOverviews, libgdal), CPLErr,
+                           (GDALDatasetH, Cstring, Cint, Ptr{Cint}, Cint, Ptr{Cint}, GDALProgressFunc, Any), arg1, arg2, arg3, arg4,
+                           arg5, arg6, arg7, arg8))
 end
 
 """
@@ -8701,32 +6805,9 @@ end
 Build raster overview(s)
 """
 function gdalbuildoverviewsex(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALBuildOverviewsEx, libgdal),
-            CPLErr,
-            (
-                GDALDatasetH,
-                Cstring,
-                Cint,
-                Ptr{Cint},
-                Cint,
-                Ptr{Cint},
-                GDALProgressFunc,
-                Any,
-                CSLConstList,
-            ),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-            arg7,
-            arg8,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALBuildOverviewsEx, libgdal), CPLErr,
+                           (GDALDatasetH, Cstring, Cint, Ptr{Cint}, Cint, Ptr{Cint}, GDALProgressFunc, Any, CSLConstList), arg1,
+                           arg2, arg3, arg4, arg5, arg6, arg7, arg8, papszOptions))
 end
 
 """
@@ -8736,15 +6817,7 @@ end
 Fetch all open GDAL dataset handles.
 """
 function gdalgetopendatasets(hDS, pnCount)
-    aftercare(
-        ccall(
-            (:GDALGetOpenDatasets, libgdal),
-            Cvoid,
-            (Ptr{Ptr{GDALDatasetH}}, Ptr{Cint}),
-            hDS,
-            pnCount,
-        ),
-    )
+    return aftercare(ccall((:GDALGetOpenDatasets, libgdal), Cvoid, (Ptr{Ptr{GDALDatasetH}}, Ptr{Cint}), hDS, pnCount))
 end
 
 """
@@ -8753,7 +6826,7 @@ end
 Return access flag.
 """
 function gdalgetaccess(hDS)
-    aftercare(ccall((:GDALGetAccess, libgdal), Cint, (GDALDatasetH,), hDS))
+    return aftercare(ccall((:GDALGetAccess, libgdal), Cint, (GDALDatasetH,), hDS))
 end
 
 """
@@ -8765,7 +6838,7 @@ Flush all write cached data to disk.
 CE_None in case of success (note: return value added in GDAL 3.7)
 """
 function gdalflushcache(hDS)
-    aftercare(ccall((:GDALFlushCache, libgdal), CPLErr, (GDALDatasetH,), hDS))
+    return aftercare(ccall((:GDALFlushCache, libgdal), CPLErr, (GDALDatasetH,), hDS))
 end
 
 """
@@ -8777,7 +6850,7 @@ Drop all write cached data.
 CE_None in case of success
 """
 function gdaldropcache(hDS)
-    aftercare(ccall((:GDALDropCache, libgdal), CPLErr, (GDALDatasetH,), hDS))
+    return aftercare(ccall((:GDALDropCache, libgdal), CPLErr, (GDALDatasetH,), hDS))
 end
 
 """
@@ -8787,15 +6860,7 @@ end
 Adds a mask band to the dataset.
 """
 function gdalcreatedatasetmaskband(hDS, nFlags)
-    aftercare(
-        ccall(
-            (:GDALCreateDatasetMaskBand, libgdal),
-            CPLErr,
-            (GDALDatasetH, Cint),
-            hDS,
-            nFlags,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateDatasetMaskBand, libgdal), CPLErr, (GDALDatasetH, Cint), hDS, nFlags))
 end
 
 """
@@ -8817,25 +6882,10 @@ Copy all dataset raster data.
 ### Returns
 CE_None on success, or CE_Failure on failure.
 """
-function gdaldatasetcopywholeraster(
-    hSrcDS,
-    hDstDS,
-    papszOptions,
-    pfnProgress,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:GDALDatasetCopyWholeRaster, libgdal),
-            CPLErr,
-            (GDALDatasetH, GDALDatasetH, CSLConstList, GDALProgressFunc, Any),
-            hSrcDS,
-            hDstDS,
-            papszOptions,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+function gdaldatasetcopywholeraster(hSrcDS, hDstDS, papszOptions, pfnProgress, pProgressData)
+    return aftercare(ccall((:GDALDatasetCopyWholeRaster, libgdal), CPLErr,
+                           (GDALDatasetH, GDALDatasetH, CSLConstList, GDALProgressFunc, Any), hSrcDS, hDstDS, papszOptions,
+                           pfnProgress, pProgressData))
 end
 
 """
@@ -8857,25 +6907,10 @@ Copy a whole raster band.
 ### Returns
 CE_None on success, or CE_Failure on failure.
 """
-function gdalrasterbandcopywholeraster(
-    hSrcBand,
-    hDstBand,
-    constpapszOptions,
-    pfnProgress,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:GDALRasterBandCopyWholeRaster, libgdal),
-            CPLErr,
-            (GDALRasterBandH, GDALRasterBandH, Ptr{Cstring}, GDALProgressFunc, Any),
-            hSrcBand,
-            hDstBand,
-            constpapszOptions,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+function gdalrasterbandcopywholeraster(hSrcBand, hDstBand, constpapszOptions, pfnProgress, pProgressData)
+    return aftercare(ccall((:GDALRasterBandCopyWholeRaster, libgdal), CPLErr,
+                           (GDALRasterBandH, GDALRasterBandH, Ptr{Cstring}, GDALProgressFunc, Any), hSrcBand, hDstBand,
+                           constpapszOptions, pfnProgress, pProgressData))
 end
 
 """
@@ -8899,27 +6934,10 @@ Generate downsampled overviews.
 ### Returns
 CE_None on success or CE_Failure on failure.
 """
-function gdalregenerateoverviews(
-    hSrcBand,
-    nOverviewCount,
-    pahOverviewBands,
-    pszResampling,
-    pfnProgress,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:GDALRegenerateOverviews, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cint, Ptr{GDALRasterBandH}, Cstring, GDALProgressFunc, Any),
-            hSrcBand,
-            nOverviewCount,
-            pahOverviewBands,
-            pszResampling,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+function gdalregenerateoverviews(hSrcBand, nOverviewCount, pahOverviewBands, pszResampling, pfnProgress, pProgressData)
+    return aftercare(ccall((:GDALRegenerateOverviews, libgdal), CPLErr,
+                           (GDALRasterBandH, Cint, Ptr{GDALRasterBandH}, Cstring, GDALProgressFunc, Any), hSrcBand, nOverviewCount,
+                           pahOverviewBands, pszResampling, pfnProgress, pProgressData))
 end
 
 """
@@ -8945,37 +6963,11 @@ Generate downsampled overviews.
 ### Returns
 CE_None on success or CE_Failure on failure.
 """
-function gdalregenerateoverviewsex(
-    hSrcBand,
-    nOverviewCount,
-    pahOverviewBands,
-    pszResampling,
-    pfnProgress,
-    pProgressData,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALRegenerateOverviewsEx, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                Cint,
-                Ptr{GDALRasterBandH},
-                Cstring,
-                GDALProgressFunc,
-                Any,
-                CSLConstList,
-            ),
-            hSrcBand,
-            nOverviewCount,
-            pahOverviewBands,
-            pszResampling,
-            pfnProgress,
-            pProgressData,
-            papszOptions,
-        ),
-    )
+function gdalregenerateoverviewsex(hSrcBand, nOverviewCount, pahOverviewBands, pszResampling, pfnProgress, pProgressData,
+                                   papszOptions)
+    return aftercare(ccall((:GDALRegenerateOverviewsEx, libgdal), CPLErr,
+                           (GDALRasterBandH, Cint, Ptr{GDALRasterBandH}, Cstring, GDALProgressFunc, Any, CSLConstList), hSrcBand,
+                           nOverviewCount, pahOverviewBands, pszResampling, pfnProgress, pProgressData, papszOptions))
 end
 
 """
@@ -8990,7 +6982,7 @@ Get the number of layers in this dataset.
 layer count.
 """
 function gdaldatasetgetlayercount(arg1)
-    aftercare(ccall((:GDALDatasetGetLayerCount, libgdal), Cint, (GDALDatasetH,), arg1))
+    return aftercare(ccall((:GDALDatasetGetLayerCount, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
 "Opaque type for a layer (OGRLayer)"
@@ -9010,9 +7002,7 @@ Fetch a layer by index.
 the layer, or NULL if iLayer is out of range or an error occurs.
 """
 function gdaldatasetgetlayer(arg1, arg2)
-    aftercare(
-        ccall((:GDALDatasetGetLayer, libgdal), OGRLayerH, (GDALDatasetH, Cint), arg1, arg2),
-    )
+    return aftercare(ccall((:GDALDatasetGetLayer, libgdal), OGRLayerH, (GDALDatasetH, Cint), arg1, arg2))
 end
 
 """
@@ -9024,7 +7014,7 @@ Return the dataset associated with this layer.
 dataset, or nullptr when unknown.
 """
 function ogr_l_getdataset(hLayer)
-    aftercare(ccall((:OGR_L_GetDataset, libgdal), GDALDatasetH, (OGRLayerH,), hLayer))
+    return aftercare(ccall((:OGR_L_GetDataset, libgdal), GDALDatasetH, (OGRLayerH,), hLayer))
 end
 
 """
@@ -9041,15 +7031,7 @@ Fetch a layer by name.
 the layer, or NULL if Layer is not found or an error occurs.
 """
 function gdaldatasetgetlayerbyname(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALDatasetGetLayerByName, libgdal),
-            OGRLayerH,
-            (GDALDatasetH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetGetLayerByName, libgdal), OGRLayerH, (GDALDatasetH, Cstring), arg1, arg2))
 end
 
 """
@@ -9066,15 +7048,7 @@ Returns true if the layer at the specified index is deemed a private or system t
 true if the layer is a private or system table.
 """
 function gdaldatasetislayerprivate(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALDatasetIsLayerPrivate, libgdal),
-            Cint,
-            (GDALDatasetH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetIsLayerPrivate, libgdal), Cint, (GDALDatasetH, Cint), arg1, arg2))
 end
 
 "Type for a OGR error"
@@ -9094,9 +7068,7 @@ Delete the indicated layer from the datasource.
 OGRERR_NONE on success, or OGRERR_UNSUPPORTED_OPERATION if deleting layers is not supported for this datasource.
 """
 function gdaldatasetdeletelayer(arg1, arg2)
-    aftercare(
-        ccall((:GDALDatasetDeleteLayer, libgdal), OGRErr, (GDALDatasetH, Cint), arg1, arg2),
-    )
+    return aftercare(ccall((:GDALDatasetDeleteLayer, libgdal), OGRErr, (GDALDatasetH, Cint), arg1, arg2))
 end
 
 """
@@ -9268,18 +7240,9 @@ This function attempts to create a new layer on the dataset with the indicated n
 NULL is returned on failure, or a new OGRLayer handle on success.
 """
 function gdaldatasetcreatelayer(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:GDALDatasetCreateLayer, libgdal),
-            OGRLayerH,
-            (GDALDatasetH, Cstring, OGRSpatialReferenceH, OGRwkbGeometryType, CSLConstList),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetCreateLayer, libgdal), OGRLayerH,
+                           (GDALDatasetH, Cstring, OGRSpatialReferenceH, OGRwkbGeometryType, CSLConstList), arg1, arg2, arg3, arg4,
+                           arg5))
 end
 
 const OGRGeomFieldDefnHS = Cvoid
@@ -9305,17 +7268,8 @@ This function attempts to create a new layer on the dataset with the indicated n
 NULL is returned on failure, or a new OGRLayer handle on success.
 """
 function gdaldatasetcreatelayerfromgeomfielddefn(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:GDALDatasetCreateLayerFromGeomFieldDefn, libgdal),
-            OGRLayerH,
-            (GDALDatasetH, Cstring, OGRGeomFieldDefnH, CSLConstList),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetCreateLayerFromGeomFieldDefn, libgdal), OGRLayerH,
+                           (GDALDatasetH, Cstring, OGRGeomFieldDefnH, CSLConstList), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -9336,17 +7290,8 @@ Duplicate an existing layer.
 a handle to the layer, or NULL if an error occurs.
 """
 function gdaldatasetcopylayer(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:GDALDatasetCopyLayer, libgdal),
-            OGRLayerH,
-            (GDALDatasetH, OGRLayerH, Cstring, CSLConstList),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetCopyLayer, libgdal), OGRLayerH, (GDALDatasetH, OGRLayerH, Cstring, CSLConstList), arg1,
+                           arg2, arg3, arg4))
 end
 
 """
@@ -9358,7 +7303,7 @@ Reset feature reading to start on the first feature.
 * **hDS**: dataset handle
 """
 function gdaldatasetresetreading(arg1)
-    aftercare(ccall((:GDALDatasetResetReading, libgdal), Cvoid, (GDALDatasetH,), arg1))
+    return aftercare(ccall((:GDALDatasetResetReading, libgdal), Cvoid, (GDALDatasetH,), arg1))
 end
 
 "Opaque type for a feature (OGRFeature)"
@@ -9383,25 +7328,10 @@ Fetch the next available feature from this dataset.
 ### Returns
 a feature, or NULL if no more features are available.
 """
-function gdaldatasetgetnextfeature(
-    hDS,
-    phBelongingLayer,
-    pdfProgressPct,
-    pfnProgress,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:GDALDatasetGetNextFeature, libgdal),
-            OGRFeatureH,
-            (GDALDatasetH, Ptr{OGRLayerH}, Ptr{Cdouble}, GDALProgressFunc, Any),
-            hDS,
-            phBelongingLayer,
-            pdfProgressPct,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+function gdaldatasetgetnextfeature(hDS, phBelongingLayer, pdfProgressPct, pfnProgress, pProgressData)
+    return aftercare(ccall((:GDALDatasetGetNextFeature, libgdal), OGRFeatureH,
+                           (GDALDatasetH, Ptr{OGRLayerH}, Ptr{Cdouble}, GDALProgressFunc, Any), hDS, phBelongingLayer,
+                           pdfProgressPct, pfnProgress, pProgressData))
 end
 
 """
@@ -9418,15 +7348,7 @@ Test if capability is available.
 TRUE if capability available otherwise FALSE.
 """
 function gdaldatasettestcapability(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALDatasetTestCapability, libgdal),
-            Cint,
-            (GDALDatasetH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetTestCapability, libgdal), Cint, (GDALDatasetH, Cstring), arg1, arg2))
 end
 
 "Opaque type for a geometry"
@@ -9450,17 +7372,8 @@ Execute an SQL statement against the data store.
 an OGRLayer containing the results of the query. Deallocate with GDALDatasetReleaseResultSet().
 """
 function gdaldatasetexecutesql(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:GDALDatasetExecuteSQL, libgdal),
-            OGRLayerH,
-            (GDALDatasetH, Cstring, OGRGeometryH, Cstring),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetExecuteSQL, libgdal), OGRLayerH, (GDALDatasetH, Cstring, OGRGeometryH, Cstring), arg1, arg2,
+                           arg3, arg4))
 end
 
 """
@@ -9475,7 +7388,7 @@ Abort any SQL statement running in the data store.
 OGRERR_NONE on success, or OGRERR_UNSUPPORTED_OPERATION if AbortSQL is not supported for this datasource. .
 """
 function gdaldatasetabortsql(arg1)
-    aftercare(ccall((:GDALDatasetAbortSQL, libgdal), OGRErr, (GDALDatasetH,), arg1))
+    return aftercare(ccall((:GDALDatasetAbortSQL, libgdal), OGRErr, (GDALDatasetH,), arg1))
 end
 
 """
@@ -9489,15 +7402,7 @@ Release results of ExecuteSQL().
 * **hLayer**: the result of a previous ExecuteSQL() call.
 """
 function gdaldatasetreleaseresultset(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALDatasetReleaseResultSet, libgdal),
-            Cvoid,
-            (GDALDatasetH, OGRLayerH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetReleaseResultSet, libgdal), Cvoid, (GDALDatasetH, OGRLayerH), arg1, arg2))
 end
 
 "Opaque type for a style table (OGRStyleTable)"
@@ -9515,9 +7420,7 @@ Returns dataset style table.
 handle to a style table which should not be modified or freed by the caller.
 """
 function gdaldatasetgetstyletable(arg1)
-    aftercare(
-        ccall((:GDALDatasetGetStyleTable, libgdal), OGRStyleTableH, (GDALDatasetH,), arg1),
-    )
+    return aftercare(ccall((:GDALDatasetGetStyleTable, libgdal), OGRStyleTableH, (GDALDatasetH,), arg1))
 end
 
 """
@@ -9531,15 +7434,7 @@ Set dataset style table.
 * **hStyleTable**: style table handle to set
 """
 function gdaldatasetsetstyletabledirectly(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALDatasetSetStyleTableDirectly, libgdal),
-            Cvoid,
-            (GDALDatasetH, OGRStyleTableH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetSetStyleTableDirectly, libgdal), Cvoid, (GDALDatasetH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -9553,15 +7448,7 @@ Set dataset style table.
 * **hStyleTable**: style table handle to set
 """
 function gdaldatasetsetstyletable(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALDatasetSetStyleTable, libgdal),
-            Cvoid,
-            (GDALDatasetH, OGRStyleTableH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetSetStyleTable, libgdal), Cvoid, (GDALDatasetH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -9578,15 +7465,7 @@ For datasources which support transactions, StartTransaction creates a transacti
 OGRERR_NONE on success.
 """
 function gdaldatasetstarttransaction(hDS, bForce)
-    aftercare(
-        ccall(
-            (:GDALDatasetStartTransaction, libgdal),
-            OGRErr,
-            (GDALDatasetH, Cint),
-            hDS,
-            bForce,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetStartTransaction, libgdal), OGRErr, (GDALDatasetH, Cint), hDS, bForce))
 end
 
 """
@@ -9598,7 +7477,7 @@ For datasources which support transactions, CommitTransaction commits a transact
 OGRERR_NONE on success.
 """
 function gdaldatasetcommittransaction(hDS)
-    aftercare(ccall((:GDALDatasetCommitTransaction, libgdal), OGRErr, (GDALDatasetH,), hDS))
+    return aftercare(ccall((:GDALDatasetCommitTransaction, libgdal), OGRErr, (GDALDatasetH,), hDS))
 end
 
 """
@@ -9610,9 +7489,7 @@ For datasources which support transactions, RollbackTransaction will roll back a
 OGRERR_NONE on success.
 """
 function gdaldatasetrollbacktransaction(hDS)
-    aftercare(
-        ccall((:GDALDatasetRollbackTransaction, libgdal), OGRErr, (GDALDatasetH,), hDS),
-    )
+    return aftercare(ccall((:GDALDatasetRollbackTransaction, libgdal), OGRErr, (GDALDatasetH,), hDS))
 end
 
 """
@@ -9621,7 +7498,7 @@ end
 Clear statistics.
 """
 function gdaldatasetclearstatistics(hDS)
-    aftercare(ccall((:GDALDatasetClearStatistics, libgdal), Cvoid, (GDALDatasetH,), hDS))
+    return aftercare(ccall((:GDALDatasetClearStatistics, libgdal), Cvoid, (GDALDatasetH,), hDS))
 end
 
 """
@@ -9638,15 +7515,7 @@ Returns a list of the names of all field domains stored in the dataset.
 list of field domain names, to be freed with CSLDestroy()
 """
 function gdaldatasetgetfielddomainnames(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALDatasetGetFieldDomainNames, libgdal),
-            Ptr{Cstring},
-            (GDALDatasetH, CSLConstList),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetGetFieldDomainNames, libgdal), Ptr{Cstring}, (GDALDatasetH, CSLConstList), arg1, arg2))
 end
 
 const OGRFieldDomainHS = Cvoid
@@ -9668,15 +7537,7 @@ Get a field domain from its name.
 the field domain (ownership remains to the dataset), or nullptr if not found.
 """
 function gdaldatasetgetfielddomain(hDS, pszName)
-    aftercare(
-        ccall(
-            (:GDALDatasetGetFieldDomain, libgdal),
-            OGRFieldDomainH,
-            (GDALDatasetH, Cstring),
-            hDS,
-            pszName,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetGetFieldDomain, libgdal), OGRFieldDomainH, (GDALDatasetH, Cstring), hDS, pszName))
 end
 
 """
@@ -9695,16 +7556,8 @@ Add a field domain to the dataset.
 true in case of success.
 """
 function gdaldatasetaddfielddomain(hDS, hFieldDomain, ppszFailureReason)
-    aftercare(
-        ccall(
-            (:GDALDatasetAddFieldDomain, libgdal),
-            Bool,
-            (GDALDatasetH, OGRFieldDomainH, Ptr{Cstring}),
-            hDS,
-            hFieldDomain,
-            ppszFailureReason,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetAddFieldDomain, libgdal), Bool, (GDALDatasetH, OGRFieldDomainH, Ptr{Cstring}), hDS,
+                           hFieldDomain, ppszFailureReason))
 end
 
 """
@@ -9723,16 +7576,8 @@ Removes a field domain from the dataset.
 true in case of success.
 """
 function gdaldatasetdeletefielddomain(hDS, pszName, ppszFailureReason)
-    aftercare(
-        ccall(
-            (:GDALDatasetDeleteFieldDomain, libgdal),
-            Bool,
-            (GDALDatasetH, Cstring, Ptr{Cstring}),
-            hDS,
-            pszName,
-            ppszFailureReason,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetDeleteFieldDomain, libgdal), Bool, (GDALDatasetH, Cstring, Ptr{Cstring}), hDS, pszName,
+                           ppszFailureReason))
 end
 
 """
@@ -9751,16 +7596,8 @@ Updates an existing field domain by replacing its definition.
 true in case of success.
 """
 function gdaldatasetupdatefielddomain(hDS, hFieldDomain, ppszFailureReason)
-    aftercare(
-        ccall(
-            (:GDALDatasetUpdateFieldDomain, libgdal),
-            Bool,
-            (GDALDatasetH, OGRFieldDomainH, Ptr{Cstring}),
-            hDS,
-            hFieldDomain,
-            ppszFailureReason,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetUpdateFieldDomain, libgdal), Bool, (GDALDatasetH, OGRFieldDomainH, Ptr{Cstring}), hDS,
+                           hFieldDomain, ppszFailureReason))
 end
 
 """
@@ -9777,15 +7614,7 @@ Returns a list of the names of all relationships stored in the dataset.
 list of relationship names, to be freed with CSLDestroy()
 """
 function gdaldatasetgetrelationshipnames(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALDatasetGetRelationshipNames, libgdal),
-            Ptr{Cstring},
-            (GDALDatasetH, CSLConstList),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetGetRelationshipNames, libgdal), Ptr{Cstring}, (GDALDatasetH, CSLConstList), arg1, arg2))
 end
 
 """
@@ -9802,15 +7631,7 @@ Get a relationship from its name.
 the relationship (ownership remains to the dataset), or nullptr if not found.
 """
 function gdaldatasetgetrelationship(hDS, pszName)
-    aftercare(
-        ccall(
-            (:GDALDatasetGetRelationship, libgdal),
-            GDALRelationshipH,
-            (GDALDatasetH, Cstring),
-            hDS,
-            pszName,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetGetRelationship, libgdal), GDALRelationshipH, (GDALDatasetH, Cstring), hDS, pszName))
 end
 
 """
@@ -9829,16 +7650,8 @@ Add a relationship to the dataset.
 true in case of success.
 """
 function gdaldatasetaddrelationship(hDS, hRelationship, ppszFailureReason)
-    aftercare(
-        ccall(
-            (:GDALDatasetAddRelationship, libgdal),
-            Bool,
-            (GDALDatasetH, GDALRelationshipH, Ptr{Cstring}),
-            hDS,
-            hRelationship,
-            ppszFailureReason,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetAddRelationship, libgdal), Bool, (GDALDatasetH, GDALRelationshipH, Ptr{Cstring}), hDS,
+                           hRelationship, ppszFailureReason))
 end
 
 """
@@ -9857,16 +7670,8 @@ Removes a relationship from the dataset.
 true in case of success.
 """
 function gdaldatasetdeleterelationship(hDS, pszName, ppszFailureReason)
-    aftercare(
-        ccall(
-            (:GDALDatasetDeleteRelationship, libgdal),
-            Bool,
-            (GDALDatasetH, Cstring, Ptr{Cstring}),
-            hDS,
-            pszName,
-            ppszFailureReason,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetDeleteRelationship, libgdal), Bool, (GDALDatasetH, Cstring, Ptr{Cstring}), hDS, pszName,
+                           ppszFailureReason))
 end
 
 """
@@ -9885,16 +7690,8 @@ Updates an existing relationship by replacing its definition.
 true in case of success.
 """
 function gdaldatasetupdaterelationship(hDS, hRelationship, ppszFailureReason)
-    aftercare(
-        ccall(
-            (:GDALDatasetUpdateRelationship, libgdal),
-            Bool,
-            (GDALDatasetH, GDALRelationshipH, Ptr{Cstring}),
-            hDS,
-            hRelationship,
-            ppszFailureReason,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetUpdateRelationship, libgdal), Bool, (GDALDatasetH, GDALRelationshipH, Ptr{Cstring}), hDS,
+                           hRelationship, ppszFailureReason))
 end
 
 """
@@ -9923,16 +7720,8 @@ A value of -1 in the execution time or in the number of records indicates that t
 true in case of success.
 """
 function gdaldatasetsetqueryloggerfunc(hDS, pfnQueryLoggerFunc, poQueryLoggerArg)
-    aftercare(
-        ccall(
-            (:GDALDatasetSetQueryLoggerFunc, libgdal),
-            Bool,
-            (GDALDatasetH, GDALQueryLoggerFunc, Ptr{Cvoid}),
-            hDS,
-            pfnQueryLoggerFunc,
-            poQueryLoggerArg,
-        ),
-    )
+    return aftercare(ccall((:GDALDatasetSetQueryLoggerFunc, libgdal), Bool, (GDALDatasetH, GDALQueryLoggerFunc, Ptr{Cvoid}), hDS,
+                           pfnQueryLoggerFunc, poQueryLoggerArg))
 end
 
 const GDALSubdatasetInfo = Cvoid
@@ -9961,14 +7750,7 @@ Returns a new [`GDALSubdatasetInfo`](@ref) object with methods to extract and ma
 Opaque pointer to a [`GDALSubdatasetInfo`](@ref) object or NULL if no drivers accepted the file name.
 """
 function gdalgetsubdatasetinfo(pszFileName)
-    aftercare(
-        ccall(
-            (:GDALGetSubdatasetInfo, libgdal),
-            GDALSubdatasetInfoH,
-            (Cstring,),
-            pszFileName,
-        ),
-    )
+    return aftercare(ccall((:GDALGetSubdatasetInfo, libgdal), GDALSubdatasetInfoH, (Cstring,), pszFileName))
 end
 
 """
@@ -9988,15 +7770,7 @@ Returns the file path component of a subdataset descriptor effectively stripping
 The original string with the subdataset information removed.
 """
 function gdalsubdatasetinfogetpathcomponent(hInfo)
-    aftercare(
-        ccall(
-            (:GDALSubdatasetInfoGetPathComponent, libgdal),
-            Cstring,
-            (GDALSubdatasetInfoH,),
-            hInfo,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALSubdatasetInfoGetPathComponent, libgdal), Cstring, (GDALSubdatasetInfoH,), hInfo), false)
 end
 
 """
@@ -10016,15 +7790,7 @@ Returns the subdataset component of a subdataset descriptor descriptor. The retu
 The subdataset name.
 """
 function gdalsubdatasetinfogetsubdatasetcomponent(hInfo)
-    aftercare(
-        ccall(
-            (:GDALSubdatasetInfoGetSubdatasetComponent, libgdal),
-            Cstring,
-            (GDALSubdatasetInfoH,),
-            hInfo,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALSubdatasetInfoGetSubdatasetComponent, libgdal), Cstring, (GDALSubdatasetInfoH,), hInfo), false)
 end
 
 """
@@ -10045,16 +7811,8 @@ Replaces the path component of a subdataset descriptor. The returned string must
 The original subdataset descriptor with the old path component replaced by newPath.
 """
 function gdalsubdatasetinfomodifypathcomponent(hInfo, pszNewPath)
-    aftercare(
-        ccall(
-            (:GDALSubdatasetInfoModifyPathComponent, libgdal),
-            Cstring,
-            (GDALSubdatasetInfoH, Cstring),
-            hInfo,
-            pszNewPath,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALSubdatasetInfoModifyPathComponent, libgdal), Cstring, (GDALSubdatasetInfoH, Cstring), hInfo,
+                           pszNewPath), false)
 end
 
 """
@@ -10068,9 +7826,7 @@ Destroys a [`GDALSubdatasetInfo`](@ref) object.
 * `hInfo`: Pointer to [`GDALSubdatasetInfo`](@ref) object
 """
 function gdaldestroysubdatasetinfo(hInfo)
-    aftercare(
-        ccall((:GDALDestroySubdatasetInfo, libgdal), Cvoid, (GDALSubdatasetInfoH,), hInfo),
-    )
+    return aftercare(ccall((:GDALDestroySubdatasetInfo, libgdal), Cvoid, (GDALSubdatasetInfoH,), hInfo))
 end
 
 """
@@ -10093,9 +7849,7 @@ const GDALDerivedPixelFuncWithArgs = Ptr{Cvoid}
 Fetch the pixel data type for this band.
 """
 function gdalgetrasterdatatype(arg1)
-    aftercare(
-        ccall((:GDALGetRasterDataType, libgdal), GDALDataType, (GDALRasterBandH,), arg1),
-    )
+    return aftercare(ccall((:GDALGetRasterDataType, libgdal), GDALDataType, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -10106,16 +7860,7 @@ end
 Fetch the "natural" block size of this band.
 """
 function gdalgetblocksize(arg1, pnXSize, pnYSize)
-    aftercare(
-        ccall(
-            (:GDALGetBlockSize, libgdal),
-            Cvoid,
-            (GDALRasterBandH, Ptr{Cint}, Ptr{Cint}),
-            arg1,
-            pnXSize,
-            pnYSize,
-        ),
-    )
+    return aftercare(ccall((:GDALGetBlockSize, libgdal), Cvoid, (GDALRasterBandH, Ptr{Cint}, Ptr{Cint}), arg1, pnXSize, pnYSize))
 end
 
 """
@@ -10128,18 +7873,8 @@ end
 Retrieve the actual block size for a given block offset.
 """
 function gdalgetactualblocksize(arg1, nXBlockOff, nYBlockOff, pnXValid, pnYValid)
-    aftercare(
-        ccall(
-            (:GDALGetActualBlockSize, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cint, Cint, Ptr{Cint}, Ptr{Cint}),
-            arg1,
-            nXBlockOff,
-            nYBlockOff,
-            pnXValid,
-            pnYValid,
-        ),
-    )
+    return aftercare(ccall((:GDALGetActualBlockSize, libgdal), CPLErr, (GDALRasterBandH, Cint, Cint, Ptr{Cint}, Ptr{Cint}), arg1,
+                           nXBlockOff, nYBlockOff, pnXValid, pnYValid))
 end
 
 """
@@ -10155,43 +7890,10 @@ end
 
 Advise driver of upcoming read requests.
 """
-function gdalrasteradviseread(
-    hRB,
-    nDSXOff,
-    nDSYOff,
-    nDSXSize,
-    nDSYSize,
-    nBXSize,
-    nBYSize,
-    eBDataType,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALRasterAdviseRead, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                GDALDataType,
-                CSLConstList,
-            ),
-            hRB,
-            nDSXOff,
-            nDSYOff,
-            nDSXSize,
-            nDSYSize,
-            nBXSize,
-            nBYSize,
-            eBDataType,
-            papszOptions,
-        ),
-    )
+function gdalrasteradviseread(hRB, nDSXOff, nDSYOff, nDSXSize, nDSYSize, nBXSize, nBYSize, eBDataType, papszOptions)
+    return aftercare(ccall((:GDALRasterAdviseRead, libgdal), CPLErr,
+                           (GDALRasterBandH, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, CSLConstList), hRB, nDSXOff, nDSYOff,
+                           nDSXSize, nDSYSize, nBXSize, nBYSize, eBDataType, papszOptions))
 end
 
 """
@@ -10210,52 +7912,12 @@ end
 
 Read/write a region of image data for this band.
 """
-function gdalrasterio(
-    hRBand,
-    eRWFlag,
-    nDSXOff,
-    nDSYOff,
-    nDSXSize,
-    nDSYSize,
-    pBuffer,
-    nBXSize,
-    nBYSize,
-    eBDataType,
-    nPixelSpace,
-    nLineSpace,
-)
-    aftercare(
-        ccall(
-            (:GDALRasterIO, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                GDALRWFlag,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Ptr{Cvoid},
-                Cint,
-                Cint,
-                GDALDataType,
-                Cint,
-                Cint,
-            ),
-            hRBand,
-            eRWFlag,
-            nDSXOff,
-            nDSYOff,
-            nDSXSize,
-            nDSYSize,
-            pBuffer,
-            nBXSize,
-            nBYSize,
-            eBDataType,
-            nPixelSpace,
-            nLineSpace,
-        ),
-    )
+function gdalrasterio(hRBand, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nPixelSpace,
+                      nLineSpace)
+    return aftercare(ccall((:GDALRasterIO, libgdal), CPLErr,
+                           (GDALRasterBandH, GDALRWFlag, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, Cint, Cint),
+                           hRBand, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType,
+                           nPixelSpace, nLineSpace))
 end
 
 """
@@ -10275,55 +7937,12 @@ end
 
 Read/write a region of image data for this band.
 """
-function gdalrasterioex(
-    hRBand,
-    eRWFlag,
-    nDSXOff,
-    nDSYOff,
-    nDSXSize,
-    nDSYSize,
-    pBuffer,
-    nBXSize,
-    nBYSize,
-    eBDataType,
-    nPixelSpace,
-    nLineSpace,
-    psExtraArg,
-)
-    aftercare(
-        ccall(
-            (:GDALRasterIOEx, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                GDALRWFlag,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Ptr{Cvoid},
-                Cint,
-                Cint,
-                GDALDataType,
-                GSpacing,
-                GSpacing,
-                Ptr{GDALRasterIOExtraArg},
-            ),
-            hRBand,
-            eRWFlag,
-            nDSXOff,
-            nDSYOff,
-            nDSXSize,
-            nDSYSize,
-            pBuffer,
-            nBXSize,
-            nBYSize,
-            eBDataType,
-            nPixelSpace,
-            nLineSpace,
-            psExtraArg,
-        ),
-    )
+function gdalrasterioex(hRBand, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer, nBXSize, nBYSize, eBDataType, nPixelSpace,
+                        nLineSpace, psExtraArg)
+    return aftercare(ccall((:GDALRasterIOEx, libgdal), CPLErr,
+                           (GDALRasterBandH, GDALRWFlag, Cint, Cint, Cint, Cint, Ptr{Cvoid}, Cint, Cint, GDALDataType, GSpacing,
+                            GSpacing, Ptr{GDALRasterIOExtraArg}), hRBand, eRWFlag, nDSXOff, nDSYOff, nDSXSize, nDSYSize, pBuffer,
+                           nBXSize, nBYSize, eBDataType, nPixelSpace, nLineSpace, psExtraArg))
 end
 
 """
@@ -10335,17 +7954,7 @@ end
 Read a block of image data efficiently.
 """
 function gdalreadblock(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:GDALReadBlock, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cint, Cint, Ptr{Cvoid}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:GDALReadBlock, libgdal), CPLErr, (GDALRasterBandH, Cint, Cint, Ptr{Cvoid}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -10357,17 +7966,7 @@ end
 Write a block of image data efficiently.
 """
 function gdalwriteblock(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:GDALWriteBlock, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cint, Cint, Ptr{Cvoid}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:GDALWriteBlock, libgdal), CPLErr, (GDALRasterBandH, Cint, Cint, Ptr{Cvoid}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -10376,7 +7975,7 @@ end
 Fetch XSize of raster.
 """
 function gdalgetrasterbandxsize(arg1)
-    aftercare(ccall((:GDALGetRasterBandXSize, libgdal), Cint, (GDALRasterBandH,), arg1))
+    return aftercare(ccall((:GDALGetRasterBandXSize, libgdal), Cint, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -10385,7 +7984,7 @@ end
 Fetch YSize of raster.
 """
 function gdalgetrasterbandysize(arg1)
-    aftercare(ccall((:GDALGetRasterBandYSize, libgdal), Cint, (GDALRasterBandH,), arg1))
+    return aftercare(ccall((:GDALGetRasterBandYSize, libgdal), Cint, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -10394,7 +7993,7 @@ end
 Find out if we have update permission for this band.
 """
 function gdalgetrasteraccess(arg1)
-    aftercare(ccall((:GDALGetRasterAccess, libgdal), GDALAccess, (GDALRasterBandH,), arg1))
+    return aftercare(ccall((:GDALGetRasterAccess, libgdal), GDALAccess, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -10403,7 +8002,7 @@ end
 Fetch the band number.
 """
 function gdalgetbandnumber(arg1)
-    aftercare(ccall((:GDALGetBandNumber, libgdal), Cint, (GDALRasterBandH,), arg1))
+    return aftercare(ccall((:GDALGetBandNumber, libgdal), Cint, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -10412,7 +8011,7 @@ end
 Fetch the owning dataset handle.
 """
 function gdalgetbanddataset(arg1)
-    aftercare(ccall((:GDALGetBandDataset, libgdal), GDALDatasetH, (GDALRasterBandH,), arg1))
+    return aftercare(ccall((:GDALGetBandDataset, libgdal), GDALDatasetH, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -10421,14 +8020,7 @@ end
 How should this band be interpreted as color?
 """
 function gdalgetrastercolorinterpretation(arg1)
-    aftercare(
-        ccall(
-            (:GDALGetRasterColorInterpretation, libgdal),
-            GDALColorInterp,
-            (GDALRasterBandH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALGetRasterColorInterpretation, libgdal), GDALColorInterp, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -10438,15 +8030,7 @@ end
 Set color interpretation of a band.
 """
 function gdalsetrastercolorinterpretation(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALSetRasterColorInterpretation, libgdal),
-            CPLErr,
-            (GDALRasterBandH, GDALColorInterp),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALSetRasterColorInterpretation, libgdal), CPLErr, (GDALRasterBandH, GDALColorInterp), arg1, arg2))
 end
 
 """
@@ -10455,14 +8039,7 @@ end
 Fetch the color table associated with band.
 """
 function gdalgetrastercolortable(arg1)
-    aftercare(
-        ccall(
-            (:GDALGetRasterColorTable, libgdal),
-            GDALColorTableH,
-            (GDALRasterBandH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALGetRasterColorTable, libgdal), GDALColorTableH, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -10472,15 +8049,7 @@ end
 Set the raster color table.
 """
 function gdalsetrastercolortable(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALSetRasterColorTable, libgdal),
-            CPLErr,
-            (GDALRasterBandH, GDALColorTableH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALSetRasterColorTable, libgdal), CPLErr, (GDALRasterBandH, GDALColorTableH), arg1, arg2))
 end
 
 """
@@ -10489,7 +8058,7 @@ end
 Check for arbitrary overviews.
 """
 function gdalhasarbitraryoverviews(arg1)
-    aftercare(ccall((:GDALHasArbitraryOverviews, libgdal), Cint, (GDALRasterBandH,), arg1))
+    return aftercare(ccall((:GDALHasArbitraryOverviews, libgdal), Cint, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -10498,7 +8067,7 @@ end
 Return the number of overview layers available.
 """
 function gdalgetoverviewcount(arg1)
-    aftercare(ccall((:GDALGetOverviewCount, libgdal), Cint, (GDALRasterBandH,), arg1))
+    return aftercare(ccall((:GDALGetOverviewCount, libgdal), Cint, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -10508,15 +8077,7 @@ end
 Fetch overview raster band object.
 """
 function gdalgetoverview(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALGetOverview, libgdal),
-            GDALRasterBandH,
-            (GDALRasterBandH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALGetOverview, libgdal), GDALRasterBandH, (GDALRasterBandH, Cint), arg1, arg2))
 end
 
 """
@@ -10526,15 +8087,7 @@ end
 Fetch the no data value for this band.
 """
 function gdalgetrasternodatavalue(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALGetRasterNoDataValue, libgdal),
-            Cdouble,
-            (GDALRasterBandH, Ptr{Cint}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALGetRasterNoDataValue, libgdal), Cdouble, (GDALRasterBandH, Ptr{Cint}), arg1, arg2))
 end
 
 """
@@ -10544,15 +8097,7 @@ end
 Fetch the no data value for this band.
 """
 function gdalgetrasternodatavalueasint64(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALGetRasterNoDataValueAsInt64, libgdal),
-            Int64,
-            (GDALRasterBandH, Ptr{Cint}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALGetRasterNoDataValueAsInt64, libgdal), Int64, (GDALRasterBandH, Ptr{Cint}), arg1, arg2))
 end
 
 """
@@ -10562,15 +8107,7 @@ end
 Fetch the no data value for this band.
 """
 function gdalgetrasternodatavalueasuint64(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALGetRasterNoDataValueAsUInt64, libgdal),
-            UInt64,
-            (GDALRasterBandH, Ptr{Cint}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALGetRasterNoDataValueAsUInt64, libgdal), UInt64, (GDALRasterBandH, Ptr{Cint}), arg1, arg2))
 end
 
 """
@@ -10580,15 +8117,7 @@ end
 Set the no data value for this band.
 """
 function gdalsetrasternodatavalue(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALSetRasterNoDataValue, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cdouble),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALSetRasterNoDataValue, libgdal), CPLErr, (GDALRasterBandH, Cdouble), arg1, arg2))
 end
 
 """
@@ -10598,15 +8127,7 @@ end
 Set the no data value for this band.
 """
 function gdalsetrasternodatavalueasint64(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALSetRasterNoDataValueAsInt64, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Int64),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALSetRasterNoDataValueAsInt64, libgdal), CPLErr, (GDALRasterBandH, Int64), arg1, arg2))
 end
 
 """
@@ -10616,15 +8137,7 @@ end
 Set the no data value for this band.
 """
 function gdalsetrasternodatavalueasuint64(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALSetRasterNoDataValueAsUInt64, libgdal),
-            CPLErr,
-            (GDALRasterBandH, UInt64),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALSetRasterNoDataValueAsUInt64, libgdal), CPLErr, (GDALRasterBandH, UInt64), arg1, arg2))
 end
 
 """
@@ -10633,9 +8146,7 @@ end
 Remove the no data value for this band.
 """
 function gdaldeleterasternodatavalue(arg1)
-    aftercare(
-        ccall((:GDALDeleteRasterNoDataValue, libgdal), CPLErr, (GDALRasterBandH,), arg1),
-    )
+    return aftercare(ccall((:GDALDeleteRasterNoDataValue, libgdal), CPLErr, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -10644,14 +8155,7 @@ end
 Fetch the list of category names for this raster.
 """
 function gdalgetrastercategorynames(arg1)
-    aftercare(
-        ccall(
-            (:GDALGetRasterCategoryNames, libgdal),
-            Ptr{Cstring},
-            (GDALRasterBandH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALGetRasterCategoryNames, libgdal), Ptr{Cstring}, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -10661,15 +8165,7 @@ end
 Set the category names for this band.
 """
 function gdalsetrastercategorynames(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALSetRasterCategoryNames, libgdal),
-            CPLErr,
-            (GDALRasterBandH, CSLConstList),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALSetRasterCategoryNames, libgdal), CPLErr, (GDALRasterBandH, CSLConstList), arg1, arg2))
 end
 
 """
@@ -10679,15 +8175,7 @@ end
 Fetch the minimum value for this band.
 """
 function gdalgetrasterminimum(arg1, pbSuccess)
-    aftercare(
-        ccall(
-            (:GDALGetRasterMinimum, libgdal),
-            Cdouble,
-            (GDALRasterBandH, Ptr{Cint}),
-            arg1,
-            pbSuccess,
-        ),
-    )
+    return aftercare(ccall((:GDALGetRasterMinimum, libgdal), Cdouble, (GDALRasterBandH, Ptr{Cint}), arg1, pbSuccess))
 end
 
 """
@@ -10697,15 +8185,7 @@ end
 Fetch the maximum value for this band.
 """
 function gdalgetrastermaximum(arg1, pbSuccess)
-    aftercare(
-        ccall(
-            (:GDALGetRasterMaximum, libgdal),
-            Cdouble,
-            (GDALRasterBandH, Ptr{Cint}),
-            arg1,
-            pbSuccess,
-        ),
-    )
+    return aftercare(ccall((:GDALGetRasterMaximum, libgdal), Cdouble, (GDALRasterBandH, Ptr{Cint}), arg1, pbSuccess))
 end
 
 """
@@ -10719,37 +8199,10 @@ end
 
 Fetch image statistics.
 """
-function gdalgetrasterstatistics(
-    arg1,
-    bApproxOK,
-    bForce,
-    pdfMin,
-    pdfMax,
-    pdfMean,
-    pdfStdDev,
-)
-    aftercare(
-        ccall(
-            (:GDALGetRasterStatistics, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                Cint,
-                Cint,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-            ),
-            arg1,
-            bApproxOK,
-            bForce,
-            pdfMin,
-            pdfMax,
-            pdfMean,
-            pdfStdDev,
-        ),
-    )
+function gdalgetrasterstatistics(arg1, bApproxOK, bForce, pdfMin, pdfMax, pdfMean, pdfStdDev)
+    return aftercare(ccall((:GDALGetRasterStatistics, libgdal), CPLErr,
+                           (GDALRasterBandH, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}), arg1, bApproxOK,
+                           bForce, pdfMin, pdfMax, pdfMean, pdfStdDev))
 end
 
 """
@@ -10764,40 +8217,10 @@ end
 
 Compute image statistics.
 """
-function gdalcomputerasterstatistics(
-    arg1,
-    bApproxOK,
-    pdfMin,
-    pdfMax,
-    pdfMean,
-    pdfStdDev,
-    pfnProgress,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:GDALComputeRasterStatistics, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                Cint,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                GDALProgressFunc,
-                Any,
-            ),
-            arg1,
-            bApproxOK,
-            pdfMin,
-            pdfMax,
-            pdfMean,
-            pdfStdDev,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+function gdalcomputerasterstatistics(arg1, bApproxOK, pdfMin, pdfMax, pdfMean, pdfStdDev, pfnProgress, pProgressData)
+    return aftercare(ccall((:GDALComputeRasterStatistics, libgdal), CPLErr,
+                           (GDALRasterBandH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, GDALProgressFunc, Any),
+                           arg1, bApproxOK, pdfMin, pdfMax, pdfMean, pdfStdDev, pfnProgress, pProgressData))
 end
 
 """
@@ -10810,18 +8233,8 @@ end
 Set statistics on band.
 """
 function gdalsetrasterstatistics(hBand, dfMin, dfMax, dfMean, dfStdDev)
-    aftercare(
-        ccall(
-            (:GDALSetRasterStatistics, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hBand,
-            dfMin,
-            dfMax,
-            dfMean,
-            dfStdDev,
-        ),
-    )
+    return aftercare(ccall((:GDALSetRasterStatistics, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble, Cdouble, Cdouble),
+                           hBand, dfMin, dfMax, dfMean, dfStdDev))
 end
 
 """
@@ -10833,9 +8246,7 @@ Return a view of this raster band as a 2D multidimensional GDALMDArray.
 a new array, or NULL.
 """
 function gdalrasterbandasmdarray(arg1)
-    aftercare(
-        ccall((:GDALRasterBandAsMDArray, libgdal), GDALMDArrayH, (GDALRasterBandH,), arg1),
-    )
+    return aftercare(ccall((:GDALRasterBandAsMDArray, libgdal), GDALMDArrayH, (GDALRasterBandH,), arg1))
 end
 
 """
@@ -10844,10 +8255,7 @@ end
 Return raster unit type.
 """
 function gdalgetrasterunittype(arg1)
-    aftercare(
-        ccall((:GDALGetRasterUnitType, libgdal), Cstring, (GDALRasterBandH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:GDALGetRasterUnitType, libgdal), Cstring, (GDALRasterBandH,), arg1), false)
 end
 
 """
@@ -10857,15 +8265,7 @@ end
 Set unit type.
 """
 function gdalsetrasterunittype(hBand, pszNewValue)
-    aftercare(
-        ccall(
-            (:GDALSetRasterUnitType, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cstring),
-            hBand,
-            pszNewValue,
-        ),
-    )
+    return aftercare(ccall((:GDALSetRasterUnitType, libgdal), CPLErr, (GDALRasterBandH, Cstring), hBand, pszNewValue))
 end
 
 """
@@ -10875,15 +8275,7 @@ end
 Fetch the raster value offset.
 """
 function gdalgetrasteroffset(arg1, pbSuccess)
-    aftercare(
-        ccall(
-            (:GDALGetRasterOffset, libgdal),
-            Cdouble,
-            (GDALRasterBandH, Ptr{Cint}),
-            arg1,
-            pbSuccess,
-        ),
-    )
+    return aftercare(ccall((:GDALGetRasterOffset, libgdal), Cdouble, (GDALRasterBandH, Ptr{Cint}), arg1, pbSuccess))
 end
 
 """
@@ -10893,15 +8285,7 @@ end
 Set scaling offset.
 """
 function gdalsetrasteroffset(hBand, dfNewOffset)
-    aftercare(
-        ccall(
-            (:GDALSetRasterOffset, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cdouble),
-            hBand,
-            dfNewOffset,
-        ),
-    )
+    return aftercare(ccall((:GDALSetRasterOffset, libgdal), CPLErr, (GDALRasterBandH, Cdouble), hBand, dfNewOffset))
 end
 
 """
@@ -10911,15 +8295,7 @@ end
 Fetch the raster value scale.
 """
 function gdalgetrasterscale(arg1, pbSuccess)
-    aftercare(
-        ccall(
-            (:GDALGetRasterScale, libgdal),
-            Cdouble,
-            (GDALRasterBandH, Ptr{Cint}),
-            arg1,
-            pbSuccess,
-        ),
-    )
+    return aftercare(ccall((:GDALGetRasterScale, libgdal), Cdouble, (GDALRasterBandH, Ptr{Cint}), arg1, pbSuccess))
 end
 
 """
@@ -10929,15 +8305,7 @@ end
 Set scaling ratio.
 """
 function gdalsetrasterscale(hBand, dfNewOffset)
-    aftercare(
-        ccall(
-            (:GDALSetRasterScale, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cdouble),
-            hBand,
-            dfNewOffset,
-        ),
-    )
+    return aftercare(ccall((:GDALSetRasterScale, libgdal), CPLErr, (GDALRasterBandH, Cdouble), hBand, dfNewOffset))
 end
 
 """
@@ -10948,16 +8316,8 @@ end
 Compute the min/max values for a band.
 """
 function gdalcomputerasterminmax(hBand, bApproxOK, adfMinMax)
-    aftercare(
-        ccall(
-            (:GDALComputeRasterMinMax, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cint, Ptr{Cdouble}),
-            hBand,
-            bApproxOK,
-            adfMinMax,
-        ),
-    )
+    return aftercare(ccall((:GDALComputeRasterMinMax, libgdal), CPLErr, (GDALRasterBandH, Cint, Ptr{Cdouble}), hBand, bApproxOK,
+                           adfMinMax))
 end
 
 """
@@ -10966,7 +8326,7 @@ end
 Flush raster data cache.
 """
 function gdalflushrastercache(hBand)
-    aftercare(ccall((:GDALFlushRasterCache, libgdal), CPLErr, (GDALRasterBandH,), hBand))
+    return aftercare(ccall((:GDALFlushRasterCache, libgdal), CPLErr, (GDALRasterBandH,), hBand))
 end
 
 """
@@ -10975,7 +8335,7 @@ end
 Drop raster data cache.
 """
 function gdaldroprastercache(hBand)
-    aftercare(ccall((:GDALDropRasterCache, libgdal), CPLErr, (GDALRasterBandH,), hBand))
+    return aftercare(ccall((:GDALDropRasterCache, libgdal), CPLErr, (GDALRasterBandH,), hBand))
 end
 
 """
@@ -10991,43 +8351,11 @@ end
 
 Compute raster histogram.
 """
-function gdalgetrasterhistogram(
-    hBand,
-    dfMin,
-    dfMax,
-    nBuckets,
-    panHistogram,
-    bIncludeOutOfRange,
-    bApproxOK,
-    pfnProgress,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:GDALGetRasterHistogram, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                Cdouble,
-                Cdouble,
-                Cint,
-                Ptr{Cint},
-                Cint,
-                Cint,
-                GDALProgressFunc,
-                Any,
-            ),
-            hBand,
-            dfMin,
-            dfMax,
-            nBuckets,
-            panHistogram,
-            bIncludeOutOfRange,
-            bApproxOK,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+function gdalgetrasterhistogram(hBand, dfMin, dfMax, nBuckets, panHistogram, bIncludeOutOfRange, bApproxOK, pfnProgress,
+                                pProgressData)
+    return aftercare(ccall((:GDALGetRasterHistogram, libgdal), CPLErr,
+                           (GDALRasterBandH, Cdouble, Cdouble, Cint, Ptr{Cint}, Cint, Cint, GDALProgressFunc, Any), hBand, dfMin,
+                           dfMax, nBuckets, panHistogram, bIncludeOutOfRange, bApproxOK, pfnProgress, pProgressData))
 end
 
 """
@@ -11043,43 +8371,11 @@ end
 
 Compute raster histogram.
 """
-function gdalgetrasterhistogramex(
-    hBand,
-    dfMin,
-    dfMax,
-    nBuckets,
-    panHistogram,
-    bIncludeOutOfRange,
-    bApproxOK,
-    pfnProgress,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:GDALGetRasterHistogramEx, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                Cdouble,
-                Cdouble,
-                Cint,
-                Ptr{GUIntBig},
-                Cint,
-                Cint,
-                GDALProgressFunc,
-                Any,
-            ),
-            hBand,
-            dfMin,
-            dfMax,
-            nBuckets,
-            panHistogram,
-            bIncludeOutOfRange,
-            bApproxOK,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+function gdalgetrasterhistogramex(hBand, dfMin, dfMax, nBuckets, panHistogram, bIncludeOutOfRange, bApproxOK, pfnProgress,
+                                  pProgressData)
+    return aftercare(ccall((:GDALGetRasterHistogramEx, libgdal), CPLErr,
+                           (GDALRasterBandH, Cdouble, Cdouble, Cint, Ptr{GUIntBig}, Cint, Cint, GDALProgressFunc, Any), hBand,
+                           dfMin, dfMax, nBuckets, panHistogram, bIncludeOutOfRange, bApproxOK, pfnProgress, pProgressData))
 end
 
 """
@@ -11094,40 +8390,10 @@ end
 
 Fetch default raster histogram.
 """
-function gdalgetdefaulthistogram(
-    hBand,
-    pdfMin,
-    pdfMax,
-    pnBuckets,
-    ppanHistogram,
-    bForce,
-    pfnProgress,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:GDALGetDefaultHistogram, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cint},
-                Ptr{Ptr{Cint}},
-                Cint,
-                GDALProgressFunc,
-                Any,
-            ),
-            hBand,
-            pdfMin,
-            pdfMax,
-            pnBuckets,
-            ppanHistogram,
-            bForce,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+function gdalgetdefaulthistogram(hBand, pdfMin, pdfMax, pnBuckets, ppanHistogram, bForce, pfnProgress, pProgressData)
+    return aftercare(ccall((:GDALGetDefaultHistogram, libgdal), CPLErr,
+                           (GDALRasterBandH, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}, Ptr{Ptr{Cint}}, Cint, GDALProgressFunc, Any),
+                           hBand, pdfMin, pdfMax, pnBuckets, ppanHistogram, bForce, pfnProgress, pProgressData))
 end
 
 """
@@ -11142,40 +8408,10 @@ end
 
 Fetch default raster histogram.
 """
-function gdalgetdefaulthistogramex(
-    hBand,
-    pdfMin,
-    pdfMax,
-    pnBuckets,
-    ppanHistogram,
-    bForce,
-    pfnProgress,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:GDALGetDefaultHistogramEx, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cint},
-                Ptr{Ptr{GUIntBig}},
-                Cint,
-                GDALProgressFunc,
-                Any,
-            ),
-            hBand,
-            pdfMin,
-            pdfMax,
-            pnBuckets,
-            ppanHistogram,
-            bForce,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+function gdalgetdefaulthistogramex(hBand, pdfMin, pdfMax, pnBuckets, ppanHistogram, bForce, pfnProgress, pProgressData)
+    return aftercare(ccall((:GDALGetDefaultHistogramEx, libgdal), CPLErr,
+                           (GDALRasterBandH, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}, Ptr{Ptr{GUIntBig}}, Cint, GDALProgressFunc,
+                            Any), hBand, pdfMin, pdfMax, pnBuckets, ppanHistogram, bForce, pfnProgress, pProgressData))
 end
 
 """
@@ -11188,18 +8424,8 @@ end
 Set default histogram.
 """
 function gdalsetdefaulthistogram(hBand, dfMin, dfMax, nBuckets, panHistogram)
-    aftercare(
-        ccall(
-            (:GDALSetDefaultHistogram, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cdouble, Cdouble, Cint, Ptr{Cint}),
-            hBand,
-            dfMin,
-            dfMax,
-            nBuckets,
-            panHistogram,
-        ),
-    )
+    return aftercare(ccall((:GDALSetDefaultHistogram, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble, Cint, Ptr{Cint}), hBand,
+                           dfMin, dfMax, nBuckets, panHistogram))
 end
 
 """
@@ -11212,18 +8438,8 @@ end
 Set default histogram.
 """
 function gdalsetdefaulthistogramex(hBand, dfMin, dfMax, nBuckets, panHistogram)
-    aftercare(
-        ccall(
-            (:GDALSetDefaultHistogramEx, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cdouble, Cdouble, Cint, Ptr{GUIntBig}),
-            hBand,
-            dfMin,
-            dfMax,
-            nBuckets,
-            panHistogram,
-        ),
-    )
+    return aftercare(ccall((:GDALSetDefaultHistogramEx, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble, Cint, Ptr{GUIntBig}),
+                           hBand, dfMin, dfMax, nBuckets, panHistogram))
 end
 
 """
@@ -11242,16 +8458,7 @@ Undocumented.
 undocumented
 """
 function gdalgetrandomrastersample(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALGetRandomRasterSample, libgdal),
-            Cint,
-            (GDALRasterBandH, Cint, Ptr{Cfloat}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALGetRandomRasterSample, libgdal), Cint, (GDALRasterBandH, Cint, Ptr{Cfloat}), arg1, arg2, arg3))
 end
 
 """
@@ -11261,15 +8468,7 @@ end
 Fetch best sampling overview.
 """
 function gdalgetrastersampleoverview(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALGetRasterSampleOverview, libgdal),
-            GDALRasterBandH,
-            (GDALRasterBandH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALGetRasterSampleOverview, libgdal), GDALRasterBandH, (GDALRasterBandH, Cint), arg1, arg2))
 end
 
 """
@@ -11279,15 +8478,7 @@ end
 Fetch best sampling overview.
 """
 function gdalgetrastersampleoverviewex(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALGetRasterSampleOverviewEx, libgdal),
-            GDALRasterBandH,
-            (GDALRasterBandH, GUIntBig),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALGetRasterSampleOverviewEx, libgdal), GDALRasterBandH, (GDALRasterBandH, GUIntBig), arg1, arg2))
 end
 
 """
@@ -11298,16 +8489,8 @@ end
 Fill this band with a constant value.
 """
 function gdalfillraster(hBand, dfRealValue, dfImaginaryValue)
-    aftercare(
-        ccall(
-            (:GDALFillRaster, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cdouble, Cdouble),
-            hBand,
-            dfRealValue,
-            dfImaginaryValue,
-        ),
-    )
+    return aftercare(ccall((:GDALFillRaster, libgdal), CPLErr, (GDALRasterBandH, Cdouble, Cdouble), hBand, dfRealValue,
+                           dfImaginaryValue))
 end
 
 """
@@ -11331,27 +8514,10 @@ Undocumented.
 ### Returns
 undocumented
 """
-function gdalcomputebandstats(
-    hBand,
-    nSampleStep,
-    pdfMean,
-    pdfStdDev,
-    pfnProgress,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:GDALComputeBandStats, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, GDALProgressFunc, Any),
-            hBand,
-            nSampleStep,
-            pdfMean,
-            pdfStdDev,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+function gdalcomputebandstats(hBand, nSampleStep, pdfMean, pdfStdDev, pfnProgress, pProgressData)
+    return aftercare(ccall((:GDALComputeBandStats, libgdal), CPLErr,
+                           (GDALRasterBandH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, GDALProgressFunc, Any), hBand, nSampleStep, pdfMean,
+                           pdfStdDev, pfnProgress, pProgressData))
 end
 
 """
@@ -11373,25 +8539,10 @@ Undocumented.
 ### Returns
 undocumented
 """
-function gdaloverviewmagnitudecorrection(
-    hBaseBand,
-    nOverviewCount,
-    pahOverviews,
-    pfnProgress,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:GDALOverviewMagnitudeCorrection, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cint, Ptr{GDALRasterBandH}, GDALProgressFunc, Any),
-            hBaseBand,
-            nOverviewCount,
-            pahOverviews,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+function gdaloverviewmagnitudecorrection(hBaseBand, nOverviewCount, pahOverviews, pfnProgress, pProgressData)
+    return aftercare(ccall((:GDALOverviewMagnitudeCorrection, libgdal), CPLErr,
+                           (GDALRasterBandH, Cint, Ptr{GDALRasterBandH}, GDALProgressFunc, Any), hBaseBand, nOverviewCount,
+                           pahOverviews, pfnProgress, pProgressData))
 end
 
 """
@@ -11400,14 +8551,7 @@ end
 Fetch default Raster Attribute Table.
 """
 function gdalgetdefaultrat(hBand)
-    aftercare(
-        ccall(
-            (:GDALGetDefaultRAT, libgdal),
-            GDALRasterAttributeTableH,
-            (GDALRasterBandH,),
-            hBand,
-        ),
-    )
+    return aftercare(ccall((:GDALGetDefaultRAT, libgdal), GDALRasterAttributeTableH, (GDALRasterBandH,), hBand))
 end
 
 """
@@ -11417,15 +8561,7 @@ end
 Set default Raster Attribute Table.
 """
 function gdalsetdefaultrat(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALSetDefaultRAT, libgdal),
-            CPLErr,
-            (GDALRasterBandH, GDALRasterAttributeTableH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALSetDefaultRAT, libgdal), CPLErr, (GDALRasterBandH, GDALRasterAttributeTableH), arg1, arg2))
 end
 
 """
@@ -11442,15 +8578,7 @@ This adds a pixel function to the global list of available pixel functions for d
 CE_None, invalid (NULL) parameters are currently ignored.
 """
 function gdaladdderivedbandpixelfunc(pszName, pfnPixelFunc)
-    aftercare(
-        ccall(
-            (:GDALAddDerivedBandPixelFunc, libgdal),
-            CPLErr,
-            (Cstring, GDALDerivedPixelFunc),
-            pszName,
-            pfnPixelFunc,
-        ),
-    )
+    return aftercare(ccall((:GDALAddDerivedBandPixelFunc, libgdal), CPLErr, (Cstring, GDALDerivedPixelFunc), pszName, pfnPixelFunc))
 end
 
 """
@@ -11469,16 +8597,8 @@ This adds a pixel function to the global list of available pixel functions for d
 CE_None, invalid (NULL) parameters are currently ignored.
 """
 function gdaladdderivedbandpixelfuncwithargs(pszName, pfnPixelFunc, pszMetadata)
-    aftercare(
-        ccall(
-            (:GDALAddDerivedBandPixelFuncWithArgs, libgdal),
-            CPLErr,
-            (Cstring, GDALDerivedPixelFuncWithArgs, Cstring),
-            pszName,
-            pfnPixelFunc,
-            pszMetadata,
-        ),
-    )
+    return aftercare(ccall((:GDALAddDerivedBandPixelFuncWithArgs, libgdal), CPLErr,
+                           (Cstring, GDALDerivedPixelFuncWithArgs, Cstring), pszName, pfnPixelFunc, pszMetadata))
 end
 
 """
@@ -11491,34 +8611,10 @@ end
 
 Interpolates the value between pixels using a resampling algorithm.
 """
-function gdalrasterinterpolateatpoint(
-    hBand,
-    dfPixel,
-    dfLine,
-    eInterpolation,
-    pdfRealValue,
-    pdfImagValue,
-)
-    aftercare(
-        ccall(
-            (:GDALRasterInterpolateAtPoint, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                Cdouble,
-                Cdouble,
-                GDALRIOResampleAlg,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-            ),
-            hBand,
-            dfPixel,
-            dfLine,
-            eInterpolation,
-            pdfRealValue,
-            pdfImagValue,
-        ),
-    )
+function gdalrasterinterpolateatpoint(hBand, dfPixel, dfLine, eInterpolation, pdfRealValue, pdfImagValue)
+    return aftercare(ccall((:GDALRasterInterpolateAtPoint, libgdal), CPLErr,
+                           (GDALRasterBandH, Cdouble, Cdouble, GDALRIOResampleAlg, Ptr{Cdouble}, Ptr{Cdouble}), hBand, dfPixel,
+                           dfLine, eInterpolation, pdfRealValue, pdfImagValue))
 end
 
 "Generic pointer for the working structure of VRTProcessedDataset function"
@@ -11625,52 +8721,15 @@ Register a function to be used by VRTProcessedDataset.
 ### Returns
 CE_None in case of success, error otherwise.
 """
-function gdalvrtregisterprocesseddatasetfunc(
-    pszFuncName,
-    pUserData,
-    pszXMLMetadata,
-    eRequestedInputDT,
-    paeSupportedInputDT,
-    nSupportedInputDTSize,
-    panSupportedInputBandCount,
-    nSupportedInputBandCountSize,
-    pfnInit,
-    pfnFree,
-    pfnProcess,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALVRTRegisterProcessedDatasetFunc, libgdal),
-            CPLErr,
-            (
-                Cstring,
-                Ptr{Cvoid},
-                Cstring,
-                GDALDataType,
-                Ptr{GDALDataType},
-                Csize_t,
-                Ptr{Cint},
-                Csize_t,
-                GDALVRTProcessedDatasetFuncInit,
-                GDALVRTProcessedDatasetFuncFree,
-                GDALVRTProcessedDatasetFuncProcess,
-                CSLConstList,
-            ),
-            pszFuncName,
-            pUserData,
-            pszXMLMetadata,
-            eRequestedInputDT,
-            paeSupportedInputDT,
-            nSupportedInputDTSize,
-            panSupportedInputBandCount,
-            nSupportedInputBandCountSize,
-            pfnInit,
-            pfnFree,
-            pfnProcess,
-            papszOptions,
-        ),
-    )
+function gdalvrtregisterprocesseddatasetfunc(pszFuncName, pUserData, pszXMLMetadata, eRequestedInputDT, paeSupportedInputDT,
+                                             nSupportedInputDTSize, panSupportedInputBandCount, nSupportedInputBandCountSize,
+                                             pfnInit, pfnFree, pfnProcess, papszOptions)
+    return aftercare(ccall((:GDALVRTRegisterProcessedDatasetFunc, libgdal), CPLErr,
+                           (Cstring, Ptr{Cvoid}, Cstring, GDALDataType, Ptr{GDALDataType}, Csize_t, Ptr{Cint}, Csize_t,
+                            GDALVRTProcessedDatasetFuncInit, GDALVRTProcessedDatasetFuncFree, GDALVRTProcessedDatasetFuncProcess,
+                            CSLConstList), pszFuncName, pUserData, pszXMLMetadata, eRequestedInputDT, paeSupportedInputDT,
+                           nSupportedInputDTSize, panSupportedInputBandCount, nSupportedInputBandCountSize, pfnInit, pfnFree,
+                           pfnProcess, papszOptions))
 end
 
 """
@@ -11679,9 +8738,7 @@ end
 Return the mask band associated with the band.
 """
 function gdalgetmaskband(hBand)
-    aftercare(
-        ccall((:GDALGetMaskBand, libgdal), GDALRasterBandH, (GDALRasterBandH,), hBand),
-    )
+    return aftercare(ccall((:GDALGetMaskBand, libgdal), GDALRasterBandH, (GDALRasterBandH,), hBand))
 end
 
 """
@@ -11690,7 +8747,7 @@ end
 Return the status flags of the mask band associated with the band.
 """
 function gdalgetmaskflags(hBand)
-    aftercare(ccall((:GDALGetMaskFlags, libgdal), Cint, (GDALRasterBandH,), hBand))
+    return aftercare(ccall((:GDALGetMaskFlags, libgdal), Cint, (GDALRasterBandH,), hBand))
 end
 
 """
@@ -11700,15 +8757,7 @@ end
 Adds a mask band to the current band.
 """
 function gdalcreatemaskband(hBand, nFlags)
-    aftercare(
-        ccall(
-            (:GDALCreateMaskBand, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Cint),
-            hBand,
-            nFlags,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateMaskBand, libgdal), CPLErr, (GDALRasterBandH, Cint), hBand, nFlags))
 end
 
 """
@@ -11720,7 +8769,7 @@ Returns whether a band is a mask band.
 true if the band is a mask band.
 """
 function gdalismaskband(hBand)
-    aftercare(ccall((:GDALIsMaskBand, libgdal), Bool, (GDALRasterBandH,), hBand))
+    return aftercare(ccall((:GDALIsMaskBand, libgdal), Bool, (GDALRasterBandH,), hBand))
 end
 
 """
@@ -11746,29 +8795,10 @@ Get the coverage status of a sub-window of the raster.
 ### Returns
 a binary-or'ed combination of possible values GDAL_DATA_COVERAGE_STATUS_UNIMPLEMENTED, GDAL_DATA_COVERAGE_STATUS_DATA and GDAL_DATA_COVERAGE_STATUS_EMPTY
 """
-function gdalgetdatacoveragestatus(
-    hBand,
-    nXOff,
-    nYOff,
-    nXSize,
-    nYSize,
-    nMaskFlagStop,
-    pdfDataPct,
-)
-    aftercare(
-        ccall(
-            (:GDALGetDataCoverageStatus, libgdal),
-            Cint,
-            (GDALRasterBandH, Cint, Cint, Cint, Cint, Cint, Ptr{Cdouble}),
-            hBand,
-            nXOff,
-            nYOff,
-            nXSize,
-            nYSize,
-            nMaskFlagStop,
-            pdfDataPct,
-        ),
-    )
+function gdalgetdatacoveragestatus(hBand, nXOff, nYOff, nXSize, nYSize, nMaskFlagStop, pdfDataPct)
+    return aftercare(ccall((:GDALGetDataCoverageStatus, libgdal), Cint,
+                           (GDALRasterBandH, Cint, Cint, Cint, Cint, Cint, Ptr{Cdouble}), hBand, nXOff, nYOff, nXSize, nYSize,
+                           nMaskFlagStop, pdfDataPct))
 end
 
 """
@@ -11792,27 +8822,10 @@ Get async IO update.
 ### Returns
 GARIO_ status, details described above.
 """
-function gdalargetnextupdatedregion(
-    hARIO,
-    dfTimeout,
-    pnXBufOff,
-    pnYBufOff,
-    pnXBufSize,
-    pnYBufSize,
-)
-    aftercare(
-        ccall(
-            (:GDALARGetNextUpdatedRegion, libgdal),
-            GDALAsyncStatusType,
-            (GDALAsyncReaderH, Cdouble, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}),
-            hARIO,
-            dfTimeout,
-            pnXBufOff,
-            pnYBufOff,
-            pnXBufSize,
-            pnYBufSize,
-        ),
-    )
+function gdalargetnextupdatedregion(hARIO, dfTimeout, pnXBufOff, pnYBufOff, pnXBufSize, pnYBufSize)
+    return aftercare(ccall((:GDALARGetNextUpdatedRegion, libgdal), GDALAsyncStatusType,
+                           (GDALAsyncReaderH, Cdouble, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}), hARIO, dfTimeout, pnXBufOff,
+                           pnYBufOff, pnXBufSize, pnYBufSize))
 end
 
 """
@@ -11829,15 +8842,7 @@ Lock image buffer.
 TRUE if successful, or FALSE on an error.
 """
 function gdalarlockbuffer(hARIO, dfTimeout)
-    aftercare(
-        ccall(
-            (:GDALARLockBuffer, libgdal),
-            Cint,
-            (GDALAsyncReaderH, Cdouble),
-            hARIO,
-            dfTimeout,
-        ),
-    )
+    return aftercare(ccall((:GDALARLockBuffer, libgdal), Cint, (GDALAsyncReaderH, Cdouble), hARIO, dfTimeout))
 end
 
 """
@@ -11849,7 +8854,7 @@ Unlock image buffer.
 * **hARIO**: handle to async reader.
 """
 function gdalarunlockbuffer(hARIO)
-    aftercare(ccall((:GDALARUnlockBuffer, libgdal), Cvoid, (GDALAsyncReaderH,), hARIO))
+    return aftercare(ccall((:GDALARUnlockBuffer, libgdal), Cvoid, (GDALAsyncReaderH,), hARIO))
 end
 
 """
@@ -11862,22 +8867,14 @@ General utility option processing.
 ### Parameters
 * **nArgc**: number of values in the argument list.
 * **ppapszArgv**: pointer to the argument list array (will be updated in place).
-* **nOptions**: a or-able combination of GDAL_OF_RASTER and GDAL_OF_VECTOR to determine which drivers should be displayed by formats. If set to 0, GDAL_OF_RASTER is assumed.
+* **nOptions**: a or-able combination of GDAL_OF_RASTER and GDAL_OF_VECTOR to determine which drivers should be displayed by --formats. If set to 0, GDAL_OF_RASTER is assumed.
 
 ### Returns
 updated nArgc argument count. Return of 0 requests terminate without error, return of -1 requests exit with error code.
 """
 function gdalgeneralcmdlineprocessor(nArgc, ppapszArgv, nOptions)
-    aftercare(
-        ccall(
-            (:GDALGeneralCmdLineProcessor, libgdal),
-            Cint,
-            (Cint, Ptr{Ptr{Cstring}}, Cint),
-            nArgc,
-            ppapszArgv,
-            nOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGeneralCmdLineProcessor, libgdal), Cint, (Cint, Ptr{Ptr{Cstring}}, Cint), nArgc, ppapszArgv,
+                           nOptions))
 end
 
 """
@@ -11895,17 +8892,8 @@ Byte swap words in-place.
 * **nWordSkip**: the byte offset from the start of one word to the start of the next. For packed buffers this is the same as nWordSize.
 """
 function gdalswapwords(pData, nWordSize, nWordCount, nWordSkip)
-    aftercare(
-        ccall(
-            (:GDALSwapWords, libgdal),
-            Cvoid,
-            (Ptr{Cvoid}, Cint, Cint, Cint),
-            pData,
-            nWordSize,
-            nWordCount,
-            nWordSkip,
-        ),
-    )
+    return aftercare(ccall((:GDALSwapWords, libgdal), Cvoid, (Ptr{Cvoid}, Cint, Cint, Cint), pData, nWordSize, nWordCount,
+                           nWordSkip))
 end
 
 """
@@ -11923,17 +8911,8 @@ Byte swap words in-place.
 * **nWordSkip**: the byte offset from the start of one word to the start of the next. For packed buffers this is the same as nWordSize.
 """
 function gdalswapwordsex(pData, nWordSize, nWordCount, nWordSkip)
-    aftercare(
-        ccall(
-            (:GDALSwapWordsEx, libgdal),
-            Cvoid,
-            (Ptr{Cvoid}, Cint, Csize_t, Cint),
-            pData,
-            nWordSize,
-            nWordCount,
-            nWordSkip,
-        ),
-    )
+    return aftercare(ccall((:GDALSwapWordsEx, libgdal), Cvoid, (Ptr{Cvoid}, Cint, Csize_t, Cint), pData, nWordSize, nWordCount,
+                           nWordSkip))
 end
 
 """
@@ -11947,29 +8926,9 @@ end
 
 Copy pixel words from buffer to buffer.
 """
-function gdalcopywords(
-    pSrcData,
-    eSrcType,
-    nSrcPixelOffset,
-    pDstData,
-    eDstType,
-    nDstPixelOffset,
-    nWordCount,
-)
-    aftercare(
-        ccall(
-            (:GDALCopyWords, libgdal),
-            Cvoid,
-            (Ptr{Cvoid}, GDALDataType, Cint, Ptr{Cvoid}, GDALDataType, Cint, Cint),
-            pSrcData,
-            eSrcType,
-            nSrcPixelOffset,
-            pDstData,
-            eDstType,
-            nDstPixelOffset,
-            nWordCount,
-        ),
-    )
+function gdalcopywords(pSrcData, eSrcType, nSrcPixelOffset, pDstData, eDstType, nDstPixelOffset, nWordCount)
+    return aftercare(ccall((:GDALCopyWords, libgdal), Cvoid, (Ptr{Cvoid}, GDALDataType, Cint, Ptr{Cvoid}, GDALDataType, Cint, Cint),
+                           pSrcData, eSrcType, nSrcPixelOffset, pDstData, eDstType, nDstPixelOffset, nWordCount))
 end
 
 """
@@ -11992,29 +8951,10 @@ Copy pixel words from buffer to buffer.
 * **nDstPixelStride**: Destination pixel stride (i.e. distance between 2 words), in bytes
 * **nWordCount**: number of words to be copied
 """
-function gdalcopywords64(
-    pSrcData,
-    eSrcType,
-    nSrcPixelOffset,
-    pDstData,
-    eDstType,
-    nDstPixelOffset,
-    nWordCount,
-)
-    aftercare(
-        ccall(
-            (:GDALCopyWords64, libgdal),
-            Cvoid,
-            (Ptr{Cvoid}, GDALDataType, Cint, Ptr{Cvoid}, GDALDataType, Cint, GPtrDiff_t),
-            pSrcData,
-            eSrcType,
-            nSrcPixelOffset,
-            pDstData,
-            eDstType,
-            nDstPixelOffset,
-            nWordCount,
-        ),
-    )
+function gdalcopywords64(pSrcData, eSrcType, nSrcPixelOffset, pDstData, eDstType, nDstPixelOffset, nWordCount)
+    return aftercare(ccall((:GDALCopyWords64, libgdal), Cvoid,
+                           (Ptr{Cvoid}, GDALDataType, Cint, Ptr{Cvoid}, GDALDataType, Cint, GPtrDiff_t), pSrcData, eSrcType,
+                           nSrcPixelOffset, pDstData, eDstType, nDstPixelOffset, nWordCount))
 end
 
 """
@@ -12039,31 +8979,9 @@ Bitwise word copying.
 * **nBitCount**: the number of bits in a word to be copied.
 * **nStepCount**: the number of words to copy.
 """
-function gdalcopybits(
-    pabySrcData,
-    nSrcOffset,
-    nSrcStep,
-    pabyDstData,
-    nDstOffset,
-    nDstStep,
-    nBitCount,
-    nStepCount,
-)
-    aftercare(
-        ccall(
-            (:GDALCopyBits, libgdal),
-            Cvoid,
-            (Ptr{GByte}, Cint, Cint, Ptr{GByte}, Cint, Cint, Cint, Cint),
-            pabySrcData,
-            nSrcOffset,
-            nSrcStep,
-            pabyDstData,
-            nDstOffset,
-            nDstStep,
-            nBitCount,
-            nStepCount,
-        ),
-    )
+function gdalcopybits(pabySrcData, nSrcOffset, nSrcStep, pabyDstData, nDstOffset, nDstStep, nBitCount, nStepCount)
+    return aftercare(ccall((:GDALCopyBits, libgdal), Cvoid, (Ptr{GByte}, Cint, Cint, Ptr{GByte}, Cint, Cint, Cint, Cint),
+                           pabySrcData, nSrcOffset, nSrcStep, pabyDstData, nDstOffset, nDstStep, nBitCount, nStepCount))
 end
 
 """
@@ -12074,27 +8992,10 @@ end
                      GDALDataType eDestDT,
                      size_t nIters) -> void
 """
-function gdaldeinterleave(
-    pSourceBuffer,
-    eSourceDT,
-    nComponents,
-    ppDestBuffer,
-    eDestDT,
-    nIters,
-)
-    aftercare(
-        ccall(
-            (:GDALDeinterleave, libgdal),
-            Cvoid,
-            (Ptr{Cvoid}, GDALDataType, Cint, Ptr{Ptr{Cvoid}}, GDALDataType, Csize_t),
-            pSourceBuffer,
-            eSourceDT,
-            nComponents,
-            ppDestBuffer,
-            eDestDT,
-            nIters,
-        ),
-    )
+function gdaldeinterleave(pSourceBuffer, eSourceDT, nComponents, ppDestBuffer, eDestDT, nIters)
+    return aftercare(ccall((:GDALDeinterleave, libgdal), Cvoid,
+                           (Ptr{Cvoid}, GDALDataType, Cint, Ptr{Ptr{Cvoid}}, GDALDataType, Csize_t), pSourceBuffer, eSourceDT,
+                           nComponents, ppDestBuffer, eDestDT, nIters))
 end
 
 """
@@ -12108,15 +9009,7 @@ Returns a replacement value for a nodata value or 0 if dfNoDataValue is out of r
 * **dfNoDataValue**: The no data value
 """
 function gdalgetnodatareplacementvalue(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALGetNoDataReplacementValue, libgdal),
-            Cdouble,
-            (GDALDataType, Cdouble),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALGetNoDataReplacementValue, libgdal), Cdouble, (GDALDataType, Cdouble), arg1, arg2))
 end
 
 """
@@ -12133,9 +9026,7 @@ Read ESRI world file.
 TRUE on success or FALSE on failure.
 """
 function gdalloadworldfile(arg1, arg2)
-    aftercare(
-        ccall((:GDALLoadWorldFile, libgdal), Cint, (Cstring, Ptr{Cdouble}), arg1, arg2),
-    )
+    return aftercare(ccall((:GDALLoadWorldFile, libgdal), Cint, (Cstring, Ptr{Cdouble}), arg1, arg2))
 end
 
 """
@@ -12154,16 +9045,7 @@ Read ESRI world file.
 TRUE on success or FALSE on failure.
 """
 function gdalreadworldfile(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALReadWorldFile, libgdal),
-            Cint,
-            (Cstring, Cstring, Ptr{Cdouble}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALReadWorldFile, libgdal), Cint, (Cstring, Cstring, Ptr{Cdouble}), arg1, arg2, arg3))
 end
 
 """
@@ -12182,16 +9064,7 @@ Write ESRI world file.
 TRUE on success or FALSE on failure.
 """
 function gdalwriteworldfile(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALWriteWorldFile, libgdal),
-            Cint,
-            (Cstring, Cstring, Ptr{Cdouble}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALWriteWorldFile, libgdal), Cint, (Cstring, Cstring, Ptr{Cdouble}), arg1, arg2, arg3))
 end
 
 """
@@ -12214,18 +9087,8 @@ Helper function for translator implementer wanting support for MapInfo .tab file
 TRUE in case of success, FALSE otherwise.
 """
 function gdalloadtabfile(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:GDALLoadTabFile, libgdal),
-            Cint,
-            (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:GDALLoadTabFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}),
+                           arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -12248,18 +9111,8 @@ Helper function for translator implementer wanting support for MapInfo .tab file
 TRUE in case of success, FALSE otherwise.
 """
 function gdalreadtabfile(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:GDALReadTabFile, libgdal),
-            Cint,
-            (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:GDALReadTabFile, libgdal), Cint, (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}),
+                           arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -12282,18 +9135,8 @@ Helper function for translator implementer wanting support for OZI .map.
 TRUE in case of success, FALSE otherwise.
 """
 function gdalloadozimapfile(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:GDALLoadOziMapFile, libgdal),
-            Cint,
-            (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:GDALLoadOziMapFile, libgdal), Cint,
+                           (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -12316,18 +9159,8 @@ Helper function for translator implementer wanting support for OZI .map.
 TRUE in case of success, FALSE otherwise.
 """
 function gdalreadozimapfile(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:GDALReadOziMapFile, libgdal),
-            Cint,
-            (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:GDALReadOziMapFile, libgdal), Cint,
+                           (Cstring, Ptr{Cdouble}, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{GDAL_GCP}}), arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -12338,17 +9171,7 @@ end
 Translate a decimal degrees value to a DMS string with hemisphere.
 """
 function gdaldectodms(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALDecToDMS, libgdal),
-            Cstring,
-            (Cdouble, Cstring, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALDecToDMS, libgdal), Cstring, (Cdouble, Cstring, Cint), arg1, arg2, arg3), false)
 end
 
 """
@@ -12357,7 +9180,7 @@ end
 Convert a packed DMS value (DDDMMMSSS.SS) into decimal degrees.
 """
 function gdalpackeddmstodec(arg1)
-    aftercare(ccall((:GDALPackedDMSToDec, libgdal), Cdouble, (Cdouble,), arg1))
+    return aftercare(ccall((:GDALPackedDMSToDec, libgdal), Cdouble, (Cdouble,), arg1))
 end
 
 """
@@ -12366,7 +9189,7 @@ end
 Convert decimal degrees into packed DMS value (DDDMMMSSS.SS).
 """
 function gdaldectopackeddms(arg1)
-    aftercare(ccall((:GDALDecToPackedDMS, libgdal), Cdouble, (Cdouble,), arg1))
+    return aftercare(ccall((:GDALDecToPackedDMS, libgdal), Cdouble, (Cdouble,), arg1))
 end
 
 """
@@ -12420,15 +9243,7 @@ end
 ` Doxygen_Suppress `
 """
 function gdalextractrpcinfov1(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALExtractRPCInfoV1, libgdal),
-            Cint,
-            (CSLConstList, Ptr{GDALRPCInfoV1}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALExtractRPCInfoV1, libgdal), Cint, (CSLConstList, Ptr{GDALRPCInfoV1}), arg1, arg2))
 end
 
 """
@@ -12456,14 +9271,7 @@ end
 Construct a new color table.
 """
 function gdalcreatecolortable(arg1)
-    aftercare(
-        ccall(
-            (:GDALCreateColorTable, libgdal),
-            GDALColorTableH,
-            (GDALPaletteInterp,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateColorTable, libgdal), GDALColorTableH, (GDALPaletteInterp,), arg1))
 end
 
 """
@@ -12472,7 +9280,7 @@ end
 Destroys a color table.
 """
 function gdaldestroycolortable(arg1)
-    aftercare(ccall((:GDALDestroyColorTable, libgdal), Cvoid, (GDALColorTableH,), arg1))
+    return aftercare(ccall((:GDALDestroyColorTable, libgdal), Cvoid, (GDALColorTableH,), arg1))
 end
 
 """
@@ -12481,9 +9289,7 @@ end
 Make a copy of a color table.
 """
 function gdalclonecolortable(arg1)
-    aftercare(
-        ccall((:GDALCloneColorTable, libgdal), GDALColorTableH, (GDALColorTableH,), arg1),
-    )
+    return aftercare(ccall((:GDALCloneColorTable, libgdal), GDALColorTableH, (GDALColorTableH,), arg1))
 end
 
 """
@@ -12492,14 +9298,7 @@ end
 Fetch palette interpretation.
 """
 function gdalgetpaletteinterpretation(arg1)
-    aftercare(
-        ccall(
-            (:GDALGetPaletteInterpretation, libgdal),
-            GDALPaletteInterp,
-            (GDALColorTableH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALGetPaletteInterpretation, libgdal), GDALPaletteInterp, (GDALColorTableH,), arg1))
 end
 
 """
@@ -12508,7 +9307,7 @@ end
 Get number of color entries in table.
 """
 function gdalgetcolorentrycount(arg1)
-    aftercare(ccall((:GDALGetColorEntryCount, libgdal), Cint, (GDALColorTableH,), arg1))
+    return aftercare(ccall((:GDALGetColorEntryCount, libgdal), Cint, (GDALColorTableH,), arg1))
 end
 
 """
@@ -12518,15 +9317,7 @@ end
 Fetch a color entry from table.
 """
 function gdalgetcolorentry(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALGetColorEntry, libgdal),
-            Ptr{GDALColorEntry},
-            (GDALColorTableH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALGetColorEntry, libgdal), Ptr{GDALColorEntry}, (GDALColorTableH, Cint), arg1, arg2))
 end
 
 """
@@ -12537,16 +9328,8 @@ end
 Fetch a table entry in RGB format.
 """
 function gdalgetcolorentryasrgb(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALGetColorEntryAsRGB, libgdal),
-            Cint,
-            (GDALColorTableH, Cint, Ptr{GDALColorEntry}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALGetColorEntryAsRGB, libgdal), Cint, (GDALColorTableH, Cint, Ptr{GDALColorEntry}), arg1, arg2,
+                           arg3))
 end
 
 """
@@ -12557,16 +9340,7 @@ end
 Set entry in color table.
 """
 function gdalsetcolorentry(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALSetColorEntry, libgdal),
-            Cvoid,
-            (GDALColorTableH, Cint, Ptr{GDALColorEntry}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALSetColorEntry, libgdal), Cvoid, (GDALColorTableH, Cint, Ptr{GDALColorEntry}), arg1, arg2, arg3))
 end
 
 """
@@ -12579,18 +9353,9 @@ end
 Create color ramp.
 """
 function gdalcreatecolorramp(hTable, nStartIndex, psStartColor, nEndIndex, psEndColor)
-    aftercare(
-        ccall(
-            (:GDALCreateColorRamp, libgdal),
-            Cvoid,
-            (GDALColorTableH, Cint, Ptr{GDALColorEntry}, Cint, Ptr{GDALColorEntry}),
-            hTable,
-            nStartIndex,
-            psStartColor,
-            nEndIndex,
-            psEndColor,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateColorRamp, libgdal), Cvoid,
+                           (GDALColorTableH, Cint, Ptr{GDALColorEntry}, Cint, Ptr{GDALColorEntry}), hTable, nStartIndex,
+                           psStartColor, nEndIndex, psEndColor))
 end
 
 """
@@ -12682,9 +9447,7 @@ end
 Construct empty table.
 """
 function gdalcreaterasterattributetable()
-    aftercare(
-        ccall((:GDALCreateRasterAttributeTable, libgdal), GDALRasterAttributeTableH, ()),
-    )
+    return aftercare(ccall((:GDALCreateRasterAttributeTable, libgdal), GDALRasterAttributeTableH, ()))
 end
 
 """
@@ -12693,14 +9456,7 @@ end
 Destroys a RAT.
 """
 function gdaldestroyrasterattributetable(arg1)
-    aftercare(
-        ccall(
-            (:GDALDestroyRasterAttributeTable, libgdal),
-            Cvoid,
-            (GDALRasterAttributeTableH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALDestroyRasterAttributeTable, libgdal), Cvoid, (GDALRasterAttributeTableH,), arg1))
 end
 
 """
@@ -12709,9 +9465,7 @@ end
 Fetch table column count.
 """
 function gdalratgetcolumncount(arg1)
-    aftercare(
-        ccall((:GDALRATGetColumnCount, libgdal), Cint, (GDALRasterAttributeTableH,), arg1),
-    )
+    return aftercare(ccall((:GDALRATGetColumnCount, libgdal), Cint, (GDALRasterAttributeTableH,), arg1))
 end
 
 """
@@ -12728,16 +9482,7 @@ Fetch name of indicated column.
 name.
 """
 function gdalratgetnameofcol(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRATGetNameOfCol, libgdal),
-            Cstring,
-            (GDALRasterAttributeTableH, Cint),
-            arg1,
-            arg2,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALRATGetNameOfCol, libgdal), Cstring, (GDALRasterAttributeTableH, Cint), arg1, arg2), false)
 end
 
 """
@@ -12754,15 +9499,7 @@ Fetch column usage value.
 usage.
 """
 function gdalratgetusageofcol(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRATGetUsageOfCol, libgdal),
-            GDALRATFieldUsage,
-            (GDALRasterAttributeTableH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRATGetUsageOfCol, libgdal), GDALRATFieldUsage, (GDALRasterAttributeTableH, Cint), arg1, arg2))
 end
 
 """
@@ -12779,15 +9516,7 @@ Fetch column type.
 type.
 """
 function gdalratgettypeofcol(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRATGetTypeOfCol, libgdal),
-            GDALRATFieldType,
-            (GDALRasterAttributeTableH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRATGetTypeOfCol, libgdal), GDALRATFieldType, (GDALRasterAttributeTableH, Cint), arg1, arg2))
 end
 
 """
@@ -12797,15 +9526,7 @@ end
 Fetch column index for given usage.
 """
 function gdalratgetcolofusage(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRATGetColOfUsage, libgdal),
-            Cint,
-            (GDALRasterAttributeTableH, GDALRATFieldUsage),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRATGetColOfUsage, libgdal), Cint, (GDALRasterAttributeTableH, GDALRATFieldUsage), arg1, arg2))
 end
 
 """
@@ -12814,9 +9535,7 @@ end
 Fetch row count.
 """
 function gdalratgetrowcount(arg1)
-    aftercare(
-        ccall((:GDALRATGetRowCount, libgdal), Cint, (GDALRasterAttributeTableH,), arg1),
-    )
+    return aftercare(ccall((:GDALRATGetRowCount, libgdal), Cint, (GDALRasterAttributeTableH,), arg1))
 end
 
 """
@@ -12827,17 +9546,8 @@ end
 Fetch field value as a string.
 """
 function gdalratgetvalueasstring(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALRATGetValueAsString, libgdal),
-            Cstring,
-            (GDALRasterAttributeTableH, Cint, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALRATGetValueAsString, libgdal), Cstring, (GDALRasterAttributeTableH, Cint, Cint), arg1, arg2, arg3),
+                     false)
 end
 
 """
@@ -12848,16 +9558,7 @@ end
 Fetch field value as a integer.
 """
 function gdalratgetvalueasint(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALRATGetValueAsInt, libgdal),
-            Cint,
-            (GDALRasterAttributeTableH, Cint, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALRATGetValueAsInt, libgdal), Cint, (GDALRasterAttributeTableH, Cint, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -12868,16 +9569,7 @@ end
 Fetch field value as a double.
 """
 function gdalratgetvalueasdouble(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALRATGetValueAsDouble, libgdal),
-            Cdouble,
-            (GDALRasterAttributeTableH, Cint, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALRATGetValueAsDouble, libgdal), Cdouble, (GDALRasterAttributeTableH, Cint, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -12895,17 +9587,8 @@ Set field value from string.
 * **pszValue**: value.
 """
 function gdalratsetvalueasstring(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:GDALRATSetValueAsString, libgdal),
-            Cvoid,
-            (GDALRasterAttributeTableH, Cint, Cint, Cstring),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:GDALRATSetValueAsString, libgdal), Cvoid, (GDALRasterAttributeTableH, Cint, Cint, Cstring), arg1, arg2,
+                           arg3, arg4))
 end
 
 """
@@ -12917,17 +9600,8 @@ end
 Set field value from integer.
 """
 function gdalratsetvalueasint(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:GDALRATSetValueAsInt, libgdal),
-            Cvoid,
-            (GDALRasterAttributeTableH, Cint, Cint, Cint),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:GDALRATSetValueAsInt, libgdal), Cvoid, (GDALRasterAttributeTableH, Cint, Cint, Cint), arg1, arg2, arg3,
+                           arg4))
 end
 
 """
@@ -12939,17 +9613,8 @@ end
 Set field value from double.
 """
 function gdalratsetvalueasdouble(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:GDALRATSetValueAsDouble, libgdal),
-            Cvoid,
-            (GDALRasterAttributeTableH, Cint, Cint, Cdouble),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:GDALRATSetValueAsDouble, libgdal), Cvoid, (GDALRasterAttributeTableH, Cint, Cint, Cdouble), arg1, arg2,
+                           arg3, arg4))
 end
 
 """
@@ -12958,14 +9623,7 @@ end
 Determine whether changes made to this RAT are reflected directly in the dataset.
 """
 function gdalratchangesarewrittentofile(hRAT)
-    aftercare(
-        ccall(
-            (:GDALRATChangesAreWrittenToFile, libgdal),
-            Cint,
-            (GDALRasterAttributeTableH,),
-            hRAT,
-        ),
-    )
+    return aftercare(ccall((:GDALRATChangesAreWrittenToFile, libgdal), Cint, (GDALRasterAttributeTableH,), hRAT))
 end
 
 """
@@ -12979,19 +9637,9 @@ end
 Read or Write a block of doubles to/from the Attribute Table.
 """
 function gdalratvaluesioasdouble(hRAT, eRWFlag, iField, iStartRow, iLength, pdfData)
-    aftercare(
-        ccall(
-            (:GDALRATValuesIOAsDouble, libgdal),
-            CPLErr,
-            (GDALRasterAttributeTableH, GDALRWFlag, Cint, Cint, Cint, Ptr{Cdouble}),
-            hRAT,
-            eRWFlag,
-            iField,
-            iStartRow,
-            iLength,
-            pdfData,
-        ),
-    )
+    return aftercare(ccall((:GDALRATValuesIOAsDouble, libgdal), CPLErr,
+                           (GDALRasterAttributeTableH, GDALRWFlag, Cint, Cint, Cint, Ptr{Cdouble}), hRAT, eRWFlag, iField,
+                           iStartRow, iLength, pdfData))
 end
 
 """
@@ -13005,19 +9653,9 @@ end
 Read or Write a block of ints to/from the Attribute Table.
 """
 function gdalratvaluesioasinteger(hRAT, eRWFlag, iField, iStartRow, iLength, pnData)
-    aftercare(
-        ccall(
-            (:GDALRATValuesIOAsInteger, libgdal),
-            CPLErr,
-            (GDALRasterAttributeTableH, GDALRWFlag, Cint, Cint, Cint, Ptr{Cint}),
-            hRAT,
-            eRWFlag,
-            iField,
-            iStartRow,
-            iLength,
-            pnData,
-        ),
-    )
+    return aftercare(ccall((:GDALRATValuesIOAsInteger, libgdal), CPLErr,
+                           (GDALRasterAttributeTableH, GDALRWFlag, Cint, Cint, Cint, Ptr{Cint}), hRAT, eRWFlag, iField, iStartRow,
+                           iLength, pnData))
 end
 
 """
@@ -13031,19 +9669,9 @@ end
 Read or Write a block of strings to/from the Attribute Table.
 """
 function gdalratvaluesioasstring(hRAT, eRWFlag, iField, iStartRow, iLength, papszStrList)
-    aftercare(
-        ccall(
-            (:GDALRATValuesIOAsString, libgdal),
-            CPLErr,
-            (GDALRasterAttributeTableH, GDALRWFlag, Cint, Cint, Cint, Ptr{Cstring}),
-            hRAT,
-            eRWFlag,
-            iField,
-            iStartRow,
-            iLength,
-            papszStrList,
-        ),
-    )
+    return aftercare(ccall((:GDALRATValuesIOAsString, libgdal), CPLErr,
+                           (GDALRasterAttributeTableH, GDALRWFlag, Cint, Cint, Cint, Ptr{Cstring}), hRAT, eRWFlag, iField,
+                           iStartRow, iLength, papszStrList))
 end
 
 """
@@ -13057,15 +9685,7 @@ Set row count.
 * **nNewCount**: the new number of rows.
 """
 function gdalratsetrowcount(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRATSetRowCount, libgdal),
-            Cvoid,
-            (GDALRasterAttributeTableH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRATSetRowCount, libgdal), Cvoid, (GDALRasterAttributeTableH, Cint), arg1, arg2))
 end
 
 """
@@ -13077,17 +9697,8 @@ end
 Create new column.
 """
 function gdalratcreatecolumn(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:GDALRATCreateColumn, libgdal),
-            CPLErr,
-            (GDALRasterAttributeTableH, Cstring, GDALRATFieldType, GDALRATFieldUsage),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:GDALRATCreateColumn, libgdal), CPLErr,
+                           (GDALRasterAttributeTableH, Cstring, GDALRATFieldType, GDALRATFieldUsage), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -13098,16 +9709,8 @@ end
 Set linear binning information.
 """
 function gdalratsetlinearbinning(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALRATSetLinearBinning, libgdal),
-            CPLErr,
-            (GDALRasterAttributeTableH, Cdouble, Cdouble),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALRATSetLinearBinning, libgdal), CPLErr, (GDALRasterAttributeTableH, Cdouble, Cdouble), arg1, arg2,
+                           arg3))
 end
 
 """
@@ -13118,16 +9721,8 @@ end
 Get linear binning information.
 """
 function gdalratgetlinearbinning(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALRATGetLinearBinning, libgdal),
-            Cint,
-            (GDALRasterAttributeTableH, Ptr{Cdouble}, Ptr{Cdouble}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALRATGetLinearBinning, libgdal), Cint, (GDALRasterAttributeTableH, Ptr{Cdouble}, Ptr{Cdouble}), arg1,
+                           arg2, arg3))
 end
 
 """
@@ -13137,15 +9732,8 @@ end
 Set RAT Table Type.
 """
 function gdalratsettabletype(hRAT, eInTableType)
-    aftercare(
-        ccall(
-            (:GDALRATSetTableType, libgdal),
-            CPLErr,
-            (GDALRasterAttributeTableH, GDALRATTableType),
-            hRAT,
-            eInTableType,
-        ),
-    )
+    return aftercare(ccall((:GDALRATSetTableType, libgdal), CPLErr, (GDALRasterAttributeTableH, GDALRATTableType), hRAT,
+                           eInTableType))
 end
 
 """
@@ -13154,14 +9742,7 @@ end
 Get Rat Table Type.
 """
 function gdalratgettabletype(hRAT)
-    aftercare(
-        ccall(
-            (:GDALRATGetTableType, libgdal),
-            GDALRATTableType,
-            (GDALRasterAttributeTableH,),
-            hRAT,
-        ),
-    )
+    return aftercare(ccall((:GDALRATGetTableType, libgdal), GDALRATTableType, (GDALRasterAttributeTableH,), hRAT))
 end
 
 """
@@ -13171,15 +9752,8 @@ end
 Initialize from color table.
 """
 function gdalratinitializefromcolortable(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRATInitializeFromColorTable, libgdal),
-            CPLErr,
-            (GDALRasterAttributeTableH, GDALColorTableH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRATInitializeFromColorTable, libgdal), CPLErr, (GDALRasterAttributeTableH, GDALColorTableH), arg1,
+                           arg2))
 end
 
 """
@@ -13189,15 +9763,8 @@ end
 Translate to a color table.
 """
 function gdalrattranslatetocolortable(arg1, nEntryCount)
-    aftercare(
-        ccall(
-            (:GDALRATTranslateToColorTable, libgdal),
-            GDALColorTableH,
-            (GDALRasterAttributeTableH, Cint),
-            arg1,
-            nEntryCount,
-        ),
-    )
+    return aftercare(ccall((:GDALRATTranslateToColorTable, libgdal), GDALColorTableH, (GDALRasterAttributeTableH, Cint), arg1,
+                           nEntryCount))
 end
 
 """
@@ -13207,15 +9774,7 @@ end
 Dump RAT in readable form.
 """
 function gdalratdumpreadable(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRATDumpReadable, libgdal),
-            Cvoid,
-            (GDALRasterAttributeTableH, Ptr{Libc.FILE}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRATDumpReadable, libgdal), Cvoid, (GDALRasterAttributeTableH, Ptr{Libc.FILE}), arg1, arg2))
 end
 
 """
@@ -13224,14 +9783,7 @@ end
 Copy Raster Attribute Table.
 """
 function gdalratclone(arg1)
-    aftercare(
-        ccall(
-            (:GDALRATClone, libgdal),
-            GDALRasterAttributeTableH,
-            (GDALRasterAttributeTableH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALRATClone, libgdal), GDALRasterAttributeTableH, (GDALRasterAttributeTableH,), arg1))
 end
 
 """
@@ -13240,14 +9792,7 @@ end
 Serialize Raster Attribute Table in Json format.
 """
 function gdalratserializejson(arg1)
-    aftercare(
-        ccall(
-            (:GDALRATSerializeJSON, libgdal),
-            Ptr{Cvoid},
-            (GDALRasterAttributeTableH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALRATSerializeJSON, libgdal), Ptr{Cvoid}, (GDALRasterAttributeTableH,), arg1))
 end
 
 """
@@ -13257,15 +9802,7 @@ end
 Get row for pixel value.
 """
 function gdalratgetrowofvalue(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRATGetRowOfValue, libgdal),
-            Cint,
-            (GDALRasterAttributeTableH, Cdouble),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRATGetRowOfValue, libgdal), Cint, (GDALRasterAttributeTableH, Cdouble), arg1, arg2))
 end
 
 """
@@ -13274,14 +9811,7 @@ end
 Remove Statistics from RAT.
 """
 function gdalratremovestatistics(arg1)
-    aftercare(
-        ccall(
-            (:GDALRATRemoveStatistics, libgdal),
-            Cvoid,
-            (GDALRasterAttributeTableH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALRATRemoveStatistics, libgdal), Cvoid, (GDALRasterAttributeTableH,), arg1))
 end
 
 """
@@ -13342,17 +9872,8 @@ Creates a new relationship.
 a new handle that should be freed with GDALDestroyRelationship(), or NULL in case of error.
 """
 function gdalrelationshipcreate(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:GDALRelationshipCreate, libgdal),
-            GDALRelationshipH,
-            (Cstring, Cstring, Cstring, GDALRelationshipCardinality),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipCreate, libgdal), GDALRelationshipH,
+                           (Cstring, Cstring, Cstring, GDALRelationshipCardinality), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -13361,7 +9882,7 @@ end
 Destroys a relationship.
 """
 function gdaldestroyrelationship(arg1)
-    aftercare(ccall((:GDALDestroyRelationship, libgdal), Cvoid, (GDALRelationshipH,), arg1))
+    return aftercare(ccall((:GDALDestroyRelationship, libgdal), Cvoid, (GDALRelationshipH,), arg1))
 end
 
 """
@@ -13373,10 +9894,7 @@ Get the name of the relationship.
 name.
 """
 function gdalrelationshipgetname(arg1)
-    aftercare(
-        ccall((:GDALRelationshipGetName, libgdal), Cstring, (GDALRelationshipH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:GDALRelationshipGetName, libgdal), Cstring, (GDALRelationshipH,), arg1), false)
 end
 
 """
@@ -13388,14 +9906,7 @@ Get the cardinality of the relationship.
 cardinality.
 """
 function gdalrelationshipgetcardinality(arg1)
-    aftercare(
-        ccall(
-            (:GDALRelationshipGetCardinality, libgdal),
-            GDALRelationshipCardinality,
-            (GDALRelationshipH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipGetCardinality, libgdal), GDALRelationshipCardinality, (GDALRelationshipH,), arg1))
 end
 
 """
@@ -13407,15 +9918,7 @@ Get the name of the left (or base/origin) table in the relationship.
 left table name.
 """
 function gdalrelationshipgetlefttablename(arg1)
-    aftercare(
-        ccall(
-            (:GDALRelationshipGetLeftTableName, libgdal),
-            Cstring,
-            (GDALRelationshipH,),
-            arg1,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALRelationshipGetLeftTableName, libgdal), Cstring, (GDALRelationshipH,), arg1), false)
 end
 
 """
@@ -13427,15 +9930,7 @@ Get the name of the right (or related/destination) table in the relationship.
 right table name.
 """
 function gdalrelationshipgetrighttablename(arg1)
-    aftercare(
-        ccall(
-            (:GDALRelationshipGetRightTableName, libgdal),
-            Cstring,
-            (GDALRelationshipH,),
-            arg1,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALRelationshipGetRightTableName, libgdal), Cstring, (GDALRelationshipH,), arg1), false)
 end
 
 """
@@ -13447,15 +9942,7 @@ Get the name of the mapping table for many-to-many relationships.
 mapping table name.
 """
 function gdalrelationshipgetmappingtablename(arg1)
-    aftercare(
-        ccall(
-            (:GDALRelationshipGetMappingTableName, libgdal),
-            Cstring,
-            (GDALRelationshipH,),
-            arg1,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALRelationshipGetMappingTableName, libgdal), Cstring, (GDALRelationshipH,), arg1), false)
 end
 
 """
@@ -13469,15 +9956,7 @@ Sets the name of the mapping table for many-to-many relationships.
 * **pszName**: the mapping table name to set.
 """
 function gdalrelationshipsetmappingtablename(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRelationshipSetMappingTableName, libgdal),
-            Cvoid,
-            (GDALRelationshipH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipSetMappingTableName, libgdal), Cvoid, (GDALRelationshipH, Cstring), arg1, arg2))
 end
 
 """
@@ -13489,14 +9968,7 @@ Get the names of the participating fields from the left table in the relationshi
 the field names, to be freed with CSLDestroy()
 """
 function gdalrelationshipgetlefttablefields(arg1)
-    aftercare(
-        ccall(
-            (:GDALRelationshipGetLeftTableFields, libgdal),
-            Ptr{Cstring},
-            (GDALRelationshipH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipGetLeftTableFields, libgdal), Ptr{Cstring}, (GDALRelationshipH,), arg1))
 end
 
 """
@@ -13508,14 +9980,7 @@ Get the names of the participating fields from the right table in the relationsh
 the field names, to be freed with CSLDestroy()
 """
 function gdalrelationshipgetrighttablefields(arg1)
-    aftercare(
-        ccall(
-            (:GDALRelationshipGetRightTableFields, libgdal),
-            Ptr{Cstring},
-            (GDALRelationshipH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipGetRightTableFields, libgdal), Ptr{Cstring}, (GDALRelationshipH,), arg1))
 end
 
 """
@@ -13529,15 +9994,7 @@ Sets the names of the participating fields from the left table in the relationsh
 * **papszFields**: the names of the fields.
 """
 function gdalrelationshipsetlefttablefields(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRelationshipSetLeftTableFields, libgdal),
-            Cvoid,
-            (GDALRelationshipH, CSLConstList),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipSetLeftTableFields, libgdal), Cvoid, (GDALRelationshipH, CSLConstList), arg1, arg2))
 end
 
 """
@@ -13551,15 +10008,7 @@ Sets the names of the participating fields from the right table in the relations
 * **papszFields**: the names of the fields.
 """
 function gdalrelationshipsetrighttablefields(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRelationshipSetRightTableFields, libgdal),
-            Cvoid,
-            (GDALRelationshipH, CSLConstList),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipSetRightTableFields, libgdal), Cvoid, (GDALRelationshipH, CSLConstList), arg1, arg2))
 end
 
 """
@@ -13571,14 +10020,7 @@ Get the names of the mapping table fields which correspond to the participating 
 the field names, to be freed with CSLDestroy()
 """
 function gdalrelationshipgetleftmappingtablefields(arg1)
-    aftercare(
-        ccall(
-            (:GDALRelationshipGetLeftMappingTableFields, libgdal),
-            Ptr{Cstring},
-            (GDALRelationshipH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipGetLeftMappingTableFields, libgdal), Ptr{Cstring}, (GDALRelationshipH,), arg1))
 end
 
 """
@@ -13590,14 +10032,7 @@ Get the names of the mapping table fields which correspond to the participating 
 the field names, to be freed with CSLDestroy()
 """
 function gdalrelationshipgetrightmappingtablefields(arg1)
-    aftercare(
-        ccall(
-            (:GDALRelationshipGetRightMappingTableFields, libgdal),
-            Ptr{Cstring},
-            (GDALRelationshipH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipGetRightMappingTableFields, libgdal), Ptr{Cstring}, (GDALRelationshipH,), arg1))
 end
 
 """
@@ -13611,15 +10046,8 @@ Sets the names of the mapping table fields which correspond to the participating
 * **papszFields**: the names of the fields.
 """
 function gdalrelationshipsetleftmappingtablefields(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRelationshipSetLeftMappingTableFields, libgdal),
-            Cvoid,
-            (GDALRelationshipH, CSLConstList),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipSetLeftMappingTableFields, libgdal), Cvoid, (GDALRelationshipH, CSLConstList), arg1,
+                           arg2))
 end
 
 """
@@ -13633,15 +10061,8 @@ Sets the names of the mapping table fields which correspond to the participating
 * **papszFields**: the names of the fields.
 """
 function gdalrelationshipsetrightmappingtablefields(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRelationshipSetRightMappingTableFields, libgdal),
-            Cvoid,
-            (GDALRelationshipH, CSLConstList),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipSetRightMappingTableFields, libgdal), Cvoid, (GDALRelationshipH, CSLConstList), arg1,
+                           arg2))
 end
 
 """
@@ -13653,14 +10074,7 @@ Get the type of the relationship.
 relationship type.
 """
 function gdalrelationshipgettype(arg1)
-    aftercare(
-        ccall(
-            (:GDALRelationshipGetType, libgdal),
-            GDALRelationshipType,
-            (GDALRelationshipH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipGetType, libgdal), GDALRelationshipType, (GDALRelationshipH,), arg1))
 end
 
 """
@@ -13670,15 +10084,7 @@ end
 Sets the type of the relationship.
 """
 function gdalrelationshipsettype(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRelationshipSetType, libgdal),
-            Cvoid,
-            (GDALRelationshipH, GDALRelationshipType),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipSetType, libgdal), Cvoid, (GDALRelationshipH, GDALRelationshipType), arg1, arg2))
 end
 
 """
@@ -13690,15 +10096,7 @@ Get the label of the forward path for the relationship.
 forward path label
 """
 function gdalrelationshipgetforwardpathlabel(arg1)
-    aftercare(
-        ccall(
-            (:GDALRelationshipGetForwardPathLabel, libgdal),
-            Cstring,
-            (GDALRelationshipH,),
-            arg1,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALRelationshipGetForwardPathLabel, libgdal), Cstring, (GDALRelationshipH,), arg1), false)
 end
 
 """
@@ -13712,15 +10110,7 @@ Sets the label of the forward path for the relationship.
 * **pszLabel**: the label to set.
 """
 function gdalrelationshipsetforwardpathlabel(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRelationshipSetForwardPathLabel, libgdal),
-            Cvoid,
-            (GDALRelationshipH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipSetForwardPathLabel, libgdal), Cvoid, (GDALRelationshipH, Cstring), arg1, arg2))
 end
 
 """
@@ -13732,15 +10122,7 @@ Get the label of the backward path for the relationship.
 backward path label
 """
 function gdalrelationshipgetbackwardpathlabel(arg1)
-    aftercare(
-        ccall(
-            (:GDALRelationshipGetBackwardPathLabel, libgdal),
-            Cstring,
-            (GDALRelationshipH,),
-            arg1,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALRelationshipGetBackwardPathLabel, libgdal), Cstring, (GDALRelationshipH,), arg1), false)
 end
 
 """
@@ -13754,15 +10136,7 @@ Sets the label of the backward path for the relationship.
 * **pszLabel**: the label to set.
 """
 function gdalrelationshipsetbackwardpathlabel(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRelationshipSetBackwardPathLabel, libgdal),
-            Cvoid,
-            (GDALRelationshipH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipSetBackwardPathLabel, libgdal), Cvoid, (GDALRelationshipH, Cstring), arg1, arg2))
 end
 
 """
@@ -13774,15 +10148,7 @@ Get the type string of the related table.
 related table type
 """
 function gdalrelationshipgetrelatedtabletype(arg1)
-    aftercare(
-        ccall(
-            (:GDALRelationshipGetRelatedTableType, libgdal),
-            Cstring,
-            (GDALRelationshipH,),
-            arg1,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALRelationshipGetRelatedTableType, libgdal), Cstring, (GDALRelationshipH,), arg1), false)
 end
 
 """
@@ -13796,15 +10162,7 @@ Sets the type string of the related table.
 * **pszType**: the type to set.
 """
 function gdalrelationshipsetrelatedtabletype(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALRelationshipSetRelatedTableType, libgdal),
-            Cvoid,
-            (GDALRelationshipH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALRelationshipSetRelatedTableType, libgdal), Cvoid, (GDALRelationshipH, Cstring), arg1, arg2))
 end
 
 """
@@ -13816,7 +10174,7 @@ Set maximum cache memory.
 * **nNewSizeInBytes**: the maximum number of bytes for caching.
 """
 function gdalsetcachemax(nBytes)
-    aftercare(ccall((:GDALSetCacheMax, libgdal), Cvoid, (Cint,), nBytes))
+    return aftercare(ccall((:GDALSetCacheMax, libgdal), Cvoid, (Cint,), nBytes))
 end
 
 """
@@ -13828,7 +10186,7 @@ Get maximum cache memory.
 maximum in bytes.
 """
 function gdalgetcachemax()
-    aftercare(ccall((:GDALGetCacheMax, libgdal), Cint, ()))
+    return aftercare(ccall((:GDALGetCacheMax, libgdal), Cint, ()))
 end
 
 """
@@ -13840,7 +10198,7 @@ Get cache memory used.
 the number of bytes of memory currently in use by the GDALRasterBlock memory caching.
 """
 function gdalgetcacheused()
-    aftercare(ccall((:GDALGetCacheUsed, libgdal), Cint, ()))
+    return aftercare(ccall((:GDALGetCacheUsed, libgdal), Cint, ()))
 end
 
 """
@@ -13852,7 +10210,7 @@ Set maximum cache memory.
 * **nNewSizeInBytes**: the maximum number of bytes for caching.
 """
 function gdalsetcachemax64(nBytes)
-    aftercare(ccall((:GDALSetCacheMax64, libgdal), Cvoid, (GIntBig,), nBytes))
+    return aftercare(ccall((:GDALSetCacheMax64, libgdal), Cvoid, (GIntBig,), nBytes))
 end
 
 """
@@ -13864,7 +10222,7 @@ Get maximum cache memory.
 maximum in bytes.
 """
 function gdalgetcachemax64()
-    aftercare(ccall((:GDALGetCacheMax64, libgdal), GIntBig, ()))
+    return aftercare(ccall((:GDALGetCacheMax64, libgdal), GIntBig, ()))
 end
 
 """
@@ -13876,7 +10234,7 @@ Get cache memory used.
 the number of bytes of memory currently in use by the GDALRasterBlock memory caching.
 """
 function gdalgetcacheused64()
-    aftercare(ccall((:GDALGetCacheUsed64, libgdal), GIntBig, ()))
+    return aftercare(ccall((:GDALGetCacheUsed64, libgdal), GIntBig, ()))
 end
 
 """
@@ -13888,7 +10246,7 @@ Try to flush one cached raster block.
 TRUE if one block was flushed, FALSE if there are no cached blocks or if they are currently locked.
 """
 function gdalflushcacheblock()
-    aftercare(ccall((:GDALFlushCacheBlock, libgdal), Cint, ()))
+    return aftercare(ccall((:GDALFlushCacheBlock, libgdal), Cint, ()))
 end
 
 """
@@ -13936,70 +10294,14 @@ Create a CPLVirtualMem object from a GDAL dataset object.
 ### Returns
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
-function gdaldatasetgetvirtualmem(
-    hDS,
-    eRWFlag,
-    nXOff,
-    nYOff,
-    nXSize,
-    nYSize,
-    nBufXSize,
-    nBufYSize,
-    eBufType,
-    nBandCount,
-    panBandMap,
-    nPixelSpace,
-    nLineSpace,
-    nBandSpace,
-    nCacheSize,
-    nPageSizeHint,
-    bSingleThreadUsage,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALDatasetGetVirtualMem, libgdal),
-            Ptr{CPLVirtualMem},
-            (
-                GDALDatasetH,
-                GDALRWFlag,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                GDALDataType,
-                Cint,
-                Ptr{Cint},
-                Cint,
-                GIntBig,
-                GIntBig,
-                Csize_t,
-                Csize_t,
-                Cint,
-                CSLConstList,
-            ),
-            hDS,
-            eRWFlag,
-            nXOff,
-            nYOff,
-            nXSize,
-            nYSize,
-            nBufXSize,
-            nBufYSize,
-            eBufType,
-            nBandCount,
-            panBandMap,
-            nPixelSpace,
-            nLineSpace,
-            nBandSpace,
-            nCacheSize,
-            nPageSizeHint,
-            bSingleThreadUsage,
-            papszOptions,
-        ),
-    )
+function gdaldatasetgetvirtualmem(hDS, eRWFlag, nXOff, nYOff, nXSize, nYSize, nBufXSize, nBufYSize, eBufType, nBandCount,
+                                  panBandMap, nPixelSpace, nLineSpace, nBandSpace, nCacheSize, nPageSizeHint, bSingleThreadUsage,
+                                  papszOptions)
+    return aftercare(ccall((:GDALDatasetGetVirtualMem, libgdal), Ptr{CPLVirtualMem},
+                           (GDALDatasetH, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, Ptr{Cint}, Cint,
+                            GIntBig, GIntBig, Csize_t, Csize_t, Cint, CSLConstList), hDS, eRWFlag, nXOff, nYOff, nXSize, nYSize,
+                           nBufXSize, nBufYSize, eBufType, nBandCount, panBandMap, nPixelSpace, nLineSpace, nBandSpace, nCacheSize,
+                           nPageSizeHint, bSingleThreadUsage, papszOptions))
 end
 
 """
@@ -14041,61 +10343,12 @@ Create a CPLVirtualMem object from a GDAL raster band object.
 ### Returns
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
-function gdalrasterbandgetvirtualmem(
-    hBand,
-    eRWFlag,
-    nXOff,
-    nYOff,
-    nXSize,
-    nYSize,
-    nBufXSize,
-    nBufYSize,
-    eBufType,
-    nPixelSpace,
-    nLineSpace,
-    nCacheSize,
-    nPageSizeHint,
-    bSingleThreadUsage,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALRasterBandGetVirtualMem, libgdal),
-            Ptr{CPLVirtualMem},
-            (
-                GDALRasterBandH,
-                GDALRWFlag,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                GDALDataType,
-                Cint,
-                GIntBig,
-                Csize_t,
-                Csize_t,
-                Cint,
-                CSLConstList,
-            ),
-            hBand,
-            eRWFlag,
-            nXOff,
-            nYOff,
-            nXSize,
-            nYSize,
-            nBufXSize,
-            nBufYSize,
-            eBufType,
-            nPixelSpace,
-            nLineSpace,
-            nCacheSize,
-            nPageSizeHint,
-            bSingleThreadUsage,
-            papszOptions,
-        ),
-    )
+function gdalrasterbandgetvirtualmem(hBand, eRWFlag, nXOff, nYOff, nXSize, nYSize, nBufXSize, nBufYSize, eBufType, nPixelSpace,
+                                     nLineSpace, nCacheSize, nPageSizeHint, bSingleThreadUsage, papszOptions)
+    return aftercare(ccall((:GDALRasterBandGetVirtualMem, libgdal), Ptr{CPLVirtualMem},
+                           (GDALRasterBandH, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, GIntBig, Csize_t,
+                            Csize_t, Cint, CSLConstList), hBand, eRWFlag, nXOff, nYOff, nXSize, nYSize, nBufXSize, nBufYSize,
+                           eBufType, nPixelSpace, nLineSpace, nCacheSize, nPageSizeHint, bSingleThreadUsage, papszOptions))
 end
 
 """
@@ -14108,18 +10361,9 @@ end
 Create a CPLVirtualMem object from a GDAL raster band object.
 """
 function gdalgetvirtualmemauto(hBand, eRWFlag, pnPixelSpace, pnLineSpace, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGetVirtualMemAuto, libgdal),
-            Ptr{CPLVirtualMem},
-            (GDALRasterBandH, GDALRWFlag, Ptr{Cint}, Ptr{GIntBig}, CSLConstList),
-            hBand,
-            eRWFlag,
-            pnPixelSpace,
-            pnLineSpace,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGetVirtualMemAuto, libgdal), Ptr{CPLVirtualMem},
+                           (GDALRasterBandH, GDALRWFlag, Ptr{Cint}, Ptr{GIntBig}, CSLConstList), hBand, eRWFlag, pnPixelSpace,
+                           pnLineSpace, papszOptions))
 end
 
 """
@@ -14178,61 +10422,13 @@ Create a CPLVirtualMem object from a GDAL dataset object, with tiling organizati
 ### Returns
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
-function gdaldatasetgettiledvirtualmem(
-    hDS,
-    eRWFlag,
-    nXOff,
-    nYOff,
-    nXSize,
-    nYSize,
-    nTileXSize,
-    nTileYSize,
-    eBufType,
-    nBandCount,
-    panBandMap,
-    eTileOrganization,
-    nCacheSize,
-    bSingleThreadUsage,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALDatasetGetTiledVirtualMem, libgdal),
-            Ptr{CPLVirtualMem},
-            (
-                GDALDatasetH,
-                GDALRWFlag,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                GDALDataType,
-                Cint,
-                Ptr{Cint},
-                GDALTileOrganization,
-                Csize_t,
-                Cint,
-                CSLConstList,
-            ),
-            hDS,
-            eRWFlag,
-            nXOff,
-            nYOff,
-            nXSize,
-            nYSize,
-            nTileXSize,
-            nTileYSize,
-            eBufType,
-            nBandCount,
-            panBandMap,
-            eTileOrganization,
-            nCacheSize,
-            bSingleThreadUsage,
-            papszOptions,
-        ),
-    )
+function gdaldatasetgettiledvirtualmem(hDS, eRWFlag, nXOff, nYOff, nXSize, nYSize, nTileXSize, nTileYSize, eBufType, nBandCount,
+                                       panBandMap, eTileOrganization, nCacheSize, bSingleThreadUsage, papszOptions)
+    return aftercare(ccall((:GDALDatasetGetTiledVirtualMem, libgdal), Ptr{CPLVirtualMem},
+                           (GDALDatasetH, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Cint, Ptr{Cint},
+                            GDALTileOrganization, Csize_t, Cint, CSLConstList), hDS, eRWFlag, nXOff, nYOff, nXSize, nYSize,
+                           nTileXSize, nTileYSize, eBufType, nBandCount, panBandMap, eTileOrganization, nCacheSize,
+                           bSingleThreadUsage, papszOptions))
 end
 
 """
@@ -14268,52 +10464,12 @@ Create a CPLVirtualMem object from a GDAL rasterband object, with tiling organiz
 ### Returns
 a virtual memory object that must be freed by CPLVirtualMemFree(), or NULL in case of failure.
 """
-function gdalrasterbandgettiledvirtualmem(
-    hBand,
-    eRWFlag,
-    nXOff,
-    nYOff,
-    nXSize,
-    nYSize,
-    nTileXSize,
-    nTileYSize,
-    eBufType,
-    nCacheSize,
-    bSingleThreadUsage,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALRasterBandGetTiledVirtualMem, libgdal),
-            Ptr{CPLVirtualMem},
-            (
-                GDALRasterBandH,
-                GDALRWFlag,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                GDALDataType,
-                Csize_t,
-                Cint,
-                CSLConstList,
-            ),
-            hBand,
-            eRWFlag,
-            nXOff,
-            nYOff,
-            nXSize,
-            nYSize,
-            nTileXSize,
-            nTileYSize,
-            eBufType,
-            nCacheSize,
-            bSingleThreadUsage,
-            papszOptions,
-        ),
-    )
+function gdalrasterbandgettiledvirtualmem(hBand, eRWFlag, nXOff, nYOff, nXSize, nYSize, nTileXSize, nTileYSize, eBufType,
+                                          nCacheSize, bSingleThreadUsage, papszOptions)
+    return aftercare(ccall((:GDALRasterBandGetTiledVirtualMem, libgdal), Ptr{CPLVirtualMem},
+                           (GDALRasterBandH, GDALRWFlag, Cint, Cint, Cint, Cint, Cint, Cint, GDALDataType, Csize_t, Cint,
+                            CSLConstList), hBand, eRWFlag, nXOff, nYOff, nXSize, nYSize, nTileXSize, nTileYSize, eBufType,
+                           nCacheSize, bSingleThreadUsage, papszOptions))
 end
 
 """
@@ -14333,23 +10489,10 @@ Create a virtual pansharpened dataset.
 ### Returns
 NULL on failure, or a new virtual dataset handle on success to be closed with GDALClose().
 """
-function gdalcreatepansharpenedvrt(
-    pszXML,
-    hPanchroBand,
-    nInputSpectralBands,
-    pahInputSpectralBands,
-)
-    aftercare(
-        ccall(
-            (:GDALCreatePansharpenedVRT, libgdal),
-            GDALDatasetH,
-            (Cstring, GDALRasterBandH, Cint, Ptr{GDALRasterBandH}),
-            pszXML,
-            hPanchroBand,
-            nInputSpectralBands,
-            pahInputSpectralBands,
-        ),
-    )
+function gdalcreatepansharpenedvrt(pszXML, hPanchroBand, nInputSpectralBands, pahInputSpectralBands)
+    return aftercare(ccall((:GDALCreatePansharpenedVRT, libgdal), GDALDatasetH,
+                           (Cstring, GDALRasterBandH, Cint, Ptr{GDALRasterBandH}), pszXML, hPanchroBand, nInputSpectralBands,
+                           pahInputSpectralBands))
 end
 
 """
@@ -14366,15 +10509,8 @@ Dump the structure of a JPEG2000 file as a XML tree.
 XML tree (to be freed with CPLDestroyXMLNode()) or NULL in case of error
 """
 function gdalgetjpeg2000structure(pszFilename, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGetJPEG2000Structure, libgdal),
-            Ptr{CPLXMLNode},
-            (Cstring, CSLConstList),
-            pszFilename,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGetJPEG2000Structure, libgdal), Ptr{CPLXMLNode}, (Cstring, CSLConstList), pszFilename,
+                           papszOptions))
 end
 
 """
@@ -14386,17 +10522,8 @@ end
 Create a new multidimensional dataset with this driver.
 """
 function gdalcreatemultidimensional(hDriver, pszName, papszRootGroupOptions, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALCreateMultiDimensional, libgdal),
-            GDALDatasetH,
-            (GDALDriverH, Cstring, CSLConstList, CSLConstList),
-            hDriver,
-            pszName,
-            papszRootGroupOptions,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateMultiDimensional, libgdal), GDALDatasetH, (GDALDriverH, Cstring, CSLConstList, CSLConstList),
+                           hDriver, pszName, papszRootGroupOptions, papszOptions))
 end
 
 """
@@ -14405,20 +10532,13 @@ end
 Return a new GDALExtendedDataType of class GEDTC_NUMERIC.
 
 ### Parameters
-* **eType**: Numeric data type.
+* **eType**: Numeric data type. Must be different from GDT_Unknown and GDT_TypeCount
 
 ### Returns
 a new GDALExtendedDataTypeH handle, or nullptr.
 """
 function gdalextendeddatatypecreate(eType)
-    aftercare(
-        ccall(
-            (:GDALExtendedDataTypeCreate, libgdal),
-            GDALExtendedDataTypeH,
-            (GDALDataType,),
-            eType,
-        ),
-    )
+    return aftercare(ccall((:GDALExtendedDataTypeCreate, libgdal), GDALExtendedDataTypeH, (GDALDataType,), eType))
 end
 
 """
@@ -14430,14 +10550,7 @@ Return a new GDALExtendedDataType of class GEDTC_STRING.
 a new GDALExtendedDataTypeH handle, or nullptr.
 """
 function gdalextendeddatatypecreatestring(nMaxStringLength)
-    aftercare(
-        ccall(
-            (:GDALExtendedDataTypeCreateString, libgdal),
-            GDALExtendedDataTypeH,
-            (Csize_t,),
-            nMaxStringLength,
-        ),
-    )
+    return aftercare(ccall((:GDALExtendedDataTypeCreateString, libgdal), GDALExtendedDataTypeH, (Csize_t,), nMaxStringLength))
 end
 
 """
@@ -14450,15 +10563,8 @@ Return a new GDALExtendedDataType of class GEDTC_STRING.
 a new GDALExtendedDataTypeH handle, or nullptr.
 """
 function gdalextendeddatatypecreatestringex(nMaxStringLength, eSubType)
-    aftercare(
-        ccall(
-            (:GDALExtendedDataTypeCreateStringEx, libgdal),
-            GDALExtendedDataTypeH,
-            (Csize_t, GDALExtendedDataTypeSubType),
-            nMaxStringLength,
-            eSubType,
-        ),
-    )
+    return aftercare(ccall((:GDALExtendedDataTypeCreateStringEx, libgdal), GDALExtendedDataTypeH,
+                           (Csize_t, GDALExtendedDataTypeSubType), nMaxStringLength, eSubType))
 end
 
 """
@@ -14479,17 +10585,8 @@ Return a new GDALExtendedDataType of class GEDTC_COMPOUND.
 a new GDALExtendedDataTypeH handle, or nullptr.
 """
 function gdalextendeddatatypecreatecompound(pszName, nTotalSize, nComponents, comps)
-    aftercare(
-        ccall(
-            (:GDALExtendedDataTypeCreateCompound, libgdal),
-            GDALExtendedDataTypeH,
-            (Cstring, Csize_t, Csize_t, Ptr{GDALEDTComponentH}),
-            pszName,
-            nTotalSize,
-            nComponents,
-            comps,
-        ),
-    )
+    return aftercare(ccall((:GDALExtendedDataTypeCreateCompound, libgdal), GDALExtendedDataTypeH,
+                           (Cstring, Csize_t, Csize_t, Ptr{GDALEDTComponentH}), pszName, nTotalSize, nComponents, comps))
 end
 
 """
@@ -14498,14 +10595,7 @@ end
 Release the GDAL in-memory object associated with a GDALExtendedDataTypeH.
 """
 function gdalextendeddatatyperelease(hEDT)
-    aftercare(
-        ccall(
-            (:GDALExtendedDataTypeRelease, libgdal),
-            Cvoid,
-            (GDALExtendedDataTypeH,),
-            hEDT,
-        ),
-    )
+    return aftercare(ccall((:GDALExtendedDataTypeRelease, libgdal), Cvoid, (GDALExtendedDataTypeH,), hEDT))
 end
 
 """
@@ -14514,15 +10604,7 @@ end
 Return type name.
 """
 function gdalextendeddatatypegetname(hEDT)
-    aftercare(
-        ccall(
-            (:GDALExtendedDataTypeGetName, libgdal),
-            Cstring,
-            (GDALExtendedDataTypeH,),
-            hEDT,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALExtendedDataTypeGetName, libgdal), Cstring, (GDALExtendedDataTypeH,), hEDT), false)
 end
 
 """
@@ -14531,14 +10613,7 @@ end
 Return type class.
 """
 function gdalextendeddatatypegetclass(hEDT)
-    aftercare(
-        ccall(
-            (:GDALExtendedDataTypeGetClass, libgdal),
-            GDALExtendedDataTypeClass,
-            (GDALExtendedDataTypeH,),
-            hEDT,
-        ),
-    )
+    return aftercare(ccall((:GDALExtendedDataTypeGetClass, libgdal), GDALExtendedDataTypeClass, (GDALExtendedDataTypeH,), hEDT))
 end
 
 """
@@ -14547,14 +10622,7 @@ end
 Return numeric data type (only valid when GetClass() == GEDTC_NUMERIC)
 """
 function gdalextendeddatatypegetnumericdatatype(hEDT)
-    aftercare(
-        ccall(
-            (:GDALExtendedDataTypeGetNumericDataType, libgdal),
-            GDALDataType,
-            (GDALExtendedDataTypeH,),
-            hEDT,
-        ),
-    )
+    return aftercare(ccall((:GDALExtendedDataTypeGetNumericDataType, libgdal), GDALDataType, (GDALExtendedDataTypeH,), hEDT))
 end
 
 """
@@ -14563,14 +10631,7 @@ end
 Return data type size in bytes.
 """
 function gdalextendeddatatypegetsize(hEDT)
-    aftercare(
-        ccall(
-            (:GDALExtendedDataTypeGetSize, libgdal),
-            Csize_t,
-            (GDALExtendedDataTypeH,),
-            hEDT,
-        ),
-    )
+    return aftercare(ccall((:GDALExtendedDataTypeGetSize, libgdal), Csize_t, (GDALExtendedDataTypeH,), hEDT))
 end
 
 """
@@ -14579,14 +10640,7 @@ end
 Return the maximum length of a string in bytes.
 """
 function gdalextendeddatatypegetmaxstringlength(hEDT)
-    aftercare(
-        ccall(
-            (:GDALExtendedDataTypeGetMaxStringLength, libgdal),
-            Csize_t,
-            (GDALExtendedDataTypeH,),
-            hEDT,
-        ),
-    )
+    return aftercare(ccall((:GDALExtendedDataTypeGetMaxStringLength, libgdal), Csize_t, (GDALExtendedDataTypeH,), hEDT))
 end
 
 """
@@ -14603,15 +10657,8 @@ Return the components of the data type (only valid when GetClass() == GEDTC_COMP
 an array of *pnCount components.
 """
 function gdalextendeddatatypegetcomponents(hEDT, pnCount)
-    aftercare(
-        ccall(
-            (:GDALExtendedDataTypeGetComponents, libgdal),
-            Ptr{GDALEDTComponentH},
-            (GDALExtendedDataTypeH, Ptr{Csize_t}),
-            hEDT,
-            pnCount,
-        ),
-    )
+    return aftercare(ccall((:GDALExtendedDataTypeGetComponents, libgdal), Ptr{GDALEDTComponentH},
+                           (GDALExtendedDataTypeH, Ptr{Csize_t}), hEDT, pnCount))
 end
 
 """
@@ -14625,15 +10672,8 @@ Free the return of GDALExtendedDataTypeGetComponents().
 * **nCount**: *pnCount value returned by GDALExtendedDataTypeGetComponents()
 """
 function gdalextendeddatatypefreecomponents(components, nCount)
-    aftercare(
-        ccall(
-            (:GDALExtendedDataTypeFreeComponents, libgdal),
-            Cvoid,
-            (Ptr{GDALEDTComponentH}, Csize_t),
-            components,
-            nCount,
-        ),
-    )
+    return aftercare(ccall((:GDALExtendedDataTypeFreeComponents, libgdal), Cvoid, (Ptr{GDALEDTComponentH}, Csize_t), components,
+                           nCount))
 end
 
 """
@@ -14650,15 +10690,8 @@ Return whether this data type can be converted to the other one.
 TRUE if hSourceEDT can be convert to hTargetEDT. FALSE otherwise.
 """
 function gdalextendeddatatypecanconvertto(hSourceEDT, hTargetEDT)
-    aftercare(
-        ccall(
-            (:GDALExtendedDataTypeCanConvertTo, libgdal),
-            Cint,
-            (GDALExtendedDataTypeH, GDALExtendedDataTypeH),
-            hSourceEDT,
-            hTargetEDT,
-        ),
-    )
+    return aftercare(ccall((:GDALExtendedDataTypeCanConvertTo, libgdal), Cint, (GDALExtendedDataTypeH, GDALExtendedDataTypeH),
+                           hSourceEDT, hTargetEDT))
 end
 
 """
@@ -14675,15 +10708,8 @@ Return whether this data type is equal to another one.
 TRUE if they are equal. FALSE otherwise.
 """
 function gdalextendeddatatypeequals(hFirstEDT, hSecondEDT)
-    aftercare(
-        ccall(
-            (:GDALExtendedDataTypeEquals, libgdal),
-            Cint,
-            (GDALExtendedDataTypeH, GDALExtendedDataTypeH),
-            hFirstEDT,
-            hSecondEDT,
-        ),
-    )
+    return aftercare(ccall((:GDALExtendedDataTypeEquals, libgdal), Cint, (GDALExtendedDataTypeH, GDALExtendedDataTypeH), hFirstEDT,
+                           hSecondEDT))
 end
 
 """
@@ -14698,14 +10724,7 @@ Return the subtype of a type.
 subtype.
 """
 function gdalextendeddatatypegetsubtype(hEDT)
-    aftercare(
-        ccall(
-            (:GDALExtendedDataTypeGetSubType, libgdal),
-            GDALExtendedDataTypeSubType,
-            (GDALExtendedDataTypeH,),
-            hEDT,
-        ),
-    )
+    return aftercare(ccall((:GDALExtendedDataTypeGetSubType, libgdal), GDALExtendedDataTypeSubType, (GDALExtendedDataTypeH,), hEDT))
 end
 
 """
@@ -14716,16 +10735,8 @@ end
 Create a new GDALEDTComponent.
 """
 function gdaledtcomponentcreate(pszName, nOffset, hType)
-    aftercare(
-        ccall(
-            (:GDALEDTComponentCreate, libgdal),
-            GDALEDTComponentH,
-            (Cstring, Csize_t, GDALExtendedDataTypeH),
-            pszName,
-            nOffset,
-            hType,
-        ),
-    )
+    return aftercare(ccall((:GDALEDTComponentCreate, libgdal), GDALEDTComponentH, (Cstring, Csize_t, GDALExtendedDataTypeH),
+                           pszName, nOffset, hType))
 end
 
 """
@@ -14734,9 +10745,7 @@ end
 Release the GDAL in-memory object associated with a GDALEDTComponentH.
 """
 function gdaledtcomponentrelease(hComp)
-    aftercare(
-        ccall((:GDALEDTComponentRelease, libgdal), Cvoid, (GDALEDTComponentH,), hComp),
-    )
+    return aftercare(ccall((:GDALEDTComponentRelease, libgdal), Cvoid, (GDALEDTComponentH,), hComp))
 end
 
 """
@@ -14745,10 +10754,7 @@ end
 Return the name.
 """
 function gdaledtcomponentgetname(hComp)
-    aftercare(
-        ccall((:GDALEDTComponentGetName, libgdal), Cstring, (GDALEDTComponentH,), hComp),
-        false,
-    )
+    return aftercare(ccall((:GDALEDTComponentGetName, libgdal), Cstring, (GDALEDTComponentH,), hComp), false)
 end
 
 """
@@ -14757,9 +10763,7 @@ end
 Return the offset (in bytes) of the component in the compound data type.
 """
 function gdaledtcomponentgetoffset(hComp)
-    aftercare(
-        ccall((:GDALEDTComponentGetOffset, libgdal), Csize_t, (GDALEDTComponentH,), hComp),
-    )
+    return aftercare(ccall((:GDALEDTComponentGetOffset, libgdal), Csize_t, (GDALEDTComponentH,), hComp))
 end
 
 """
@@ -14768,14 +10772,7 @@ end
 Return the data type of the component.
 """
 function gdaledtcomponentgettype(hComp)
-    aftercare(
-        ccall(
-            (:GDALEDTComponentGetType, libgdal),
-            GDALExtendedDataTypeH,
-            (GDALEDTComponentH,),
-            hComp,
-        ),
-    )
+    return aftercare(ccall((:GDALEDTComponentGetType, libgdal), GDALExtendedDataTypeH, (GDALEDTComponentH,), hComp))
 end
 
 """
@@ -14784,7 +10781,7 @@ end
 Return the root GDALGroup of this dataset.
 """
 function gdaldatasetgetrootgroup(hDS)
-    aftercare(ccall((:GDALDatasetGetRootGroup, libgdal), GDALGroupH, (GDALDatasetH,), hDS))
+    return aftercare(ccall((:GDALDatasetGetRootGroup, libgdal), GDALGroupH, (GDALDatasetH,), hDS))
 end
 
 """
@@ -14793,7 +10790,7 @@ end
 Release the GDAL in-memory object associated with a GDALGroupH.
 """
 function gdalgrouprelease(hGroup)
-    aftercare(ccall((:GDALGroupRelease, libgdal), Cvoid, (GDALGroupH,), hGroup))
+    return aftercare(ccall((:GDALGroupRelease, libgdal), Cvoid, (GDALGroupH,), hGroup))
 end
 
 """
@@ -14802,7 +10799,7 @@ end
 Return the name of the group.
 """
 function gdalgroupgetname(hGroup)
-    aftercare(ccall((:GDALGroupGetName, libgdal), Cstring, (GDALGroupH,), hGroup), false)
+    return aftercare(ccall((:GDALGroupGetName, libgdal), Cstring, (GDALGroupH,), hGroup), false)
 end
 
 """
@@ -14811,10 +10808,7 @@ end
 Return the full name of the group.
 """
 function gdalgroupgetfullname(hGroup)
-    aftercare(
-        ccall((:GDALGroupGetFullName, libgdal), Cstring, (GDALGroupH,), hGroup),
-        false,
-    )
+    return aftercare(ccall((:GDALGroupGetFullName, libgdal), Cstring, (GDALGroupH,), hGroup), false)
 end
 
 """
@@ -14827,15 +10821,7 @@ Return the list of multidimensional array names contained in this group.
 the array names, to be freed with CSLDestroy()
 """
 function gdalgroupgetmdarraynames(hGroup, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupGetMDArrayNames, libgdal),
-            Ptr{Cstring},
-            (GDALGroupH, CSLConstList),
-            hGroup,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupGetMDArrayNames, libgdal), Ptr{Cstring}, (GDALGroupH, CSLConstList), hGroup, papszOptions))
 end
 
 """
@@ -14849,16 +10835,8 @@ Open and return a multidimensional array.
 the array, to be freed with GDALMDArrayRelease(), or nullptr.
 """
 function gdalgroupopenmdarray(hGroup, pszMDArrayName, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupOpenMDArray, libgdal),
-            GDALMDArrayH,
-            (GDALGroupH, Cstring, CSLConstList),
-            hGroup,
-            pszMDArrayName,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupOpenMDArray, libgdal), GDALMDArrayH, (GDALGroupH, Cstring, CSLConstList), hGroup,
+                           pszMDArrayName, papszOptions))
 end
 
 """
@@ -14872,16 +10850,8 @@ Open and return a multidimensional array from its fully qualified name.
 the array, to be freed with GDALMDArrayRelease(), or nullptr.
 """
 function gdalgroupopenmdarrayfromfullname(hGroup, pszMDArrayName, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupOpenMDArrayFromFullname, libgdal),
-            GDALMDArrayH,
-            (GDALGroupH, Cstring, CSLConstList),
-            hGroup,
-            pszMDArrayName,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupOpenMDArrayFromFullname, libgdal), GDALMDArrayH, (GDALGroupH, Cstring, CSLConstList), hGroup,
+                           pszMDArrayName, papszOptions))
 end
 
 """
@@ -14893,17 +10863,8 @@ end
 Locate an array in a group and its subgroups by name.
 """
 function gdalgroupresolvemdarray(hGroup, pszName, pszStartingPoint, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupResolveMDArray, libgdal),
-            GDALMDArrayH,
-            (GDALGroupH, Cstring, Cstring, CSLConstList),
-            hGroup,
-            pszName,
-            pszStartingPoint,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupResolveMDArray, libgdal), GDALMDArrayH, (GDALGroupH, Cstring, Cstring, CSLConstList), hGroup,
+                           pszName, pszStartingPoint, papszOptions))
 end
 
 """
@@ -14916,15 +10877,7 @@ Return the list of sub-groups contained in this group.
 the group names, to be freed with CSLDestroy()
 """
 function gdalgroupgetgroupnames(hGroup, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupGetGroupNames, libgdal),
-            Ptr{Cstring},
-            (GDALGroupH, CSLConstList),
-            hGroup,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupGetGroupNames, libgdal), Ptr{Cstring}, (GDALGroupH, CSLConstList), hGroup, papszOptions))
 end
 
 """
@@ -14938,16 +10891,8 @@ Open and return a sub-group.
 the sub-group, to be freed with GDALGroupRelease(), or nullptr.
 """
 function gdalgroupopengroup(hGroup, pszSubGroupName, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupOpenGroup, libgdal),
-            GDALGroupH,
-            (GDALGroupH, Cstring, CSLConstList),
-            hGroup,
-            pszSubGroupName,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupOpenGroup, libgdal), GDALGroupH, (GDALGroupH, Cstring, CSLConstList), hGroup, pszSubGroupName,
+                           papszOptions))
 end
 
 """
@@ -14961,16 +10906,8 @@ Open and return a sub-group from its fully qualified name.
 the sub-group, to be freed with GDALGroupRelease(), or nullptr.
 """
 function gdalgroupopengroupfromfullname(hGroup, pszMDArrayName, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupOpenGroupFromFullname, libgdal),
-            GDALGroupH,
-            (GDALGroupH, Cstring, CSLConstList),
-            hGroup,
-            pszMDArrayName,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupOpenGroupFromFullname, libgdal), GDALGroupH, (GDALGroupH, Cstring, CSLConstList), hGroup,
+                           pszMDArrayName, papszOptions))
 end
 
 """
@@ -14983,15 +10920,8 @@ Return the list of layer names contained in this group.
 the group names, to be freed with CSLDestroy()
 """
 function gdalgroupgetvectorlayernames(hGroup, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupGetVectorLayerNames, libgdal),
-            Ptr{Cstring},
-            (GDALGroupH, CSLConstList),
-            hGroup,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupGetVectorLayerNames, libgdal), Ptr{Cstring}, (GDALGroupH, CSLConstList), hGroup,
+                           papszOptions))
 end
 
 """
@@ -15005,16 +10935,8 @@ Open and return a vector layer.
 the vector layer, or nullptr.
 """
 function gdalgroupopenvectorlayer(hGroup, pszVectorLayerName, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupOpenVectorLayer, libgdal),
-            OGRLayerH,
-            (GDALGroupH, Cstring, CSLConstList),
-            hGroup,
-            pszVectorLayerName,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupOpenVectorLayer, libgdal), OGRLayerH, (GDALGroupH, Cstring, CSLConstList), hGroup,
+                           pszVectorLayerName, papszOptions))
 end
 
 """
@@ -15033,16 +10955,8 @@ Return the list of dimensions contained in this group and used by its arrays.
 an array of *pnCount dimensions.
 """
 function gdalgroupgetdimensions(hGroup, pnCount, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupGetDimensions, libgdal),
-            Ptr{GDALDimensionH},
-            (GDALGroupH, Ptr{Csize_t}, CSLConstList),
-            hGroup,
-            pnCount,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupGetDimensions, libgdal), Ptr{GDALDimensionH}, (GDALGroupH, Ptr{Csize_t}, CSLConstList),
+                           hGroup, pnCount, papszOptions))
 end
 
 """
@@ -15052,15 +10966,7 @@ end
 Return an attribute by its name.
 """
 function gdalgroupgetattribute(hGroup, pszName)
-    aftercare(
-        ccall(
-            (:GDALGroupGetAttribute, libgdal),
-            GDALAttributeH,
-            (GDALGroupH, Cstring),
-            hGroup,
-            pszName,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupGetAttribute, libgdal), GDALAttributeH, (GDALGroupH, Cstring), hGroup, pszName))
 end
 
 """
@@ -15079,16 +10985,8 @@ Return the list of attributes contained in this group.
 an array of *pnCount attributes.
 """
 function gdalgroupgetattributes(hGroup, pnCount, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupGetAttributes, libgdal),
-            Ptr{GDALAttributeH},
-            (GDALGroupH, Ptr{Csize_t}, CSLConstList),
-            hGroup,
-            pnCount,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupGetAttributes, libgdal), Ptr{GDALAttributeH}, (GDALGroupH, Ptr{Csize_t}, CSLConstList),
+                           hGroup, pnCount, papszOptions))
 end
 
 """
@@ -15097,9 +10995,7 @@ end
 Return structural information on the group.
 """
 function gdalgroupgetstructuralinfo(hGroup)
-    aftercare(
-        ccall((:GDALGroupGetStructuralInfo, libgdal), CSLConstList, (GDALGroupH,), hGroup),
-    )
+    return aftercare(ccall((:GDALGroupGetStructuralInfo, libgdal), CSLConstList, (GDALGroupH,), hGroup))
 end
 
 """
@@ -15113,16 +11009,8 @@ Create a sub-group within a group.
 the sub-group, to be freed with GDALGroupRelease(), or nullptr.
 """
 function gdalgroupcreategroup(hGroup, pszSubGroupName, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupCreateGroup, libgdal),
-            GDALGroupH,
-            (GDALGroupH, Cstring, CSLConstList),
-            hGroup,
-            pszSubGroupName,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupCreateGroup, libgdal), GDALGroupH, (GDALGroupH, Cstring, CSLConstList), hGroup,
+                           pszSubGroupName, papszOptions))
 end
 
 """
@@ -15136,16 +11024,8 @@ Delete a sub-group from a group.
 true in case of success.
 """
 function gdalgroupdeletegroup(hGroup, pszName, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupDeleteGroup, libgdal),
-            Bool,
-            (GDALGroupH, Cstring, CSLConstList),
-            hGroup,
-            pszName,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupDeleteGroup, libgdal), Bool, (GDALGroupH, Cstring, CSLConstList), hGroup, pszName,
+                           papszOptions))
 end
 
 """
@@ -15161,27 +11041,10 @@ Create a dimension within a group.
 ### Returns
 the dimension, to be freed with GDALDimensionRelease(), or nullptr.
 """
-function gdalgroupcreatedimension(
-    hGroup,
-    pszName,
-    pszType,
-    pszDirection,
-    nSize,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALGroupCreateDimension, libgdal),
-            GDALDimensionH,
-            (GDALGroupH, Cstring, Cstring, Cstring, GUInt64, CSLConstList),
-            hGroup,
-            pszName,
-            pszType,
-            pszDirection,
-            nSize,
-            papszOptions,
-        ),
-    )
+function gdalgroupcreatedimension(hGroup, pszName, pszType, pszDirection, nSize, papszOptions)
+    return aftercare(ccall((:GDALGroupCreateDimension, libgdal), GDALDimensionH,
+                           (GDALGroupH, Cstring, Cstring, Cstring, GUInt64, CSLConstList), hGroup, pszName, pszType, pszDirection,
+                           nSize, papszOptions))
 end
 
 """
@@ -15197,34 +11060,10 @@ Create a multidimensional array within a group.
 ### Returns
 the array, to be freed with GDALMDArrayRelease(), or nullptr.
 """
-function gdalgroupcreatemdarray(
-    hGroup,
-    pszName,
-    nDimensions,
-    pahDimensions,
-    hEDT,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALGroupCreateMDArray, libgdal),
-            GDALMDArrayH,
-            (
-                GDALGroupH,
-                Cstring,
-                Csize_t,
-                Ptr{GDALDimensionH},
-                GDALExtendedDataTypeH,
-                CSLConstList,
-            ),
-            hGroup,
-            pszName,
-            nDimensions,
-            pahDimensions,
-            hEDT,
-            papszOptions,
-        ),
-    )
+function gdalgroupcreatemdarray(hGroup, pszName, nDimensions, pahDimensions, hEDT, papszOptions)
+    return aftercare(ccall((:GDALGroupCreateMDArray, libgdal), GDALMDArrayH,
+                           (GDALGroupH, Cstring, Csize_t, Ptr{GDALDimensionH}, GDALExtendedDataTypeH, CSLConstList), hGroup,
+                           pszName, nDimensions, pahDimensions, hEDT, papszOptions))
 end
 
 """
@@ -15238,16 +11077,8 @@ Delete an array from a group.
 true in case of success.
 """
 function gdalgroupdeletemdarray(hGroup, pszName, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupDeleteMDArray, libgdal),
-            Bool,
-            (GDALGroupH, Cstring, CSLConstList),
-            hGroup,
-            pszName,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupDeleteMDArray, libgdal), Bool, (GDALGroupH, Cstring, CSLConstList), hGroup, pszName,
+                           papszOptions))
 end
 
 """
@@ -15263,34 +11094,10 @@ Create a attribute within a group.
 ### Returns
 the attribute, to be freed with GDALAttributeRelease(), or nullptr.
 """
-function gdalgroupcreateattribute(
-    hGroup,
-    pszName,
-    nDimensions,
-    panDimensions,
-    hEDT,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALGroupCreateAttribute, libgdal),
-            GDALAttributeH,
-            (
-                GDALGroupH,
-                Cstring,
-                Csize_t,
-                Ptr{GUInt64},
-                GDALExtendedDataTypeH,
-                CSLConstList,
-            ),
-            hGroup,
-            pszName,
-            nDimensions,
-            panDimensions,
-            hEDT,
-            papszOptions,
-        ),
-    )
+function gdalgroupcreateattribute(hGroup, pszName, nDimensions, panDimensions, hEDT, papszOptions)
+    return aftercare(ccall((:GDALGroupCreateAttribute, libgdal), GDALAttributeH,
+                           (GDALGroupH, Cstring, Csize_t, Ptr{GUInt64}, GDALExtendedDataTypeH, CSLConstList), hGroup, pszName,
+                           nDimensions, panDimensions, hEDT, papszOptions))
 end
 
 """
@@ -15304,16 +11111,8 @@ Delete an attribute from a group.
 true in case of success.
 """
 function gdalgroupdeleteattribute(hGroup, pszName, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupDeleteAttribute, libgdal),
-            Bool,
-            (GDALGroupH, Cstring, CSLConstList),
-            hGroup,
-            pszName,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupDeleteAttribute, libgdal), Bool, (GDALGroupH, Cstring, CSLConstList), hGroup, pszName,
+                           papszOptions))
 end
 
 """
@@ -15326,9 +11125,7 @@ Rename the group.
 true in case of success
 """
 function gdalgrouprename(hGroup, pszNewName)
-    aftercare(
-        ccall((:GDALGroupRename, libgdal), Bool, (GDALGroupH, Cstring), hGroup, pszNewName),
-    )
+    return aftercare(ccall((:GDALGroupRename, libgdal), Bool, (GDALGroupH, Cstring), hGroup, pszNewName))
 end
 
 """
@@ -15342,16 +11139,8 @@ Return a virtual group whose one dimension has been subset according to a select
 a virtual group, to be freed with GDALGroupRelease(), or nullptr.
 """
 function gdalgroupsubsetdimensionfromselection(hGroup, pszSelection, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALGroupSubsetDimensionFromSelection, libgdal),
-            GDALGroupH,
-            (GDALGroupH, Cstring, CSLConstList),
-            hGroup,
-            pszSelection,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALGroupSubsetDimensionFromSelection, libgdal), GDALGroupH, (GDALGroupH, Cstring, CSLConstList),
+                           hGroup, pszSelection, papszOptions))
 end
 
 """
@@ -15360,7 +11149,7 @@ end
 Release the GDAL in-memory object associated with a GDALMDArray.
 """
 function gdalmdarrayrelease(hMDArray)
-    aftercare(ccall((:GDALMDArrayRelease, libgdal), Cvoid, (GDALMDArrayH,), hMDArray))
+    return aftercare(ccall((:GDALMDArrayRelease, libgdal), Cvoid, (GDALMDArrayH,), hMDArray))
 end
 
 """
@@ -15369,10 +11158,7 @@ end
 Return array name.
 """
 function gdalmdarraygetname(hArray)
-    aftercare(
-        ccall((:GDALMDArrayGetName, libgdal), Cstring, (GDALMDArrayH,), hArray),
-        false,
-    )
+    return aftercare(ccall((:GDALMDArrayGetName, libgdal), Cstring, (GDALMDArrayH,), hArray), false)
 end
 
 """
@@ -15381,10 +11167,7 @@ end
 Return array full name.
 """
 function gdalmdarraygetfullname(hArray)
-    aftercare(
-        ccall((:GDALMDArrayGetFullName, libgdal), Cstring, (GDALMDArrayH,), hArray),
-        false,
-    )
+    return aftercare(ccall((:GDALMDArrayGetFullName, libgdal), Cstring, (GDALMDArrayH,), hArray), false)
 end
 
 """
@@ -15393,14 +11176,7 @@ end
 Return the total number of values in the array.
 """
 function gdalmdarraygettotalelementscount(hArray)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetTotalElementsCount, libgdal),
-            GUInt64,
-            (GDALMDArrayH,),
-            hArray,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetTotalElementsCount, libgdal), GUInt64, (GDALMDArrayH,), hArray))
 end
 
 """
@@ -15409,9 +11185,7 @@ end
 Return the number of dimensions.
 """
 function gdalmdarraygetdimensioncount(hArray)
-    aftercare(
-        ccall((:GDALMDArrayGetDimensionCount, libgdal), Csize_t, (GDALMDArrayH,), hArray),
-    )
+    return aftercare(ccall((:GDALMDArrayGetDimensionCount, libgdal), Csize_t, (GDALMDArrayH,), hArray))
 end
 
 """
@@ -15428,15 +11202,8 @@ Return the dimensions of the array.
 an array of *pnCount dimensions.
 """
 function gdalmdarraygetdimensions(hArray, pnCount)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetDimensions, libgdal),
-            Ptr{GDALDimensionH},
-            (GDALMDArrayH, Ptr{Csize_t}),
-            hArray,
-            pnCount,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetDimensions, libgdal), Ptr{GDALDimensionH}, (GDALMDArrayH, Ptr{Csize_t}), hArray,
+                           pnCount))
 end
 
 """
@@ -15445,14 +11212,7 @@ end
 Return the data type.
 """
 function gdalmdarraygetdatatype(hArray)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetDataType, libgdal),
-            GDALExtendedDataTypeH,
-            (GDALMDArrayH,),
-            hArray,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetDataType, libgdal), GDALExtendedDataTypeH, (GDALMDArrayH,), hArray))
 end
 
 """
@@ -15471,43 +11231,12 @@ Read part or totality of a multidimensional array.
 ### Returns
 TRUE in case of success.
 """
-function gdalmdarrayread(
-    hArray,
-    arrayStartIdx,
-    count,
-    arrayStep,
-    bufferStride,
-    bufferDatatype,
-    pDstBuffer,
-    pDstBufferAllocStart,
-    nDstBufferllocSize,
-)
-    aftercare(
-        ccall(
-            (:GDALMDArrayRead, libgdal),
-            Cint,
-            (
-                GDALMDArrayH,
-                Ptr{GUInt64},
-                Ptr{Csize_t},
-                Ptr{GInt64},
-                Ptr{GPtrDiff_t},
-                GDALExtendedDataTypeH,
-                Ptr{Cvoid},
-                Ptr{Cvoid},
-                Csize_t,
-            ),
-            hArray,
-            arrayStartIdx,
-            count,
-            arrayStep,
-            bufferStride,
-            bufferDatatype,
-            pDstBuffer,
-            pDstBufferAllocStart,
-            nDstBufferllocSize,
-        ),
-    )
+function gdalmdarrayread(hArray, arrayStartIdx, count, arrayStep, bufferStride, bufferDatatype, pDstBuffer, pDstBufferAllocStart,
+                         nDstBufferllocSize)
+    return aftercare(ccall((:GDALMDArrayRead, libgdal), Cint,
+                           (GDALMDArrayH, Ptr{GUInt64}, Ptr{Csize_t}, Ptr{GInt64}, Ptr{GPtrDiff_t}, GDALExtendedDataTypeH,
+                            Ptr{Cvoid}, Ptr{Cvoid}, Csize_t), hArray, arrayStartIdx, count, arrayStep, bufferStride, bufferDatatype,
+                           pDstBuffer, pDstBufferAllocStart, nDstBufferllocSize))
 end
 
 """
@@ -15526,43 +11255,12 @@ Write part or totality of a multidimensional array.
 ### Returns
 TRUE in case of success.
 """
-function gdalmdarraywrite(
-    hArray,
-    arrayStartIdx,
-    count,
-    arrayStep,
-    bufferStride,
-    bufferDatatype,
-    pSrcBuffer,
-    psrcBufferAllocStart,
-    nSrcBufferllocSize,
-)
-    aftercare(
-        ccall(
-            (:GDALMDArrayWrite, libgdal),
-            Cint,
-            (
-                GDALMDArrayH,
-                Ptr{GUInt64},
-                Ptr{Csize_t},
-                Ptr{GInt64},
-                Ptr{GPtrDiff_t},
-                GDALExtendedDataTypeH,
-                Ptr{Cvoid},
-                Ptr{Cvoid},
-                Csize_t,
-            ),
-            hArray,
-            arrayStartIdx,
-            count,
-            arrayStep,
-            bufferStride,
-            bufferDatatype,
-            pSrcBuffer,
-            psrcBufferAllocStart,
-            nSrcBufferllocSize,
-        ),
-    )
+function gdalmdarraywrite(hArray, arrayStartIdx, count, arrayStep, bufferStride, bufferDatatype, pSrcBuffer, psrcBufferAllocStart,
+                          nSrcBufferllocSize)
+    return aftercare(ccall((:GDALMDArrayWrite, libgdal), Cint,
+                           (GDALMDArrayH, Ptr{GUInt64}, Ptr{Csize_t}, Ptr{GInt64}, Ptr{GPtrDiff_t}, GDALExtendedDataTypeH,
+                            Ptr{Cvoid}, Ptr{Cvoid}, Csize_t), hArray, arrayStartIdx, count, arrayStep, bufferStride, bufferDatatype,
+                           pSrcBuffer, psrcBufferAllocStart, nSrcBufferllocSize))
 end
 
 """
@@ -15576,16 +11274,8 @@ Advise driver of upcoming read requests.
 TRUE in case of success.
 """
 function gdalmdarrayadviseread(hArray, arrayStartIdx, count)
-    aftercare(
-        ccall(
-            (:GDALMDArrayAdviseRead, libgdal),
-            Cint,
-            (GDALMDArrayH, Ptr{GUInt64}, Ptr{Csize_t}),
-            hArray,
-            arrayStartIdx,
-            count,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayAdviseRead, libgdal), Cint, (GDALMDArrayH, Ptr{GUInt64}, Ptr{Csize_t}), hArray,
+                           arrayStartIdx, count))
 end
 
 """
@@ -15600,17 +11290,8 @@ Advise driver of upcoming read requests.
 TRUE in case of success.
 """
 function gdalmdarrayadvisereadex(hArray, arrayStartIdx, count, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALMDArrayAdviseReadEx, libgdal),
-            Cint,
-            (GDALMDArrayH, Ptr{GUInt64}, Ptr{Csize_t}, CSLConstList),
-            hArray,
-            arrayStartIdx,
-            count,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayAdviseReadEx, libgdal), Cint, (GDALMDArrayH, Ptr{GUInt64}, Ptr{Csize_t}, CSLConstList),
+                           hArray, arrayStartIdx, count, papszOptions))
 end
 
 """
@@ -15620,15 +11301,7 @@ end
 Return an attribute by its name.
 """
 function gdalmdarraygetattribute(hArray, pszName)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetAttribute, libgdal),
-            GDALAttributeH,
-            (GDALMDArrayH, Cstring),
-            hArray,
-            pszName,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetAttribute, libgdal), GDALAttributeH, (GDALMDArrayH, Cstring), hArray, pszName))
 end
 
 """
@@ -15647,16 +11320,8 @@ Return the list of attributes contained in this array.
 an array of *pnCount attributes.
 """
 function gdalmdarraygetattributes(hArray, pnCount, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetAttributes, libgdal),
-            Ptr{GDALAttributeH},
-            (GDALMDArrayH, Ptr{Csize_t}, CSLConstList),
-            hArray,
-            pnCount,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetAttributes, libgdal), Ptr{GDALAttributeH}, (GDALMDArrayH, Ptr{Csize_t}, CSLConstList),
+                           hArray, pnCount, papszOptions))
 end
 
 """
@@ -15672,34 +11337,10 @@ Create a attribute within an array.
 ### Returns
 the attribute, to be freed with GDALAttributeRelease(), or nullptr.
 """
-function gdalmdarraycreateattribute(
-    hArray,
-    pszName,
-    nDimensions,
-    panDimensions,
-    hEDT,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALMDArrayCreateAttribute, libgdal),
-            GDALAttributeH,
-            (
-                GDALMDArrayH,
-                Cstring,
-                Csize_t,
-                Ptr{GUInt64},
-                GDALExtendedDataTypeH,
-                CSLConstList,
-            ),
-            hArray,
-            pszName,
-            nDimensions,
-            panDimensions,
-            hEDT,
-            papszOptions,
-        ),
-    )
+function gdalmdarraycreateattribute(hArray, pszName, nDimensions, panDimensions, hEDT, papszOptions)
+    return aftercare(ccall((:GDALMDArrayCreateAttribute, libgdal), GDALAttributeH,
+                           (GDALMDArrayH, Cstring, Csize_t, Ptr{GUInt64}, GDALExtendedDataTypeH, CSLConstList), hArray, pszName,
+                           nDimensions, panDimensions, hEDT, papszOptions))
 end
 
 """
@@ -15713,16 +11354,8 @@ Delete an attribute from an array.
 true in case of success.
 """
 function gdalmdarraydeleteattribute(hArray, pszName, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALMDArrayDeleteAttribute, libgdal),
-            Bool,
-            (GDALMDArrayH, Cstring, CSLConstList),
-            hArray,
-            pszName,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayDeleteAttribute, libgdal), Bool, (GDALMDArrayH, Cstring, CSLConstList), hArray, pszName,
+                           papszOptions))
 end
 
 """
@@ -15741,16 +11374,8 @@ Resize an array to new dimensions.
 true in case of success.
 """
 function gdalmdarrayresize(hArray, panNewDimSizes, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALMDArrayResize, libgdal),
-            Bool,
-            (GDALMDArrayH, Ptr{GUInt64}, CSLConstList),
-            hArray,
-            panNewDimSizes,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayResize, libgdal), Bool, (GDALMDArrayH, Ptr{GUInt64}, CSLConstList), hArray, panNewDimSizes,
+                           papszOptions))
 end
 
 """
@@ -15762,14 +11387,7 @@ Return the nodata value as a "raw" value.
 nullptr or a pointer to GetDataType().GetSize() bytes.
 """
 function gdalmdarraygetrawnodatavalue(hArray)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetRawNoDataValue, libgdal),
-            Ptr{Cvoid},
-            (GDALMDArrayH,),
-            hArray,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetRawNoDataValue, libgdal), Ptr{Cvoid}, (GDALMDArrayH,), hArray))
 end
 
 """
@@ -15786,15 +11404,8 @@ Return the nodata value as a double.
 the nodata value as a double. A 0.0 value might also indicate the absence of a nodata value or an error in the conversion (*pbHasNoDataValue will be set to false then).
 """
 function gdalmdarraygetnodatavalueasdouble(hArray, pbHasNoDataValue)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetNoDataValueAsDouble, libgdal),
-            Cdouble,
-            (GDALMDArrayH, Ptr{Cint}),
-            hArray,
-            pbHasNoDataValue,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetNoDataValueAsDouble, libgdal), Cdouble, (GDALMDArrayH, Ptr{Cint}), hArray,
+                           pbHasNoDataValue))
 end
 
 """
@@ -15811,15 +11422,8 @@ Return the nodata value as a Int64.
 the nodata value as a Int64.
 """
 function gdalmdarraygetnodatavalueasint64(hArray, pbHasNoDataValue)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetNoDataValueAsInt64, libgdal),
-            Int64,
-            (GDALMDArrayH, Ptr{Cint}),
-            hArray,
-            pbHasNoDataValue,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetNoDataValueAsInt64, libgdal), Int64, (GDALMDArrayH, Ptr{Cint}), hArray,
+                           pbHasNoDataValue))
 end
 
 """
@@ -15836,15 +11440,8 @@ Return the nodata value as a UInt64.
 the nodata value as a UInt64.
 """
 function gdalmdarraygetnodatavalueasuint64(hArray, pbHasNoDataValue)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetNoDataValueAsUInt64, libgdal),
-            UInt64,
-            (GDALMDArrayH, Ptr{Cint}),
-            hArray,
-            pbHasNoDataValue,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetNoDataValueAsUInt64, libgdal), UInt64, (GDALMDArrayH, Ptr{Cint}), hArray,
+                           pbHasNoDataValue))
 end
 
 """
@@ -15857,15 +11454,7 @@ Set the nodata value as a "raw" value.
 TRUE in case of success.
 """
 function gdalmdarraysetrawnodatavalue(hArray, arg2)
-    aftercare(
-        ccall(
-            (:GDALMDArraySetRawNoDataValue, libgdal),
-            Cint,
-            (GDALMDArrayH, Ptr{Cvoid}),
-            hArray,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArraySetRawNoDataValue, libgdal), Cint, (GDALMDArrayH, Ptr{Cvoid}), hArray, arg2))
 end
 
 """
@@ -15878,15 +11467,7 @@ Set the nodata value as a double.
 TRUE in case of success.
 """
 function gdalmdarraysetnodatavalueasdouble(hArray, dfNoDataValue)
-    aftercare(
-        ccall(
-            (:GDALMDArraySetNoDataValueAsDouble, libgdal),
-            Cint,
-            (GDALMDArrayH, Cdouble),
-            hArray,
-            dfNoDataValue,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArraySetNoDataValueAsDouble, libgdal), Cint, (GDALMDArrayH, Cdouble), hArray, dfNoDataValue))
 end
 
 """
@@ -15899,15 +11480,7 @@ Set the nodata value as a Int64.
 TRUE in case of success.
 """
 function gdalmdarraysetnodatavalueasint64(hArray, nNoDataValue)
-    aftercare(
-        ccall(
-            (:GDALMDArraySetNoDataValueAsInt64, libgdal),
-            Cint,
-            (GDALMDArrayH, Int64),
-            hArray,
-            nNoDataValue,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArraySetNoDataValueAsInt64, libgdal), Cint, (GDALMDArrayH, Int64), hArray, nNoDataValue))
 end
 
 """
@@ -15920,15 +11493,7 @@ Set the nodata value as a UInt64.
 TRUE in case of success.
 """
 function gdalmdarraysetnodatavalueasuint64(hArray, nNoDataValue)
-    aftercare(
-        ccall(
-            (:GDALMDArraySetNoDataValueAsUInt64, libgdal),
-            Cint,
-            (GDALMDArrayH, UInt64),
-            hArray,
-            nNoDataValue,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArraySetNoDataValueAsUInt64, libgdal), Cint, (GDALMDArrayH, UInt64), hArray, nNoDataValue))
 end
 
 """
@@ -15941,15 +11506,7 @@ Set the scale value to apply to raw values.
 TRUE in case of success.
 """
 function gdalmdarraysetscale(hArray, dfScale)
-    aftercare(
-        ccall(
-            (:GDALMDArraySetScale, libgdal),
-            Cint,
-            (GDALMDArrayH, Cdouble),
-            hArray,
-            dfScale,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArraySetScale, libgdal), Cint, (GDALMDArrayH, Cdouble), hArray, dfScale))
 end
 
 """
@@ -15963,16 +11520,8 @@ Set the scale value to apply to raw values.
 TRUE in case of success.
 """
 function gdalmdarraysetscaleex(hArray, dfScale, eStorageType)
-    aftercare(
-        ccall(
-            (:GDALMDArraySetScaleEx, libgdal),
-            Cint,
-            (GDALMDArrayH, Cdouble, GDALDataType),
-            hArray,
-            dfScale,
-            eStorageType,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArraySetScaleEx, libgdal), Cint, (GDALMDArrayH, Cdouble, GDALDataType), hArray, dfScale,
+                           eStorageType))
 end
 
 """
@@ -15985,15 +11534,7 @@ Get the scale value to apply to raw values.
 the scale value
 """
 function gdalmdarraygetscale(hArray, pbHasValue)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetScale, libgdal),
-            Cdouble,
-            (GDALMDArrayH, Ptr{Cint}),
-            hArray,
-            pbHasValue,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetScale, libgdal), Cdouble, (GDALMDArrayH, Ptr{Cint}), hArray, pbHasValue))
 end
 
 """
@@ -16007,16 +11548,8 @@ Get the scale value to apply to raw values.
 the scale value
 """
 function gdalmdarraygetscaleex(hArray, pbHasValue, peStorageType)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetScaleEx, libgdal),
-            Cdouble,
-            (GDALMDArrayH, Ptr{Cint}, Ptr{GDALDataType}),
-            hArray,
-            pbHasValue,
-            peStorageType,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetScaleEx, libgdal), Cdouble, (GDALMDArrayH, Ptr{Cint}, Ptr{GDALDataType}), hArray,
+                           pbHasValue, peStorageType))
 end
 
 """
@@ -16029,15 +11562,7 @@ Set the scale value to apply to raw values.
 TRUE in case of success.
 """
 function gdalmdarraysetoffset(hArray, dfOffset)
-    aftercare(
-        ccall(
-            (:GDALMDArraySetOffset, libgdal),
-            Cint,
-            (GDALMDArrayH, Cdouble),
-            hArray,
-            dfOffset,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArraySetOffset, libgdal), Cint, (GDALMDArrayH, Cdouble), hArray, dfOffset))
 end
 
 """
@@ -16051,16 +11576,8 @@ Set the scale value to apply to raw values.
 TRUE in case of success.
 """
 function gdalmdarraysetoffsetex(hArray, dfOffset, eStorageType)
-    aftercare(
-        ccall(
-            (:GDALMDArraySetOffsetEx, libgdal),
-            Cint,
-            (GDALMDArrayH, Cdouble, GDALDataType),
-            hArray,
-            dfOffset,
-            eStorageType,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArraySetOffsetEx, libgdal), Cint, (GDALMDArrayH, Cdouble, GDALDataType), hArray, dfOffset,
+                           eStorageType))
 end
 
 """
@@ -16073,15 +11590,7 @@ Get the scale value to apply to raw values.
 the scale value
 """
 function gdalmdarraygetoffset(hArray, pbHasValue)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetOffset, libgdal),
-            Cdouble,
-            (GDALMDArrayH, Ptr{Cint}),
-            hArray,
-            pbHasValue,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetOffset, libgdal), Cdouble, (GDALMDArrayH, Ptr{Cint}), hArray, pbHasValue))
 end
 
 """
@@ -16095,16 +11604,8 @@ Get the scale value to apply to raw values.
 the scale value
 """
 function gdalmdarraygetoffsetex(hArray, pbHasValue, peStorageType)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetOffsetEx, libgdal),
-            Cdouble,
-            (GDALMDArrayH, Ptr{Cint}, Ptr{GDALDataType}),
-            hArray,
-            pbHasValue,
-            peStorageType,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetOffsetEx, libgdal), Cdouble, (GDALMDArrayH, Ptr{Cint}, Ptr{GDALDataType}), hArray,
+                           pbHasValue, peStorageType))
 end
 
 """
@@ -16117,15 +11618,7 @@ Return the "natural" block size of the array along all dimensions.
 the block size, in number of elements along each dimension.
 """
 function gdalmdarraygetblocksize(hArray, pnCount)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetBlockSize, libgdal),
-            Ptr{GUInt64},
-            (GDALMDArrayH, Ptr{Csize_t}),
-            hArray,
-            pnCount,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetBlockSize, libgdal), Ptr{GUInt64}, (GDALMDArrayH, Ptr{Csize_t}), hArray, pnCount))
 end
 
 """
@@ -16142,9 +11635,7 @@ Set the variable unit.
 TRUE in case of success.
 """
 function gdalmdarraysetunit(hArray, arg2)
-    aftercare(
-        ccall((:GDALMDArraySetUnit, libgdal), Cint, (GDALMDArrayH, Cstring), hArray, arg2),
-    )
+    return aftercare(ccall((:GDALMDArraySetUnit, libgdal), Cint, (GDALMDArrayH, Cstring), hArray, arg2))
 end
 
 """
@@ -16153,10 +11644,7 @@ end
 Return the array unit.
 """
 function gdalmdarraygetunit(hArray)
-    aftercare(
-        ccall((:GDALMDArrayGetUnit, libgdal), Cstring, (GDALMDArrayH,), hArray),
-        false,
-    )
+    return aftercare(ccall((:GDALMDArrayGetUnit, libgdal), Cstring, (GDALMDArrayH,), hArray), false)
 end
 
 """
@@ -16169,15 +11657,7 @@ Assign a spatial reference system object to the array.
 TRUE in case of success.
 """
 function gdalmdarraysetspatialref(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALMDArraySetSpatialRef, libgdal),
-            Cint,
-            (GDALMDArrayH, OGRSpatialReferenceH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArraySetSpatialRef, libgdal), Cint, (GDALMDArrayH, OGRSpatialReferenceH), arg1, arg2))
 end
 
 """
@@ -16186,14 +11666,7 @@ end
 Return the spatial reference system object associated with the array.
 """
 function gdalmdarraygetspatialref(hArray)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetSpatialRef, libgdal),
-            OGRSpatialReferenceH,
-            (GDALMDArrayH,),
-            hArray,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetSpatialRef, libgdal), OGRSpatialReferenceH, (GDALMDArrayH,), hArray))
 end
 
 """
@@ -16212,16 +11685,8 @@ Return an optimal chunk size for read/write operations, given the natural block 
 the chunk size, in number of elements along each dimension.
 """
 function gdalmdarraygetprocessingchunksize(hArray, pnCount, nMaxChunkMemory)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetProcessingChunkSize, libgdal),
-            Ptr{Csize_t},
-            (GDALMDArrayH, Ptr{Csize_t}, Csize_t),
-            hArray,
-            pnCount,
-            nMaxChunkMemory,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetProcessingChunkSize, libgdal), Ptr{Csize_t}, (GDALMDArrayH, Ptr{Csize_t}, Csize_t),
+                           hArray, pnCount, nMaxChunkMemory))
 end
 
 """
@@ -16230,14 +11695,7 @@ end
 Return structural information on the array.
 """
 function gdalmdarraygetstructuralinfo(hArray)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetStructuralInfo, libgdal),
-            CSLConstList,
-            (GDALMDArrayH,),
-            hArray,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetStructuralInfo, libgdal), CSLConstList, (GDALMDArrayH,), hArray))
 end
 
 """
@@ -16247,15 +11705,7 @@ end
 Return a view of the array using slicing or field access.
 """
 function gdalmdarraygetview(hArray, pszViewExpr)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetView, libgdal),
-            GDALMDArrayH,
-            (GDALMDArrayH, Cstring),
-            hArray,
-            pszViewExpr,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetView, libgdal), GDALMDArrayH, (GDALMDArrayH, Cstring), hArray, pszViewExpr))
 end
 
 """
@@ -16266,16 +11716,8 @@ end
 Return a view of the array whose axis have been reordered.
 """
 function gdalmdarraytranspose(hArray, nNewAxisCount, panMapNewAxisToOldAxis)
-    aftercare(
-        ccall(
-            (:GDALMDArrayTranspose, libgdal),
-            GDALMDArrayH,
-            (GDALMDArrayH, Csize_t, Ptr{Cint}),
-            hArray,
-            nNewAxisCount,
-            panMapNewAxisToOldAxis,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayTranspose, libgdal), GDALMDArrayH, (GDALMDArrayH, Csize_t, Ptr{Cint}), hArray,
+                           nNewAxisCount, panMapNewAxisToOldAxis))
 end
 
 """
@@ -16284,9 +11726,7 @@ end
 Return an array that is the unscaled version of the current one.
 """
 function gdalmdarraygetunscaled(hArray)
-    aftercare(
-        ccall((:GDALMDArrayGetUnscaled, libgdal), GDALMDArrayH, (GDALMDArrayH,), hArray),
-    )
+    return aftercare(ccall((:GDALMDArrayGetUnscaled, libgdal), GDALMDArrayH, (GDALMDArrayH,), hArray))
 end
 
 """
@@ -16296,15 +11736,7 @@ end
 Return an array that is a mask for the current array.
 """
 function gdalmdarraygetmask(hArray, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetMask, libgdal),
-            GDALMDArrayH,
-            (GDALMDArrayH, CSLConstList),
-            hArray,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetMask, libgdal), GDALMDArrayH, (GDALMDArrayH, CSLConstList), hArray, papszOptions))
 end
 
 """
@@ -16323,16 +11755,8 @@ Return a view of this array as a "classic" GDALDataset (ie 2D)
 a new GDALDataset that must be freed with GDALClose(), or nullptr
 """
 function gdalmdarrayasclassicdataset(hArray, iXDim, iYDim)
-    aftercare(
-        ccall(
-            (:GDALMDArrayAsClassicDataset, libgdal),
-            GDALDatasetH,
-            (GDALMDArrayH, Csize_t, Csize_t),
-            hArray,
-            iXDim,
-            iYDim,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayAsClassicDataset, libgdal), GDALDatasetH, (GDALMDArrayH, Csize_t, Csize_t), hArray, iXDim,
+                           iYDim))
 end
 
 """
@@ -16348,25 +11772,16 @@ Return a view of this array as a "classic" GDALDataset (ie 2D)
 * **hArray**: Array.
 * **iXDim**: Index of the dimension that will be used as the X/width axis.
 * **iYDim**: Index of the dimension that will be used as the Y/height axis. Ignored if the dimension count is 1.
-* **hRootGroup**: Root group, or NULL. Used with the BAND_METADATA option.
+* **hRootGroup**: Root group, or NULL. Used with the BAND_METADATA and BAND_IMAGERY_METADATA option.
 * **papszOptions**: Cf GDALMDArray::AsClassicDataset()
 
 ### Returns
 a new GDALDataset that must be freed with GDALClose(), or nullptr
 """
 function gdalmdarrayasclassicdatasetex(hArray, iXDim, iYDim, hRootGroup, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALMDArrayAsClassicDatasetEx, libgdal),
-            GDALDatasetH,
-            (GDALMDArrayH, Csize_t, Csize_t, GDALGroupH, CSLConstList),
-            hArray,
-            iXDim,
-            iYDim,
-            hRootGroup,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayAsClassicDatasetEx, libgdal), GDALDatasetH,
+                           (GDALMDArrayH, Csize_t, Csize_t, GDALGroupH, CSLConstList), hArray, iXDim, iYDim, hRootGroup,
+                           papszOptions))
 end
 
 """
@@ -16384,49 +11799,12 @@ end
 
 Fetch statistics.
 """
-function gdalmdarraygetstatistics(
-    hArray,
-    arg2,
-    bApproxOK,
-    bForce,
-    pdfMin,
-    pdfMax,
-    pdfMean,
-    pdfStdDev,
-    pnValidCount,
-    pfnProgress,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetStatistics, libgdal),
-            CPLErr,
-            (
-                GDALMDArrayH,
-                GDALDatasetH,
-                Cint,
-                Cint,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{GUInt64},
-                GDALProgressFunc,
-                Any,
-            ),
-            hArray,
-            arg2,
-            bApproxOK,
-            bForce,
-            pdfMin,
-            pdfMax,
-            pdfMean,
-            pdfStdDev,
-            pnValidCount,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+function gdalmdarraygetstatistics(hArray, arg2, bApproxOK, bForce, pdfMin, pdfMax, pdfMean, pdfStdDev, pnValidCount, pfnProgress,
+                                  pProgressData)
+    return aftercare(ccall((:GDALMDArrayGetStatistics, libgdal), CPLErr,
+                           (GDALMDArrayH, GDALDatasetH, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble},
+                            Ptr{GUInt64}, GDALProgressFunc, Any), hArray, arg2, bApproxOK, bForce, pdfMin, pdfMax, pdfMean,
+                           pdfStdDev, pnValidCount, pfnProgress, pProgressData))
 end
 
 """
@@ -16443,46 +11821,12 @@ end
 
 Compute statistics.
 """
-function gdalmdarraycomputestatistics(
-    hArray,
-    arg2,
-    bApproxOK,
-    pdfMin,
-    pdfMax,
-    pdfMean,
-    pdfStdDev,
-    pnValidCount,
-    arg9,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:GDALMDArrayComputeStatistics, libgdal),
-            Cint,
-            (
-                GDALMDArrayH,
-                GDALDatasetH,
-                Cint,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{GUInt64},
-                GDALProgressFunc,
-                Any,
-            ),
-            hArray,
-            arg2,
-            bApproxOK,
-            pdfMin,
-            pdfMax,
-            pdfMean,
-            pdfStdDev,
-            pnValidCount,
-            arg9,
-            pProgressData,
-        ),
-    )
+function gdalmdarraycomputestatistics(hArray, arg2, bApproxOK, pdfMin, pdfMax, pdfMean, pdfStdDev, pnValidCount, arg9,
+                                      pProgressData)
+    return aftercare(ccall((:GDALMDArrayComputeStatistics, libgdal), Cint,
+                           (GDALMDArrayH, GDALDatasetH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{GUInt64},
+                            GDALProgressFunc, Any), hArray, arg2, bApproxOK, pdfMin, pdfMax, pdfMean, pdfStdDev, pnValidCount, arg9,
+                           pProgressData))
 end
 
 """
@@ -16500,49 +11844,12 @@ end
 
 Compute statistics.
 """
-function gdalmdarraycomputestatisticsex(
-    hArray,
-    arg2,
-    bApproxOK,
-    pdfMin,
-    pdfMax,
-    pdfMean,
-    pdfStdDev,
-    pnValidCount,
-    arg9,
-    pProgressData,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALMDArrayComputeStatisticsEx, libgdal),
-            Cint,
-            (
-                GDALMDArrayH,
-                GDALDatasetH,
-                Cint,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{GUInt64},
-                GDALProgressFunc,
-                Any,
-                CSLConstList,
-            ),
-            hArray,
-            arg2,
-            bApproxOK,
-            pdfMin,
-            pdfMax,
-            pdfMean,
-            pdfStdDev,
-            pnValidCount,
-            arg9,
-            pProgressData,
-            papszOptions,
-        ),
-    )
+function gdalmdarraycomputestatisticsex(hArray, arg2, bApproxOK, pdfMin, pdfMax, pdfMean, pdfStdDev, pnValidCount, arg9,
+                                        pProgressData, papszOptions)
+    return aftercare(ccall((:GDALMDArrayComputeStatisticsEx, libgdal), Cint,
+                           (GDALMDArrayH, GDALDatasetH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{GUInt64},
+                            GDALProgressFunc, Any, CSLConstList), hArray, arg2, bApproxOK, pdfMin, pdfMax, pdfMean, pdfStdDev,
+                           pnValidCount, arg9, pProgressData, papszOptions))
 end
 
 """
@@ -16555,34 +11862,10 @@ end
 
 Return an array that is a resampled / reprojected view of the current array.
 """
-function gdalmdarraygetresampled(
-    hArray,
-    nNewDimCount,
-    pahNewDims,
-    resampleAlg,
-    hTargetSRS,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetResampled, libgdal),
-            GDALMDArrayH,
-            (
-                GDALMDArrayH,
-                Csize_t,
-                Ptr{GDALDimensionH},
-                GDALRIOResampleAlg,
-                OGRSpatialReferenceH,
-                CSLConstList,
-            ),
-            hArray,
-            nNewDimCount,
-            pahNewDims,
-            resampleAlg,
-            hTargetSRS,
-            papszOptions,
-        ),
-    )
+function gdalmdarraygetresampled(hArray, nNewDimCount, pahNewDims, resampleAlg, hTargetSRS, papszOptions)
+    return aftercare(ccall((:GDALMDArrayGetResampled, libgdal), GDALMDArrayH,
+                           (GDALMDArrayH, Csize_t, Ptr{GDALDimensionH}, GDALRIOResampleAlg, OGRSpatialReferenceH, CSLConstList),
+                           hArray, nNewDimCount, pahNewDims, resampleAlg, hTargetSRS, papszOptions))
 end
 
 """
@@ -16595,18 +11878,9 @@ end
 Return a gridded array from scattered point data, that is from an array whose last dimension is the indexing variable of X and Y arrays.
 """
 function gdalmdarraygetgridded(hArray, pszGridOptions, hXArray, hYArray, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetGridded, libgdal),
-            GDALMDArrayH,
-            (GDALMDArrayH, Cstring, GDALMDArrayH, GDALMDArrayH, CSLConstList),
-            hArray,
-            pszGridOptions,
-            hXArray,
-            hYArray,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetGridded, libgdal), GDALMDArrayH,
+                           (GDALMDArrayH, Cstring, GDALMDArrayH, GDALMDArrayH, CSLConstList), hArray, pszGridOptions, hXArray,
+                           hYArray, papszOptions))
 end
 
 """
@@ -16623,15 +11897,8 @@ Return coordinate variables.
 an array of *pnCount arrays.
 """
 function gdalmdarraygetcoordinatevariables(hArray, pnCount)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetCoordinateVariables, libgdal),
-            Ptr{GDALMDArrayH},
-            (GDALMDArrayH, Ptr{Csize_t}),
-            hArray,
-            pnCount,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayGetCoordinateVariables, libgdal), Ptr{GDALMDArrayH}, (GDALMDArrayH, Ptr{Csize_t}), hArray,
+                           pnCount))
 end
 
 """
@@ -16651,23 +11918,10 @@ Return a list of multidimensional arrays from a list of one-dimensional arrays.
 ### Returns
 an array of *pnCountOutputArrays arrays.
 """
-function gdalmdarraygetmeshgrid(
-    pahInputArrays,
-    nCountInputArrays,
-    pnCountOutputArrays,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALMDArrayGetMeshGrid, libgdal),
-            Ptr{GDALMDArrayH},
-            (Ptr{GDALMDArrayH}, Csize_t, Ptr{Csize_t}, CSLConstList),
-            pahInputArrays,
-            nCountInputArrays,
-            pnCountOutputArrays,
-            papszOptions,
-        ),
-    )
+function gdalmdarraygetmeshgrid(pahInputArrays, nCountInputArrays, pnCountOutputArrays, papszOptions)
+    return aftercare(ccall((:GDALMDArrayGetMeshGrid, libgdal), Ptr{GDALMDArrayH},
+                           (Ptr{GDALMDArrayH}, Csize_t, Ptr{Csize_t}, CSLConstList), pahInputArrays, nCountInputArrays,
+                           pnCountOutputArrays, papszOptions))
 end
 
 """
@@ -16681,15 +11935,7 @@ Free the return of GDALMDArrayGetCoordinateVariables()
 * **nCount**: *pnCount value returned by above methods
 """
 function gdalreleasearrays(arrays, nCount)
-    aftercare(
-        ccall(
-            (:GDALReleaseArrays, libgdal),
-            Cvoid,
-            (Ptr{GDALMDArrayH}, Csize_t),
-            arrays,
-            nCount,
-        ),
-    )
+    return aftercare(ccall((:GDALReleaseArrays, libgdal), Cvoid, (Ptr{GDALMDArrayH}, Csize_t), arrays, nCount))
 end
 
 """
@@ -16699,15 +11945,7 @@ end
 Cache the content of the array into an auxiliary filename.
 """
 function gdalmdarraycache(hArray, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALMDArrayCache, libgdal),
-            Cint,
-            (GDALMDArrayH, CSLConstList),
-            hArray,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayCache, libgdal), Cint, (GDALMDArrayH, CSLConstList), hArray, papszOptions))
 end
 
 """
@@ -16720,15 +11958,7 @@ Rename the array.
 true in case of success
 """
 function gdalmdarrayrename(hArray, pszNewName)
-    aftercare(
-        ccall(
-            (:GDALMDArrayRename, libgdal),
-            Bool,
-            (GDALMDArrayH, Cstring),
-            hArray,
-            pszNewName,
-        ),
-    )
+    return aftercare(ccall((:GDALMDArrayRename, libgdal), Bool, (GDALMDArrayH, Cstring), hArray, pszNewName))
 end
 
 """
@@ -16746,23 +11976,10 @@ Return a virtual Raster Attribute Table from several GDALMDArray's.
 ### Returns
 a new Raster Attribute Table to free with delete, or nullptr in case of error
 """
-function gdalcreaterasterattributetablefrommdarrays(
-    eTableType,
-    nArrays,
-    ahArrays,
-    paeUsages,
-)
-    aftercare(
-        ccall(
-            (:GDALCreateRasterAttributeTableFromMDArrays, libgdal),
-            GDALRasterAttributeTableH,
-            (GDALRATTableType, Cint, Ptr{GDALMDArrayH}, Ptr{GDALRATFieldUsage}),
-            eTableType,
-            nArrays,
-            ahArrays,
-            paeUsages,
-        ),
-    )
+function gdalcreaterasterattributetablefrommdarrays(eTableType, nArrays, ahArrays, paeUsages)
+    return aftercare(ccall((:GDALCreateRasterAttributeTableFromMDArrays, libgdal), GDALRasterAttributeTableH,
+                           (GDALRATTableType, Cint, Ptr{GDALMDArrayH}, Ptr{GDALRATFieldUsage}), eTableType, nArrays, ahArrays,
+                           paeUsages))
 end
 
 """
@@ -16771,7 +11988,7 @@ end
 Release the GDAL in-memory object associated with a GDALAttribute.
 """
 function gdalattributerelease(hAttr)
-    aftercare(ccall((:GDALAttributeRelease, libgdal), Cvoid, (GDALAttributeH,), hAttr))
+    return aftercare(ccall((:GDALAttributeRelease, libgdal), Cvoid, (GDALAttributeH,), hAttr))
 end
 
 """
@@ -16785,15 +12002,7 @@ Free the return of GDALGroupGetAttributes() or GDALMDArrayGetAttributes()
 * **nCount**: *pnCount value returned by above methods
 """
 function gdalreleaseattributes(attributes, nCount)
-    aftercare(
-        ccall(
-            (:GDALReleaseAttributes, libgdal),
-            Cvoid,
-            (Ptr{GDALAttributeH}, Csize_t),
-            attributes,
-            nCount,
-        ),
-    )
+    return aftercare(ccall((:GDALReleaseAttributes, libgdal), Cvoid, (Ptr{GDALAttributeH}, Csize_t), attributes, nCount))
 end
 
 """
@@ -16802,10 +12011,7 @@ end
 Return the name of the attribute.
 """
 function gdalattributegetname(hAttr)
-    aftercare(
-        ccall((:GDALAttributeGetName, libgdal), Cstring, (GDALAttributeH,), hAttr),
-        false,
-    )
+    return aftercare(ccall((:GDALAttributeGetName, libgdal), Cstring, (GDALAttributeH,), hAttr), false)
 end
 
 """
@@ -16814,10 +12020,7 @@ end
 Return the full name of the attribute.
 """
 function gdalattributegetfullname(hAttr)
-    aftercare(
-        ccall((:GDALAttributeGetFullName, libgdal), Cstring, (GDALAttributeH,), hAttr),
-        false,
-    )
+    return aftercare(ccall((:GDALAttributeGetFullName, libgdal), Cstring, (GDALAttributeH,), hAttr), false)
 end
 
 """
@@ -16826,14 +12029,7 @@ end
 Return the total number of values in the attribute.
 """
 function gdalattributegettotalelementscount(hAttr)
-    aftercare(
-        ccall(
-            (:GDALAttributeGetTotalElementsCount, libgdal),
-            GUInt64,
-            (GDALAttributeH,),
-            hAttr,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeGetTotalElementsCount, libgdal), GUInt64, (GDALAttributeH,), hAttr))
 end
 
 """
@@ -16842,14 +12038,7 @@ end
 Return the number of dimensions.
 """
 function gdalattributegetdimensioncount(hAttr)
-    aftercare(
-        ccall(
-            (:GDALAttributeGetDimensionCount, libgdal),
-            Csize_t,
-            (GDALAttributeH,),
-            hAttr,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeGetDimensionCount, libgdal), Csize_t, (GDALAttributeH,), hAttr))
 end
 
 """
@@ -16866,15 +12055,8 @@ Return the dimension sizes of the attribute.
 an array of *pnCount values.
 """
 function gdalattributegetdimensionssize(hAttr, pnCount)
-    aftercare(
-        ccall(
-            (:GDALAttributeGetDimensionsSize, libgdal),
-            Ptr{GUInt64},
-            (GDALAttributeH, Ptr{Csize_t}),
-            hAttr,
-            pnCount,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeGetDimensionsSize, libgdal), Ptr{GUInt64}, (GDALAttributeH, Ptr{Csize_t}), hAttr,
+                           pnCount))
 end
 
 """
@@ -16883,14 +12065,7 @@ end
 Return the data type.
 """
 function gdalattributegetdatatype(hAttr)
-    aftercare(
-        ccall(
-            (:GDALAttributeGetDataType, libgdal),
-            GDALExtendedDataTypeH,
-            (GDALAttributeH,),
-            hAttr,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeGetDataType, libgdal), GDALExtendedDataTypeH, (GDALAttributeH,), hAttr))
 end
 
 """
@@ -16907,15 +12082,7 @@ Return the raw value of an attribute.
 a buffer of *pnSize bytes.
 """
 function gdalattributereadasraw(hAttr, pnSize)
-    aftercare(
-        ccall(
-            (:GDALAttributeReadAsRaw, libgdal),
-            Ptr{GByte},
-            (GDALAttributeH, Ptr{Csize_t}),
-            hAttr,
-            pnSize,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeReadAsRaw, libgdal), Ptr{GByte}, (GDALAttributeH, Ptr{Csize_t}), hAttr, pnSize))
 end
 
 """
@@ -16926,16 +12093,7 @@ end
 Free the return of GDALAttributeAsRaw()
 """
 function gdalattributefreerawresult(hAttr, raw, nSize)
-    aftercare(
-        ccall(
-            (:GDALAttributeFreeRawResult, libgdal),
-            Cvoid,
-            (GDALAttributeH, Ptr{GByte}, Csize_t),
-            hAttr,
-            raw,
-            nSize,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeFreeRawResult, libgdal), Cvoid, (GDALAttributeH, Ptr{GByte}, Csize_t), hAttr, raw, nSize))
 end
 
 """
@@ -16947,10 +12105,7 @@ Return the value of an attribute as a string.
 a string, or nullptr.
 """
 function gdalattributereadasstring(hAttr)
-    aftercare(
-        ccall((:GDALAttributeReadAsString, libgdal), Cstring, (GDALAttributeH,), hAttr),
-        false,
-    )
+    return aftercare(ccall((:GDALAttributeReadAsString, libgdal), Cstring, (GDALAttributeH,), hAttr), false)
 end
 
 """
@@ -16962,7 +12117,7 @@ Return the value of an attribute as a integer.
 a integer, or INT_MIN in case of error.
 """
 function gdalattributereadasint(hAttr)
-    aftercare(ccall((:GDALAttributeReadAsInt, libgdal), Cint, (GDALAttributeH,), hAttr))
+    return aftercare(ccall((:GDALAttributeReadAsInt, libgdal), Cint, (GDALAttributeH,), hAttr))
 end
 
 """
@@ -16974,7 +12129,7 @@ Return the value of an attribute as a int64_t.
 an int64_t, or INT64_MIN in case of error.
 """
 function gdalattributereadasint64(hAttr)
-    aftercare(ccall((:GDALAttributeReadAsInt64, libgdal), Int64, (GDALAttributeH,), hAttr))
+    return aftercare(ccall((:GDALAttributeReadAsInt64, libgdal), Int64, (GDALAttributeH,), hAttr))
 end
 
 """
@@ -16986,9 +12141,7 @@ Return the value of an attribute as a double.
 a double value.
 """
 function gdalattributereadasdouble(hAttr)
-    aftercare(
-        ccall((:GDALAttributeReadAsDouble, libgdal), Cdouble, (GDALAttributeH,), hAttr),
-    )
+    return aftercare(ccall((:GDALAttributeReadAsDouble, libgdal), Cdouble, (GDALAttributeH,), hAttr))
 end
 
 """
@@ -16997,14 +12150,7 @@ end
 Return the value of an attribute as an array of strings.
 """
 function gdalattributereadasstringarray(hAttr)
-    aftercare(
-        ccall(
-            (:GDALAttributeReadAsStringArray, libgdal),
-            Ptr{Cstring},
-            (GDALAttributeH,),
-            hAttr,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeReadAsStringArray, libgdal), Ptr{Cstring}, (GDALAttributeH,), hAttr))
 end
 
 """
@@ -17021,15 +12167,7 @@ Return the value of an attribute as an array of integers.
 array to be freed with CPLFree(), or nullptr.
 """
 function gdalattributereadasintarray(hAttr, pnCount)
-    aftercare(
-        ccall(
-            (:GDALAttributeReadAsIntArray, libgdal),
-            Ptr{Cint},
-            (GDALAttributeH, Ptr{Csize_t}),
-            hAttr,
-            pnCount,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeReadAsIntArray, libgdal), Ptr{Cint}, (GDALAttributeH, Ptr{Csize_t}), hAttr, pnCount))
 end
 
 """
@@ -17046,15 +12184,7 @@ Return the value of an attribute as an array of int64_t.
 array to be freed with CPLFree(), or nullptr.
 """
 function gdalattributereadasint64array(hAttr, pnCount)
-    aftercare(
-        ccall(
-            (:GDALAttributeReadAsInt64Array, libgdal),
-            Ptr{Int64},
-            (GDALAttributeH, Ptr{Csize_t}),
-            hAttr,
-            pnCount,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeReadAsInt64Array, libgdal), Ptr{Int64}, (GDALAttributeH, Ptr{Csize_t}), hAttr, pnCount))
 end
 
 """
@@ -17071,15 +12201,8 @@ Return the value of an attribute as an array of doubles.
 array to be freed with CPLFree(), or nullptr.
 """
 function gdalattributereadasdoublearray(hAttr, pnCount)
-    aftercare(
-        ccall(
-            (:GDALAttributeReadAsDoubleArray, libgdal),
-            Ptr{Cdouble},
-            (GDALAttributeH, Ptr{Csize_t}),
-            hAttr,
-            pnCount,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeReadAsDoubleArray, libgdal), Ptr{Cdouble}, (GDALAttributeH, Ptr{Csize_t}), hAttr,
+                           pnCount))
 end
 
 """
@@ -17098,16 +12221,7 @@ Write an attribute from raw values expressed in GetDataType()
 TRUE in case of success.
 """
 function gdalattributewriteraw(hAttr, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALAttributeWriteRaw, libgdal),
-            Cint,
-            (GDALAttributeH, Ptr{Cvoid}, Csize_t),
-            hAttr,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeWriteRaw, libgdal), Cint, (GDALAttributeH, Ptr{Cvoid}, Csize_t), hAttr, arg2, arg3))
 end
 
 """
@@ -17124,15 +12238,7 @@ Write an attribute from a string value.
 TRUE in case of success.
 """
 function gdalattributewritestring(hAttr, arg2)
-    aftercare(
-        ccall(
-            (:GDALAttributeWriteString, libgdal),
-            Cint,
-            (GDALAttributeH, Cstring),
-            hAttr,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeWriteString, libgdal), Cint, (GDALAttributeH, Cstring), hAttr, arg2))
 end
 
 """
@@ -17149,15 +12255,7 @@ Write an attribute from an array of strings.
 TRUE in case of success.
 """
 function gdalattributewritestringarray(hAttr, arg2)
-    aftercare(
-        ccall(
-            (:GDALAttributeWriteStringArray, libgdal),
-            Cint,
-            (GDALAttributeH, CSLConstList),
-            hAttr,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeWriteStringArray, libgdal), Cint, (GDALAttributeH, CSLConstList), hAttr, arg2))
 end
 
 """
@@ -17174,9 +12272,7 @@ Write an attribute from a integer value.
 TRUE in case of success.
 """
 function gdalattributewriteint(hAttr, arg2)
-    aftercare(
-        ccall((:GDALAttributeWriteInt, libgdal), Cint, (GDALAttributeH, Cint), hAttr, arg2),
-    )
+    return aftercare(ccall((:GDALAttributeWriteInt, libgdal), Cint, (GDALAttributeH, Cint), hAttr, arg2))
 end
 
 """
@@ -17195,16 +12291,7 @@ Write an attribute from an array of int.
 TRUE in case of success.
 """
 function gdalattributewriteintarray(hAttr, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALAttributeWriteIntArray, libgdal),
-            Cint,
-            (GDALAttributeH, Ptr{Cint}, Csize_t),
-            hAttr,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeWriteIntArray, libgdal), Cint, (GDALAttributeH, Ptr{Cint}, Csize_t), hAttr, arg2, arg3))
 end
 
 """
@@ -17221,15 +12308,7 @@ Write an attribute from an int64_t value.
 TRUE in case of success.
 """
 function gdalattributewriteint64(hAttr, arg2)
-    aftercare(
-        ccall(
-            (:GDALAttributeWriteInt64, libgdal),
-            Cint,
-            (GDALAttributeH, Int64),
-            hAttr,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeWriteInt64, libgdal), Cint, (GDALAttributeH, Int64), hAttr, arg2))
 end
 
 """
@@ -17248,16 +12327,8 @@ Write an attribute from an array of int64_t.
 TRUE in case of success.
 """
 function gdalattributewriteint64array(hAttr, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALAttributeWriteInt64Array, libgdal),
-            Cint,
-            (GDALAttributeH, Ptr{Int64}, Csize_t),
-            hAttr,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeWriteInt64Array, libgdal), Cint, (GDALAttributeH, Ptr{Int64}, Csize_t), hAttr, arg2,
+                           arg3))
 end
 
 """
@@ -17274,15 +12345,7 @@ Write an attribute from a double value.
 TRUE in case of success.
 """
 function gdalattributewritedouble(hAttr, arg2)
-    aftercare(
-        ccall(
-            (:GDALAttributeWriteDouble, libgdal),
-            Cint,
-            (GDALAttributeH, Cdouble),
-            hAttr,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeWriteDouble, libgdal), Cint, (GDALAttributeH, Cdouble), hAttr, arg2))
 end
 
 """
@@ -17301,16 +12364,8 @@ Write an attribute from an array of double.
 TRUE in case of success.
 """
 function gdalattributewritedoublearray(hAttr, arg2, arg3)
-    aftercare(
-        ccall(
-            (:GDALAttributeWriteDoubleArray, libgdal),
-            Cint,
-            (GDALAttributeH, Ptr{Cdouble}, Csize_t),
-            hAttr,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeWriteDoubleArray, libgdal), Cint, (GDALAttributeH, Ptr{Cdouble}, Csize_t), hAttr, arg2,
+                           arg3))
 end
 
 """
@@ -17323,15 +12378,7 @@ Rename the attribute.
 true in case of success
 """
 function gdalattributerename(hAttr, pszNewName)
-    aftercare(
-        ccall(
-            (:GDALAttributeRename, libgdal),
-            Bool,
-            (GDALAttributeH, Cstring),
-            hAttr,
-            pszNewName,
-        ),
-    )
+    return aftercare(ccall((:GDALAttributeRename, libgdal), Bool, (GDALAttributeH, Cstring), hAttr, pszNewName))
 end
 
 """
@@ -17340,7 +12387,7 @@ end
 Release the GDAL in-memory object associated with a GDALDimension.
 """
 function gdaldimensionrelease(hDim)
-    aftercare(ccall((:GDALDimensionRelease, libgdal), Cvoid, (GDALDimensionH,), hDim))
+    return aftercare(ccall((:GDALDimensionRelease, libgdal), Cvoid, (GDALDimensionH,), hDim))
 end
 
 """
@@ -17354,15 +12401,7 @@ Free the return of GDALGroupGetDimensions() or GDALMDArrayGetDimensions()
 * **nCount**: *pnCount value returned by above methods
 """
 function gdalreleasedimensions(dims, nCount)
-    aftercare(
-        ccall(
-            (:GDALReleaseDimensions, libgdal),
-            Cvoid,
-            (Ptr{GDALDimensionH}, Csize_t),
-            dims,
-            nCount,
-        ),
-    )
+    return aftercare(ccall((:GDALReleaseDimensions, libgdal), Cvoid, (Ptr{GDALDimensionH}, Csize_t), dims, nCount))
 end
 
 """
@@ -17371,10 +12410,7 @@ end
 Return dimension name.
 """
 function gdaldimensiongetname(hDim)
-    aftercare(
-        ccall((:GDALDimensionGetName, libgdal), Cstring, (GDALDimensionH,), hDim),
-        false,
-    )
+    return aftercare(ccall((:GDALDimensionGetName, libgdal), Cstring, (GDALDimensionH,), hDim), false)
 end
 
 """
@@ -17383,10 +12419,7 @@ end
 Return dimension full name.
 """
 function gdaldimensiongetfullname(hDim)
-    aftercare(
-        ccall((:GDALDimensionGetFullName, libgdal), Cstring, (GDALDimensionH,), hDim),
-        false,
-    )
+    return aftercare(ccall((:GDALDimensionGetFullName, libgdal), Cstring, (GDALDimensionH,), hDim), false)
 end
 
 """
@@ -17395,10 +12428,7 @@ end
 Return dimension type.
 """
 function gdaldimensiongettype(hDim)
-    aftercare(
-        ccall((:GDALDimensionGetType, libgdal), Cstring, (GDALDimensionH,), hDim),
-        false,
-    )
+    return aftercare(ccall((:GDALDimensionGetType, libgdal), Cstring, (GDALDimensionH,), hDim), false)
 end
 
 """
@@ -17407,10 +12437,7 @@ end
 Return dimension direction.
 """
 function gdaldimensiongetdirection(hDim)
-    aftercare(
-        ccall((:GDALDimensionGetDirection, libgdal), Cstring, (GDALDimensionH,), hDim),
-        false,
-    )
+    return aftercare(ccall((:GDALDimensionGetDirection, libgdal), Cstring, (GDALDimensionH,), hDim), false)
 end
 
 """
@@ -17419,7 +12446,7 @@ end
 Return the size, that is the number of values along the dimension.
 """
 function gdaldimensiongetsize(hDim)
-    aftercare(ccall((:GDALDimensionGetSize, libgdal), GUInt64, (GDALDimensionH,), hDim))
+    return aftercare(ccall((:GDALDimensionGetSize, libgdal), GUInt64, (GDALDimensionH,), hDim))
 end
 
 """
@@ -17428,14 +12455,7 @@ end
 Return the variable that is used to index the dimension (if there is one).
 """
 function gdaldimensiongetindexingvariable(hDim)
-    aftercare(
-        ccall(
-            (:GDALDimensionGetIndexingVariable, libgdal),
-            GDALMDArrayH,
-            (GDALDimensionH,),
-            hDim,
-        ),
-    )
+    return aftercare(ccall((:GDALDimensionGetIndexingVariable, libgdal), GDALMDArrayH, (GDALDimensionH,), hDim))
 end
 
 """
@@ -17448,15 +12468,7 @@ Set the variable that is used to index the dimension.
 TRUE in case of success.
 """
 function gdaldimensionsetindexingvariable(hDim, hArray)
-    aftercare(
-        ccall(
-            (:GDALDimensionSetIndexingVariable, libgdal),
-            Cint,
-            (GDALDimensionH, GDALMDArrayH),
-            hDim,
-            hArray,
-        ),
-    )
+    return aftercare(ccall((:GDALDimensionSetIndexingVariable, libgdal), Cint, (GDALDimensionH, GDALMDArrayH), hDim, hArray))
 end
 
 """
@@ -17469,24 +12481,14 @@ Rename the dimension.
 true in case of success
 """
 function gdaldimensionrename(hDim, pszNewName)
-    aftercare(
-        ccall(
-            (:GDALDimensionRename, libgdal),
-            Bool,
-            (GDALDimensionH, Cstring),
-            hDim,
-            pszNewName,
-        ),
-    )
+    return aftercare(ccall((:GDALDimensionRename, libgdal), Bool, (GDALDimensionH, Cstring), hDim, pszNewName))
 end
 
 """
     RPCInfoV2ToMD(GDALRPCInfoV2 * psRPCInfo) -> char **
 """
 function rpcinfov2tomd(psRPCInfo)
-    aftercare(
-        ccall((:RPCInfoV2ToMD, libgdal), Ptr{Cstring}, (Ptr{GDALRPCInfoV2},), psRPCInfo),
-    )
+    return aftercare(ccall((:RPCInfoV2ToMD, libgdal), Ptr{Cstring}, (Ptr{GDALRPCInfoV2},), psRPCInfo))
 end
 
 """
@@ -17495,17 +12497,8 @@ end
 ` `
 """
 function gdalcreaterpctransformerv2(psRPC, bReversed, dfPixErrThreshold, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALCreateRPCTransformerV2, libgdal),
-            Ptr{Cvoid},
-            (Ptr{GDALRPCInfoV2}, Cint, Cdouble, Ptr{Cstring}),
-            psRPC,
-            bReversed,
-            dfPixErrThreshold,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateRPCTransformerV2, libgdal), Ptr{Cvoid}, (Ptr{GDALRPCInfoV2}, Cint, Cdouble, Ptr{Cstring}),
+                           psRPC, bReversed, dfPixErrThreshold, papszOptions))
 end
 
 """
@@ -17533,40 +12526,10 @@ Compute optimal PCT for RGB image.
 ### Returns
 returns CE_None on success or CE_Failure if an error occurs.
 """
-function gdalcomputemediancutpct(
-    hRed,
-    hGreen,
-    hBlue,
-    pfnIncludePixel,
-    nColors,
-    hColorTable,
-    pfnProgress,
-    pProgressArg,
-)
-    aftercare(
-        ccall(
-            (:GDALComputeMedianCutPCT, libgdal),
-            Cint,
-            (
-                GDALRasterBandH,
-                GDALRasterBandH,
-                GDALRasterBandH,
-                Ptr{Cvoid},
-                Cint,
-                GDALColorTableH,
-                GDALProgressFunc,
-                Any,
-            ),
-            hRed,
-            hGreen,
-            hBlue,
-            pfnIncludePixel,
-            nColors,
-            hColorTable,
-            pfnProgress,
-            pProgressArg,
-        ),
-    )
+function gdalcomputemediancutpct(hRed, hGreen, hBlue, pfnIncludePixel, nColors, hColorTable, pfnProgress, pProgressArg)
+    return aftercare(ccall((:GDALComputeMedianCutPCT, libgdal), Cint,
+                           (GDALRasterBandH, GDALRasterBandH, GDALRasterBandH, Ptr{Cvoid}, Cint, GDALColorTableH, GDALProgressFunc,
+                            Any), hRed, hGreen, hBlue, pfnIncludePixel, nColors, hColorTable, pfnProgress, pProgressArg))
 end
 
 """
@@ -17592,37 +12555,10 @@ end
 ### Returns
 CE_None on success or CE_Failure if an error occurs.
 """
-function gdalditherrgb2pct(
-    hRed,
-    hGreen,
-    hBlue,
-    hTarget,
-    hColorTable,
-    pfnProgress,
-    pProgressArg,
-)
-    aftercare(
-        ccall(
-            (:GDALDitherRGB2PCT, libgdal),
-            Cint,
-            (
-                GDALRasterBandH,
-                GDALRasterBandH,
-                GDALRasterBandH,
-                GDALRasterBandH,
-                GDALColorTableH,
-                GDALProgressFunc,
-                Any,
-            ),
-            hRed,
-            hGreen,
-            hBlue,
-            hTarget,
-            hColorTable,
-            pfnProgress,
-            pProgressArg,
-        ),
-    )
+function gdalditherrgb2pct(hRed, hGreen, hBlue, hTarget, hColorTable, pfnProgress, pProgressArg)
+    return aftercare(ccall((:GDALDitherRGB2PCT, libgdal), Cint,
+                           (GDALRasterBandH, GDALRasterBandH, GDALRasterBandH, GDALRasterBandH, GDALColorTableH, GDALProgressFunc,
+                            Any), hRed, hGreen, hBlue, hTarget, hColorTable, pfnProgress, pProgressArg))
 end
 
 """
@@ -17645,18 +12581,8 @@ Compute checksum for image region.
 Checksum value, or -1 in case of error (starting with GDAL 3.6)
 """
 function gdalchecksumimage(hBand, nXOff, nYOff, nXSize, nYSize)
-    aftercare(
-        ccall(
-            (:GDALChecksumImage, libgdal),
-            Cint,
-            (GDALRasterBandH, Cint, Cint, Cint, Cint),
-            hBand,
-            nXOff,
-            nYOff,
-            nXSize,
-            nYSize,
-        ),
-    )
+    return aftercare(ccall((:GDALChecksumImage, libgdal), Cint, (GDALRasterBandH, Cint, Cint, Cint, Cint), hBand, nXOff, nYOff,
+                           nXSize, nYSize))
 end
 
 """
@@ -17668,25 +12594,10 @@ end
 
 Compute the proximity of all pixels in the image to a set of pixels in the source image.
 """
-function gdalcomputeproximity(
-    hSrcBand,
-    hProximityBand,
-    papszOptions,
-    pfnProgress,
-    pProgressArg,
-)
-    aftercare(
-        ccall(
-            (:GDALComputeProximity, libgdal),
-            CPLErr,
-            (GDALRasterBandH, GDALRasterBandH, Ptr{Cstring}, GDALProgressFunc, Any),
-            hSrcBand,
-            hProximityBand,
-            papszOptions,
-            pfnProgress,
-            pProgressArg,
-        ),
-    )
+function gdalcomputeproximity(hSrcBand, hProximityBand, papszOptions, pfnProgress, pProgressArg)
+    return aftercare(ccall((:GDALComputeProximity, libgdal), CPLErr,
+                           (GDALRasterBandH, GDALRasterBandH, Ptr{Cstring}, GDALProgressFunc, Any), hSrcBand, hProximityBand,
+                           papszOptions, pfnProgress, pProgressArg))
 end
 
 """
@@ -17722,40 +12633,12 @@ INTERPOLATION=INV_DIST/NEAREST (GDAL >= 3.9). By default, pixels are interpolate
 ### Returns
 CE_None on success or CE_Failure if something goes wrong.
 """
-function gdalfillnodata(
-    hTargetBand,
-    hMaskBand,
-    dfMaxSearchDist,
-    bDeprecatedOption,
-    nSmoothingIterations,
-    papszOptions,
-    pfnProgress,
-    pProgressArg,
-)
-    aftercare(
-        ccall(
-            (:GDALFillNodata, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                GDALRasterBandH,
-                Cdouble,
-                Cint,
-                Cint,
-                Ptr{Cstring},
-                GDALProgressFunc,
-                Any,
-            ),
-            hTargetBand,
-            hMaskBand,
-            dfMaxSearchDist,
-            bDeprecatedOption,
-            nSmoothingIterations,
-            papszOptions,
-            pfnProgress,
-            pProgressArg,
-        ),
-    )
+function gdalfillnodata(hTargetBand, hMaskBand, dfMaxSearchDist, bDeprecatedOption, nSmoothingIterations, papszOptions, pfnProgress,
+                        pProgressArg)
+    return aftercare(ccall((:GDALFillNodata, libgdal), CPLErr,
+                           (GDALRasterBandH, GDALRasterBandH, Cdouble, Cint, Cint, Ptr{Cstring}, GDALProgressFunc, Any),
+                           hTargetBand, hMaskBand, dfMaxSearchDist, bDeprecatedOption, nSmoothingIterations, papszOptions,
+                           pfnProgress, pProgressArg))
 end
 
 """
@@ -17786,37 +12669,10 @@ DATASET_FOR_GEOREF=dataset_name: Name of a dataset from which to read the geotra
 ### Returns
 CE_None on success or CE_Failure on a failure.
 """
-function gdalpolygonize(
-    hSrcBand,
-    hMaskBand,
-    hOutLayer,
-    iPixValField,
-    papszOptions,
-    pfnProgress,
-    pProgressArg,
-)
-    aftercare(
-        ccall(
-            (:GDALPolygonize, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                GDALRasterBandH,
-                OGRLayerH,
-                Cint,
-                Ptr{Cstring},
-                GDALProgressFunc,
-                Any,
-            ),
-            hSrcBand,
-            hMaskBand,
-            hOutLayer,
-            iPixValField,
-            papszOptions,
-            pfnProgress,
-            pProgressArg,
-        ),
-    )
+function gdalpolygonize(hSrcBand, hMaskBand, hOutLayer, iPixValField, papszOptions, pfnProgress, pProgressArg)
+    return aftercare(ccall((:GDALPolygonize, libgdal), CPLErr,
+                           (GDALRasterBandH, GDALRasterBandH, OGRLayerH, Cint, Ptr{Cstring}, GDALProgressFunc, Any), hSrcBand,
+                           hMaskBand, hOutLayer, iPixValField, papszOptions, pfnProgress, pProgressArg))
 end
 
 """
@@ -17847,37 +12703,10 @@ DATASET_FOR_GEOREF=dataset_name: Name of a dataset from which to read the geotra
 ### Returns
 CE_None on success or CE_Failure on a failure.
 """
-function gdalfpolygonize(
-    hSrcBand,
-    hMaskBand,
-    hOutLayer,
-    iPixValField,
-    papszOptions,
-    pfnProgress,
-    pProgressArg,
-)
-    aftercare(
-        ccall(
-            (:GDALFPolygonize, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                GDALRasterBandH,
-                OGRLayerH,
-                Cint,
-                Ptr{Cstring},
-                GDALProgressFunc,
-                Any,
-            ),
-            hSrcBand,
-            hMaskBand,
-            hOutLayer,
-            iPixValField,
-            papszOptions,
-            pfnProgress,
-            pProgressArg,
-        ),
-    )
+function gdalfpolygonize(hSrcBand, hMaskBand, hOutLayer, iPixValField, papszOptions, pfnProgress, pProgressArg)
+    return aftercare(ccall((:GDALFPolygonize, libgdal), CPLErr,
+                           (GDALRasterBandH, GDALRasterBandH, OGRLayerH, Cint, Ptr{Cstring}, GDALProgressFunc, Any), hSrcBand,
+                           hMaskBand, hOutLayer, iPixValField, papszOptions, pfnProgress, pProgressArg))
 end
 
 """
@@ -17905,40 +12734,10 @@ Removes small raster polygons.
 ### Returns
 CE_None on success or CE_Failure if an error occurs.
 """
-function gdalsievefilter(
-    hSrcBand,
-    hMaskBand,
-    hDstBand,
-    nSizeThreshold,
-    nConnectedness,
-    papszOptions,
-    pfnProgress,
-    pProgressArg,
-)
-    aftercare(
-        ccall(
-            (:GDALSieveFilter, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                GDALRasterBandH,
-                GDALRasterBandH,
-                Cint,
-                Cint,
-                Ptr{Cstring},
-                GDALProgressFunc,
-                Any,
-            ),
-            hSrcBand,
-            hMaskBand,
-            hDstBand,
-            nSizeThreshold,
-            nConnectedness,
-            papszOptions,
-            pfnProgress,
-            pProgressArg,
-        ),
-    )
+function gdalsievefilter(hSrcBand, hMaskBand, hDstBand, nSizeThreshold, nConnectedness, papszOptions, pfnProgress, pProgressArg)
+    return aftercare(ccall((:GDALSieveFilter, libgdal), CPLErr,
+                           (GDALRasterBandH, GDALRasterBandH, GDALRasterBandH, Cint, Cint, Ptr{Cstring}, GDALProgressFunc, Any),
+                           hSrcBand, hMaskBand, hDstBand, nSizeThreshold, nConnectedness, papszOptions, pfnProgress, pProgressArg))
 end
 
 const GDALTransformerFunc = Ptr{Cvoid}
@@ -17958,9 +12757,7 @@ end
 ` Doxygen_Suppress `
 """
 function gdaldestroytransformer(pTransformerArg)
-    aftercare(
-        ccall((:GDALDestroyTransformer, libgdal), Cvoid, (Ptr{Cvoid},), pTransformerArg),
-    )
+    return aftercare(ccall((:GDALDestroyTransformer, libgdal), Cvoid, (Ptr{Cvoid},), pTransformerArg))
 end
 
 """
@@ -17973,20 +12770,9 @@ end
                        int * panSuccess) -> int
 """
 function gdalusetransformer(pTransformerArg, bDstToSrc, nPointCount, x, y, z, panSuccess)
-    aftercare(
-        ccall(
-            (:GDALUseTransformer, libgdal),
-            Cint,
-            (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}),
-            pTransformerArg,
-            bDstToSrc,
-            nPointCount,
-            x,
-            y,
-            z,
-            panSuccess,
-        ),
-    )
+    return aftercare(ccall((:GDALUseTransformer, libgdal), Cint,
+                           (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}), pTransformerArg,
+                           bDstToSrc, nPointCount, x, y, z, panSuccess))
 end
 
 """
@@ -17995,16 +12781,8 @@ end
                                  double dfRatioY) -> void *
 """
 function gdalcreatesimilartransformer(psTransformerArg, dfSrcRatioX, dfSrcRatioY)
-    aftercare(
-        ccall(
-            (:GDALCreateSimilarTransformer, libgdal),
-            Ptr{Cvoid},
-            (Ptr{Cvoid}, Cdouble, Cdouble),
-            psTransformerArg,
-            dfSrcRatioX,
-            dfSrcRatioY,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateSimilarTransformer, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Cdouble, Cdouble), psTransformerArg,
+                           dfSrcRatioX, dfSrcRatioY))
 end
 
 """
@@ -18012,35 +12790,16 @@ end
 
 ` `
 """
-function gdalcreategenimgprojtransformer(
-    hSrcDS,
-    pszSrcWKT,
-    hDstDS,
-    pszDstWKT,
-    bGCPUseOK,
-    dfGCPErrorThreshold,
-    nOrder,
-)
-    aftercare(
-        ccall(
-            (:GDALCreateGenImgProjTransformer, libgdal),
-            Ptr{Cvoid},
-            (GDALDatasetH, Cstring, GDALDatasetH, Cstring, Cint, Cdouble, Cint),
-            hSrcDS,
-            pszSrcWKT,
-            hDstDS,
-            pszDstWKT,
-            bGCPUseOK,
-            dfGCPErrorThreshold,
-            nOrder,
-        ),
-    )
+function gdalcreategenimgprojtransformer(hSrcDS, pszSrcWKT, hDstDS, pszDstWKT, bGCPUseOK, dfGCPErrorThreshold, nOrder)
+    return aftercare(ccall((:GDALCreateGenImgProjTransformer, libgdal), Ptr{Cvoid},
+                           (GDALDatasetH, Cstring, GDALDatasetH, Cstring, Cint, Cdouble, Cint), hSrcDS, pszSrcWKT, hDstDS,
+                           pszDstWKT, bGCPUseOK, dfGCPErrorThreshold, nOrder))
 end
 
 """
     GDALCreateGenImgProjTransformer2(GDALDatasetH hSrcDS,
                                      GDALDatasetH hDstDS,
-                                     char ** papszOptions) -> void *
+                                     CSLConstList papszOptions) -> void *
 
 Create image to image transformer.
 
@@ -18053,16 +12812,8 @@ Create image to image transformer.
 handle suitable for use GDALGenImgProjTransform(), and to be deallocated with GDALDestroyGenImgProjTransformer() or NULL on failure.
 """
 function gdalcreategenimgprojtransformer2(hSrcDS, hDstDS, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALCreateGenImgProjTransformer2, libgdal),
-            Ptr{Cvoid},
-            (GDALDatasetH, GDALDatasetH, Ptr{Cstring}),
-            hSrcDS,
-            hDstDS,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateGenImgProjTransformer2, libgdal), Ptr{Cvoid}, (GDALDatasetH, GDALDatasetH, Ptr{Cstring}),
+                           hSrcDS, hDstDS, papszOptions))
 end
 
 """
@@ -18082,23 +12833,9 @@ Create image to image transformer.
 ### Returns
 handle suitable for use GDALGenImgProjTransform(), and to be deallocated with GDALDestroyGenImgProjTransformer() or NULL on failure.
 """
-function gdalcreategenimgprojtransformer3(
-    pszSrcWKT,
-    padfSrcGeoTransform,
-    pszDstWKT,
-    padfDstGeoTransform,
-)
-    aftercare(
-        ccall(
-            (:GDALCreateGenImgProjTransformer3, libgdal),
-            Ptr{Cvoid},
-            (Cstring, Ptr{Cdouble}, Cstring, Ptr{Cdouble}),
-            pszSrcWKT,
-            padfSrcGeoTransform,
-            pszDstWKT,
-            padfDstGeoTransform,
-        ),
-    )
+function gdalcreategenimgprojtransformer3(pszSrcWKT, padfSrcGeoTransform, pszDstWKT, padfDstGeoTransform)
+    return aftercare(ccall((:GDALCreateGenImgProjTransformer3, libgdal), Ptr{Cvoid}, (Cstring, Ptr{Cdouble}, Cstring, Ptr{Cdouble}),
+                           pszSrcWKT, padfSrcGeoTransform, pszDstWKT, padfDstGeoTransform))
 end
 
 """
@@ -18110,31 +12847,10 @@ end
 
 Create image to image transformer.
 """
-function gdalcreategenimgprojtransformer4(
-    hSrcSRS,
-    padfSrcGeoTransform,
-    hDstSRS,
-    padfDstGeoTransform,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALCreateGenImgProjTransformer4, libgdal),
-            Ptr{Cvoid},
-            (
-                OGRSpatialReferenceH,
-                Ptr{Cdouble},
-                OGRSpatialReferenceH,
-                Ptr{Cdouble},
-                Ptr{Cstring},
-            ),
-            hSrcSRS,
-            padfSrcGeoTransform,
-            hDstSRS,
-            padfDstGeoTransform,
-            papszOptions,
-        ),
-    )
+function gdalcreategenimgprojtransformer4(hSrcSRS, padfSrcGeoTransform, hDstSRS, padfDstGeoTransform, papszOptions)
+    return aftercare(ccall((:GDALCreateGenImgProjTransformer4, libgdal), Ptr{Cvoid},
+                           (OGRSpatialReferenceH, Ptr{Cdouble}, OGRSpatialReferenceH, Ptr{Cdouble}, Ptr{Cstring}), hSrcSRS,
+                           padfSrcGeoTransform, hDstSRS, padfDstGeoTransform, papszOptions))
 end
 
 """
@@ -18148,15 +12864,7 @@ Set GenImgProj output geotransform.
 * **padfGeoTransform**: the destination geotransform to apply (six doubles).
 """
 function gdalsetgenimgprojtransformerdstgeotransform(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALSetGenImgProjTransformerDstGeoTransform, libgdal),
-            Cvoid,
-            (Ptr{Cvoid}, Ptr{Cdouble}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALSetGenImgProjTransformerDstGeoTransform, libgdal), Cvoid, (Ptr{Cvoid}, Ptr{Cdouble}), arg1, arg2))
 end
 
 """
@@ -18168,9 +12876,7 @@ GenImgProjTransformer deallocator.
 * **hTransformArg**: the handle to deallocate.
 """
 function gdaldestroygenimgprojtransformer(arg1)
-    aftercare(
-        ccall((:GDALDestroyGenImgProjTransformer, libgdal), Cvoid, (Ptr{Cvoid},), arg1),
-    )
+    return aftercare(ccall((:GDALDestroyGenImgProjTransformer, libgdal), Cvoid, (Ptr{Cvoid},), arg1))
 end
 
 """
@@ -18185,20 +12891,9 @@ end
 Perform general image reprojection transformation.
 """
 function gdalgenimgprojtransform(pTransformArg, bDstToSrc, nPointCount, x, y, z, panSuccess)
-    aftercare(
-        ccall(
-            (:GDALGenImgProjTransform, libgdal),
-            Cint,
-            (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}),
-            pTransformArg,
-            bDstToSrc,
-            nPointCount,
-            x,
-            y,
-            z,
-            panSuccess,
-        ),
-    )
+    return aftercare(ccall((:GDALGenImgProjTransform, libgdal), Cint,
+                           (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}), pTransformArg, bDstToSrc,
+                           nPointCount, x, y, z, panSuccess))
 end
 
 """
@@ -18212,15 +12907,7 @@ Set ApproxTransformer or GenImgProj output geotransform.
 * **padfGeoTransform**: the destination geotransform to apply (six doubles).
 """
 function gdalsettransformerdstgeotransform(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALSetTransformerDstGeoTransform, libgdal),
-            Cvoid,
-            (Ptr{Cvoid}, Ptr{Cdouble}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALSetTransformerDstGeoTransform, libgdal), Cvoid, (Ptr{Cvoid}, Ptr{Cdouble}), arg1, arg2))
 end
 
 """
@@ -18234,15 +12921,7 @@ Get ApproxTransformer or GenImgProj output geotransform.
 * **padfGeoTransform**: (output) the destination geotransform to return (six doubles).
 """
 function gdalgettransformerdstgeotransform(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALGetTransformerDstGeoTransform, libgdal),
-            Cvoid,
-            (Ptr{Cvoid}, Ptr{Cdouble}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:GDALGetTransformerDstGeoTransform, libgdal), Cvoid, (Ptr{Cvoid}, Ptr{Cdouble}), arg1, arg2))
 end
 
 """
@@ -18259,15 +12938,7 @@ Create reprojection transformer.
 Handle for use with GDALReprojectionTransform(), or NULL if the system fails to initialize the reprojection.
 """
 function gdalcreatereprojectiontransformer(pszSrcWKT, pszDstWKT)
-    aftercare(
-        ccall(
-            (:GDALCreateReprojectionTransformer, libgdal),
-            Ptr{Cvoid},
-            (Cstring, Cstring),
-            pszSrcWKT,
-            pszDstWKT,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateReprojectionTransformer, libgdal), Ptr{Cvoid}, (Cstring, Cstring), pszSrcWKT, pszDstWKT))
 end
 
 """
@@ -18294,22 +12965,20 @@ COORDINATE_EPOCH=decimal_year: Coordinate epoch, expressed as a decimal year. Us
 SRC_COORDINATE_EPOCH: (GDAL >= 3.4) Coordinate epoch of source CRS, expressed as a decimal year. Useful for time-dependent coordinate operations. 
 
 
-DST_COORDINATE_EPOCH: (GDAL >= 3.4) Coordinate epoch of target CRS, expressed as a decimal year. Useful for time-dependent coordinate operations.
+DST_COORDINATE_EPOCH: (GDAL >= 3.4) Coordinate epoch of target CRS, expressed as a decimal year. Useful for time-dependent coordinate operations. 
+
+
+ALLOW_BALLPARK=YES/NO: (GDAL >= 3.11) Whether ballpark coordinate operations are allowed. Defaults to YES. 
+
+
+ONLY_BEST=YES/NO/AUTO: (GDAL >= 3.11) By default (at least in the PROJ 9.x series), PROJ may use coordinate operations that are not the "best" if resources (typically grids) needed to use them are missing. It will then fallback to other coordinate operations that have a lesser accuracy, for example using Helmert transformations, or in the absence of such operations, to ones with potential very rought accuracy, using "ballpark" transformations (see https://proj.org/glossary.html). When calling this method with YES, PROJ will only consider the "best" operation, and error out (at Transform() time) if they cannot be used. This method may be used together with ALLOW_BALLPARK=NO to only allow best operations that have a known accuracy. Note that this method has no effect on PROJ versions before 9.2. The default value for this option can be also set with the PROJ_ONLY_BEST_DEFAULT environment variable, or with the "only_best_default" setting of proj.ini. Calling SetOnlyBest() overrides such default value.
 
 ### Returns
 Handle for use with GDALReprojectionTransform(), or NULL if the system fails to initialize the reprojection.
 """
 function gdalcreatereprojectiontransformerex(hSrcSRS, hDstSRS, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALCreateReprojectionTransformerEx, libgdal),
-            Ptr{Cvoid},
-            (OGRSpatialReferenceH, OGRSpatialReferenceH, Ptr{Cstring}),
-            hSrcSRS,
-            hDstSRS,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateReprojectionTransformerEx, libgdal), Ptr{Cvoid},
+                           (OGRSpatialReferenceH, OGRSpatialReferenceH, Ptr{Cstring}), hSrcSRS, hDstSRS, papszOptions))
 end
 
 """
@@ -18321,9 +12990,7 @@ Destroy reprojection transformation.
 * **pTransformArg**: the transformation handle returned by GDALCreateReprojectionTransformer().
 """
 function gdaldestroyreprojectiontransformer(arg1)
-    aftercare(
-        ccall((:GDALDestroyReprojectionTransformer, libgdal), Cvoid, (Ptr{Cvoid},), arg1),
-    )
+    return aftercare(ccall((:GDALDestroyReprojectionTransformer, libgdal), Cvoid, (Ptr{Cvoid},), arg1))
 end
 
 """
@@ -18337,29 +13004,10 @@ end
 
 Perform reprojection transformation.
 """
-function gdalreprojectiontransform(
-    pTransformArg,
-    bDstToSrc,
-    nPointCount,
-    x,
-    y,
-    z,
-    panSuccess,
-)
-    aftercare(
-        ccall(
-            (:GDALReprojectionTransform, libgdal),
-            Cint,
-            (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}),
-            pTransformArg,
-            bDstToSrc,
-            nPointCount,
-            x,
-            y,
-            z,
-            panSuccess,
-        ),
-    )
+function gdalreprojectiontransform(pTransformArg, bDstToSrc, nPointCount, x, y, z, panSuccess)
+    return aftercare(ccall((:GDALReprojectionTransform, libgdal), Cint,
+                           (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}), pTransformArg, bDstToSrc,
+                           nPointCount, x, y, z, panSuccess))
 end
 
 """
@@ -18380,17 +13028,8 @@ Create GCP based polynomial transformer.
 the transform argument or nullptr if creation fails.
 """
 function gdalcreategcptransformer(nGCPCount, pasGCPList, nReqOrder, bReversed)
-    aftercare(
-        ccall(
-            (:GDALCreateGCPTransformer, libgdal),
-            Ptr{Cvoid},
-            (Cint, Ptr{GDAL_GCP}, Cint, Cint),
-            nGCPCount,
-            pasGCPList,
-            nReqOrder,
-            bReversed,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateGCPTransformer, libgdal), Ptr{Cvoid}, (Cint, Ptr{GDAL_GCP}, Cint, Cint), nGCPCount,
+                           pasGCPList, nReqOrder, bReversed))
 end
 
 """
@@ -18403,27 +13042,9 @@ end
 
 Create GCP based polynomial transformer, with a tolerance threshold to discard GCPs that transform badly.
 """
-function gdalcreategcprefinetransformer(
-    nGCPCount,
-    pasGCPList,
-    nReqOrder,
-    bReversed,
-    tolerance,
-    minimumGcps,
-)
-    aftercare(
-        ccall(
-            (:GDALCreateGCPRefineTransformer, libgdal),
-            Ptr{Cvoid},
-            (Cint, Ptr{GDAL_GCP}, Cint, Cint, Cdouble, Cint),
-            nGCPCount,
-            pasGCPList,
-            nReqOrder,
-            bReversed,
-            tolerance,
-            minimumGcps,
-        ),
-    )
+function gdalcreategcprefinetransformer(nGCPCount, pasGCPList, nReqOrder, bReversed, tolerance, minimumGcps)
+    return aftercare(ccall((:GDALCreateGCPRefineTransformer, libgdal), Ptr{Cvoid}, (Cint, Ptr{GDAL_GCP}, Cint, Cint, Cdouble, Cint),
+                           nGCPCount, pasGCPList, nReqOrder, bReversed, tolerance, minimumGcps))
 end
 
 """
@@ -18435,9 +13056,7 @@ Destroy GCP transformer.
 * **pTransformArg**: the transform arg previously returned by GDALCreateGCPTransformer().
 """
 function gdaldestroygcptransformer(pTransformArg)
-    aftercare(
-        ccall((:GDALDestroyGCPTransformer, libgdal), Cvoid, (Ptr{Cvoid},), pTransformArg),
-    )
+    return aftercare(ccall((:GDALDestroyGCPTransformer, libgdal), Cvoid, (Ptr{Cvoid},), pTransformArg))
 end
 
 """
@@ -18461,23 +13080,12 @@ Transforms point based on GCP derived polynomial model.
 * **panSuccess**: array in which a flag indicating success (TRUE) or failure (FALSE) of the transformation are placed.
 
 ### Returns
-TRUE.
+TRUE if all points have been successfully transformed.
 """
 function gdalgcptransform(pTransformArg, bDstToSrc, nPointCount, x, y, z, panSuccess)
-    aftercare(
-        ccall(
-            (:GDALGCPTransform, libgdal),
-            Cint,
-            (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}),
-            pTransformArg,
-            bDstToSrc,
-            nPointCount,
-            x,
-            y,
-            z,
-            panSuccess,
-        ),
-    )
+    return aftercare(ccall((:GDALGCPTransform, libgdal), Cint,
+                           (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}), pTransformArg, bDstToSrc,
+                           nPointCount, x, y, z, panSuccess))
 end
 
 """
@@ -18496,16 +13104,8 @@ Create Thin Plate Spline transformer from GCPs.
 the transform argument or NULL if creation fails.
 """
 function gdalcreatetpstransformer(nGCPCount, pasGCPList, bReversed)
-    aftercare(
-        ccall(
-            (:GDALCreateTPSTransformer, libgdal),
-            Ptr{Cvoid},
-            (Cint, Ptr{GDAL_GCP}, Cint),
-            nGCPCount,
-            pasGCPList,
-            bReversed,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateTPSTransformer, libgdal), Ptr{Cvoid}, (Cint, Ptr{GDAL_GCP}, Cint), nGCPCount, pasGCPList,
+                           bReversed))
 end
 
 """
@@ -18517,9 +13117,7 @@ Destroy TPS transformer.
 * **pTransformArg**: the transform arg previously returned by GDALCreateTPSTransformer().
 """
 function gdaldestroytpstransformer(pTransformArg)
-    aftercare(
-        ccall((:GDALDestroyTPSTransformer, libgdal), Cvoid, (Ptr{Cvoid},), pTransformArg),
-    )
+    return aftercare(ccall((:GDALDestroyTPSTransformer, libgdal), Cvoid, (Ptr{Cvoid},), pTransformArg))
 end
 
 """
@@ -18543,32 +13141,19 @@ Transforms point based on GCP derived polynomial model.
 * **panSuccess**: array in which a flag indicating success (TRUE) or failure (FALSE) of the transformation are placed.
 
 ### Returns
-TRUE.
+TRUE if all points have been successfully transformed.
 """
 function gdaltpstransform(pTransformArg, bDstToSrc, nPointCount, x, y, z, panSuccess)
-    aftercare(
-        ccall(
-            (:GDALTPSTransform, libgdal),
-            Cint,
-            (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}),
-            pTransformArg,
-            bDstToSrc,
-            nPointCount,
-            x,
-            y,
-            z,
-            panSuccess,
-        ),
-    )
+    return aftercare(ccall((:GDALTPSTransform, libgdal), Cint,
+                           (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}), pTransformArg, bDstToSrc,
+                           nPointCount, x, y, z, panSuccess))
 end
 
 """
     RPCInfoV1ToMD(GDALRPCInfoV1 * psRPCInfo) -> char **
 """
 function rpcinfov1tomd(psRPCInfo)
-    aftercare(
-        ccall((:RPCInfoV1ToMD, libgdal), Ptr{Cstring}, (Ptr{GDALRPCInfoV1},), psRPCInfo),
-    )
+    return aftercare(ccall((:RPCInfoV1ToMD, libgdal), Ptr{Cstring}, (Ptr{GDALRPCInfoV1},), psRPCInfo))
 end
 
 """
@@ -18578,17 +13163,8 @@ end
                                char ** papszOptions) -> void *
 """
 function gdalcreaterpctransformerv1(psRPC, bReversed, dfPixErrThreshold, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALCreateRPCTransformerV1, libgdal),
-            Ptr{Cvoid},
-            (Ptr{GDALRPCInfoV1}, Cint, Cdouble, Ptr{Cstring}),
-            psRPC,
-            bReversed,
-            dfPixErrThreshold,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateRPCTransformerV1, libgdal), Ptr{Cvoid}, (Ptr{GDALRPCInfoV1}, Cint, Cdouble, Ptr{Cstring}),
+                           psRPC, bReversed, dfPixErrThreshold, papszOptions))
 end
 
 """
@@ -18597,9 +13173,7 @@ end
 Destroy RPC transformer.
 """
 function gdaldestroyrpctransformer(pTransformArg)
-    aftercare(
-        ccall((:GDALDestroyRPCTransformer, libgdal), Cvoid, (Ptr{Cvoid},), pTransformArg),
-    )
+    return aftercare(ccall((:GDALDestroyRPCTransformer, libgdal), Cvoid, (Ptr{Cvoid},), pTransformArg))
 end
 
 """
@@ -18614,20 +13188,9 @@ end
 RPC transform.
 """
 function gdalrpctransform(pTransformArg, bDstToSrc, nPointCount, x, y, z, panSuccess)
-    aftercare(
-        ccall(
-            (:GDALRPCTransform, libgdal),
-            Cint,
-            (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}),
-            pTransformArg,
-            bDstToSrc,
-            nPointCount,
-            x,
-            y,
-            z,
-            panSuccess,
-        ),
-    )
+    return aftercare(ccall((:GDALRPCTransform, libgdal), Cint,
+                           (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}), pTransformArg, bDstToSrc,
+                           nPointCount, x, y, z, panSuccess))
 end
 
 """
@@ -18638,16 +13201,8 @@ end
 Create GeoLocation transformer.
 """
 function gdalcreategeoloctransformer(hBaseDS, papszGeolocationInfo, bReversed)
-    aftercare(
-        ccall(
-            (:GDALCreateGeoLocTransformer, libgdal),
-            Ptr{Cvoid},
-            (GDALDatasetH, Ptr{Cstring}, Cint),
-            hBaseDS,
-            papszGeolocationInfo,
-            bReversed,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateGeoLocTransformer, libgdal), Ptr{Cvoid}, (GDALDatasetH, Ptr{Cstring}, Cint), hBaseDS,
+                           papszGeolocationInfo, bReversed))
 end
 
 """
@@ -18656,14 +13211,7 @@ end
 Destroy GeoLocation transformer.
 """
 function gdaldestroygeoloctransformer(pTransformArg)
-    aftercare(
-        ccall(
-            (:GDALDestroyGeoLocTransformer, libgdal),
-            Cvoid,
-            (Ptr{Cvoid},),
-            pTransformArg,
-        ),
-    )
+    return aftercare(ccall((:GDALDestroyGeoLocTransformer, libgdal), Cvoid, (Ptr{Cvoid},), pTransformArg))
 end
 
 """
@@ -18678,20 +13226,9 @@ end
 Use GeoLocation transformer.
 """
 function gdalgeoloctransform(pTransformArg, bDstToSrc, nPointCount, x, y, z, panSuccess)
-    aftercare(
-        ccall(
-            (:GDALGeoLocTransform, libgdal),
-            Cint,
-            (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}),
-            pTransformArg,
-            bDstToSrc,
-            nPointCount,
-            x,
-            y,
-            z,
-            panSuccess,
-        ),
-    )
+    return aftercare(ccall((:GDALGeoLocTransform, libgdal), Cint,
+                           (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}), pTransformArg, bDstToSrc,
+                           nPointCount, x, y, z, panSuccess))
 end
 
 """
@@ -18710,16 +13247,8 @@ Create an approximating transformer.
 callback pointer suitable for use with GDALApproxTransform(). It should be deallocated with GDALDestroyApproxTransformer().
 """
 function gdalcreateapproxtransformer(pfnRawTransformer, pRawTransformerArg, dfMaxError)
-    aftercare(
-        ccall(
-            (:GDALCreateApproxTransformer, libgdal),
-            Ptr{Cvoid},
-            (GDALTransformerFunc, Ptr{Cvoid}, Cdouble),
-            pfnRawTransformer,
-            pRawTransformerArg,
-            dfMaxError,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateApproxTransformer, libgdal), Ptr{Cvoid}, (GDALTransformerFunc, Ptr{Cvoid}, Cdouble),
+                           pfnRawTransformer, pRawTransformerArg, dfMaxError))
 end
 
 """
@@ -18729,15 +13258,7 @@ end
 Set bOwnSubtransformer flag.
 """
 function gdalapproxtransformerownssubtransformer(pCBData, bOwnFlag)
-    aftercare(
-        ccall(
-            (:GDALApproxTransformerOwnsSubtransformer, libgdal),
-            Cvoid,
-            (Ptr{Cvoid}, Cint),
-            pCBData,
-            bOwnFlag,
-        ),
-    )
+    return aftercare(ccall((:GDALApproxTransformerOwnsSubtransformer, libgdal), Cvoid, (Ptr{Cvoid}, Cint), pCBData, bOwnFlag))
 end
 
 """
@@ -18749,9 +13270,7 @@ Cleanup approximate transformer.
 * **pCBData**: callback data originally returned by GDALCreateApproxTransformer().
 """
 function gdaldestroyapproxtransformer(pApproxArg)
-    aftercare(
-        ccall((:GDALDestroyApproxTransformer, libgdal), Cvoid, (Ptr{Cvoid},), pApproxArg),
-    )
+    return aftercare(ccall((:GDALDestroyApproxTransformer, libgdal), Cvoid, (Ptr{Cvoid},), pApproxArg))
 end
 
 """
@@ -18766,20 +13285,9 @@ end
 Perform approximate transformation.
 """
 function gdalapproxtransform(pTransformArg, bDstToSrc, nPointCount, x, y, z, panSuccess)
-    aftercare(
-        ccall(
-            (:GDALApproxTransform, libgdal),
-            Cint,
-            (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}),
-            pTransformArg,
-            bDstToSrc,
-            nPointCount,
-            x,
-            y,
-            z,
-            panSuccess,
-        ),
-    )
+    return aftercare(ccall((:GDALApproxTransform, libgdal), Cint,
+                           (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}), pTransformArg, bDstToSrc,
+                           nPointCount, x, y, z, panSuccess))
 end
 
 """
@@ -18809,43 +13317,12 @@ Perform simple image warp.
 ### Returns
 TRUE if the operation completes, or FALSE if an error occurs.
 """
-function gdalsimpleimagewarp(
-    hSrcDS,
-    hDstDS,
-    nBandCount,
-    panBandList,
-    pfnTransform,
-    pTransformArg,
-    pfnProgress,
-    pProgressArg,
-    papszWarpOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALSimpleImageWarp, libgdal),
-            Cint,
-            (
-                GDALDatasetH,
-                GDALDatasetH,
-                Cint,
-                Ptr{Cint},
-                GDALTransformerFunc,
-                Ptr{Cvoid},
-                GDALProgressFunc,
-                Any,
-                Ptr{Cstring},
-            ),
-            hSrcDS,
-            hDstDS,
-            nBandCount,
-            panBandList,
-            pfnTransform,
-            pTransformArg,
-            pfnProgress,
-            pProgressArg,
-            papszWarpOptions,
-        ),
-    )
+function gdalsimpleimagewarp(hSrcDS, hDstDS, nBandCount, panBandList, pfnTransform, pTransformArg, pfnProgress, pProgressArg,
+                             papszWarpOptions)
+    return aftercare(ccall((:GDALSimpleImageWarp, libgdal), Cint,
+                           (GDALDatasetH, GDALDatasetH, Cint, Ptr{Cint}, GDALTransformerFunc, Ptr{Cvoid}, GDALProgressFunc, Any,
+                            Ptr{Cstring}), hSrcDS, hDstDS, nBandCount, panBandList, pfnTransform, pTransformArg, pfnProgress,
+                           pProgressArg, papszWarpOptions))
 end
 
 """
@@ -18869,34 +13346,10 @@ Suggest output file size.
 ### Returns
 CE_None if successful or CE_Failure otherwise.
 """
-function gdalsuggestedwarpoutput(
-    hSrcDS,
-    pfnTransformer,
-    pTransformArg,
-    padfGeoTransformOut,
-    pnPixels,
-    pnLines,
-)
-    aftercare(
-        ccall(
-            (:GDALSuggestedWarpOutput, libgdal),
-            CPLErr,
-            (
-                GDALDatasetH,
-                GDALTransformerFunc,
-                Ptr{Cvoid},
-                Ptr{Cdouble},
-                Ptr{Cint},
-                Ptr{Cint},
-            ),
-            hSrcDS,
-            pfnTransformer,
-            pTransformArg,
-            padfGeoTransformOut,
-            pnPixels,
-            pnLines,
-        ),
-    )
+function gdalsuggestedwarpoutput(hSrcDS, pfnTransformer, pTransformArg, padfGeoTransformOut, pnPixels, pnLines)
+    return aftercare(ccall((:GDALSuggestedWarpOutput, libgdal), CPLErr,
+                           (GDALDatasetH, GDALTransformerFunc, Ptr{Cvoid}, Ptr{Cdouble}, Ptr{Cint}, Ptr{Cint}), hSrcDS,
+                           pfnTransformer, pTransformArg, padfGeoTransformOut, pnPixels, pnLines))
 end
 
 """
@@ -18924,40 +13377,11 @@ Suggest output file size.
 ### Returns
 CE_None if successful or CE_Failure otherwise.
 """
-function gdalsuggestedwarpoutput2(
-    hSrcDS,
-    pfnTransformer,
-    pTransformArg,
-    padfGeoTransformOut,
-    pnPixels,
-    pnLines,
-    padfExtent,
-    nOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALSuggestedWarpOutput2, libgdal),
-            CPLErr,
-            (
-                GDALDatasetH,
-                GDALTransformerFunc,
-                Ptr{Cvoid},
-                Ptr{Cdouble},
-                Ptr{Cint},
-                Ptr{Cint},
-                Ptr{Cdouble},
-                Cint,
-            ),
-            hSrcDS,
-            pfnTransformer,
-            pTransformArg,
-            padfGeoTransformOut,
-            pnPixels,
-            pnLines,
-            padfExtent,
-            nOptions,
-        ),
-    )
+function gdalsuggestedwarpoutput2(hSrcDS, pfnTransformer, pTransformArg, padfGeoTransformOut, pnPixels, pnLines, padfExtent,
+                                  nOptions)
+    return aftercare(ccall((:GDALSuggestedWarpOutput2, libgdal), CPLErr,
+                           (GDALDatasetH, GDALTransformerFunc, Ptr{Cvoid}, Ptr{Cdouble}, Ptr{Cint}, Ptr{Cint}, Ptr{Cdouble}, Cint),
+                           hSrcDS, pfnTransformer, pTransformArg, padfGeoTransformOut, pnPixels, pnLines, padfExtent, nOptions))
 end
 
 """
@@ -18966,15 +13390,8 @@ end
 ` Doxygen_Suppress `
 """
 function gdalserializetransformer(pfnFunc, pTransformArg)
-    aftercare(
-        ccall(
-            (:GDALSerializeTransformer, libgdal),
-            Ptr{CPLXMLNode},
-            (GDALTransformerFunc, Ptr{Cvoid}),
-            pfnFunc,
-            pTransformArg,
-        ),
-    )
+    return aftercare(ccall((:GDALSerializeTransformer, libgdal), Ptr{CPLXMLNode}, (GDALTransformerFunc, Ptr{Cvoid}), pfnFunc,
+                           pTransformArg))
 end
 
 """
@@ -18983,16 +13400,8 @@ end
                                void ** ppTransformArg) -> CPLErr
 """
 function gdaldeserializetransformer(psTree, ppfnFunc, ppTransformArg)
-    aftercare(
-        ccall(
-            (:GDALDeserializeTransformer, libgdal),
-            CPLErr,
-            (Ptr{CPLXMLNode}, Ptr{GDALTransformerFunc}, Ptr{Ptr{Cvoid}}),
-            psTree,
-            ppfnFunc,
-            ppTransformArg,
-        ),
-    )
+    return aftercare(ccall((:GDALDeserializeTransformer, libgdal), CPLErr,
+                           (Ptr{CPLXMLNode}, Ptr{GDALTransformerFunc}, Ptr{Ptr{Cvoid}}), psTree, ppfnFunc, ppTransformArg))
 end
 
 """
@@ -19000,40 +13409,11 @@ end
 
 ` `
 """
-function gdaltransformgeolocations(
-    hXBand,
-    hYBand,
-    hZBand,
-    pfnTransformer,
-    pTransformArg,
-    pfnProgress,
-    pProgressArg,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALTransformGeolocations, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                GDALRasterBandH,
-                GDALRasterBandH,
-                GDALTransformerFunc,
-                Ptr{Cvoid},
-                GDALProgressFunc,
-                Any,
-                Ptr{Cstring},
-            ),
-            hXBand,
-            hYBand,
-            hZBand,
-            pfnTransformer,
-            pTransformArg,
-            pfnProgress,
-            pProgressArg,
-            papszOptions,
-        ),
-    )
+function gdaltransformgeolocations(hXBand, hYBand, hZBand, pfnTransformer, pTransformArg, pfnProgress, pProgressArg, papszOptions)
+    return aftercare(ccall((:GDALTransformGeolocations, libgdal), CPLErr,
+                           (GDALRasterBandH, GDALRasterBandH, GDALRasterBandH, GDALTransformerFunc, Ptr{Cvoid}, GDALProgressFunc,
+                            Any, Ptr{Cstring}), hXBand, hYBand, hZBand, pfnTransformer, pTransformArg, pfnProgress, pProgressArg,
+                           papszOptions))
 end
 
 "Contour writer callback type"
@@ -19054,31 +13434,10 @@ const GDALContourGeneratorH = Ptr{Cvoid}
 
 Create contour generator.
 """
-function gdal_cg_create(
-    nWidth,
-    nHeight,
-    bNoDataSet,
-    dfNoDataValue,
-    dfContourInterval,
-    dfContourBase,
-    pfnWriter,
-    pCBData,
-)
-    aftercare(
-        ccall(
-            (:GDAL_CG_Create, libgdal),
-            GDALContourGeneratorH,
-            (Cint, Cint, Cint, Cdouble, Cdouble, Cdouble, GDALContourWriter, Ptr{Cvoid}),
-            nWidth,
-            nHeight,
-            bNoDataSet,
-            dfNoDataValue,
-            dfContourInterval,
-            dfContourBase,
-            pfnWriter,
-            pCBData,
-        ),
-    )
+function gdal_cg_create(nWidth, nHeight, bNoDataSet, dfNoDataValue, dfContourInterval, dfContourBase, pfnWriter, pCBData)
+    return aftercare(ccall((:GDAL_CG_Create, libgdal), GDALContourGeneratorH,
+                           (Cint, Cint, Cint, Cdouble, Cdouble, Cdouble, GDALContourWriter, Ptr{Cvoid}), nWidth, nHeight,
+                           bNoDataSet, dfNoDataValue, dfContourInterval, dfContourBase, pfnWriter, pCBData))
 end
 
 """
@@ -19088,15 +13447,7 @@ end
 Feed a line to the contour generator.
 """
 function gdal_cg_feedline(hCG, padfScanline)
-    aftercare(
-        ccall(
-            (:GDAL_CG_FeedLine, libgdal),
-            CPLErr,
-            (GDALContourGeneratorH, Ptr{Cdouble}),
-            hCG,
-            padfScanline,
-        ),
-    )
+    return aftercare(ccall((:GDAL_CG_FeedLine, libgdal), CPLErr, (GDALContourGeneratorH, Ptr{Cdouble}), hCG, padfScanline))
 end
 
 """
@@ -19105,7 +13456,7 @@ end
 Destroy contour generator.
 """
 function gdal_cg_destroy(hCG)
-    aftercare(ccall((:GDAL_CG_Destroy, libgdal), Cvoid, (GDALContourGeneratorH,), hCG))
+    return aftercare(ccall((:GDAL_CG_Destroy, libgdal), Cvoid, (GDALContourGeneratorH,), hCG))
 end
 
 """
@@ -19133,18 +13484,8 @@ end
                      void * pInfo) -> CPLErr
 """
 function ogrcontourwriter(arg1, arg2, arg3, arg4, pInfo)
-    aftercare(
-        ccall(
-            (:OGRContourWriter, libgdal),
-            CPLErr,
-            (Cdouble, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cvoid}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            pInfo,
-        ),
-    )
+    return aftercare(ccall((:OGRContourWriter, libgdal), CPLErr, (Cdouble, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cvoid}), arg1,
+                           arg2, arg3, arg4, pInfo))
 end
 
 """
@@ -19152,52 +13493,12 @@ end
 
 ` `
 """
-function gdalcontourgenerate(
-    hBand,
-    dfContourInterval,
-    dfContourBase,
-    nFixedLevelCount,
-    padfFixedLevels,
-    bUseNoData,
-    dfNoDataValue,
-    hLayer,
-    iIDField,
-    iElevField,
-    pfnProgress,
-    pProgressArg,
-)
-    aftercare(
-        ccall(
-            (:GDALContourGenerate, libgdal),
-            CPLErr,
-            (
-                GDALRasterBandH,
-                Cdouble,
-                Cdouble,
-                Cint,
-                Ptr{Cdouble},
-                Cint,
-                Cdouble,
-                Ptr{Cvoid},
-                Cint,
-                Cint,
-                GDALProgressFunc,
-                Any,
-            ),
-            hBand,
-            dfContourInterval,
-            dfContourBase,
-            nFixedLevelCount,
-            padfFixedLevels,
-            bUseNoData,
-            dfNoDataValue,
-            hLayer,
-            iIDField,
-            iElevField,
-            pfnProgress,
-            pProgressArg,
-        ),
-    )
+function gdalcontourgenerate(hBand, dfContourInterval, dfContourBase, nFixedLevelCount, padfFixedLevels, bUseNoData, dfNoDataValue,
+                             hLayer, iIDField, iElevField, pfnProgress, pProgressArg)
+    return aftercare(ccall((:GDALContourGenerate, libgdal), CPLErr,
+                           (GDALRasterBandH, Cdouble, Cdouble, Cint, Ptr{Cdouble}, Cint, Cdouble, Ptr{Cvoid}, Cint, Cint,
+                            GDALProgressFunc, Any), hBand, dfContourInterval, dfContourBase, nFixedLevelCount, padfFixedLevels,
+                           bUseNoData, dfNoDataValue, hLayer, iIDField, iElevField, pfnProgress, pProgressArg))
 end
 
 """
@@ -19220,18 +13521,9 @@ Create vector contours from raster DEM.
 CE_None on success or CE_Failure if an error occurs.
 """
 function gdalcontourgenerateex(hBand, hLayer, options, pfnProgress, pProgressArg)
-    aftercare(
-        ccall(
-            (:GDALContourGenerateEx, libgdal),
-            CPLErr,
-            (GDALRasterBandH, Ptr{Cvoid}, CSLConstList, GDALProgressFunc, Any),
-            hBand,
-            hLayer,
-            options,
-            pfnProgress,
-            pProgressArg,
-        ),
-    )
+    return aftercare(ccall((:GDALContourGenerateEx, libgdal), CPLErr,
+                           (GDALRasterBandH, Ptr{Cvoid}, CSLConstList, GDALProgressFunc, Any), hBand, hLayer, options, pfnProgress,
+                           pProgressArg))
 end
 
 """
@@ -19304,73 +13596,16 @@ Create viewshed from raster DEM.
 ### Returns
 not NULL output dataset on success (to be closed with GDALClose()) or NULL if an error occurs.
 """
-function gdalviewshedgenerate(
-    hBand,
-    pszDriverName,
-    pszTargetRasterName,
-    papszCreationOptions,
-    dfObserverX,
-    dfObserverY,
-    dfObserverHeight,
-    dfTargetHeight,
-    dfVisibleVal,
-    dfInvisibleVal,
-    dfOutOfRangeVal,
-    dfNoDataVal,
-    dfCurvCoeff,
-    eMode,
-    dfMaxDistance,
-    pfnProgress,
-    pProgressArg,
-    heightMode,
-    papszExtraOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALViewshedGenerate, libgdal),
-            GDALDatasetH,
-            (
-                GDALRasterBandH,
-                Cstring,
-                Cstring,
-                CSLConstList,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                GDALViewshedMode,
-                Cdouble,
-                GDALProgressFunc,
-                Any,
-                GDALViewshedOutputType,
-                CSLConstList,
-            ),
-            hBand,
-            pszDriverName,
-            pszTargetRasterName,
-            papszCreationOptions,
-            dfObserverX,
-            dfObserverY,
-            dfObserverHeight,
-            dfTargetHeight,
-            dfVisibleVal,
-            dfInvisibleVal,
-            dfOutOfRangeVal,
-            dfNoDataVal,
-            dfCurvCoeff,
-            eMode,
-            dfMaxDistance,
-            pfnProgress,
-            pProgressArg,
-            heightMode,
-            papszExtraOptions,
-        ),
-    )
+function gdalviewshedgenerate(hBand, pszDriverName, pszTargetRasterName, papszCreationOptions, dfObserverX, dfObserverY,
+                              dfObserverHeight, dfTargetHeight, dfVisibleVal, dfInvisibleVal, dfOutOfRangeVal, dfNoDataVal,
+                              dfCurvCoeff, eMode, dfMaxDistance, pfnProgress, pProgressArg, heightMode, papszExtraOptions)
+    return aftercare(ccall((:GDALViewshedGenerate, libgdal), GDALDatasetH,
+                           (GDALRasterBandH, Cstring, Cstring, CSLConstList, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble,
+                            Cdouble, Cdouble, Cdouble, GDALViewshedMode, Cdouble, GDALProgressFunc, Any, GDALViewshedOutputType,
+                            CSLConstList), hBand, pszDriverName, pszTargetRasterName, papszCreationOptions, dfObserverX,
+                           dfObserverY, dfObserverHeight, dfTargetHeight, dfVisibleVal, dfInvisibleVal, dfOutOfRangeVal,
+                           dfNoDataVal, dfCurvCoeff, eMode, dfMaxDistance, pfnProgress, pProgressArg, heightMode,
+                           papszExtraOptions))
 end
 
 """
@@ -19402,46 +13637,10 @@ Check Line of Sight between two points.
 ### Returns
 True if the two points are within Line of Sight.
 """
-function gdalislineofsightvisible(
-    arg1,
-    xA,
-    yA,
-    zA,
-    xB,
-    yB,
-    zB,
-    pnxTerrainIntersection,
-    pnyTerrainIntersection,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALIsLineOfSightVisible, libgdal),
-            Bool,
-            (
-                GDALRasterBandH,
-                Cint,
-                Cint,
-                Cdouble,
-                Cint,
-                Cint,
-                Cdouble,
-                Ptr{Cint},
-                Ptr{Cint},
-                CSLConstList,
-            ),
-            arg1,
-            xA,
-            yA,
-            zA,
-            xB,
-            yB,
-            zB,
-            pnxTerrainIntersection,
-            pnyTerrainIntersection,
-            papszOptions,
-        ),
-    )
+function gdalislineofsightvisible(arg1, xA, yA, zA, xB, yB, zB, pnxTerrainIntersection, pnyTerrainIntersection, papszOptions)
+    return aftercare(ccall((:GDALIsLineOfSightVisible, libgdal), Bool,
+                           (GDALRasterBandH, Cint, Cint, Cdouble, Cint, Cint, Cdouble, Ptr{Cint}, Ptr{Cint}, CSLConstList), arg1,
+                           xA, yA, zA, xB, yB, zB, pnxTerrainIntersection, pnyTerrainIntersection, papszOptions))
 end
 
 """
@@ -19449,49 +13648,12 @@ end
 
 *********************************************************************
 """
-function gdalrasterizegeometries(
-    hDS,
-    nBandCount,
-    panBandList,
-    nGeomCount,
-    pahGeometries,
-    pfnTransformer,
-    pTransformArg,
-    padfGeomBurnValues,
-    papszOptions,
-    pfnProgress,
-    pProgressArg,
-)
-    aftercare(
-        ccall(
-            (:GDALRasterizeGeometries, libgdal),
-            CPLErr,
-            (
-                GDALDatasetH,
-                Cint,
-                Ptr{Cint},
-                Cint,
-                Ptr{OGRGeometryH},
-                GDALTransformerFunc,
-                Ptr{Cvoid},
-                Ptr{Cdouble},
-                CSLConstList,
-                GDALProgressFunc,
-                Any,
-            ),
-            hDS,
-            nBandCount,
-            panBandList,
-            nGeomCount,
-            pahGeometries,
-            pfnTransformer,
-            pTransformArg,
-            padfGeomBurnValues,
-            papszOptions,
-            pfnProgress,
-            pProgressArg,
-        ),
-    )
+function gdalrasterizegeometries(hDS, nBandCount, panBandList, nGeomCount, pahGeometries, pfnTransformer, pTransformArg,
+                                 padfGeomBurnValues, papszOptions, pfnProgress, pProgressArg)
+    return aftercare(ccall((:GDALRasterizeGeometries, libgdal), CPLErr,
+                           (GDALDatasetH, Cint, Ptr{Cint}, Cint, Ptr{OGRGeometryH}, GDALTransformerFunc, Ptr{Cvoid}, Ptr{Cdouble},
+                            CSLConstList, GDALProgressFunc, Any), hDS, nBandCount, panBandList, nGeomCount, pahGeometries,
+                           pfnTransformer, pTransformArg, padfGeomBurnValues, papszOptions, pfnProgress, pProgressArg))
 end
 
 """
@@ -19509,49 +13671,12 @@ end
 
 Burn geometries into raster.
 """
-function gdalrasterizegeometriesint64(
-    hDS,
-    nBandCount,
-    panBandList,
-    nGeomCount,
-    pahGeometries,
-    pfnTransformer,
-    pTransformArg,
-    panGeomBurnValues,
-    papszOptions,
-    pfnProgress,
-    pProgressArg,
-)
-    aftercare(
-        ccall(
-            (:GDALRasterizeGeometriesInt64, libgdal),
-            CPLErr,
-            (
-                GDALDatasetH,
-                Cint,
-                Ptr{Cint},
-                Cint,
-                Ptr{OGRGeometryH},
-                GDALTransformerFunc,
-                Ptr{Cvoid},
-                Ptr{Int64},
-                CSLConstList,
-                GDALProgressFunc,
-                Any,
-            ),
-            hDS,
-            nBandCount,
-            panBandList,
-            nGeomCount,
-            pahGeometries,
-            pfnTransformer,
-            pTransformArg,
-            panGeomBurnValues,
-            papszOptions,
-            pfnProgress,
-            pProgressArg,
-        ),
-    )
+function gdalrasterizegeometriesint64(hDS, nBandCount, panBandList, nGeomCount, pahGeometries, pfnTransformer, pTransformArg,
+                                      panGeomBurnValues, papszOptions, pfnProgress, pProgressArg)
+    return aftercare(ccall((:GDALRasterizeGeometriesInt64, libgdal), CPLErr,
+                           (GDALDatasetH, Cint, Ptr{Cint}, Cint, Ptr{OGRGeometryH}, GDALTransformerFunc, Ptr{Cvoid}, Ptr{Int64},
+                            CSLConstList, GDALProgressFunc, Any), hDS, nBandCount, panBandList, nGeomCount, pahGeometries,
+                           pfnTransformer, pTransformArg, panGeomBurnValues, papszOptions, pfnProgress, pProgressArg))
 end
 
 """
@@ -19599,49 +13724,12 @@ Burn geometries from the specified list of layers into raster.
 ### Returns
 CE_None on success or CE_Failure on error.
 """
-function gdalrasterizelayers(
-    hDS,
-    nBandCount,
-    panBandList,
-    nLayerCount,
-    pahLayers,
-    pfnTransformer,
-    pTransformArg,
-    padfLayerBurnValues,
-    papszOptions,
-    pfnProgress,
-    pProgressArg,
-)
-    aftercare(
-        ccall(
-            (:GDALRasterizeLayers, libgdal),
-            CPLErr,
-            (
-                GDALDatasetH,
-                Cint,
-                Ptr{Cint},
-                Cint,
-                Ptr{OGRLayerH},
-                GDALTransformerFunc,
-                Ptr{Cvoid},
-                Ptr{Cdouble},
-                Ptr{Cstring},
-                GDALProgressFunc,
-                Any,
-            ),
-            hDS,
-            nBandCount,
-            panBandList,
-            nLayerCount,
-            pahLayers,
-            pfnTransformer,
-            pTransformArg,
-            padfLayerBurnValues,
-            papszOptions,
-            pfnProgress,
-            pProgressArg,
-        ),
-    )
+function gdalrasterizelayers(hDS, nBandCount, panBandList, nLayerCount, pahLayers, pfnTransformer, pTransformArg,
+                             padfLayerBurnValues, papszOptions, pfnProgress, pProgressArg)
+    return aftercare(ccall((:GDALRasterizeLayers, libgdal), CPLErr,
+                           (GDALDatasetH, Cint, Ptr{Cint}, Cint, Ptr{OGRLayerH}, GDALTransformerFunc, Ptr{Cvoid}, Ptr{Cdouble},
+                            Ptr{Cstring}, GDALProgressFunc, Any), hDS, nBandCount, panBandList, nLayerCount, pahLayers,
+                           pfnTransformer, pTransformArg, padfLayerBurnValues, papszOptions, pfnProgress, pProgressArg))
 end
 
 """
@@ -19696,64 +13784,15 @@ Burn geometries from the specified list of layer into raster.
 ### Returns
 CE_None on success or CE_Failure on error.
 """
-function gdalrasterizelayersbuf(
-    pData,
-    nBufXSize,
-    nBufYSize,
-    eBufType,
-    nPixelSpace,
-    nLineSpace,
-    nLayerCount,
-    pahLayers,
-    pszDstProjection,
-    padfDstGeoTransform,
-    pfnTransformer,
-    pTransformArg,
-    dfBurnValue,
-    papszOptions,
-    pfnProgress,
-    pProgressArg,
-)
-    aftercare(
-        ccall(
-            (:GDALRasterizeLayersBuf, libgdal),
-            CPLErr,
-            (
-                Ptr{Cvoid},
-                Cint,
-                Cint,
-                GDALDataType,
-                Cint,
-                Cint,
-                Cint,
-                Ptr{OGRLayerH},
-                Cstring,
-                Ptr{Cdouble},
-                GDALTransformerFunc,
-                Ptr{Cvoid},
-                Cdouble,
-                Ptr{Cstring},
-                GDALProgressFunc,
-                Any,
-            ),
-            pData,
-            nBufXSize,
-            nBufYSize,
-            eBufType,
-            nPixelSpace,
-            nLineSpace,
-            nLayerCount,
-            pahLayers,
-            pszDstProjection,
-            padfDstGeoTransform,
-            pfnTransformer,
-            pTransformArg,
-            dfBurnValue,
-            papszOptions,
-            pfnProgress,
-            pProgressArg,
-        ),
-    )
+function gdalrasterizelayersbuf(pData, nBufXSize, nBufYSize, eBufType, nPixelSpace, nLineSpace, nLayerCount, pahLayers,
+                                pszDstProjection, padfDstGeoTransform, pfnTransformer, pTransformArg, dfBurnValue, papszOptions,
+                                pfnProgress, pProgressArg)
+    return aftercare(ccall((:GDALRasterizeLayersBuf, libgdal), CPLErr,
+                           (Ptr{Cvoid}, Cint, Cint, GDALDataType, Cint, Cint, Cint, Ptr{OGRLayerH}, Cstring, Ptr{Cdouble},
+                            GDALTransformerFunc, Ptr{Cvoid}, Cdouble, Ptr{Cstring}, GDALProgressFunc, Any), pData, nBufXSize,
+                           nBufYSize, eBufType, nPixelSpace, nLineSpace, nLayerCount, pahLayers, pszDstProjection,
+                           padfDstGeoTransform, pfnTransformer, pTransformArg, dfBurnValue, papszOptions, pfnProgress,
+                           pProgressArg))
 end
 
 """
@@ -19986,64 +14025,11 @@ Create regular grid from the scattered data.
 ### Returns
 CE_None on success or CE_Failure if something goes wrong.
 """
-function gdalgridcreate(
-    arg1,
-    arg2,
-    arg3,
-    arg4,
-    arg5,
-    arg6,
-    arg7,
-    arg8,
-    arg9,
-    arg10,
-    arg11,
-    arg12,
-    arg13,
-    arg14,
-    arg15,
-    arg16,
-)
-    aftercare(
-        ccall(
-            (:GDALGridCreate, libgdal),
-            CPLErr,
-            (
-                GDALGridAlgorithm,
-                Ptr{Cvoid},
-                GUInt32,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                GUInt32,
-                GUInt32,
-                GDALDataType,
-                Ptr{Cvoid},
-                GDALProgressFunc,
-                Any,
-            ),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-            arg7,
-            arg8,
-            arg9,
-            arg10,
-            arg11,
-            arg12,
-            arg13,
-            arg14,
-            arg15,
-            arg16,
-        ),
-    )
+function gdalgridcreate(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16)
+    return aftercare(ccall((:GDALGridCreate, libgdal), CPLErr,
+                           (GDALGridAlgorithm, Ptr{Cvoid}, GUInt32, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Cdouble, Cdouble,
+                            Cdouble, Cdouble, GUInt32, GUInt32, GDALDataType, Ptr{Cvoid}, GDALProgressFunc, Any), arg1, arg2, arg3,
+                           arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16))
 end
 
 const GDALGridContext = Cvoid
@@ -20071,37 +14057,10 @@ Creates a context to do regular gridding from the scattered data.
 ### Returns
 the context (to be freed with GDALGridContextFree()) or NULL in case or error.
 """
-function gdalgridcontextcreate(
-    eAlgorithm,
-    poOptions,
-    nPoints,
-    padfX,
-    padfY,
-    padfZ,
-    bCallerWillKeepPointArraysAlive,
-)
-    aftercare(
-        ccall(
-            (:GDALGridContextCreate, libgdal),
-            Ptr{GDALGridContext},
-            (
-                GDALGridAlgorithm,
-                Ptr{Cvoid},
-                GUInt32,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Cint,
-            ),
-            eAlgorithm,
-            poOptions,
-            nPoints,
-            padfX,
-            padfY,
-            padfZ,
-            bCallerWillKeepPointArraysAlive,
-        ),
-    )
+function gdalgridcontextcreate(eAlgorithm, poOptions, nPoints, padfX, padfY, padfZ, bCallerWillKeepPointArraysAlive)
+    return aftercare(ccall((:GDALGridContextCreate, libgdal), Ptr{GDALGridContext},
+                           (GDALGridAlgorithm, Ptr{Cvoid}, GUInt32, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Cint), eAlgorithm,
+                           poOptions, nPoints, padfX, padfY, padfZ, bCallerWillKeepPointArraysAlive))
 end
 
 """
@@ -20113,9 +14072,7 @@ Free a context used created by GDALGridContextCreate()
 * **psContext**: the context.
 """
 function gdalgridcontextfree(psContext)
-    aftercare(
-        ccall((:GDALGridContextFree, libgdal), Cvoid, (Ptr{GDALGridContext},), psContext),
-    )
+    return aftercare(ccall((:GDALGridContextFree, libgdal), Cvoid, (Ptr{GDALGridContext},), psContext))
 end
 
 """
@@ -20149,49 +14106,11 @@ Do the gridding of a window of a raster.
 ### Returns
 CE_None on success or CE_Failure if something goes wrong.
 """
-function gdalgridcontextprocess(
-    psContext,
-    dfXMin,
-    dfXMax,
-    dfYMin,
-    dfYMax,
-    nXSize,
-    nYSize,
-    eType,
-    pData,
-    pfnProgress,
-    pProgressArg,
-)
-    aftercare(
-        ccall(
-            (:GDALGridContextProcess, libgdal),
-            CPLErr,
-            (
-                Ptr{GDALGridContext},
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                GUInt32,
-                GUInt32,
-                GDALDataType,
-                Ptr{Cvoid},
-                GDALProgressFunc,
-                Any,
-            ),
-            psContext,
-            dfXMin,
-            dfXMax,
-            dfYMin,
-            dfYMax,
-            nXSize,
-            nYSize,
-            eType,
-            pData,
-            pfnProgress,
-            pProgressArg,
-        ),
-    )
+function gdalgridcontextprocess(psContext, dfXMin, dfXMax, dfYMin, dfYMax, nXSize, nYSize, eType, pData, pfnProgress, pProgressArg)
+    return aftercare(ccall((:GDALGridContextProcess, libgdal), CPLErr,
+                           (Ptr{GDALGridContext}, Cdouble, Cdouble, Cdouble, Cdouble, GUInt32, GUInt32, GDALDataType, Ptr{Cvoid},
+                            GDALProgressFunc, Any), psContext, dfXMin, dfXMax, dfYMin, dfYMax, nXSize, nYSize, eType, pData,
+                           pfnProgress, pProgressArg))
 end
 
 """
@@ -20203,17 +14122,9 @@ end
 GDALComputeMatchingPoints.
 """
 function gdalcomputematchingpoints(hFirstImage, hSecondImage, papszOptions, pnGCPCount)
-    aftercare(
-        ccall(
-            (:GDALComputeMatchingPoints, libgdal),
-            Ptr{GDAL_GCP},
-            (GDALDatasetH, GDALDatasetH, Ptr{Cstring}, Ptr{Cint}),
-            hFirstImage,
-            hSecondImage,
-            papszOptions,
-            pnGCPCount,
-        ),
-    )
+    return aftercare(ccall((:GDALComputeMatchingPoints, libgdal), Ptr{GDAL_GCP},
+                           (GDALDatasetH, GDALDatasetH, Ptr{Cstring}, Ptr{Cint}), hFirstImage, hSecondImage, papszOptions,
+                           pnGCPCount))
 end
 
 """
@@ -20274,7 +14185,7 @@ struct GDALTriangulation
 end
 
 """
-    GDALHasTriangulation() -> int
+    GDALHasTriangulation(void) -> int
 
 Returns if GDAL is built with Delaunay triangulation support.
 
@@ -20282,7 +14193,7 @@ Returns if GDAL is built with Delaunay triangulation support.
 TRUE if GDAL is built with Delaunay triangulation support.
 """
 function gdalhastriangulation()
-    aftercare(ccall((:GDALHasTriangulation, libgdal), Cint, ()))
+    return aftercare(ccall((:GDALHasTriangulation, libgdal), Cint, ()))
 end
 
 """
@@ -20301,16 +14212,8 @@ Computes a Delaunay triangulation of the passed points.
 triangulation that must be freed with GDALTriangulationFree(), or NULL in case of error.
 """
 function gdaltriangulationcreatedelaunay(nPoints, padfX, padfY)
-    aftercare(
-        ccall(
-            (:GDALTriangulationCreateDelaunay, libgdal),
-            Ptr{GDALTriangulation},
-            (Cint, Ptr{Cdouble}, Ptr{Cdouble}),
-            nPoints,
-            padfX,
-            padfY,
-        ),
-    )
+    return aftercare(ccall((:GDALTriangulationCreateDelaunay, libgdal), Ptr{GDALTriangulation}, (Cint, Ptr{Cdouble}, Ptr{Cdouble}),
+                           nPoints, padfX, padfY))
 end
 
 """
@@ -20329,16 +14232,8 @@ Computes barycentric coefficients for each triangles of the triangulation.
 TRUE in case of success.
 """
 function gdaltriangulationcomputebarycentriccoefficients(psDT, padfX, padfY)
-    aftercare(
-        ccall(
-            (:GDALTriangulationComputeBarycentricCoefficients, libgdal),
-            Cint,
-            (Ptr{GDALTriangulation}, Ptr{Cdouble}, Ptr{Cdouble}),
-            psDT,
-            padfX,
-            padfY,
-        ),
-    )
+    return aftercare(ccall((:GDALTriangulationComputeBarycentricCoefficients, libgdal), Cint,
+                           (Ptr{GDALTriangulation}, Ptr{Cdouble}, Ptr{Cdouble}), psDT, padfX, padfY))
 end
 
 """
@@ -20364,37 +14259,10 @@ Computes the barycentric coordinates of a point.
 ### Returns
 TRUE in case of success.
 """
-function gdaltriangulationcomputebarycentriccoordinates(
-    psDT,
-    nFacetIdx,
-    dfX,
-    dfY,
-    pdfL1,
-    pdfL2,
-    pdfL3,
-)
-    aftercare(
-        ccall(
-            (:GDALTriangulationComputeBarycentricCoordinates, libgdal),
-            Cint,
-            (
-                Ptr{GDALTriangulation},
-                Cint,
-                Cdouble,
-                Cdouble,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-            ),
-            psDT,
-            nFacetIdx,
-            dfX,
-            dfY,
-            pdfL1,
-            pdfL2,
-            pdfL3,
-        ),
-    )
+function gdaltriangulationcomputebarycentriccoordinates(psDT, nFacetIdx, dfX, dfY, pdfL1, pdfL2, pdfL3)
+    return aftercare(ccall((:GDALTriangulationComputeBarycentricCoordinates, libgdal), Cint,
+                           (Ptr{GDALTriangulation}, Cint, Cdouble, Cdouble, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}), psDT,
+                           nFacetIdx, dfX, dfY, pdfL1, pdfL2, pdfL3))
 end
 
 """
@@ -20415,17 +14283,8 @@ Returns the index of the triangle that contains the point by iterating over all 
 index >= 0 of the triangle in case of success, -1 otherwise.
 """
 function gdaltriangulationfindfacetbruteforce(psDT, dfX, dfY, panOutputFacetIdx)
-    aftercare(
-        ccall(
-            (:GDALTriangulationFindFacetBruteForce, libgdal),
-            Cint,
-            (Ptr{GDALTriangulation}, Cdouble, Cdouble, Ptr{Cint}),
-            psDT,
-            dfX,
-            dfY,
-            panOutputFacetIdx,
-        ),
-    )
+    return aftercare(ccall((:GDALTriangulationFindFacetBruteForce, libgdal), Cint,
+                           (Ptr{GDALTriangulation}, Cdouble, Cdouble, Ptr{Cint}), psDT, dfX, dfY, panOutputFacetIdx))
 end
 
 """
@@ -20448,18 +14307,9 @@ Returns the index of the triangle that contains the point by walking in the tria
 TRUE in case of success, FALSE otherwise.
 """
 function gdaltriangulationfindfacetdirected(psDT, nFacetIdx, dfX, dfY, panOutputFacetIdx)
-    aftercare(
-        ccall(
-            (:GDALTriangulationFindFacetDirected, libgdal),
-            Cint,
-            (Ptr{GDALTriangulation}, Cint, Cdouble, Cdouble, Ptr{Cint}),
-            psDT,
-            nFacetIdx,
-            dfX,
-            dfY,
-            panOutputFacetIdx,
-        ),
-    )
+    return aftercare(ccall((:GDALTriangulationFindFacetDirected, libgdal), Cint,
+                           (Ptr{GDALTriangulation}, Cint, Cdouble, Cdouble, Ptr{Cint}), psDT, nFacetIdx, dfX, dfY,
+                           panOutputFacetIdx))
 end
 
 """
@@ -20471,9 +14321,7 @@ Free a triangulation.
 * **psDT**: triangulation.
 """
 function gdaltriangulationfree(psDT)
-    aftercare(
-        ccall((:GDALTriangulationFree, libgdal), Cvoid, (Ptr{GDALTriangulation},), psDT),
-    )
+    return aftercare(ccall((:GDALTriangulationFree, libgdal), Cvoid, (Ptr{GDALTriangulation},), psDT))
 end
 
 """
@@ -20482,15 +14330,7 @@ end
 ` `
 """
 function gdalopenverticalshiftgrid(pszProj4Geoidgrids, pbError)
-    aftercare(
-        ccall(
-            (:GDALOpenVerticalShiftGrid, libgdal),
-            GDALDatasetH,
-            (Cstring, Ptr{Cint}),
-            pszProj4Geoidgrids,
-            pbError,
-        ),
-    )
+    return aftercare(ccall((:GDALOpenVerticalShiftGrid, libgdal), GDALDatasetH, (Cstring, Ptr{Cint}), pszProj4Geoidgrids, pbError))
 end
 
 """
@@ -20498,27 +14338,10 @@ end
 
 ` `
 """
-function gdalapplyverticalshiftgrid(
-    hSrcDataset,
-    hGridDataset,
-    bInverse,
-    dfSrcUnitToMeter,
-    dfDstUnitToMeter,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALApplyVerticalShiftGrid, libgdal),
-            GDALDatasetH,
-            (GDALDatasetH, GDALDatasetH, Cint, Cdouble, Cdouble, Ptr{Cstring}),
-            hSrcDataset,
-            hGridDataset,
-            bInverse,
-            dfSrcUnitToMeter,
-            dfDstUnitToMeter,
-            papszOptions,
-        ),
-    )
+function gdalapplyverticalshiftgrid(hSrcDataset, hGridDataset, bInverse, dfSrcUnitToMeter, dfDstUnitToMeter, papszOptions)
+    return aftercare(ccall((:GDALApplyVerticalShiftGrid, libgdal), GDALDatasetH,
+                           (GDALDatasetH, GDALDatasetH, Cint, Cdouble, Cdouble, Ptr{Cstring}), hSrcDataset, hGridDataset, bInverse,
+                           dfSrcUnitToMeter, dfDstUnitToMeter, papszOptions))
 end
 
 const CPLThreadFunc = Ptr{Cvoid}
@@ -20528,22 +14351,14 @@ const CPLThreadFunc = Ptr{Cvoid}
                 double dfWaitInSeconds) -> void *
 """
 function cpllockfile(pszPath, dfWaitInSeconds)
-    aftercare(
-        ccall(
-            (:CPLLockFile, libgdal),
-            Ptr{Cvoid},
-            (Cstring, Cdouble),
-            pszPath,
-            dfWaitInSeconds,
-        ),
-    )
+    return aftercare(ccall((:CPLLockFile, libgdal), Ptr{Cvoid}, (Cstring, Cdouble), pszPath, dfWaitInSeconds))
 end
 
 """
     CPLUnlockFile(void * hLock) -> void
 """
 function cplunlockfile(hLock)
-    aftercare(ccall((:CPLUnlockFile, libgdal), Cvoid, (Ptr{Cvoid},), hLock))
+    return aftercare(ccall((:CPLUnlockFile, libgdal), Cvoid, (Ptr{Cvoid},), hLock))
 end
 
 const _CPLMutex = Cvoid
@@ -20562,14 +14377,14 @@ const CPLJoinableThread = _CPLJoinableThread
     CPLCreateMutex() -> CPLMutex *
 """
 function cplcreatemutex()
-    aftercare(ccall((:CPLCreateMutex, libgdal), Ptr{CPLMutex}, ()))
+    return aftercare(ccall((:CPLCreateMutex, libgdal), Ptr{CPLMutex}, ()))
 end
 
 """
     CPLCreateMutexEx(int nOptions) -> CPLMutex *
 """
 function cplcreatemutexex(nOptions)
-    aftercare(ccall((:CPLCreateMutexEx, libgdal), Ptr{CPLMutex}, (Cint,), nOptions))
+    return aftercare(ccall((:CPLCreateMutexEx, libgdal), Ptr{CPLMutex}, (Cint,), nOptions))
 end
 
 """
@@ -20577,15 +14392,7 @@ end
                             double dfWaitInSeconds) -> int
 """
 function cplcreateoracquiremutex(arg1, dfWaitInSeconds)
-    aftercare(
-        ccall(
-            (:CPLCreateOrAcquireMutex, libgdal),
-            Cint,
-            (Ptr{Ptr{CPLMutex}}, Cdouble),
-            arg1,
-            dfWaitInSeconds,
-        ),
-    )
+    return aftercare(ccall((:CPLCreateOrAcquireMutex, libgdal), Cint, (Ptr{Ptr{CPLMutex}}, Cdouble), arg1, dfWaitInSeconds))
 end
 
 """
@@ -20594,16 +14401,8 @@ end
                               int nOptions) -> int
 """
 function cplcreateoracquiremutexex(arg1, dfWaitInSeconds, nOptions)
-    aftercare(
-        ccall(
-            (:CPLCreateOrAcquireMutexEx, libgdal),
-            Cint,
-            (Ptr{Ptr{CPLMutex}}, Cdouble, Cint),
-            arg1,
-            dfWaitInSeconds,
-            nOptions,
-        ),
-    )
+    return aftercare(ccall((:CPLCreateOrAcquireMutexEx, libgdal), Cint, (Ptr{Ptr{CPLMutex}}, Cdouble, Cint), arg1, dfWaitInSeconds,
+                           nOptions))
 end
 
 """
@@ -20611,43 +14410,35 @@ end
                     double) -> int
 """
 function cplacquiremutex(hMutex, dfWaitInSeconds)
-    aftercare(
-        ccall(
-            (:CPLAcquireMutex, libgdal),
-            Cint,
-            (Ptr{CPLMutex}, Cdouble),
-            hMutex,
-            dfWaitInSeconds,
-        ),
-    )
+    return aftercare(ccall((:CPLAcquireMutex, libgdal), Cint, (Ptr{CPLMutex}, Cdouble), hMutex, dfWaitInSeconds))
 end
 
 """
     CPLReleaseMutex(CPLMutex * hMutexIn) -> void
 """
 function cplreleasemutex(hMutex)
-    aftercare(ccall((:CPLReleaseMutex, libgdal), Cvoid, (Ptr{CPLMutex},), hMutex))
+    return aftercare(ccall((:CPLReleaseMutex, libgdal), Cvoid, (Ptr{CPLMutex},), hMutex))
 end
 
 """
     CPLDestroyMutex(CPLMutex * hMutexIn) -> void
 """
 function cpldestroymutex(hMutex)
-    aftercare(ccall((:CPLDestroyMutex, libgdal), Cvoid, (Ptr{CPLMutex},), hMutex))
+    return aftercare(ccall((:CPLDestroyMutex, libgdal), Cvoid, (Ptr{CPLMutex},), hMutex))
 end
 
 """
     CPLCleanupMasterMutex() -> void
 """
 function cplcleanupmastermutex()
-    aftercare(ccall((:CPLCleanupMasterMutex, libgdal), Cvoid, ()))
+    return aftercare(ccall((:CPLCleanupMasterMutex, libgdal), Cvoid, ()))
 end
 
 """
     CPLCreateCond() -> CPLCond *
 """
 function cplcreatecond()
-    aftercare(ccall((:CPLCreateCond, libgdal), Ptr{CPLCond}, ()))
+    return aftercare(ccall((:CPLCreateCond, libgdal), Ptr{CPLCond}, ()))
 end
 
 """
@@ -20655,9 +14446,7 @@ end
                 CPLMutex * hMutex) -> void
 """
 function cplcondwait(hCond, hMutex)
-    aftercare(
-        ccall((:CPLCondWait, libgdal), Cvoid, (Ptr{CPLCond}, Ptr{CPLMutex}), hCond, hMutex),
-    )
+    return aftercare(ccall((:CPLCondWait, libgdal), Cvoid, (Ptr{CPLCond}, Ptr{CPLMutex}), hCond, hMutex))
 end
 
 @cenum CPLCondTimedWaitReason::UInt32 begin
@@ -20672,37 +14461,29 @@ end
                      double dfWaitInSeconds) -> CPLCondTimedWaitReason
 """
 function cplcondtimedwait(hCond, hMutex, dfWaitInSeconds)
-    aftercare(
-        ccall(
-            (:CPLCondTimedWait, libgdal),
-            CPLCondTimedWaitReason,
-            (Ptr{CPLCond}, Ptr{CPLMutex}, Cdouble),
-            hCond,
-            hMutex,
-            dfWaitInSeconds,
-        ),
-    )
+    return aftercare(ccall((:CPLCondTimedWait, libgdal), CPLCondTimedWaitReason, (Ptr{CPLCond}, Ptr{CPLMutex}, Cdouble), hCond,
+                           hMutex, dfWaitInSeconds))
 end
 
 """
     CPLCondSignal(CPLCond * hCond) -> void
 """
 function cplcondsignal(hCond)
-    aftercare(ccall((:CPLCondSignal, libgdal), Cvoid, (Ptr{CPLCond},), hCond))
+    return aftercare(ccall((:CPLCondSignal, libgdal), Cvoid, (Ptr{CPLCond},), hCond))
 end
 
 """
     CPLCondBroadcast(CPLCond * hCond) -> void
 """
 function cplcondbroadcast(hCond)
-    aftercare(ccall((:CPLCondBroadcast, libgdal), Cvoid, (Ptr{CPLCond},), hCond))
+    return aftercare(ccall((:CPLCondBroadcast, libgdal), Cvoid, (Ptr{CPLCond},), hCond))
 end
 
 """
     CPLDestroyCond(CPLCond * hCond) -> void
 """
 function cpldestroycond(hCond)
-    aftercare(ccall((:CPLDestroyCond, libgdal), Cvoid, (Ptr{CPLCond},), hCond))
+    return aftercare(ccall((:CPLDestroyCond, libgdal), Cvoid, (Ptr{CPLCond},), hCond))
 end
 
 """
@@ -20711,14 +14492,14 @@ end
 Contrary to what its name suggests, [`CPLGetPID`](@ref)() actually returns the thread id
 """
 function cplgetpid()
-    aftercare(ccall((:CPLGetPID, libgdal), GIntBig, ()))
+    return aftercare(ccall((:CPLGetPID, libgdal), GIntBig, ()))
 end
 
 """
     CPLGetCurrentProcessID() -> int
 """
 function cplgetcurrentprocessid()
-    aftercare(ccall((:CPLGetCurrentProcessID, libgdal), Cint, ()))
+    return aftercare(ccall((:CPLGetCurrentProcessID, libgdal), Cint, ()))
 end
 
 """
@@ -20726,15 +14507,7 @@ end
                     void * pThreadArg) -> int
 """
 function cplcreatethread(pfnMain, pArg)
-    aftercare(
-        ccall(
-            (:CPLCreateThread, libgdal),
-            Cint,
-            (CPLThreadFunc, Ptr{Cvoid}),
-            pfnMain,
-            pArg,
-        ),
-    )
+    return aftercare(ccall((:CPLCreateThread, libgdal), Cint, (CPLThreadFunc, Ptr{Cvoid}), pfnMain, pArg))
 end
 
 """
@@ -20742,45 +14515,35 @@ end
                             void * pThreadArg) -> CPLJoinableThread *
 """
 function cplcreatejoinablethread(pfnMain, pArg)
-    aftercare(
-        ccall(
-            (:CPLCreateJoinableThread, libgdal),
-            Ptr{CPLJoinableThread},
-            (CPLThreadFunc, Ptr{Cvoid}),
-            pfnMain,
-            pArg,
-        ),
-    )
+    return aftercare(ccall((:CPLCreateJoinableThread, libgdal), Ptr{CPLJoinableThread}, (CPLThreadFunc, Ptr{Cvoid}), pfnMain, pArg))
 end
 
 """
     CPLJoinThread(CPLJoinableThread * hJoinableThread) -> void
 """
 function cpljointhread(hJoinableThread)
-    aftercare(
-        ccall((:CPLJoinThread, libgdal), Cvoid, (Ptr{CPLJoinableThread},), hJoinableThread),
-    )
+    return aftercare(ccall((:CPLJoinThread, libgdal), Cvoid, (Ptr{CPLJoinableThread},), hJoinableThread))
 end
 
 """
     CPLSleep(double dfWaitInSeconds) -> void
 """
 function cplsleep(dfWaitInSeconds)
-    aftercare(ccall((:CPLSleep, libgdal), Cvoid, (Cdouble,), dfWaitInSeconds))
+    return aftercare(ccall((:CPLSleep, libgdal), Cvoid, (Cdouble,), dfWaitInSeconds))
 end
 
 """
     CPLGetThreadingModel() -> const char *
 """
 function cplgetthreadingmodel()
-    aftercare(ccall((:CPLGetThreadingModel, libgdal), Cstring, ()), false)
+    return aftercare(ccall((:CPLGetThreadingModel, libgdal), Cstring, ()), false)
 end
 
 """
     CPLGetNumCPUs() -> int
 """
 function cplgetnumcpus()
-    aftercare(ccall((:CPLGetNumCPUs, libgdal), Cint, ()))
+    return aftercare(ccall((:CPLGetNumCPUs, libgdal), Cint, ()))
 end
 
 const _CPLLock = Cvoid
@@ -20797,7 +14560,7 @@ end
     CPLCreateLock(CPLLockType eType) -> CPLLock *
 """
 function cplcreatelock(eType)
-    aftercare(ccall((:CPLCreateLock, libgdal), Ptr{CPLLock}, (CPLLockType,), eType))
+    return aftercare(ccall((:CPLCreateLock, libgdal), Ptr{CPLLock}, (CPLLockType,), eType))
 end
 
 """
@@ -20805,36 +14568,28 @@ end
                            CPLLockType eType) -> int
 """
 function cplcreateoracquirelock(arg1, eType)
-    aftercare(
-        ccall(
-            (:CPLCreateOrAcquireLock, libgdal),
-            Cint,
-            (Ptr{Ptr{CPLLock}}, CPLLockType),
-            arg1,
-            eType,
-        ),
-    )
+    return aftercare(ccall((:CPLCreateOrAcquireLock, libgdal), Cint, (Ptr{Ptr{CPLLock}}, CPLLockType), arg1, eType))
 end
 
 """
     CPLAcquireLock(CPLLock * psLock) -> int
 """
 function cplacquirelock(arg1)
-    aftercare(ccall((:CPLAcquireLock, libgdal), Cint, (Ptr{CPLLock},), arg1))
+    return aftercare(ccall((:CPLAcquireLock, libgdal), Cint, (Ptr{CPLLock},), arg1))
 end
 
 """
     CPLReleaseLock(CPLLock * psLock) -> void
 """
 function cplreleaselock(arg1)
-    aftercare(ccall((:CPLReleaseLock, libgdal), Cvoid, (Ptr{CPLLock},), arg1))
+    return aftercare(ccall((:CPLReleaseLock, libgdal), Cvoid, (Ptr{CPLLock},), arg1))
 end
 
 """
     CPLDestroyLock(CPLLock * psLock) -> void
 """
 function cpldestroylock(arg1)
-    aftercare(ccall((:CPLDestroyLock, libgdal), Cvoid, (Ptr{CPLLock},), arg1))
+    return aftercare(ccall((:CPLDestroyLock, libgdal), Cvoid, (Ptr{CPLLock},), arg1))
 end
 
 """
@@ -20842,22 +14597,14 @@ end
                         int bEnableIn) -> void
 """
 function cpllocksetdebugperf(arg1, bEnableIn)
-    aftercare(
-        ccall(
-            (:CPLLockSetDebugPerf, libgdal),
-            Cvoid,
-            (Ptr{CPLLock}, Cint),
-            arg1,
-            bEnableIn,
-        ),
-    )
+    return aftercare(ccall((:CPLLockSetDebugPerf, libgdal), Cvoid, (Ptr{CPLLock}, Cint), arg1, bEnableIn))
 end
 
 """
     CPLGetTLS(int nIndex) -> void *
 """
 function cplgettls(nIndex)
-    aftercare(ccall((:CPLGetTLS, libgdal), Ptr{Cvoid}, (Cint,), nIndex))
+    return aftercare(ccall((:CPLGetTLS, libgdal), Ptr{Cvoid}, (Cint,), nIndex))
 end
 
 """
@@ -20865,15 +14612,7 @@ end
                 int * pbMemoryErrorOccurred) -> void *
 """
 function cplgettlsex(nIndex, pbMemoryErrorOccurred)
-    aftercare(
-        ccall(
-            (:CPLGetTLSEx, libgdal),
-            Ptr{Cvoid},
-            (Cint, Ptr{Cint}),
-            nIndex,
-            pbMemoryErrorOccurred,
-        ),
-    )
+    return aftercare(ccall((:CPLGetTLSEx, libgdal), Ptr{Cvoid}, (Cint, Ptr{Cint}), nIndex, pbMemoryErrorOccurred))
 end
 
 """
@@ -20882,16 +14621,7 @@ end
               int bFreeOnExit) -> void
 """
 function cplsettls(nIndex, pData, bFreeOnExit)
-    aftercare(
-        ccall(
-            (:CPLSetTLS, libgdal),
-            Cvoid,
-            (Cint, Ptr{Cvoid}, Cint),
-            nIndex,
-            pData,
-            bFreeOnExit,
-        ),
-    )
+    return aftercare(ccall((:CPLSetTLS, libgdal), Cvoid, (Cint, Ptr{Cvoid}, Cint), nIndex, pData, bFreeOnExit))
 end
 
 const CPLTLSFreeFunc = Ptr{Cvoid}
@@ -20902,16 +14632,7 @@ const CPLTLSFreeFunc = Ptr{Cvoid}
                           CPLTLSFreeFunc pfnFree) -> void
 """
 function cplsettlswithfreefunc(nIndex, pData, pfnFree)
-    aftercare(
-        ccall(
-            (:CPLSetTLSWithFreeFunc, libgdal),
-            Cvoid,
-            (Cint, Ptr{Cvoid}, CPLTLSFreeFunc),
-            nIndex,
-            pData,
-            pfnFree,
-        ),
-    )
+    return aftercare(ccall((:CPLSetTLSWithFreeFunc, libgdal), Cvoid, (Cint, Ptr{Cvoid}, CPLTLSFreeFunc), nIndex, pData, pfnFree))
 end
 
 """
@@ -20921,24 +14642,15 @@ end
                             int * pbMemoryErrorOccurred) -> void
 """
 function cplsettlswithfreefuncex(nIndex, pData, pfnFree, pbMemoryErrorOccurred)
-    aftercare(
-        ccall(
-            (:CPLSetTLSWithFreeFuncEx, libgdal),
-            Cvoid,
-            (Cint, Ptr{Cvoid}, CPLTLSFreeFunc, Ptr{Cint}),
-            nIndex,
-            pData,
-            pfnFree,
-            pbMemoryErrorOccurred,
-        ),
-    )
+    return aftercare(ccall((:CPLSetTLSWithFreeFuncEx, libgdal), Cvoid, (Cint, Ptr{Cvoid}, CPLTLSFreeFunc, Ptr{Cint}), nIndex, pData,
+                           pfnFree, pbMemoryErrorOccurred))
 end
 
 """
     CPLCleanupTLS() -> void
 """
 function cplcleanuptls()
-    aftercare(ccall((:CPLCleanupTLS, libgdal), Cvoid, ()))
+    return aftercare(ccall((:CPLCleanupTLS, libgdal), Cvoid, ()))
 end
 
 """
@@ -21025,49 +14737,12 @@ const GDALMaskFunc = Ptr{Cvoid}
                          void * pValidityMask,
                          int * pbOutAllValid) -> CPLErr
 """
-function gdalwarpnodatamasker(
-    pMaskFuncArg,
-    nBandCount,
-    eType,
-    nXOff,
-    nYOff,
-    nXSize,
-    nYSize,
-    papabyImageData,
-    bMaskIsFloat,
-    pValidityMask,
-    pbOutAllValid,
-)
-    aftercare(
-        ccall(
-            (:GDALWarpNoDataMasker, libgdal),
-            CPLErr,
-            (
-                Ptr{Cvoid},
-                Cint,
-                GDALDataType,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Ptr{Ptr{GByte}},
-                Cint,
-                Ptr{Cvoid},
-                Ptr{Cint},
-            ),
-            pMaskFuncArg,
-            nBandCount,
-            eType,
-            nXOff,
-            nYOff,
-            nXSize,
-            nYSize,
-            papabyImageData,
-            bMaskIsFloat,
-            pValidityMask,
-            pbOutAllValid,
-        ),
-    )
+function gdalwarpnodatamasker(pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, papabyImageData, bMaskIsFloat,
+                              pValidityMask, pbOutAllValid)
+    return aftercare(ccall((:GDALWarpNoDataMasker, libgdal), CPLErr,
+                           (Ptr{Cvoid}, Cint, GDALDataType, Cint, Cint, Cint, Cint, Ptr{Ptr{GByte}}, Cint, Ptr{Cvoid}, Ptr{Cint}),
+                           pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, papabyImageData, bMaskIsFloat,
+                           pValidityMask, pbOutAllValid))
 end
 
 """
@@ -21082,46 +14757,10 @@ end
                            int bMaskIsFloat,
                            void * pValidityMask) -> CPLErr
 """
-function gdalwarpdstalphamasker(
-    pMaskFuncArg,
-    nBandCount,
-    eType,
-    nXOff,
-    nYOff,
-    nXSize,
-    nYSize,
-    arg8,
-    bMaskIsFloat,
-    pValidityMask,
-)
-    aftercare(
-        ccall(
-            (:GDALWarpDstAlphaMasker, libgdal),
-            CPLErr,
-            (
-                Ptr{Cvoid},
-                Cint,
-                GDALDataType,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Ptr{Ptr{GByte}},
-                Cint,
-                Ptr{Cvoid},
-            ),
-            pMaskFuncArg,
-            nBandCount,
-            eType,
-            nXOff,
-            nYOff,
-            nXSize,
-            nYSize,
-            arg8,
-            bMaskIsFloat,
-            pValidityMask,
-        ),
-    )
+function gdalwarpdstalphamasker(pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg8, bMaskIsFloat, pValidityMask)
+    return aftercare(ccall((:GDALWarpDstAlphaMasker, libgdal), CPLErr,
+                           (Ptr{Cvoid}, Cint, GDALDataType, Cint, Cint, Cint, Cint, Ptr{Ptr{GByte}}, Cint, Ptr{Cvoid}),
+                           pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg8, bMaskIsFloat, pValidityMask))
 end
 
 """
@@ -21137,49 +14776,12 @@ end
                            void * pValidityMask,
                            int * pbOutAllOpaque) -> CPLErr
 """
-function gdalwarpsrcalphamasker(
-    pMaskFuncArg,
-    nBandCount,
-    eType,
-    nXOff,
-    nYOff,
-    nXSize,
-    nYSize,
-    arg8,
-    bMaskIsFloat,
-    pValidityMask,
-    pbOutAllOpaque,
-)
-    aftercare(
-        ccall(
-            (:GDALWarpSrcAlphaMasker, libgdal),
-            CPLErr,
-            (
-                Ptr{Cvoid},
-                Cint,
-                GDALDataType,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Ptr{Ptr{GByte}},
-                Cint,
-                Ptr{Cvoid},
-                Ptr{Cint},
-            ),
-            pMaskFuncArg,
-            nBandCount,
-            eType,
-            nXOff,
-            nYOff,
-            nXSize,
-            nYSize,
-            arg8,
-            bMaskIsFloat,
-            pValidityMask,
-            pbOutAllOpaque,
-        ),
-    )
+function gdalwarpsrcalphamasker(pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg8, bMaskIsFloat, pValidityMask,
+                                pbOutAllOpaque)
+    return aftercare(ccall((:GDALWarpSrcAlphaMasker, libgdal), CPLErr,
+                           (Ptr{Cvoid}, Cint, GDALDataType, Cint, Cint, Cint, Cint, Ptr{Ptr{GByte}}, Cint, Ptr{Cvoid}, Ptr{Cint}),
+                           pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg8, bMaskIsFloat, pValidityMask,
+                           pbOutAllOpaque))
 end
 
 """
@@ -21194,46 +14796,10 @@ end
                           int bMaskIsFloat,
                           void * pValidityMask) -> CPLErr
 """
-function gdalwarpsrcmaskmasker(
-    pMaskFuncArg,
-    nBandCount,
-    eType,
-    nXOff,
-    nYOff,
-    nXSize,
-    nYSize,
-    arg8,
-    bMaskIsFloat,
-    pValidityMask,
-)
-    aftercare(
-        ccall(
-            (:GDALWarpSrcMaskMasker, libgdal),
-            CPLErr,
-            (
-                Ptr{Cvoid},
-                Cint,
-                GDALDataType,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Ptr{Ptr{GByte}},
-                Cint,
-                Ptr{Cvoid},
-            ),
-            pMaskFuncArg,
-            nBandCount,
-            eType,
-            nXOff,
-            nYOff,
-            nXSize,
-            nYSize,
-            arg8,
-            bMaskIsFloat,
-            pValidityMask,
-        ),
-    )
+function gdalwarpsrcmaskmasker(pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg8, bMaskIsFloat, pValidityMask)
+    return aftercare(ccall((:GDALWarpSrcMaskMasker, libgdal), CPLErr,
+                           (Ptr{Cvoid}, Cint, GDALDataType, Cint, Cint, Cint, Cint, Ptr{Ptr{GByte}}, Cint, Ptr{Cvoid}),
+                           pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg8, bMaskIsFloat, pValidityMask))
 end
 
 """
@@ -21248,46 +14814,10 @@ end
                           int bMaskIsFloat,
                           void * pValidityMask) -> CPLErr
 """
-function gdalwarpcutlinemasker(
-    pMaskFuncArg,
-    nBandCount,
-    eType,
-    nXOff,
-    nYOff,
-    nXSize,
-    nYSize,
-    arg8,
-    bMaskIsFloat,
-    pValidityMask,
-)
-    aftercare(
-        ccall(
-            (:GDALWarpCutlineMasker, libgdal),
-            CPLErr,
-            (
-                Ptr{Cvoid},
-                Cint,
-                GDALDataType,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Ptr{Ptr{GByte}},
-                Cint,
-                Ptr{Cvoid},
-            ),
-            pMaskFuncArg,
-            nBandCount,
-            eType,
-            nXOff,
-            nYOff,
-            nXSize,
-            nYSize,
-            arg8,
-            bMaskIsFloat,
-            pValidityMask,
-        ),
-    )
+function gdalwarpcutlinemasker(pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg8, bMaskIsFloat, pValidityMask)
+    return aftercare(ccall((:GDALWarpCutlineMasker, libgdal), CPLErr,
+                           (Ptr{Cvoid}, Cint, GDALDataType, Cint, Cint, Cint, Cint, Ptr{Ptr{GByte}}, Cint, Ptr{Cvoid}),
+                           pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg8, bMaskIsFloat, pValidityMask))
 end
 
 """
@@ -21303,49 +14833,12 @@ end
                             void * pValidityMask,
                             int * pnValidityFlag) -> CPLErr
 """
-function gdalwarpcutlinemaskerex(
-    pMaskFuncArg,
-    nBandCount,
-    eType,
-    nXOff,
-    nYOff,
-    nXSize,
-    nYSize,
-    arg8,
-    bMaskIsFloat,
-    pValidityMask,
-    pnValidityFlag,
-)
-    aftercare(
-        ccall(
-            (:GDALWarpCutlineMaskerEx, libgdal),
-            CPLErr,
-            (
-                Ptr{Cvoid},
-                Cint,
-                GDALDataType,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Ptr{Ptr{GByte}},
-                Cint,
-                Ptr{Cvoid},
-                Ptr{Cint},
-            ),
-            pMaskFuncArg,
-            nBandCount,
-            eType,
-            nXOff,
-            nYOff,
-            nXSize,
-            nYSize,
-            arg8,
-            bMaskIsFloat,
-            pValidityMask,
-            pnValidityFlag,
-        ),
-    )
+function gdalwarpcutlinemaskerex(pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg8, bMaskIsFloat, pValidityMask,
+                                 pnValidityFlag)
+    return aftercare(ccall((:GDALWarpCutlineMaskerEx, libgdal), CPLErr,
+                           (Ptr{Cvoid}, Cint, GDALDataType, Cint, Cint, Cint, Cint, Ptr{Ptr{GByte}}, Cint, Ptr{Cvoid}, Ptr{Cint}),
+                           pMaskFuncArg, nBandCount, eType, nXOff, nYOff, nXSize, nYSize, arg8, bMaskIsFloat, pValidityMask,
+                           pnValidityFlag))
 end
 
 """
@@ -21434,7 +14927,7 @@ end
 Create a warp options structure.
 """
 function gdalcreatewarpoptions()
-    aftercare(ccall((:GDALCreateWarpOptions, libgdal), Ptr{GDALWarpOptions}, ()))
+    return aftercare(ccall((:GDALCreateWarpOptions, libgdal), Ptr{GDALWarpOptions}, ()))
 end
 
 """
@@ -21443,9 +14936,7 @@ end
 Destroy a warp options structure.
 """
 function gdaldestroywarpoptions(arg1)
-    aftercare(
-        ccall((:GDALDestroyWarpOptions, libgdal), Cvoid, (Ptr{GDALWarpOptions},), arg1),
-    )
+    return aftercare(ccall((:GDALDestroyWarpOptions, libgdal), Cvoid, (Ptr{GDALWarpOptions},), arg1))
 end
 
 """
@@ -21454,14 +14945,7 @@ end
 Clone a warp options structure.
 """
 function gdalclonewarpoptions(arg1)
-    aftercare(
-        ccall(
-            (:GDALCloneWarpOptions, libgdal),
-            Ptr{GDALWarpOptions},
-            (Ptr{GDALWarpOptions},),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALCloneWarpOptions, libgdal), Ptr{GDALWarpOptions}, (Ptr{GDALWarpOptions},), arg1))
 end
 
 """
@@ -21475,15 +14959,7 @@ Initialize padfDstNoDataReal with specified value.
 * **dNoDataReal**: value to initialize to.
 """
 function gdalwarpinitdstnodatareal(arg1, dNoDataReal)
-    aftercare(
-        ccall(
-            (:GDALWarpInitDstNoDataReal, libgdal),
-            Cvoid,
-            (Ptr{GDALWarpOptions}, Cdouble),
-            arg1,
-            dNoDataReal,
-        ),
-    )
+    return aftercare(ccall((:GDALWarpInitDstNoDataReal, libgdal), Cvoid, (Ptr{GDALWarpOptions}, Cdouble), arg1, dNoDataReal))
 end
 
 """
@@ -21497,15 +14973,7 @@ Initialize padfSrcNoDataReal with specified value.
 * **dNoDataReal**: value to initialize to.
 """
 function gdalwarpinitsrcnodatareal(arg1, dNoDataReal)
-    aftercare(
-        ccall(
-            (:GDALWarpInitSrcNoDataReal, libgdal),
-            Cvoid,
-            (Ptr{GDALWarpOptions}, Cdouble),
-            arg1,
-            dNoDataReal,
-        ),
-    )
+    return aftercare(ccall((:GDALWarpInitSrcNoDataReal, libgdal), Cvoid, (Ptr{GDALWarpOptions}, Cdouble), arg1, dNoDataReal))
 end
 
 """
@@ -21519,15 +14987,7 @@ Initialize padfSrcNoDataReal and padfDstNoDataReal with specified value.
 * **dNoDataReal**: value to initialize to.
 """
 function gdalwarpinitnodatareal(arg1, dNoDataReal)
-    aftercare(
-        ccall(
-            (:GDALWarpInitNoDataReal, libgdal),
-            Cvoid,
-            (Ptr{GDALWarpOptions}, Cdouble),
-            arg1,
-            dNoDataReal,
-        ),
-    )
+    return aftercare(ccall((:GDALWarpInitNoDataReal, libgdal), Cvoid, (Ptr{GDALWarpOptions}, Cdouble), arg1, dNoDataReal))
 end
 
 """
@@ -21541,15 +15001,7 @@ Initialize padfDstNoDataImag with specified value.
 * **dNoDataImag**: value to initialize to.
 """
 function gdalwarpinitdstnodataimag(arg1, dNoDataImag)
-    aftercare(
-        ccall(
-            (:GDALWarpInitDstNoDataImag, libgdal),
-            Cvoid,
-            (Ptr{GDALWarpOptions}, Cdouble),
-            arg1,
-            dNoDataImag,
-        ),
-    )
+    return aftercare(ccall((:GDALWarpInitDstNoDataImag, libgdal), Cvoid, (Ptr{GDALWarpOptions}, Cdouble), arg1, dNoDataImag))
 end
 
 """
@@ -21563,15 +15015,7 @@ Initialize padfSrcNoDataImag with specified value.
 * **dNoDataImag**: value to initialize to.
 """
 function gdalwarpinitsrcnodataimag(arg1, dNoDataImag)
-    aftercare(
-        ccall(
-            (:GDALWarpInitSrcNoDataImag, libgdal),
-            Cvoid,
-            (Ptr{GDALWarpOptions}, Cdouble),
-            arg1,
-            dNoDataImag,
-        ),
-    )
+    return aftercare(ccall((:GDALWarpInitSrcNoDataImag, libgdal), Cvoid, (Ptr{GDALWarpOptions}, Cdouble), arg1, dNoDataImag))
 end
 
 """
@@ -21583,14 +15027,7 @@ If the working data type is unknown, this method will determine a valid working 
 * **psOptions**: options to initialize.
 """
 function gdalwarpresolveworkingdatatype(arg1)
-    aftercare(
-        ccall(
-            (:GDALWarpResolveWorkingDataType, libgdal),
-            Cvoid,
-            (Ptr{GDALWarpOptions},),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALWarpResolveWorkingDataType, libgdal), Cvoid, (Ptr{GDALWarpOptions},), arg1))
 end
 
 """
@@ -21604,15 +15041,7 @@ Init src and dst band mappings such that Bands[i] = i+1 for nBandCount Does noth
 * **nBandCount**: bands to initialize for.
 """
 function gdalwarpinitdefaultbandmapping(arg1, nBandCount)
-    aftercare(
-        ccall(
-            (:GDALWarpInitDefaultBandMapping, libgdal),
-            Cvoid,
-            (Ptr{GDALWarpOptions}, Cint),
-            arg1,
-            nBandCount,
-        ),
-    )
+    return aftercare(ccall((:GDALWarpInitDefaultBandMapping, libgdal), Cvoid, (Ptr{GDALWarpOptions}, Cint), arg1, nBandCount))
 end
 
 """
@@ -21621,28 +15050,14 @@ end
 ` Doxygen_Suppress `
 """
 function gdalserializewarpoptions(arg1)
-    aftercare(
-        ccall(
-            (:GDALSerializeWarpOptions, libgdal),
-            Ptr{CPLXMLNode},
-            (Ptr{GDALWarpOptions},),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALSerializeWarpOptions, libgdal), Ptr{CPLXMLNode}, (Ptr{GDALWarpOptions},), arg1))
 end
 
 """
     GDALDeserializeWarpOptions(CPLXMLNode * psTree) -> GDALWarpOptions *
 """
 function gdaldeserializewarpoptions(arg1)
-    aftercare(
-        ccall(
-            (:GDALDeserializeWarpOptions, libgdal),
-            Ptr{GDALWarpOptions},
-            (Ptr{CPLXMLNode},),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALDeserializeWarpOptions, libgdal), Ptr{GDALWarpOptions}, (Ptr{CPLXMLNode},), arg1))
 end
 
 """
@@ -21650,46 +15065,12 @@ end
 
 *********************************************************************
 """
-function gdalreprojectimage(
-    hSrcDS,
-    pszSrcWKT,
-    hDstDS,
-    pszDstWKT,
-    eResampleAlg,
-    dfWarpMemoryLimit,
-    dfMaxError,
-    pfnProgress,
-    pProgressArg,
-    psOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALReprojectImage, libgdal),
-            CPLErr,
-            (
-                GDALDatasetH,
-                Cstring,
-                GDALDatasetH,
-                Cstring,
-                GDALResampleAlg,
-                Cdouble,
-                Cdouble,
-                GDALProgressFunc,
-                Any,
-                Ptr{GDALWarpOptions},
-            ),
-            hSrcDS,
-            pszSrcWKT,
-            hDstDS,
-            pszDstWKT,
-            eResampleAlg,
-            dfWarpMemoryLimit,
-            dfMaxError,
-            pfnProgress,
-            pProgressArg,
-            psOptions,
-        ),
-    )
+function gdalreprojectimage(hSrcDS, pszSrcWKT, hDstDS, pszDstWKT, eResampleAlg, dfWarpMemoryLimit, dfMaxError, pfnProgress,
+                            pProgressArg, psOptions)
+    return aftercare(ccall((:GDALReprojectImage, libgdal), CPLErr,
+                           (GDALDatasetH, Cstring, GDALDatasetH, Cstring, GDALResampleAlg, Cdouble, Cdouble, GDALProgressFunc, Any,
+                            Ptr{GDALWarpOptions}), hSrcDS, pszSrcWKT, hDstDS, pszDstWKT, eResampleAlg, dfWarpMemoryLimit,
+                           dfMaxError, pfnProgress, pProgressArg, psOptions))
 end
 
 """
@@ -21708,52 +15089,12 @@ end
 
 Reproject an image and create the target reprojected image.
 """
-function gdalcreateandreprojectimage(
-    hSrcDS,
-    pszSrcWKT,
-    pszDstFilename,
-    pszDstWKT,
-    hDstDriver,
-    papszCreateOptions,
-    eResampleAlg,
-    dfWarpMemoryLimit,
-    dfMaxError,
-    pfnProgress,
-    pProgressArg,
-    psOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALCreateAndReprojectImage, libgdal),
-            CPLErr,
-            (
-                GDALDatasetH,
-                Cstring,
-                Cstring,
-                Cstring,
-                GDALDriverH,
-                Ptr{Cstring},
-                GDALResampleAlg,
-                Cdouble,
-                Cdouble,
-                GDALProgressFunc,
-                Any,
-                Ptr{GDALWarpOptions},
-            ),
-            hSrcDS,
-            pszSrcWKT,
-            pszDstFilename,
-            pszDstWKT,
-            hDstDriver,
-            papszCreateOptions,
-            eResampleAlg,
-            dfWarpMemoryLimit,
-            dfMaxError,
-            pfnProgress,
-            pProgressArg,
-            psOptions,
-        ),
-    )
+function gdalcreateandreprojectimage(hSrcDS, pszSrcWKT, pszDstFilename, pszDstWKT, hDstDriver, papszCreateOptions, eResampleAlg,
+                                     dfWarpMemoryLimit, dfMaxError, pfnProgress, pProgressArg, psOptions)
+    return aftercare(ccall((:GDALCreateAndReprojectImage, libgdal), CPLErr,
+                           (GDALDatasetH, Cstring, Cstring, Cstring, GDALDriverH, Ptr{Cstring}, GDALResampleAlg, Cdouble, Cdouble,
+                            GDALProgressFunc, Any, Ptr{GDALWarpOptions}), hSrcDS, pszSrcWKT, pszDstFilename, pszDstWKT, hDstDriver,
+                           papszCreateOptions, eResampleAlg, dfWarpMemoryLimit, dfMaxError, pfnProgress, pProgressArg, psOptions))
 end
 
 """
@@ -21761,34 +15102,10 @@ end
 
 *********************************************************************
 """
-function gdalautocreatewarpedvrt(
-    hSrcDS,
-    pszSrcWKT,
-    pszDstWKT,
-    eResampleAlg,
-    dfMaxError,
-    psOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALAutoCreateWarpedVRT, libgdal),
-            GDALDatasetH,
-            (
-                GDALDatasetH,
-                Cstring,
-                Cstring,
-                GDALResampleAlg,
-                Cdouble,
-                Ptr{GDALWarpOptions},
-            ),
-            hSrcDS,
-            pszSrcWKT,
-            pszDstWKT,
-            eResampleAlg,
-            dfMaxError,
-            psOptions,
-        ),
-    )
+function gdalautocreatewarpedvrt(hSrcDS, pszSrcWKT, pszDstWKT, eResampleAlg, dfMaxError, psOptions)
+    return aftercare(ccall((:GDALAutoCreateWarpedVRT, libgdal), GDALDatasetH,
+                           (GDALDatasetH, Cstring, Cstring, GDALResampleAlg, Cdouble, Ptr{GDALWarpOptions}), hSrcDS, pszSrcWKT,
+                           pszDstWKT, eResampleAlg, dfMaxError, psOptions))
 end
 
 """
@@ -21802,37 +15119,10 @@ end
 
 Create virtual warped dataset automatically.
 """
-function gdalautocreatewarpedvrtex(
-    hSrcDS,
-    pszSrcWKT,
-    pszDstWKT,
-    eResampleAlg,
-    dfMaxError,
-    psOptions,
-    papszTransformerOptions,
-)
-    aftercare(
-        ccall(
-            (:GDALAutoCreateWarpedVRTEx, libgdal),
-            GDALDatasetH,
-            (
-                GDALDatasetH,
-                Cstring,
-                Cstring,
-                GDALResampleAlg,
-                Cdouble,
-                Ptr{GDALWarpOptions},
-                CSLConstList,
-            ),
-            hSrcDS,
-            pszSrcWKT,
-            pszDstWKT,
-            eResampleAlg,
-            dfMaxError,
-            psOptions,
-            papszTransformerOptions,
-        ),
-    )
+function gdalautocreatewarpedvrtex(hSrcDS, pszSrcWKT, pszDstWKT, eResampleAlg, dfMaxError, psOptions, papszTransformerOptions)
+    return aftercare(ccall((:GDALAutoCreateWarpedVRTEx, libgdal), GDALDatasetH,
+                           (GDALDatasetH, Cstring, Cstring, GDALResampleAlg, Cdouble, Ptr{GDALWarpOptions}, CSLConstList), hSrcDS,
+                           pszSrcWKT, pszDstWKT, eResampleAlg, dfMaxError, psOptions, papszTransformerOptions))
 end
 
 """
@@ -21855,18 +15145,9 @@ Create virtual warped dataset.
 NULL on failure, or a new virtual dataset handle on success.
 """
 function gdalcreatewarpedvrt(hSrcDS, nPixels, nLines, padfGeoTransform, psOptions)
-    aftercare(
-        ccall(
-            (:GDALCreateWarpedVRT, libgdal),
-            GDALDatasetH,
-            (GDALDatasetH, Cint, Cint, Ptr{Cdouble}, Ptr{GDALWarpOptions}),
-            hSrcDS,
-            nPixels,
-            nLines,
-            padfGeoTransform,
-            psOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateWarpedVRT, libgdal), GDALDatasetH,
+                           (GDALDatasetH, Cint, Cint, Ptr{Cdouble}, Ptr{GDALWarpOptions}), hSrcDS, nPixels, nLines,
+                           padfGeoTransform, psOptions))
 end
 
 """
@@ -21883,15 +15164,7 @@ Set warp info on virtual warped dataset.
 CE_None on success or CE_Failure if an error occurs.
 """
 function gdalinitializewarpedvrt(hDS, psWO)
-    aftercare(
-        ccall(
-            (:GDALInitializeWarpedVRT, libgdal),
-            CPLErr,
-            (GDALDatasetH, Ptr{GDALWarpOptions}),
-            hDS,
-            psWO,
-        ),
-    )
+    return aftercare(ccall((:GDALInitializeWarpedVRT, libgdal), CPLErr, (GDALDatasetH, Ptr{GDALWarpOptions}), hDS, psWO))
 end
 
 "Opaque type representing a GDALWarpOperation object"
@@ -21901,23 +15174,14 @@ const GDALWarpOperationH = Ptr{Cvoid}
     GDALCreateWarpOperation(const GDALWarpOptions * psNewOptions) -> GDALWarpOperationH
 """
 function gdalcreatewarpoperation(arg1)
-    aftercare(
-        ccall(
-            (:GDALCreateWarpOperation, libgdal),
-            GDALWarpOperationH,
-            (Ptr{GDALWarpOptions},),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:GDALCreateWarpOperation, libgdal), GDALWarpOperationH, (Ptr{GDALWarpOptions},), arg1))
 end
 
 """
     GDALDestroyWarpOperation(GDALWarpOperationH hOperation) -> void
 """
 function gdaldestroywarpoperation(arg1)
-    aftercare(
-        ccall((:GDALDestroyWarpOperation, libgdal), Cvoid, (GDALWarpOperationH,), arg1),
-    )
+    return aftercare(ccall((:GDALDestroyWarpOperation, libgdal), Cvoid, (GDALWarpOperationH,), arg1))
 end
 
 """
@@ -21928,18 +15192,8 @@ end
                           int nDstYSize) -> CPLErr
 """
 function gdalchunkandwarpimage(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:GDALChunkAndWarpImage, libgdal),
-            CPLErr,
-            (GDALWarpOperationH, Cint, Cint, Cint, Cint),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:GDALChunkAndWarpImage, libgdal), CPLErr, (GDALWarpOperationH, Cint, Cint, Cint, Cint), arg1, arg2,
+                           arg3, arg4, arg5))
 end
 
 """
@@ -21950,18 +15204,8 @@ end
                           int nDstYSize) -> CPLErr
 """
 function gdalchunkandwarpmulti(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:GDALChunkAndWarpMulti, libgdal),
-            CPLErr,
-            (GDALWarpOperationH, Cint, Cint, Cint, Cint),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:GDALChunkAndWarpMulti, libgdal), CPLErr, (GDALWarpOperationH, Cint, Cint, Cint, Cint), arg1, arg2,
+                           arg3, arg4, arg5))
 end
 
 """
@@ -21976,22 +15220,8 @@ end
                    int nSrcYSize) -> CPLErr
 """
 function gdalwarpregion(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
-    aftercare(
-        ccall(
-            (:GDALWarpRegion, libgdal),
-            CPLErr,
-            (GDALWarpOperationH, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-            arg7,
-            arg8,
-            arg9,
-        ),
-    )
+    return aftercare(ccall((:GDALWarpRegion, libgdal), CPLErr, (GDALWarpOperationH, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint),
+                           arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9))
 end
 
 """
@@ -22007,49 +15237,10 @@ end
                            int nSrcXSize,
                            int nSrcYSize) -> CPLErr
 """
-function gdalwarpregiontobuffer(
-    arg1,
-    arg2,
-    arg3,
-    arg4,
-    arg5,
-    arg6,
-    arg7,
-    arg8,
-    arg9,
-    arg10,
-    arg11,
-)
-    aftercare(
-        ccall(
-            (:GDALWarpRegionToBuffer, libgdal),
-            CPLErr,
-            (
-                GDALWarpOperationH,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Ptr{Cvoid},
-                GDALDataType,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-            ),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-            arg7,
-            arg8,
-            arg9,
-            arg10,
-            arg11,
-        ),
-    )
+function gdalwarpregiontobuffer(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11)
+    return aftercare(ccall((:GDALWarpRegionToBuffer, libgdal), CPLErr,
+                           (GDALWarpOperationH, Cint, Cint, Cint, Cint, Ptr{Cvoid}, GDALDataType, Cint, Cint, Cint, Cint), arg1,
+                           arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11))
 end
 
 """
@@ -22058,7 +15249,7 @@ end
 ` Doxygen_Suppress `
 """
 function gwkgetfilterradius(eResampleAlg)
-    aftercare(ccall((:GWKGetFilterRadius, libgdal), Cint, (GDALResampleAlg,), eResampleAlg))
+    return aftercare(ccall((:GWKGetFilterRadius, libgdal), Cint, (GDALResampleAlg,), eResampleAlg))
 end
 
 const FilterFuncType = Ptr{Cvoid}
@@ -22067,14 +15258,7 @@ const FilterFuncType = Ptr{Cvoid}
     GWKGetFilterFunc(GDALResampleAlg eResampleAlg) -> FilterFuncType
 """
 function gwkgetfilterfunc(eResampleAlg)
-    aftercare(
-        ccall(
-            (:GWKGetFilterFunc, libgdal),
-            FilterFuncType,
-            (GDALResampleAlg,),
-            eResampleAlg,
-        ),
-    )
+    return aftercare(ccall((:GWKGetFilterFunc, libgdal), FilterFuncType, (GDALResampleAlg,), eResampleAlg))
 end
 
 const FilterFunc4ValuesType = Ptr{Cvoid}
@@ -22083,14 +15267,7 @@ const FilterFunc4ValuesType = Ptr{Cvoid}
     GWKGetFilterFunc4Values(GDALResampleAlg eResampleAlg) -> FilterFunc4ValuesType
 """
 function gwkgetfilterfunc4values(eResampleAlg)
-    aftercare(
-        ccall(
-            (:GWKGetFilterFunc4Values, libgdal),
-            FilterFunc4ValuesType,
-            (GDALResampleAlg,),
-            eResampleAlg,
-        ),
-    )
+    return aftercare(ccall((:GWKGetFilterFunc4Values, libgdal), FilterFunc4ValuesType, (GDALResampleAlg,), eResampleAlg))
 end
 
 "Type for a function that returns the pixel data in a provided window"
@@ -22136,14 +15313,14 @@ const VRTSourcedRasterBandH = Ptr{Cvoid}
               int nYSize) -> VRTDatasetH
 """
 function vrtcreate(arg1, arg2)
-    aftercare(ccall((:VRTCreate, libgdal), VRTDatasetH, (Cint, Cint), arg1, arg2))
+    return aftercare(ccall((:VRTCreate, libgdal), VRTDatasetH, (Cint, Cint), arg1, arg2))
 end
 
 """
     VRTFlushCache(VRTDatasetH hDataset) -> void
 """
 function vrtflushcache(arg1)
-    aftercare(ccall((:VRTFlushCache, libgdal), Cvoid, (VRTDatasetH,), arg1))
+    return aftercare(ccall((:VRTFlushCache, libgdal), Cvoid, (VRTDatasetH,), arg1))
 end
 
 """
@@ -22151,15 +15328,7 @@ end
                       const char * pszVRTPath) -> CPLXMLNode *
 """
 function vrtserializetoxml(arg1, arg2)
-    aftercare(
-        ccall(
-            (:VRTSerializeToXML, libgdal),
-            Ptr{CPLXMLNode},
-            (VRTDatasetH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:VRTSerializeToXML, libgdal), Ptr{CPLXMLNode}, (VRTDatasetH, Cstring), arg1, arg2))
 end
 
 """
@@ -22168,16 +15337,7 @@ end
                char ** papszOptions) -> int
 """
 function vrtaddband(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:VRTAddBand, libgdal),
-            Cint,
-            (VRTDatasetH, GDALDataType, Ptr{Cstring}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:VRTAddBand, libgdal), Cint, (VRTDatasetH, GDALDataType, Ptr{Cstring}), arg1, arg2, arg3))
 end
 
 """
@@ -22185,15 +15345,7 @@ end
                  VRTSourceH hNewSource) -> CPLErr
 """
 function vrtaddsource(arg1, arg2)
-    aftercare(
-        ccall(
-            (:VRTAddSource, libgdal),
-            CPLErr,
-            (VRTSourcedRasterBandH, VRTSourceH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:VRTAddSource, libgdal), CPLErr, (VRTSourcedRasterBandH, VRTSourceH), arg1, arg2))
 end
 
 """
@@ -22210,52 +15362,10 @@ end
                        const char * pszResampling,
                        double dfNoDataValue) -> CPLErr
 """
-function vrtaddsimplesource(
-    arg1,
-    arg2,
-    arg3,
-    arg4,
-    arg5,
-    arg6,
-    arg7,
-    arg8,
-    arg9,
-    arg10,
-    arg11,
-    arg12,
-)
-    aftercare(
-        ccall(
-            (:VRTAddSimpleSource, libgdal),
-            CPLErr,
-            (
-                VRTSourcedRasterBandH,
-                GDALRasterBandH,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cstring,
-                Cdouble,
-            ),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-            arg7,
-            arg8,
-            arg9,
-            arg10,
-            arg11,
-            arg12,
-        ),
-    )
+function vrtaddsimplesource(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12)
+    return aftercare(ccall((:VRTAddSimpleSource, libgdal), CPLErr,
+                           (VRTSourcedRasterBandH, GDALRasterBandH, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cstring,
+                            Cdouble), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12))
 end
 
 """
@@ -22273,55 +15383,10 @@ end
                         double dfScaleRatio,
                         double dfNoDataValue) -> CPLErr
 """
-function vrtaddcomplexsource(
-    arg1,
-    arg2,
-    arg3,
-    arg4,
-    arg5,
-    arg6,
-    arg7,
-    arg8,
-    arg9,
-    arg10,
-    arg11,
-    arg12,
-    arg13,
-)
-    aftercare(
-        ccall(
-            (:VRTAddComplexSource, libgdal),
-            CPLErr,
-            (
-                VRTSourcedRasterBandH,
-                GDALRasterBandH,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cint,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-            ),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-            arg7,
-            arg8,
-            arg9,
-            arg10,
-            arg11,
-            arg12,
-            arg13,
-        ),
-    )
+function vrtaddcomplexsource(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13)
+    return aftercare(ccall((:VRTAddComplexSource, libgdal), CPLErr,
+                           (VRTSourcedRasterBandH, GDALRasterBandH, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cdouble,
+                            Cdouble, Cdouble), arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13))
 end
 
 """
@@ -22331,17 +15396,8 @@ end
                      double dfNoDataValue) -> CPLErr
 """
 function vrtaddfuncsource(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:VRTAddFuncSource, libgdal),
-            CPLErr,
-            (VRTSourcedRasterBandH, VRTImageReadFunc, Ptr{Cvoid}, Cdouble),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:VRTAddFuncSource, libgdal), CPLErr, (VRTSourcedRasterBandH, VRTImageReadFunc, Ptr{Cvoid}, Cdouble),
+                           arg1, arg2, arg3, arg4))
 end
 
 const GDALInfoOptions = Cvoid
@@ -22362,15 +15418,8 @@ Allocates a GDALInfoOptions struct.
 pointer to the allocated GDALInfoOptions struct. Must be freed with GDALInfoOptionsFree().
 """
 function gdalinfooptionsnew(papszArgv, psOptionsForBinary)
-    aftercare(
-        ccall(
-            (:GDALInfoOptionsNew, libgdal),
-            Ptr{GDALInfoOptions},
-            (Ptr{Cstring}, Ptr{GDALInfoOptionsForBinary}),
-            papszArgv,
-            psOptionsForBinary,
-        ),
-    )
+    return aftercare(ccall((:GDALInfoOptionsNew, libgdal), Ptr{GDALInfoOptions}, (Ptr{Cstring}, Ptr{GDALInfoOptionsForBinary}),
+                           papszArgv, psOptionsForBinary))
 end
 
 """
@@ -22382,9 +15431,7 @@ Frees the GDALInfoOptions struct.
 * **psOptions**: the options struct for GDALInfo().
 """
 function gdalinfooptionsfree(psOptions)
-    aftercare(
-        ccall((:GDALInfoOptionsFree, libgdal), Cvoid, (Ptr{GDALInfoOptions},), psOptions),
-    )
+    return aftercare(ccall((:GDALInfoOptionsFree, libgdal), Cvoid, (Ptr{GDALInfoOptions},), psOptions))
 end
 
 """
@@ -22401,16 +15448,7 @@ Lists various information about a GDAL supported raster dataset.
 string corresponding to the information about the raster dataset (must be freed with CPLFree()), or NULL in case of error.
 """
 function gdalinfo(hDataset, psOptions)
-    aftercare(
-        ccall(
-            (:GDALInfo, libgdal),
-            Cstring,
-            (GDALDatasetH, Ptr{GDALInfoOptions}),
-            hDataset,
-            psOptions,
-        ),
-        true,
-    )
+    return aftercare(ccall((:GDALInfo, libgdal), Cstring, (GDALDatasetH, Ptr{GDALInfoOptions}), hDataset, psOptions), true)
 end
 
 const GDALTranslateOptions = Cvoid
@@ -22431,15 +15469,8 @@ Allocates a GDALTranslateOptions struct.
 pointer to the allocated GDALTranslateOptions struct. Must be freed with GDALTranslateOptionsFree().
 """
 function gdaltranslateoptionsnew(papszArgv, psOptionsForBinary)
-    aftercare(
-        ccall(
-            (:GDALTranslateOptionsNew, libgdal),
-            Ptr{GDALTranslateOptions},
-            (Ptr{Cstring}, Ptr{GDALTranslateOptionsForBinary}),
-            papszArgv,
-            psOptionsForBinary,
-        ),
-    )
+    return aftercare(ccall((:GDALTranslateOptionsNew, libgdal), Ptr{GDALTranslateOptions},
+                           (Ptr{Cstring}, Ptr{GDALTranslateOptionsForBinary}), papszArgv, psOptionsForBinary))
 end
 
 """
@@ -22451,14 +15482,7 @@ Frees the GDALTranslateOptions struct.
 * **psOptions**: the options struct for GDALTranslate().
 """
 function gdaltranslateoptionsfree(psOptions)
-    aftercare(
-        ccall(
-            (:GDALTranslateOptionsFree, libgdal),
-            Cvoid,
-            (Ptr{GDALTranslateOptions},),
-            psOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALTranslateOptionsFree, libgdal), Cvoid, (Ptr{GDALTranslateOptions},), psOptions))
 end
 
 """
@@ -22474,16 +15498,8 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function gdaltranslateoptionssetprogress(psOptions, pfnProgress, pProgressData)
-    aftercare(
-        ccall(
-            (:GDALTranslateOptionsSetProgress, libgdal),
-            Cvoid,
-            (Ptr{GDALTranslateOptions}, GDALProgressFunc, Any),
-            psOptions,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+    return aftercare(ccall((:GDALTranslateOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALTranslateOptions}, GDALProgressFunc, Any),
+                           psOptions, pfnProgress, pProgressData))
 end
 
 """
@@ -22504,17 +15520,8 @@ Converts raster data between different formats.
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error. If the output format is a VRT dataset, then the returned VRT dataset has a reference to hSrcDataset. Hence hSrcDataset should be closed after the returned dataset if using GDALClose(). A safer alternative is to use GDALReleaseDataset() instead of using GDALClose(), in which case you can close datasets in any order.
 """
 function gdaltranslate(pszDestFilename, hSrcDataset, psOptions, pbUsageError)
-    aftercare(
-        ccall(
-            (:GDALTranslate, libgdal),
-            GDALDatasetH,
-            (Cstring, GDALDatasetH, Ptr{GDALTranslateOptions}, Ptr{Cint}),
-            pszDestFilename,
-            hSrcDataset,
-            psOptions,
-            pbUsageError,
-        ),
-    )
+    return aftercare(ccall((:GDALTranslate, libgdal), GDALDatasetH, (Cstring, GDALDatasetH, Ptr{GDALTranslateOptions}, Ptr{Cint}),
+                           pszDestFilename, hSrcDataset, psOptions, pbUsageError))
 end
 
 const GDALWarpAppOptions = Cvoid
@@ -22535,15 +15542,8 @@ Allocates a GDALWarpAppOptions struct.
 pointer to the allocated GDALWarpAppOptions struct. Must be freed with GDALWarpAppOptionsFree().
 """
 function gdalwarpappoptionsnew(papszArgv, psOptionsForBinary)
-    aftercare(
-        ccall(
-            (:GDALWarpAppOptionsNew, libgdal),
-            Ptr{GDALWarpAppOptions},
-            (Ptr{Cstring}, Ptr{GDALWarpAppOptionsForBinary}),
-            papszArgv,
-            psOptionsForBinary,
-        ),
-    )
+    return aftercare(ccall((:GDALWarpAppOptionsNew, libgdal), Ptr{GDALWarpAppOptions},
+                           (Ptr{Cstring}, Ptr{GDALWarpAppOptionsForBinary}), papszArgv, psOptionsForBinary))
 end
 
 """
@@ -22555,14 +15555,7 @@ Frees the GDALWarpAppOptions struct.
 * **psOptions**: the options struct for GDALWarp().
 """
 function gdalwarpappoptionsfree(psOptions)
-    aftercare(
-        ccall(
-            (:GDALWarpAppOptionsFree, libgdal),
-            Cvoid,
-            (Ptr{GDALWarpAppOptions},),
-            psOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALWarpAppOptionsFree, libgdal), Cvoid, (Ptr{GDALWarpAppOptions},), psOptions))
 end
 
 """
@@ -22578,16 +15571,8 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function gdalwarpappoptionssetprogress(psOptions, pfnProgress, pProgressData)
-    aftercare(
-        ccall(
-            (:GDALWarpAppOptionsSetProgress, libgdal),
-            Cvoid,
-            (Ptr{GDALWarpAppOptions}, GDALProgressFunc, Any),
-            psOptions,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+    return aftercare(ccall((:GDALWarpAppOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALWarpAppOptions}, GDALProgressFunc, Any),
+                           psOptions, pfnProgress, pProgressData))
 end
 
 """
@@ -22601,15 +15586,7 @@ Set a progress function.
 * **bQuiet**: whether GDALWarp() should emit messages on stdout.
 """
 function gdalwarpappoptionssetquiet(psOptions, bQuiet)
-    aftercare(
-        ccall(
-            (:GDALWarpAppOptionsSetQuiet, libgdal),
-            Cvoid,
-            (Ptr{GDALWarpAppOptions}, Cint),
-            psOptions,
-            bQuiet,
-        ),
-    )
+    return aftercare(ccall((:GDALWarpAppOptionsSetQuiet, libgdal), Cvoid, (Ptr{GDALWarpAppOptions}, Cint), psOptions, bQuiet))
 end
 
 """
@@ -22625,16 +15602,8 @@ Set a warp option.
 * **pszValue**: value.
 """
 function gdalwarpappoptionssetwarpoption(psOptions, pszKey, pszValue)
-    aftercare(
-        ccall(
-            (:GDALWarpAppOptionsSetWarpOption, libgdal),
-            Cvoid,
-            (Ptr{GDALWarpAppOptions}, Cstring, Cstring),
-            psOptions,
-            pszKey,
-            pszValue,
-        ),
-    )
+    return aftercare(ccall((:GDALWarpAppOptionsSetWarpOption, libgdal), Cvoid, (Ptr{GDALWarpAppOptions}, Cstring, Cstring),
+                           psOptions, pszKey, pszValue))
 end
 
 """
@@ -22659,26 +15628,9 @@ Image reprojection and warping function.
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS if not NULL) or NULL in case of error. If the output format is a VRT dataset, then the returned VRT dataset has a reference to pahSrcDS[0]. Hence pahSrcDS[0] should be closed after the returned dataset if using GDALClose(). A safer alternative is to use GDALReleaseDataset() instead of using GDALClose(), in which case you can close datasets in any order.
 """
 function gdalwarp(pszDest, hDstDS, nSrcCount, pahSrcDS, psOptions, pbUsageError)
-    aftercare(
-        ccall(
-            (:GDALWarp, libgdal),
-            GDALDatasetH,
-            (
-                Cstring,
-                GDALDatasetH,
-                Cint,
-                Ptr{GDALDatasetH},
-                Ptr{GDALWarpAppOptions},
-                Ptr{Cint},
-            ),
-            pszDest,
-            hDstDS,
-            nSrcCount,
-            pahSrcDS,
-            psOptions,
-            pbUsageError,
-        ),
-    )
+    return aftercare(ccall((:GDALWarp, libgdal), GDALDatasetH,
+                           (Cstring, GDALDatasetH, Cint, Ptr{GDALDatasetH}, Ptr{GDALWarpAppOptions}, Ptr{Cint}), pszDest, hDstDS,
+                           nSrcCount, pahSrcDS, psOptions, pbUsageError))
 end
 
 const GDALVectorTranslateOptions = Cvoid
@@ -22699,15 +15651,8 @@ allocates a GDALVectorTranslateOptions struct.
 pointer to the allocated GDALVectorTranslateOptions struct. Must be freed with GDALVectorTranslateOptionsFree().
 """
 function gdalvectortranslateoptionsnew(papszArgv, psOptionsForBinary)
-    aftercare(
-        ccall(
-            (:GDALVectorTranslateOptionsNew, libgdal),
-            Ptr{GDALVectorTranslateOptions},
-            (Ptr{Cstring}, Ptr{GDALVectorTranslateOptionsForBinary}),
-            papszArgv,
-            psOptionsForBinary,
-        ),
-    )
+    return aftercare(ccall((:GDALVectorTranslateOptionsNew, libgdal), Ptr{GDALVectorTranslateOptions},
+                           (Ptr{Cstring}, Ptr{GDALVectorTranslateOptionsForBinary}), papszArgv, psOptionsForBinary))
 end
 
 """
@@ -22719,14 +15664,7 @@ Frees the GDALVectorTranslateOptions struct.
 * **psOptions**: the options struct for GDALVectorTranslate().
 """
 function gdalvectortranslateoptionsfree(psOptions)
-    aftercare(
-        ccall(
-            (:GDALVectorTranslateOptionsFree, libgdal),
-            Cvoid,
-            (Ptr{GDALVectorTranslateOptions},),
-            psOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALVectorTranslateOptionsFree, libgdal), Cvoid, (Ptr{GDALVectorTranslateOptions},), psOptions))
 end
 
 """
@@ -22742,16 +15680,8 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function gdalvectortranslateoptionssetprogress(psOptions, pfnProgress, pProgressData)
-    aftercare(
-        ccall(
-            (:GDALVectorTranslateOptionsSetProgress, libgdal),
-            Cvoid,
-            (Ptr{GDALVectorTranslateOptions}, GDALProgressFunc, Any),
-            psOptions,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+    return aftercare(ccall((:GDALVectorTranslateOptionsSetProgress, libgdal), Cvoid,
+                           (Ptr{GDALVectorTranslateOptions}, GDALProgressFunc, Any), psOptions, pfnProgress, pProgressData))
 end
 
 """
@@ -22776,26 +15706,9 @@ Converts vector data between file formats.
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
 """
 function gdalvectortranslate(pszDest, hDstDS, nSrcCount, pahSrcDS, psOptions, pbUsageError)
-    aftercare(
-        ccall(
-            (:GDALVectorTranslate, libgdal),
-            GDALDatasetH,
-            (
-                Cstring,
-                GDALDatasetH,
-                Cint,
-                Ptr{GDALDatasetH},
-                Ptr{GDALVectorTranslateOptions},
-                Ptr{Cint},
-            ),
-            pszDest,
-            hDstDS,
-            nSrcCount,
-            pahSrcDS,
-            psOptions,
-            pbUsageError,
-        ),
-    )
+    return aftercare(ccall((:GDALVectorTranslate, libgdal), GDALDatasetH,
+                           (Cstring, GDALDatasetH, Cint, Ptr{GDALDatasetH}, Ptr{GDALVectorTranslateOptions}, Ptr{Cint}), pszDest,
+                           hDstDS, nSrcCount, pahSrcDS, psOptions, pbUsageError))
 end
 
 const GDALDEMProcessingOptions = Cvoid
@@ -22816,15 +15729,8 @@ Allocates a GDALDEMProcessingOptions struct.
 pointer to the allocated GDALDEMProcessingOptions struct. Must be freed with GDALDEMProcessingOptionsFree().
 """
 function gdaldemprocessingoptionsnew(papszArgv, psOptionsForBinary)
-    aftercare(
-        ccall(
-            (:GDALDEMProcessingOptionsNew, libgdal),
-            Ptr{GDALDEMProcessingOptions},
-            (Ptr{Cstring}, Ptr{GDALDEMProcessingOptionsForBinary}),
-            papszArgv,
-            psOptionsForBinary,
-        ),
-    )
+    return aftercare(ccall((:GDALDEMProcessingOptionsNew, libgdal), Ptr{GDALDEMProcessingOptions},
+                           (Ptr{Cstring}, Ptr{GDALDEMProcessingOptionsForBinary}), papszArgv, psOptionsForBinary))
 end
 
 """
@@ -22836,14 +15742,7 @@ Frees the GDALDEMProcessingOptions struct.
 * **psOptions**: the options struct for GDALDEMProcessing().
 """
 function gdaldemprocessingoptionsfree(psOptions)
-    aftercare(
-        ccall(
-            (:GDALDEMProcessingOptionsFree, libgdal),
-            Cvoid,
-            (Ptr{GDALDEMProcessingOptions},),
-            psOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALDEMProcessingOptionsFree, libgdal), Cvoid, (Ptr{GDALDEMProcessingOptions},), psOptions))
 end
 
 """
@@ -22859,16 +15758,8 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function gdaldemprocessingoptionssetprogress(psOptions, pfnProgress, pProgressData)
-    aftercare(
-        ccall(
-            (:GDALDEMProcessingOptionsSetProgress, libgdal),
-            Cvoid,
-            (Ptr{GDALDEMProcessingOptions}, GDALProgressFunc, Any),
-            psOptions,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+    return aftercare(ccall((:GDALDEMProcessingOptionsSetProgress, libgdal), Cvoid,
+                           (Ptr{GDALDEMProcessingOptions}, GDALProgressFunc, Any), psOptions, pfnProgress, pProgressData))
 end
 
 """
@@ -22892,34 +15783,10 @@ Apply a DEM processing.
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
 """
-function gdaldemprocessing(
-    pszDestFilename,
-    hSrcDataset,
-    pszProcessing,
-    pszColorFilename,
-    psOptions,
-    pbUsageError,
-)
-    aftercare(
-        ccall(
-            (:GDALDEMProcessing, libgdal),
-            GDALDatasetH,
-            (
-                Cstring,
-                GDALDatasetH,
-                Cstring,
-                Cstring,
-                Ptr{GDALDEMProcessingOptions},
-                Ptr{Cint},
-            ),
-            pszDestFilename,
-            hSrcDataset,
-            pszProcessing,
-            pszColorFilename,
-            psOptions,
-            pbUsageError,
-        ),
-    )
+function gdaldemprocessing(pszDestFilename, hSrcDataset, pszProcessing, pszColorFilename, psOptions, pbUsageError)
+    return aftercare(ccall((:GDALDEMProcessing, libgdal), GDALDatasetH,
+                           (Cstring, GDALDatasetH, Cstring, Cstring, Ptr{GDALDEMProcessingOptions}, Ptr{Cint}), pszDestFilename,
+                           hSrcDataset, pszProcessing, pszColorFilename, psOptions, pbUsageError))
 end
 
 const GDALNearblackOptions = Cvoid
@@ -22940,15 +15807,8 @@ Allocates a GDALNearblackOptions struct.
 pointer to the allocated GDALNearblackOptions struct. Must be freed with GDALNearblackOptionsFree().
 """
 function gdalnearblackoptionsnew(papszArgv, psOptionsForBinary)
-    aftercare(
-        ccall(
-            (:GDALNearblackOptionsNew, libgdal),
-            Ptr{GDALNearblackOptions},
-            (Ptr{Cstring}, Ptr{GDALNearblackOptionsForBinary}),
-            papszArgv,
-            psOptionsForBinary,
-        ),
-    )
+    return aftercare(ccall((:GDALNearblackOptionsNew, libgdal), Ptr{GDALNearblackOptions},
+                           (Ptr{Cstring}, Ptr{GDALNearblackOptionsForBinary}), papszArgv, psOptionsForBinary))
 end
 
 """
@@ -22960,14 +15820,7 @@ Frees the GDALNearblackOptions struct.
 * **psOptions**: the options struct for GDALNearblack().
 """
 function gdalnearblackoptionsfree(psOptions)
-    aftercare(
-        ccall(
-            (:GDALNearblackOptionsFree, libgdal),
-            Cvoid,
-            (Ptr{GDALNearblackOptions},),
-            psOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALNearblackOptionsFree, libgdal), Cvoid, (Ptr{GDALNearblackOptions},), psOptions))
 end
 
 """
@@ -22983,16 +15836,8 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function gdalnearblackoptionssetprogress(psOptions, pfnProgress, pProgressData)
-    aftercare(
-        ccall(
-            (:GDALNearblackOptionsSetProgress, libgdal),
-            Cvoid,
-            (Ptr{GDALNearblackOptions}, GDALProgressFunc, Any),
-            psOptions,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+    return aftercare(ccall((:GDALNearblackOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALNearblackOptions}, GDALProgressFunc, Any),
+                           psOptions, pfnProgress, pProgressData))
 end
 
 """
@@ -23015,18 +15860,9 @@ Convert nearly black/white borders to exact value.
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS when it is not NULL) or NULL in case of error.
 """
 function gdalnearblack(pszDest, hDstDS, hSrcDS, psOptions, pbUsageError)
-    aftercare(
-        ccall(
-            (:GDALNearblack, libgdal),
-            GDALDatasetH,
-            (Cstring, GDALDatasetH, GDALDatasetH, Ptr{GDALNearblackOptions}, Ptr{Cint}),
-            pszDest,
-            hDstDS,
-            hSrcDS,
-            psOptions,
-            pbUsageError,
-        ),
-    )
+    return aftercare(ccall((:GDALNearblack, libgdal), GDALDatasetH,
+                           (Cstring, GDALDatasetH, GDALDatasetH, Ptr{GDALNearblackOptions}, Ptr{Cint}), pszDest, hDstDS, hSrcDS,
+                           psOptions, pbUsageError))
 end
 
 const GDALGridOptions = Cvoid
@@ -23047,15 +15883,8 @@ Allocates a GDALGridOptions struct.
 pointer to the allocated GDALGridOptions struct. Must be freed with GDALGridOptionsFree().
 """
 function gdalgridoptionsnew(papszArgv, psOptionsForBinary)
-    aftercare(
-        ccall(
-            (:GDALGridOptionsNew, libgdal),
-            Ptr{GDALGridOptions},
-            (Ptr{Cstring}, Ptr{GDALGridOptionsForBinary}),
-            papszArgv,
-            psOptionsForBinary,
-        ),
-    )
+    return aftercare(ccall((:GDALGridOptionsNew, libgdal), Ptr{GDALGridOptions}, (Ptr{Cstring}, Ptr{GDALGridOptionsForBinary}),
+                           papszArgv, psOptionsForBinary))
 end
 
 """
@@ -23067,9 +15896,7 @@ Frees the GDALGridOptions struct.
 * **psOptions**: the options struct for GDALGrid().
 """
 function gdalgridoptionsfree(psOptions)
-    aftercare(
-        ccall((:GDALGridOptionsFree, libgdal), Cvoid, (Ptr{GDALGridOptions},), psOptions),
-    )
+    return aftercare(ccall((:GDALGridOptionsFree, libgdal), Cvoid, (Ptr{GDALGridOptions},), psOptions))
 end
 
 """
@@ -23085,16 +15912,8 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function gdalgridoptionssetprogress(psOptions, pfnProgress, pProgressData)
-    aftercare(
-        ccall(
-            (:GDALGridOptionsSetProgress, libgdal),
-            Cvoid,
-            (Ptr{GDALGridOptions}, GDALProgressFunc, Any),
-            psOptions,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+    return aftercare(ccall((:GDALGridOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALGridOptions}, GDALProgressFunc, Any), psOptions,
+                           pfnProgress, pProgressData))
 end
 
 """
@@ -23115,17 +15934,8 @@ Create raster from the scattered data.
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
 """
 function gdalgrid(pszDest, hSrcDS, psOptions, pbUsageError)
-    aftercare(
-        ccall(
-            (:GDALGrid, libgdal),
-            GDALDatasetH,
-            (Cstring, GDALDatasetH, Ptr{GDALGridOptions}, Ptr{Cint}),
-            pszDest,
-            hSrcDS,
-            psOptions,
-            pbUsageError,
-        ),
-    )
+    return aftercare(ccall((:GDALGrid, libgdal), GDALDatasetH, (Cstring, GDALDatasetH, Ptr{GDALGridOptions}, Ptr{Cint}), pszDest,
+                           hSrcDS, psOptions, pbUsageError))
 end
 
 const GDALRasterizeOptions = Cvoid
@@ -23146,15 +15956,8 @@ Allocates a GDALRasterizeOptions struct.
 pointer to the allocated GDALRasterizeOptions struct. Must be freed with GDALRasterizeOptionsFree().
 """
 function gdalrasterizeoptionsnew(papszArgv, psOptionsForBinary)
-    aftercare(
-        ccall(
-            (:GDALRasterizeOptionsNew, libgdal),
-            Ptr{GDALRasterizeOptions},
-            (Ptr{Cstring}, Ptr{GDALRasterizeOptionsForBinary}),
-            papszArgv,
-            psOptionsForBinary,
-        ),
-    )
+    return aftercare(ccall((:GDALRasterizeOptionsNew, libgdal), Ptr{GDALRasterizeOptions},
+                           (Ptr{Cstring}, Ptr{GDALRasterizeOptionsForBinary}), papszArgv, psOptionsForBinary))
 end
 
 """
@@ -23166,14 +15969,7 @@ Frees the GDALRasterizeOptions struct.
 * **psOptions**: the options struct for GDALRasterize().
 """
 function gdalrasterizeoptionsfree(psOptions)
-    aftercare(
-        ccall(
-            (:GDALRasterizeOptionsFree, libgdal),
-            Cvoid,
-            (Ptr{GDALRasterizeOptions},),
-            psOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALRasterizeOptionsFree, libgdal), Cvoid, (Ptr{GDALRasterizeOptions},), psOptions))
 end
 
 """
@@ -23189,16 +15985,8 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function gdalrasterizeoptionssetprogress(psOptions, pfnProgress, pProgressData)
-    aftercare(
-        ccall(
-            (:GDALRasterizeOptionsSetProgress, libgdal),
-            Cvoid,
-            (Ptr{GDALRasterizeOptions}, GDALProgressFunc, Any),
-            psOptions,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+    return aftercare(ccall((:GDALRasterizeOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALRasterizeOptions}, GDALProgressFunc, Any),
+                           psOptions, pfnProgress, pProgressData))
 end
 
 """
@@ -23215,24 +16003,15 @@ Burns vector geometries into a raster.
 * **hDstDS**: the destination dataset or NULL.
 * **hSrcDataset**: the source dataset handle.
 * **psOptionsIn**: the options struct returned by GDALRasterizeOptionsNew() or NULL.
-* **pbUsageError**: pointer to a integer output variable to store if any usage error has occurred or NULL.
+* **pbUsageError**: pointer to an integer output variable to store if any usage error has occurred or NULL.
 
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
 """
 function gdalrasterize(pszDest, hDstDS, hSrcDS, psOptions, pbUsageError)
-    aftercare(
-        ccall(
-            (:GDALRasterize, libgdal),
-            GDALDatasetH,
-            (Cstring, GDALDatasetH, GDALDatasetH, Ptr{GDALRasterizeOptions}, Ptr{Cint}),
-            pszDest,
-            hDstDS,
-            hSrcDS,
-            psOptions,
-            pbUsageError,
-        ),
-    )
+    return aftercare(ccall((:GDALRasterize, libgdal), GDALDatasetH,
+                           (Cstring, GDALDatasetH, GDALDatasetH, Ptr{GDALRasterizeOptions}, Ptr{Cint}), pszDest, hDstDS, hSrcDS,
+                           psOptions, pbUsageError))
 end
 
 const GDALFootprintOptions = Cvoid
@@ -23253,15 +16032,8 @@ Allocates a GDALFootprintOptions struct.
 pointer to the allocated GDALFootprintOptions struct. Must be freed with GDALFootprintOptionsFree().
 """
 function gdalfootprintoptionsnew(papszArgv, psOptionsForBinary)
-    aftercare(
-        ccall(
-            (:GDALFootprintOptionsNew, libgdal),
-            Ptr{GDALFootprintOptions},
-            (Ptr{Cstring}, Ptr{GDALFootprintOptionsForBinary}),
-            papszArgv,
-            psOptionsForBinary,
-        ),
-    )
+    return aftercare(ccall((:GDALFootprintOptionsNew, libgdal), Ptr{GDALFootprintOptions},
+                           (Ptr{Cstring}, Ptr{GDALFootprintOptionsForBinary}), papszArgv, psOptionsForBinary))
 end
 
 """
@@ -23273,14 +16045,7 @@ Frees the GDALFootprintOptions struct.
 * **psOptions**: the options struct for GDALFootprint().
 """
 function gdalfootprintoptionsfree(psOptions)
-    aftercare(
-        ccall(
-            (:GDALFootprintOptionsFree, libgdal),
-            Cvoid,
-            (Ptr{GDALFootprintOptions},),
-            psOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALFootprintOptionsFree, libgdal), Cvoid, (Ptr{GDALFootprintOptions},), psOptions))
 end
 
 """
@@ -23296,16 +16061,8 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function gdalfootprintoptionssetprogress(psOptions, pfnProgress, pProgressData)
-    aftercare(
-        ccall(
-            (:GDALFootprintOptionsSetProgress, libgdal),
-            Cvoid,
-            (Ptr{GDALFootprintOptions}, GDALProgressFunc, Any),
-            psOptions,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+    return aftercare(ccall((:GDALFootprintOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALFootprintOptions}, GDALProgressFunc, Any),
+                           psOptions, pfnProgress, pProgressData))
 end
 
 """
@@ -23328,18 +16085,9 @@ Computes the footprint of a raster.
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
 """
 function gdalfootprint(pszDest, hDstDS, hSrcDS, psOptions, pbUsageError)
-    aftercare(
-        ccall(
-            (:GDALFootprint, libgdal),
-            GDALDatasetH,
-            (Cstring, GDALDatasetH, GDALDatasetH, Ptr{GDALFootprintOptions}, Ptr{Cint}),
-            pszDest,
-            hDstDS,
-            hSrcDS,
-            psOptions,
-            pbUsageError,
-        ),
-    )
+    return aftercare(ccall((:GDALFootprint, libgdal), GDALDatasetH,
+                           (Cstring, GDALDatasetH, GDALDatasetH, Ptr{GDALFootprintOptions}, Ptr{Cint}), pszDest, hDstDS, hSrcDS,
+                           psOptions, pbUsageError))
 end
 
 const GDALBuildVRTOptions = Cvoid
@@ -23360,15 +16108,8 @@ Allocates a GDALBuildVRTOptions struct.
 pointer to the allocated GDALBuildVRTOptions struct. Must be freed with GDALBuildVRTOptionsFree().
 """
 function gdalbuildvrtoptionsnew(papszArgv, psOptionsForBinary)
-    aftercare(
-        ccall(
-            (:GDALBuildVRTOptionsNew, libgdal),
-            Ptr{GDALBuildVRTOptions},
-            (Ptr{Cstring}, Ptr{GDALBuildVRTOptionsForBinary}),
-            papszArgv,
-            psOptionsForBinary,
-        ),
-    )
+    return aftercare(ccall((:GDALBuildVRTOptionsNew, libgdal), Ptr{GDALBuildVRTOptions},
+                           (Ptr{Cstring}, Ptr{GDALBuildVRTOptionsForBinary}), papszArgv, psOptionsForBinary))
 end
 
 """
@@ -23380,14 +16121,7 @@ Frees the GDALBuildVRTOptions struct.
 * **psOptions**: the options struct for GDALBuildVRT().
 """
 function gdalbuildvrtoptionsfree(psOptions)
-    aftercare(
-        ccall(
-            (:GDALBuildVRTOptionsFree, libgdal),
-            Cvoid,
-            (Ptr{GDALBuildVRTOptions},),
-            psOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALBuildVRTOptionsFree, libgdal), Cvoid, (Ptr{GDALBuildVRTOptions},), psOptions))
 end
 
 """
@@ -23403,16 +16137,8 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function gdalbuildvrtoptionssetprogress(psOptions, pfnProgress, pProgressData)
-    aftercare(
-        ccall(
-            (:GDALBuildVRTOptionsSetProgress, libgdal),
-            Cvoid,
-            (Ptr{GDALBuildVRTOptions}, GDALProgressFunc, Any),
-            psOptions,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+    return aftercare(ccall((:GDALBuildVRTOptionsSetProgress, libgdal), Cvoid, (Ptr{GDALBuildVRTOptions}, GDALProgressFunc, Any),
+                           psOptions, pfnProgress, pProgressData))
 end
 
 """
@@ -23436,34 +16162,10 @@ Build a VRT from a list of datasets.
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error. If using pahSrcDS, the returned VRT dataset has a reference to each pahSrcDS[] element. Hence pahSrcDS[] elements should be closed after the returned dataset if using GDALClose(). A safer alternative is to use GDALReleaseDataset() instead of using GDALClose(), in which case you can close datasets in any order.
 """
-function gdalbuildvrt(
-    pszDest,
-    nSrcCount,
-    pahSrcDS,
-    papszSrcDSNames,
-    psOptions,
-    pbUsageError,
-)
-    aftercare(
-        ccall(
-            (:GDALBuildVRT, libgdal),
-            GDALDatasetH,
-            (
-                Cstring,
-                Cint,
-                Ptr{GDALDatasetH},
-                Ptr{Cstring},
-                Ptr{GDALBuildVRTOptions},
-                Ptr{Cint},
-            ),
-            pszDest,
-            nSrcCount,
-            pahSrcDS,
-            papszSrcDSNames,
-            psOptions,
-            pbUsageError,
-        ),
-    )
+function gdalbuildvrt(pszDest, nSrcCount, pahSrcDS, papszSrcDSNames, psOptions, pbUsageError)
+    return aftercare(ccall((:GDALBuildVRT, libgdal), GDALDatasetH,
+                           (Cstring, Cint, Ptr{GDALDatasetH}, Ptr{Cstring}, Ptr{GDALBuildVRTOptions}, Ptr{Cint}), pszDest,
+                           nSrcCount, pahSrcDS, papszSrcDSNames, psOptions, pbUsageError))
 end
 
 const GDALMultiDimInfoOptions = Cvoid
@@ -23484,15 +16186,8 @@ Allocates a GDALMultiDimInfo struct.
 pointer to the allocated GDALMultiDimInfoOptions struct. Must be freed with GDALMultiDimInfoOptionsFree().
 """
 function gdalmultidiminfooptionsnew(papszArgv, psOptionsForBinary)
-    aftercare(
-        ccall(
-            (:GDALMultiDimInfoOptionsNew, libgdal),
-            Ptr{GDALMultiDimInfoOptions},
-            (Ptr{Cstring}, Ptr{GDALMultiDimInfoOptionsForBinary}),
-            papszArgv,
-            psOptionsForBinary,
-        ),
-    )
+    return aftercare(ccall((:GDALMultiDimInfoOptionsNew, libgdal), Ptr{GDALMultiDimInfoOptions},
+                           (Ptr{Cstring}, Ptr{GDALMultiDimInfoOptionsForBinary}), papszArgv, psOptionsForBinary))
 end
 
 """
@@ -23504,14 +16199,7 @@ Frees the GDALMultiDimInfoOptions struct.
 * **psOptions**: the options struct for GDALMultiDimInfo().
 """
 function gdalmultidiminfooptionsfree(psOptions)
-    aftercare(
-        ccall(
-            (:GDALMultiDimInfoOptionsFree, libgdal),
-            Cvoid,
-            (Ptr{GDALMultiDimInfoOptions},),
-            psOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALMultiDimInfoOptionsFree, libgdal), Cvoid, (Ptr{GDALMultiDimInfoOptions},), psOptions))
 end
 
 """
@@ -23528,16 +16216,8 @@ Lists various information about a GDAL multidimensional dataset.
 string corresponding to the information about the raster dataset (must be freed with CPLFree()), or NULL in case of error.
 """
 function gdalmultidiminfo(hDataset, psOptions)
-    aftercare(
-        ccall(
-            (:GDALMultiDimInfo, libgdal),
-            Cstring,
-            (GDALDatasetH, Ptr{GDALMultiDimInfoOptions}),
-            hDataset,
-            psOptions,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALMultiDimInfo, libgdal), Cstring, (GDALDatasetH, Ptr{GDALMultiDimInfoOptions}), hDataset,
+                           psOptions), false)
 end
 
 const GDALMultiDimTranslateOptions = Cvoid
@@ -23558,15 +16238,8 @@ Allocates a GDALMultiDimTranslateOptions struct.
 pointer to the allocated GDALMultiDimTranslateOptions struct. Must be freed with GDALMultiDimTranslateOptionsFree().
 """
 function gdalmultidimtranslateoptionsnew(papszArgv, psOptionsForBinary)
-    aftercare(
-        ccall(
-            (:GDALMultiDimTranslateOptionsNew, libgdal),
-            Ptr{GDALMultiDimTranslateOptions},
-            (Ptr{Cstring}, Ptr{GDALMultiDimTranslateOptionsForBinary}),
-            papszArgv,
-            psOptionsForBinary,
-        ),
-    )
+    return aftercare(ccall((:GDALMultiDimTranslateOptionsNew, libgdal), Ptr{GDALMultiDimTranslateOptions},
+                           (Ptr{Cstring}, Ptr{GDALMultiDimTranslateOptionsForBinary}), papszArgv, psOptionsForBinary))
 end
 
 """
@@ -23578,14 +16251,7 @@ Frees the GDALMultiDimTranslateOptions struct.
 * **psOptions**: the options struct for GDALMultiDimTranslate().
 """
 function gdalmultidimtranslateoptionsfree(psOptions)
-    aftercare(
-        ccall(
-            (:GDALMultiDimTranslateOptionsFree, libgdal),
-            Cvoid,
-            (Ptr{GDALMultiDimTranslateOptions},),
-            psOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALMultiDimTranslateOptionsFree, libgdal), Cvoid, (Ptr{GDALMultiDimTranslateOptions},), psOptions))
 end
 
 """
@@ -23601,16 +16267,8 @@ Set a progress function.
 * **pProgressData**: the user data for the progress callback.
 """
 function gdalmultidimtranslateoptionssetprogress(psOptions, pfnProgress, pProgressData)
-    aftercare(
-        ccall(
-            (:GDALMultiDimTranslateOptionsSetProgress, libgdal),
-            Cvoid,
-            (Ptr{GDALMultiDimTranslateOptions}, GDALProgressFunc, Any),
-            psOptions,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+    return aftercare(ccall((:GDALMultiDimTranslateOptionsSetProgress, libgdal), Cvoid,
+                           (Ptr{GDALMultiDimTranslateOptions}, GDALProgressFunc, Any), psOptions, pfnProgress, pProgressData))
 end
 
 """
@@ -23634,34 +16292,10 @@ Converts raster data between different formats.
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
 """
-function gdalmultidimtranslate(
-    pszDest,
-    hDstDataset,
-    nSrcCount,
-    pahSrcDS,
-    psOptions,
-    pbUsageError,
-)
-    aftercare(
-        ccall(
-            (:GDALMultiDimTranslate, libgdal),
-            GDALDatasetH,
-            (
-                Cstring,
-                GDALDatasetH,
-                Cint,
-                Ptr{GDALDatasetH},
-                Ptr{GDALMultiDimTranslateOptions},
-                Ptr{Cint},
-            ),
-            pszDest,
-            hDstDataset,
-            nSrcCount,
-            pahSrcDS,
-            psOptions,
-            pbUsageError,
-        ),
-    )
+function gdalmultidimtranslate(pszDest, hDstDataset, nSrcCount, pahSrcDS, psOptions, pbUsageError)
+    return aftercare(ccall((:GDALMultiDimTranslate, libgdal), GDALDatasetH,
+                           (Cstring, GDALDatasetH, Cint, Ptr{GDALDatasetH}, Ptr{GDALMultiDimTranslateOptions}, Ptr{Cint}), pszDest,
+                           hDstDataset, nSrcCount, pahSrcDS, psOptions, pbUsageError))
 end
 
 const GDALVectorInfoOptions = Cvoid
@@ -23682,15 +16316,8 @@ Allocates a GDALVectorInfoOptions struct.
 pointer to the allocated GDALVectorInfoOptions struct. Must be freed with GDALVectorInfoOptionsFree().
 """
 function gdalvectorinfooptionsnew(papszArgv, psOptionsForBinary)
-    aftercare(
-        ccall(
-            (:GDALVectorInfoOptionsNew, libgdal),
-            Ptr{GDALVectorInfoOptions},
-            (Ptr{Cstring}, Ptr{GDALVectorInfoOptionsForBinary}),
-            papszArgv,
-            psOptionsForBinary,
-        ),
-    )
+    return aftercare(ccall((:GDALVectorInfoOptionsNew, libgdal), Ptr{GDALVectorInfoOptions},
+                           (Ptr{Cstring}, Ptr{GDALVectorInfoOptionsForBinary}), papszArgv, psOptionsForBinary))
 end
 
 """
@@ -23702,14 +16329,7 @@ Frees the GDALVectorInfoOptions struct.
 * **psOptions**: the options struct for GDALVectorInfo().
 """
 function gdalvectorinfooptionsfree(psOptions)
-    aftercare(
-        ccall(
-            (:GDALVectorInfoOptionsFree, libgdal),
-            Cvoid,
-            (Ptr{GDALVectorInfoOptions},),
-            psOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALVectorInfoOptionsFree, libgdal), Cvoid, (Ptr{GDALVectorInfoOptions},), psOptions))
 end
 
 """
@@ -23726,16 +16346,8 @@ Lists various information about a GDAL supported vector dataset.
 string corresponding to the information about the raster dataset (must be freed with CPLFree()), or NULL in case of error.
 """
 function gdalvectorinfo(hDataset, psOptions)
-    aftercare(
-        ccall(
-            (:GDALVectorInfo, libgdal),
-            Cstring,
-            (GDALDatasetH, Ptr{GDALVectorInfoOptions}),
-            hDataset,
-            psOptions,
-        ),
-        false,
-    )
+    return aftercare(ccall((:GDALVectorInfo, libgdal), Cstring, (GDALDatasetH, Ptr{GDALVectorInfoOptions}), hDataset, psOptions),
+                     false)
 end
 
 const GDALTileIndexOptions = Cvoid
@@ -23756,15 +16368,8 @@ Allocates a GDALTileIndexOptions struct.
 pointer to the allocated GDALTileIndexOptions struct. Must be freed with GDALTileIndexOptionsFree().
 """
 function gdaltileindexoptionsnew(papszArgv, psOptionsForBinary)
-    aftercare(
-        ccall(
-            (:GDALTileIndexOptionsNew, libgdal),
-            Ptr{GDALTileIndexOptions},
-            (Ptr{Cstring}, Ptr{GDALTileIndexOptionsForBinary}),
-            papszArgv,
-            psOptionsForBinary,
-        ),
-    )
+    return aftercare(ccall((:GDALTileIndexOptionsNew, libgdal), Ptr{GDALTileIndexOptions},
+                           (Ptr{Cstring}, Ptr{GDALTileIndexOptionsForBinary}), papszArgv, psOptionsForBinary))
 end
 
 """
@@ -23776,14 +16381,7 @@ Frees the GDALTileIndexOptions struct.
 * **psOptions**: the options struct for GDALTileIndex().
 """
 function gdaltileindexoptionsfree(psOptions)
-    aftercare(
-        ccall(
-            (:GDALTileIndexOptionsFree, libgdal),
-            Cvoid,
-            (Ptr{GDALTileIndexOptions},),
-            psOptions,
-        ),
-    )
+    return aftercare(ccall((:GDALTileIndexOptionsFree, libgdal), Cvoid, (Ptr{GDALTileIndexOptions},), psOptions))
 end
 
 """
@@ -23806,18 +16404,9 @@ Build a tile index from a list of datasets.
 the output dataset (new dataset that must be closed using GDALClose()) or NULL in case of error.
 """
 function gdaltileindex(pszDest, nSrcCount, papszSrcDSNames, psOptions, pbUsageError)
-    aftercare(
-        ccall(
-            (:GDALTileIndex, libgdal),
-            GDALDatasetH,
-            (Cstring, Cint, Ptr{Cstring}, Ptr{GDALTileIndexOptions}, Ptr{Cint}),
-            pszDest,
-            nSrcCount,
-            papszSrcDSNames,
-            psOptions,
-            pbUsageError,
-        ),
-    )
+    return aftercare(ccall((:GDALTileIndex, libgdal), GDALDatasetH,
+                           (Cstring, Cint, Ptr{Cstring}, Ptr{GDALTileIndexOptions}, Ptr{Cint}), pszDest, nSrcCount, papszSrcDSNames,
+                           psOptions, pbUsageError))
 end
 
 """
@@ -23829,7 +16418,7 @@ Reset feature reading to start on the first feature.
 * **hLayer**: handle to the layer on which features are read.
 """
 function ogr_l_resetreading(arg1)
-    aftercare(ccall((:OGR_L_ResetReading, libgdal), Cvoid, (OGRLayerH,), arg1))
+    return aftercare(ccall((:OGR_L_ResetReading, libgdal), Cvoid, (OGRLayerH,), arg1))
 end
 
 """
@@ -23841,7 +16430,7 @@ Destroy feature.
 * **hFeat**: handle to the feature to destroy.
 """
 function ogr_f_destroy(arg1)
-    aftercare(ccall((:OGR_F_Destroy, libgdal), Cvoid, (OGRFeatureH,), arg1))
+    return aftercare(ccall((:OGR_F_Destroy, libgdal), Cvoid, (OGRFeatureH,), arg1))
 end
 
 """
@@ -23856,7 +16445,7 @@ Fetch the next available feature from this layer.
 a handle to a feature, or NULL if no more features are available.
 """
 function ogr_l_getnextfeature(arg1)
-    aftercare(ccall((:OGR_L_GetNextFeature, libgdal), OGRFeatureH, (OGRLayerH,), arg1))
+    return aftercare(ccall((:OGR_L_GetNextFeature, libgdal), OGRFeatureH, (OGRLayerH,), arg1))
 end
 
 """
@@ -23875,16 +16464,7 @@ Get the GEOS version.
 TRUE if GDAL is built against GEOS
 """
 function ogrgetgeosversion(pnMajor, pnMinor, pnPatch)
-    aftercare(
-        ccall(
-            (:OGRGetGEOSVersion, libgdal),
-            Bool,
-            (Ptr{Cint}, Ptr{Cint}, Ptr{Cint}),
-            pnMajor,
-            pnMinor,
-            pnPatch,
-        ),
-    )
+    return aftercare(ccall((:OGRGetGEOSVersion, libgdal), Bool, (Ptr{Cint}, Ptr{Cint}, Ptr{Cint}), pnMajor, pnMinor, pnPatch))
 end
 
 "Opaque type for a coordinate transformation object"
@@ -23903,13 +16483,7 @@ const OGRGeomCoordinatePrecisionH = Ptr{OGRGeomCoordinatePrecision}
 Creates a new instance of OGRGeomCoordinatePrecision.
 """
 function ogrgeomcoordinateprecisioncreate()
-    aftercare(
-        ccall(
-            (:OGRGeomCoordinatePrecisionCreate, libgdal),
-            OGRGeomCoordinatePrecisionH,
-            (),
-        ),
-    )
+    return aftercare(ccall((:OGRGeomCoordinatePrecisionCreate, libgdal), OGRGeomCoordinatePrecisionH, ()))
 end
 
 """
@@ -23921,14 +16495,7 @@ Destroy a OGRGeomCoordinatePrecision.
 * **hGeomCoordPrec**: OGRGeomCoordinatePrecision instance or nullptr
 """
 function ogrgeomcoordinateprecisiondestroy(arg1)
-    aftercare(
-        ccall(
-            (:OGRGeomCoordinatePrecisionDestroy, libgdal),
-            Cvoid,
-            (OGRGeomCoordinatePrecisionH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGRGeomCoordinatePrecisionDestroy, libgdal), Cvoid, (OGRGeomCoordinatePrecisionH,), arg1))
 end
 
 """
@@ -23943,14 +16510,7 @@ Get the X/Y resolution of a OGRGeomCoordinatePrecision.
 the the X/Y resolution of a OGRGeomCoordinatePrecision or OGR_GEOM_COORD_PRECISION_UNKNOWN
 """
 function ogrgeomcoordinateprecisiongetxyresolution(arg1)
-    aftercare(
-        ccall(
-            (:OGRGeomCoordinatePrecisionGetXYResolution, libgdal),
-            Cdouble,
-            (OGRGeomCoordinatePrecisionH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGRGeomCoordinatePrecisionGetXYResolution, libgdal), Cdouble, (OGRGeomCoordinatePrecisionH,), arg1))
 end
 
 """
@@ -23965,14 +16525,7 @@ Get the Z resolution of a OGRGeomCoordinatePrecision.
 the the Z resolution of a OGRGeomCoordinatePrecision or OGR_GEOM_COORD_PRECISION_UNKNOWN
 """
 function ogrgeomcoordinateprecisiongetzresolution(arg1)
-    aftercare(
-        ccall(
-            (:OGRGeomCoordinatePrecisionGetZResolution, libgdal),
-            Cdouble,
-            (OGRGeomCoordinatePrecisionH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGRGeomCoordinatePrecisionGetZResolution, libgdal), Cdouble, (OGRGeomCoordinatePrecisionH,), arg1))
 end
 
 """
@@ -23987,14 +16540,7 @@ Get the M resolution of a OGRGeomCoordinatePrecision.
 the the M resolution of a OGRGeomCoordinatePrecision or OGR_GEOM_COORD_PRECISION_UNKNOWN
 """
 function ogrgeomcoordinateprecisiongetmresolution(arg1)
-    aftercare(
-        ccall(
-            (:OGRGeomCoordinatePrecisionGetMResolution, libgdal),
-            Cdouble,
-            (OGRGeomCoordinatePrecisionH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGRGeomCoordinatePrecisionGetMResolution, libgdal), Cdouble, (OGRGeomCoordinatePrecisionH,), arg1))
 end
 
 """
@@ -24009,14 +16555,7 @@ Get the list of format names for coordinate precision format specific options.
 a null-terminated list to free with CSLDestroy(), or nullptr.
 """
 function ogrgeomcoordinateprecisiongetformats(arg1)
-    aftercare(
-        ccall(
-            (:OGRGeomCoordinatePrecisionGetFormats, libgdal),
-            Ptr{Cstring},
-            (OGRGeomCoordinatePrecisionH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGRGeomCoordinatePrecisionGetFormats, libgdal), Ptr{Cstring}, (OGRGeomCoordinatePrecisionH,), arg1))
 end
 
 """
@@ -24033,15 +16572,8 @@ Get format specific coordinate precision options.
 a null-terminated list, or nullptr. The list must not be freed, and is owned by hGeomCoordPrec
 """
 function ogrgeomcoordinateprecisiongetformatspecificoptions(arg1, pszFormatName)
-    aftercare(
-        ccall(
-            (:OGRGeomCoordinatePrecisionGetFormatSpecificOptions, libgdal),
-            CSLConstList,
-            (OGRGeomCoordinatePrecisionH, Cstring),
-            arg1,
-            pszFormatName,
-        ),
-    )
+    return aftercare(ccall((:OGRGeomCoordinatePrecisionGetFormatSpecificOptions, libgdal), CSLConstList,
+                           (OGRGeomCoordinatePrecisionH, Cstring), arg1, pszFormatName))
 end
 
 """
@@ -24059,17 +16591,9 @@ Set the resolution of the geometry coordinate components.
 * **dfMResolution**: Resolution for for M coordinates.
 """
 function ogrgeomcoordinateprecisionset(arg1, dfXYResolution, dfZResolution, dfMResolution)
-    aftercare(
-        ccall(
-            (:OGRGeomCoordinatePrecisionSet, libgdal),
-            Cvoid,
-            (OGRGeomCoordinatePrecisionH, Cdouble, Cdouble, Cdouble),
-            arg1,
-            dfXYResolution,
-            dfZResolution,
-            dfMResolution,
-        ),
-    )
+    return aftercare(ccall((:OGRGeomCoordinatePrecisionSet, libgdal), Cvoid,
+                           (OGRGeomCoordinatePrecisionH, Cdouble, Cdouble, Cdouble), arg1, dfXYResolution, dfZResolution,
+                           dfMResolution))
 end
 
 """
@@ -24088,25 +16612,10 @@ Set the resolution of the geometry coordinate components.
 * **dfZMeterResolution**: Resolution for for Z coordinates, in meter.
 * **dfMResolution**: Resolution for for M coordinates.
 """
-function ogrgeomcoordinateprecisionsetfrommeter(
-    arg1,
-    hSRS,
-    dfXYMeterResolution,
-    dfZMeterResolution,
-    dfMResolution,
-)
-    aftercare(
-        ccall(
-            (:OGRGeomCoordinatePrecisionSetFromMeter, libgdal),
-            Cvoid,
-            (OGRGeomCoordinatePrecisionH, OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble),
-            arg1,
-            hSRS,
-            dfXYMeterResolution,
-            dfZMeterResolution,
-            dfMResolution,
-        ),
-    )
+function ogrgeomcoordinateprecisionsetfrommeter(arg1, hSRS, dfXYMeterResolution, dfZMeterResolution, dfMResolution)
+    return aftercare(ccall((:OGRGeomCoordinatePrecisionSetFromMeter, libgdal), Cvoid,
+                           (OGRGeomCoordinatePrecisionH, OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble), arg1, hSRS,
+                           dfXYMeterResolution, dfZMeterResolution, dfMResolution))
 end
 
 """
@@ -24121,21 +16630,9 @@ Set format specific coordinate precision options.
 * **pszFormatName**: A format name (must not be null)
 * **papszOptions**: null-terminated list of options.
 """
-function ogrgeomcoordinateprecisionsetformatspecificoptions(
-    arg1,
-    pszFormatName,
-    papszOptions,
-)
-    aftercare(
-        ccall(
-            (:OGRGeomCoordinatePrecisionSetFormatSpecificOptions, libgdal),
-            Cvoid,
-            (OGRGeomCoordinatePrecisionH, Cstring, CSLConstList),
-            arg1,
-            pszFormatName,
-            papszOptions,
-        ),
-    )
+function ogrgeomcoordinateprecisionsetformatspecificoptions(arg1, pszFormatName, papszOptions)
+    return aftercare(ccall((:OGRGeomCoordinatePrecisionSetFormatSpecificOptions, libgdal), Cvoid,
+                           (OGRGeomCoordinatePrecisionH, Cstring, CSLConstList), arg1, pszFormatName, papszOptions))
 end
 
 """
@@ -24156,17 +16653,8 @@ Create a geometry object of the appropriate type from its well known binary repr
 OGRERR_NONE if all goes well, otherwise any of OGRERR_NOT_ENOUGH_DATA, OGRERR_UNSUPPORTED_GEOMETRY_TYPE, or OGRERR_CORRUPT_DATA may be returned.
 """
 function ogr_g_createfromwkb(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OGR_G_CreateFromWkb, libgdal),
-            OGRErr,
-            (Ptr{Cvoid}, OGRSpatialReferenceH, Ptr{OGRGeometryH}, Cint),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_CreateFromWkb, libgdal), OGRErr, (Ptr{Cvoid}, OGRSpatialReferenceH, Ptr{OGRGeometryH}, Cint),
+                           arg1, arg2, arg3, arg4))
 end
 
 """
@@ -24187,17 +16675,8 @@ Create a geometry object of the appropriate type from its well known binary repr
 OGRERR_NONE if all goes well, otherwise any of OGRERR_NOT_ENOUGH_DATA, OGRERR_UNSUPPORTED_GEOMETRY_TYPE, or OGRERR_CORRUPT_DATA may be returned.
 """
 function ogr_g_createfromwkbex(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OGR_G_CreateFromWkbEx, libgdal),
-            OGRErr,
-            (Ptr{Cvoid}, OGRSpatialReferenceH, Ptr{OGRGeometryH}, Csize_t),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_CreateFromWkbEx, libgdal), OGRErr,
+                           (Ptr{Cvoid}, OGRSpatialReferenceH, Ptr{OGRGeometryH}, Csize_t), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -24216,16 +16695,8 @@ Create a geometry object of the appropriate type from its well known text repres
 OGRERR_NONE if all goes well, otherwise any of OGRERR_NOT_ENOUGH_DATA, OGRERR_UNSUPPORTED_GEOMETRY_TYPE, or OGRERR_CORRUPT_DATA may be returned.
 """
 function ogr_g_createfromwkt(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_G_CreateFromWkt, libgdal),
-            OGRErr,
-            (Ptr{Cstring}, OGRSpatialReferenceH, Ptr{OGRGeometryH}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_CreateFromWkt, libgdal), OGRErr, (Ptr{Cstring}, OGRSpatialReferenceH, Ptr{OGRGeometryH}), arg1,
+                           arg2, arg3))
 end
 
 """
@@ -24238,18 +16709,8 @@ end
 Create a geometry object of the appropriate type from its FGF (FDO Geometry Format) binary representation.
 """
 function ogr_g_createfromfgf(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:OGR_G_CreateFromFgf, libgdal),
-            OGRErr,
-            (Ptr{Cvoid}, OGRSpatialReferenceH, Ptr{OGRGeometryH}, Cint, Ptr{Cint}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_CreateFromFgf, libgdal), OGRErr,
+                           (Ptr{Cvoid}, OGRSpatialReferenceH, Ptr{OGRGeometryH}, Cint, Ptr{Cint}), arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -24261,7 +16722,7 @@ Destroy geometry object.
 * **hGeom**: handle to the geometry to delete.
 """
 function ogr_g_destroygeometry(arg1)
-    aftercare(ccall((:OGR_G_DestroyGeometry, libgdal), Cvoid, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_DestroyGeometry, libgdal), Cvoid, (OGRGeometryH,), arg1))
 end
 
 """
@@ -24276,9 +16737,7 @@ Create an empty geometry of desired type.
 handle to the newly create geometry or NULL on failure. Should be freed with OGR_G_DestroyGeometry() after use.
 """
 function ogr_g_creategeometry(arg1)
-    aftercare(
-        ccall((:OGR_G_CreateGeometry, libgdal), OGRGeometryH, (OGRwkbGeometryType,), arg1),
-    )
+    return aftercare(ccall((:OGR_G_CreateGeometry, libgdal), OGRGeometryH, (OGRwkbGeometryType,), arg1))
 end
 
 """
@@ -24308,43 +16767,11 @@ Stroke arc to linestring.
 ### Returns
 OGRLineString geometry representing an approximation of the arc.
 """
-function ogr_g_approximatearcangles(
-    dfCenterX,
-    dfCenterY,
-    dfZ,
-    dfPrimaryRadius,
-    dfSecondaryAxis,
-    dfRotation,
-    dfStartAngle,
-    dfEndAngle,
-    dfMaxAngleStepSizeDegrees,
-)
-    aftercare(
-        ccall(
-            (:OGR_G_ApproximateArcAngles, libgdal),
-            OGRGeometryH,
-            (
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-            ),
-            dfCenterX,
-            dfCenterY,
-            dfZ,
-            dfPrimaryRadius,
-            dfSecondaryAxis,
-            dfRotation,
-            dfStartAngle,
-            dfEndAngle,
-            dfMaxAngleStepSizeDegrees,
-        ),
-    )
+function ogr_g_approximatearcangles(dfCenterX, dfCenterY, dfZ, dfPrimaryRadius, dfSecondaryAxis, dfRotation, dfStartAngle,
+                                    dfEndAngle, dfMaxAngleStepSizeDegrees)
+    return aftercare(ccall((:OGR_G_ApproximateArcAngles, libgdal), OGRGeometryH,
+                           (Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), dfCenterX, dfCenterY,
+                           dfZ, dfPrimaryRadius, dfSecondaryAxis, dfRotation, dfStartAngle, dfEndAngle, dfMaxAngleStepSizeDegrees))
 end
 
 """
@@ -24359,7 +16786,7 @@ Convert to polygon.
 the converted geometry (ownership to caller).
 """
 function ogr_g_forcetopolygon(arg1)
-    aftercare(ccall((:OGR_G_ForceToPolygon, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_ForceToPolygon, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -24374,9 +16801,7 @@ Convert to line string.
 the converted geometry (ownership to caller).
 """
 function ogr_g_forcetolinestring(arg1)
-    aftercare(
-        ccall((:OGR_G_ForceToLineString, libgdal), OGRGeometryH, (OGRGeometryH,), arg1),
-    )
+    return aftercare(ccall((:OGR_G_ForceToLineString, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -24391,9 +16816,7 @@ Convert to multipolygon.
 the converted geometry (ownership to caller).
 """
 function ogr_g_forcetomultipolygon(arg1)
-    aftercare(
-        ccall((:OGR_G_ForceToMultiPolygon, libgdal), OGRGeometryH, (OGRGeometryH,), arg1),
-    )
+    return aftercare(ccall((:OGR_G_ForceToMultiPolygon, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -24408,9 +16831,7 @@ Convert to multipoint.
 the converted geometry (ownership to caller).
 """
 function ogr_g_forcetomultipoint(arg1)
-    aftercare(
-        ccall((:OGR_G_ForceToMultiPoint, libgdal), OGRGeometryH, (OGRGeometryH,), arg1),
-    )
+    return aftercare(ccall((:OGR_G_ForceToMultiPoint, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -24425,14 +16846,7 @@ Convert to multilinestring.
 the converted geometry (ownership to caller).
 """
 function ogr_g_forcetomultilinestring(arg1)
-    aftercare(
-        ccall(
-            (:OGR_G_ForceToMultiLineString, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_ForceToMultiLineString, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -24451,16 +16865,8 @@ Convert to another geometry type.
 new geometry.
 """
 function ogr_g_forceto(hGeom, eTargetType, papszOptions)
-    aftercare(
-        ccall(
-            (:OGR_G_ForceTo, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, OGRwkbGeometryType, Ptr{Cstring}),
-            hGeom,
-            eTargetType,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_ForceTo, libgdal), OGRGeometryH, (OGRGeometryH, OGRwkbGeometryType, Ptr{Cstring}), hGeom,
+                           eTargetType, papszOptions))
 end
 
 """
@@ -24475,14 +16881,7 @@ Remove sub-geometries from a geometry collection that do not have the maximum to
 a new geometry.
 """
 function ogr_g_removelowerdimensionsubgeoms(hGeom)
-    aftercare(
-        ccall(
-            (:OGR_G_RemoveLowerDimensionSubGeoms, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH,),
-            hGeom,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_RemoveLowerDimensionSubGeoms, libgdal), OGRGeometryH, (OGRGeometryH,), hGeom))
 end
 
 """
@@ -24497,7 +16896,7 @@ Get the dimension of this geometry.
 0 for points, 1 for lines and 2 for surfaces.
 """
 function ogr_g_getdimension(arg1)
-    aftercare(ccall((:OGR_G_GetDimension, libgdal), Cint, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_GetDimension, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -24512,7 +16911,7 @@ Get the dimension of the coordinates in this geometry.
 this will return 2 or 3.
 """
 function ogr_g_getcoordinatedimension(arg1)
-    aftercare(ccall((:OGR_G_GetCoordinateDimension, libgdal), Cint, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_GetCoordinateDimension, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -24527,7 +16926,7 @@ Get the dimension of the coordinates in this geometry.
 this will return 2 for XY, 3 for XYZ and XYM, and 4 for XYZM data.
 """
 function ogr_g_coordinatedimension(arg1)
-    aftercare(ccall((:OGR_G_CoordinateDimension, libgdal), Cint, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_CoordinateDimension, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -24541,15 +16940,7 @@ Set the coordinate dimension.
 * **nNewDimension**: New coordinate dimension value, either 2 or 3.
 """
 function ogr_g_setcoordinatedimension(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_SetCoordinateDimension, libgdal),
-            Cvoid,
-            (OGRGeometryH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_SetCoordinateDimension, libgdal), Cvoid, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -24564,7 +16955,7 @@ See whether this geometry has Z coordinates.
 TRUE if the geometry has Z coordinates.
 """
 function ogr_g_is3d(arg1)
-    aftercare(ccall((:OGR_G_Is3D, libgdal), Cint, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_Is3D, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -24579,7 +16970,7 @@ See whether this geometry is measured.
 TRUE if the geometry has M coordinates.
 """
 function ogr_g_ismeasured(arg1)
-    aftercare(ccall((:OGR_G_IsMeasured, libgdal), Cint, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_IsMeasured, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -24593,7 +16984,7 @@ Add or remove the Z coordinate dimension.
 * **bIs3D**: Should the geometry have a Z dimension, either TRUE or FALSE.
 """
 function ogr_g_set3d(arg1, arg2)
-    aftercare(ccall((:OGR_G_Set3D, libgdal), Cvoid, (OGRGeometryH, Cint), arg1, arg2))
+    return aftercare(ccall((:OGR_G_Set3D, libgdal), Cvoid, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -24607,7 +16998,7 @@ Add or remove the M coordinate dimension.
 * **bIsMeasured**: Should the geometry have a M dimension, either TRUE or FALSE.
 """
 function ogr_g_setmeasured(arg1, arg2)
-    aftercare(ccall((:OGR_G_SetMeasured, libgdal), Cvoid, (OGRGeometryH, Cint), arg1, arg2))
+    return aftercare(ccall((:OGR_G_SetMeasured, libgdal), Cvoid, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -24622,7 +17013,7 @@ Make a copy of this object.
 a handle on the copy of the geometry with the spatial reference system as the original.
 """
 function ogr_g_clone(arg1)
-    aftercare(ccall((:OGR_G_Clone, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_Clone, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 struct OGREnvelope
@@ -24643,15 +17034,7 @@ Computes and returns the bounding envelope for this geometry in the passed psEnv
 * **psEnvelope**: the structure in which to place the results.
 """
 function ogr_g_getenvelope(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_GetEnvelope, libgdal),
-            Cvoid,
-            (OGRGeometryH, Ptr{OGREnvelope}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_GetEnvelope, libgdal), Cvoid, (OGRGeometryH, Ptr{OGREnvelope}), arg1, arg2))
 end
 
 struct OGREnvelope3D
@@ -24674,15 +17057,7 @@ Computes and returns the bounding envelope (3D) for this geometry in the passed 
 * **psEnvelope**: the structure in which to place the results.
 """
 function ogr_g_getenvelope3d(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_GetEnvelope3D, libgdal),
-            Cvoid,
-            (OGRGeometryH, Ptr{OGREnvelope3D}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_GetEnvelope3D, libgdal), Cvoid, (OGRGeometryH, Ptr{OGREnvelope3D}), arg1, arg2))
 end
 
 """
@@ -24701,16 +17076,7 @@ Assign geometry from well known binary data.
 OGRERR_NONE if all goes well, otherwise any of OGRERR_NOT_ENOUGH_DATA, OGRERR_UNSUPPORTED_GEOMETRY_TYPE, or OGRERR_CORRUPT_DATA may be returned.
 """
 function ogr_g_importfromwkb(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_G_ImportFromWkb, libgdal),
-            OGRErr,
-            (OGRGeometryH, Ptr{Cvoid}, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_ImportFromWkb, libgdal), OGRErr, (OGRGeometryH, Ptr{Cvoid}, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -24744,16 +17110,7 @@ Convert a geometry well known binary format.
 Currently OGRERR_NONE is always returned.
 """
 function ogr_g_exporttowkb(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_G_ExportToWkb, libgdal),
-            OGRErr,
-            (OGRGeometryH, OGRwkbByteOrder, Ptr{Cuchar}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_ExportToWkb, libgdal), OGRErr, (OGRGeometryH, OGRwkbByteOrder, Ptr{Cuchar}), arg1, arg2, arg3))
 end
 
 """
@@ -24772,16 +17129,8 @@ Convert a geometry into SFSQL 1.2 / ISO SQL/MM Part 3 well known binary format.
 Currently OGRERR_NONE is always returned.
 """
 function ogr_g_exporttoisowkb(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_G_ExportToIsoWkb, libgdal),
-            OGRErr,
-            (OGRGeometryH, OGRwkbByteOrder, Ptr{Cuchar}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_ExportToIsoWkb, libgdal), OGRErr, (OGRGeometryH, OGRwkbByteOrder, Ptr{Cuchar}), arg1, arg2,
+                           arg3))
 end
 
 const OGRwkbExportOptions = Cvoid
@@ -24795,7 +17144,7 @@ Create geometry WKB export options.
 object to be freed with OGRwkbExportOptionsDestroy().
 """
 function ogrwkbexportoptionscreate()
-    aftercare(ccall((:OGRwkbExportOptionsCreate, libgdal), Ptr{OGRwkbExportOptions}, ()))
+    return aftercare(ccall((:OGRwkbExportOptionsCreate, libgdal), Ptr{OGRwkbExportOptions}, ()))
 end
 
 """
@@ -24807,14 +17156,7 @@ Destroy object returned by OGRwkbExportOptionsCreate()
 * **psOptions**: WKB export options
 """
 function ogrwkbexportoptionsdestroy(arg1)
-    aftercare(
-        ccall(
-            (:OGRwkbExportOptionsDestroy, libgdal),
-            Cvoid,
-            (Ptr{OGRwkbExportOptions},),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGRwkbExportOptionsDestroy, libgdal), Cvoid, (Ptr{OGRwkbExportOptions},), arg1))
 end
 
 """
@@ -24828,15 +17170,8 @@ Set the WKB byte order.
 * **eByteOrder**: Byte order: wkbXDR (big-endian) or wkbNDR (little-endian, Intel)
 """
 function ogrwkbexportoptionssetbyteorder(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGRwkbExportOptionsSetByteOrder, libgdal),
-            Cvoid,
-            (Ptr{OGRwkbExportOptions}, OGRwkbByteOrder),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGRwkbExportOptionsSetByteOrder, libgdal), Cvoid, (Ptr{OGRwkbExportOptions}, OGRwkbByteOrder), arg1,
+                           arg2))
 end
 
 """
@@ -24871,15 +17206,7 @@ Set the WKB variant.
 * **eWkbVariant**: variant: wkbVariantOldOgc, wkbVariantIso, wkbVariantPostGIS1
 """
 function ogrwkbexportoptionssetvariant(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGRwkbExportOptionsSetVariant, libgdal),
-            Cvoid,
-            (Ptr{OGRwkbExportOptions}, OGRwkbVariant),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGRwkbExportOptionsSetVariant, libgdal), Cvoid, (Ptr{OGRwkbExportOptions}, OGRwkbVariant), arg1, arg2))
 end
 
 """
@@ -24893,15 +17220,8 @@ Set precision options.
 * **hPrecisionOptions**: Precision options (might be null to reset them)
 """
 function ogrwkbexportoptionssetprecision(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGRwkbExportOptionsSetPrecision, libgdal),
-            Cvoid,
-            (Ptr{OGRwkbExportOptions}, OGRGeomCoordinatePrecisionH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGRwkbExportOptionsSetPrecision, libgdal), Cvoid,
+                           (Ptr{OGRwkbExportOptions}, OGRGeomCoordinatePrecisionH), arg1, arg2))
 end
 
 """
@@ -24920,16 +17240,8 @@ Convert a geometry into well known binary format.
 Currently OGRERR_NONE is always returned.
 """
 function ogr_g_exporttowkbex(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_G_ExportToWkbEx, libgdal),
-            OGRErr,
-            (OGRGeometryH, Ptr{Cuchar}, Ptr{OGRwkbExportOptions}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_ExportToWkbEx, libgdal), OGRErr, (OGRGeometryH, Ptr{Cuchar}, Ptr{OGRwkbExportOptions}), arg1,
+                           arg2, arg3))
 end
 
 """
@@ -24944,7 +17256,7 @@ Returns size of related binary representation.
 size of binary representation in bytes.
 """
 function ogr_g_wkbsize(hGeom)
-    aftercare(ccall((:OGR_G_WkbSize, libgdal), Cint, (OGRGeometryH,), hGeom))
+    return aftercare(ccall((:OGR_G_WkbSize, libgdal), Cint, (OGRGeometryH,), hGeom))
 end
 
 """
@@ -24959,7 +17271,7 @@ Returns size of related binary representation.
 size of binary representation in bytes.
 """
 function ogr_g_wkbsizeex(hGeom)
-    aftercare(ccall((:OGR_G_WkbSizeEx, libgdal), Csize_t, (OGRGeometryH,), hGeom))
+    return aftercare(ccall((:OGR_G_WkbSizeEx, libgdal), Csize_t, (OGRGeometryH,), hGeom))
 end
 
 """
@@ -24976,15 +17288,7 @@ Assign geometry from well known text data.
 OGRERR_NONE if all goes well, otherwise any of OGRERR_NOT_ENOUGH_DATA, OGRERR_UNSUPPORTED_GEOMETRY_TYPE, or OGRERR_CORRUPT_DATA may be returned.
 """
 function ogr_g_importfromwkt(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_ImportFromWkt, libgdal),
-            OGRErr,
-            (OGRGeometryH, Ptr{Cstring}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_ImportFromWkt, libgdal), OGRErr, (OGRGeometryH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -25001,15 +17305,7 @@ Convert a geometry into well known text format.
 Currently OGRERR_NONE is always returned.
 """
 function ogr_g_exporttowkt(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_ExportToWkt, libgdal),
-            OGRErr,
-            (OGRGeometryH, Ptr{Cstring}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_ExportToWkt, libgdal), OGRErr, (OGRGeometryH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -25026,15 +17322,7 @@ Convert a geometry into SFSQL 1.2 / ISO SQL/MM Part 3 well known text format.
 Currently OGRERR_NONE is always returned.
 """
 function ogr_g_exporttoisowkt(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_ExportToIsoWkt, libgdal),
-            OGRErr,
-            (OGRGeometryH, Ptr{Cstring}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_ExportToIsoWkt, libgdal), OGRErr, (OGRGeometryH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -25049,9 +17337,7 @@ Fetch geometry type.
 the geometry type code.
 """
 function ogr_g_getgeometrytype(arg1)
-    aftercare(
-        ccall((:OGR_G_GetGeometryType, libgdal), OGRwkbGeometryType, (OGRGeometryH,), arg1),
-    )
+    return aftercare(ccall((:OGR_G_GetGeometryType, libgdal), OGRwkbGeometryType, (OGRGeometryH,), arg1))
 end
 
 """
@@ -25066,10 +17352,7 @@ Fetch WKT name for geometry type.
 name used for this geometry type in well known text format.
 """
 function ogr_g_getgeometryname(arg1)
-    aftercare(
-        ccall((:OGR_G_GetGeometryName, libgdal), Cstring, (OGRGeometryH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:OGR_G_GetGeometryName, libgdal), Cstring, (OGRGeometryH,), arg1), false)
 end
 
 """
@@ -25085,16 +17368,7 @@ Dump geometry in well known text format to indicated output file.
 * **pszPrefix**: the prefix to put on each line of output.
 """
 function ogr_g_dumpreadable(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_G_DumpReadable, libgdal),
-            Cvoid,
-            (OGRGeometryH, Ptr{Libc.FILE}, Cstring),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_DumpReadable, libgdal), Cvoid, (OGRGeometryH, Ptr{Libc.FILE}, Cstring), arg1, arg2, arg3))
 end
 
 """
@@ -25106,7 +17380,7 @@ Convert geometry to strictly 2D.
 * **hGeom**: handle on the geometry to convert.
 """
 function ogr_g_flattento2d(arg1)
-    aftercare(ccall((:OGR_G_FlattenTo2D, libgdal), Cvoid, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_FlattenTo2D, libgdal), Cvoid, (OGRGeometryH,), arg1))
 end
 
 """
@@ -25118,7 +17392,7 @@ Force rings to be closed.
 * **hGeom**: handle to the geometry.
 """
 function ogr_g_closerings(arg1)
-    aftercare(ccall((:OGR_G_CloseRings, libgdal), Cvoid, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_CloseRings, libgdal), Cvoid, (OGRGeometryH,), arg1))
 end
 
 """
@@ -25133,7 +17407,7 @@ Create geometry from GML.
 a geometry on success, or NULL on error.
 """
 function ogr_g_createfromgml(arg1)
-    aftercare(ccall((:OGR_G_CreateFromGML, libgdal), OGRGeometryH, (Cstring,), arg1))
+    return aftercare(ccall((:OGR_G_CreateFromGML, libgdal), OGRGeometryH, (Cstring,), arg1))
 end
 
 """
@@ -25148,7 +17422,7 @@ Convert a geometry into GML format.
 A GML fragment or NULL in case of error.
 """
 function ogr_g_exporttogml(arg1)
-    aftercare(ccall((:OGR_G_ExportToGML, libgdal), Cstring, (OGRGeometryH,), arg1), false)
+    return aftercare(ccall((:OGR_G_ExportToGML, libgdal), Cstring, (OGRGeometryH,), arg1), false)
 end
 
 """
@@ -25165,16 +17439,7 @@ Convert a geometry into GML format.
 A GML fragment or NULL in case of error.
 """
 function ogr_g_exporttogmlex(arg1, papszOptions)
-    aftercare(
-        ccall(
-            (:OGR_G_ExportToGMLEx, libgdal),
-            Cstring,
-            (OGRGeometryH, Ptr{Cstring}),
-            arg1,
-            papszOptions,
-        ),
-        false,
-    )
+    return aftercare(ccall((:OGR_G_ExportToGMLEx, libgdal), Cstring, (OGRGeometryH, Ptr{Cstring}), arg1, papszOptions), false)
 end
 
 """
@@ -25183,9 +17448,7 @@ end
 Create geometry from GML.
 """
 function ogr_g_createfromgmltree(arg1)
-    aftercare(
-        ccall((:OGR_G_CreateFromGMLTree, libgdal), OGRGeometryH, (Ptr{CPLXMLNode},), arg1),
-    )
+    return aftercare(ccall((:OGR_G_CreateFromGMLTree, libgdal), OGRGeometryH, (Ptr{CPLXMLNode},), arg1))
 end
 
 """
@@ -25194,9 +17457,7 @@ end
 Convert a geometry into GML format.
 """
 function ogr_g_exporttogmltree(arg1)
-    aftercare(
-        ccall((:OGR_G_ExportToGMLTree, libgdal), Ptr{CPLXMLNode}, (OGRGeometryH,), arg1),
-    )
+    return aftercare(ccall((:OGR_G_ExportToGMLTree, libgdal), Ptr{CPLXMLNode}, (OGRGeometryH,), arg1))
 end
 
 """
@@ -25205,14 +17466,7 @@ end
 Export the envelope of a geometry as a gml:Box.
 """
 function ogr_g_exportenvelopetogmltree(arg1)
-    aftercare(
-        ccall(
-            (:OGR_G_ExportEnvelopeToGMLTree, libgdal),
-            Ptr{CPLXMLNode},
-            (OGRGeometryH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_ExportEnvelopeToGMLTree, libgdal), Ptr{CPLXMLNode}, (OGRGeometryH,), arg1))
 end
 
 """
@@ -25229,16 +17483,7 @@ Convert a geometry into KML format.
 A KML fragment or NULL in case of error.
 """
 function ogr_g_exporttokml(arg1, pszAltitudeMode)
-    aftercare(
-        ccall(
-            (:OGR_G_ExportToKML, libgdal),
-            Cstring,
-            (OGRGeometryH, Cstring),
-            arg1,
-            pszAltitudeMode,
-        ),
-        false,
-    )
+    return aftercare(ccall((:OGR_G_ExportToKML, libgdal), Cstring, (OGRGeometryH, Cstring), arg1, pszAltitudeMode), false)
 end
 
 """
@@ -25253,7 +17498,7 @@ Convert a geometry into GeoJSON format.
 A GeoJSON fragment or NULL in case of error.
 """
 function ogr_g_exporttojson(arg1)
-    aftercare(ccall((:OGR_G_ExportToJson, libgdal), Cstring, (OGRGeometryH,), arg1), false)
+    return aftercare(ccall((:OGR_G_ExportToJson, libgdal), Cstring, (OGRGeometryH,), arg1), false)
 end
 
 """
@@ -25270,16 +17515,7 @@ Convert a geometry into GeoJSON format.
 A GeoJSON fragment or NULL in case of error.
 """
 function ogr_g_exporttojsonex(arg1, papszOptions)
-    aftercare(
-        ccall(
-            (:OGR_G_ExportToJsonEx, libgdal),
-            Cstring,
-            (OGRGeometryH, Ptr{Cstring}),
-            arg1,
-            papszOptions,
-        ),
-        false,
-    )
+    return aftercare(ccall((:OGR_G_ExportToJsonEx, libgdal), Cstring, (OGRGeometryH, Ptr{Cstring}), arg1, papszOptions), false)
 end
 
 """
@@ -25288,9 +17524,7 @@ end
 Create a OGR geometry from a GeoJSON geometry object
 """
 function ogr_g_creategeometryfromjson(arg1)
-    aftercare(
-        ccall((:OGR_G_CreateGeometryFromJson, libgdal), OGRGeometryH, (Cstring,), arg1),
-    )
+    return aftercare(ccall((:OGR_G_CreateGeometryFromJson, libgdal), OGRGeometryH, (Cstring,), arg1))
 end
 
 """
@@ -25299,9 +17533,7 @@ end
 Create a OGR geometry from a ESRI JSON geometry object
 """
 function ogr_g_creategeometryfromesrijson(arg1)
-    aftercare(
-        ccall((:OGR_G_CreateGeometryFromEsriJson, libgdal), OGRGeometryH, (Cstring,), arg1),
-    )
+    return aftercare(ccall((:OGR_G_CreateGeometryFromEsriJson, libgdal), OGRGeometryH, (Cstring,), arg1))
 end
 
 """
@@ -25315,15 +17547,7 @@ Assign spatial reference to this object.
 * **hSRS**: handle on the new spatial reference system to apply.
 """
 function ogr_g_assignspatialreference(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_AssignSpatialReference, libgdal),
-            Cvoid,
-            (OGRGeometryH, OGRSpatialReferenceH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_AssignSpatialReference, libgdal), Cvoid, (OGRGeometryH, OGRSpatialReferenceH), arg1, arg2))
 end
 
 """
@@ -25338,14 +17562,7 @@ Returns spatial reference system for geometry.
 a reference to the spatial reference geometry, which should not be modified.
 """
 function ogr_g_getspatialreference(arg1)
-    aftercare(
-        ccall(
-            (:OGR_G_GetSpatialReference, libgdal),
-            OGRSpatialReferenceH,
-            (OGRGeometryH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_GetSpatialReference, libgdal), OGRSpatialReferenceH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -25362,15 +17579,7 @@ Apply arbitrary coordinate transformation to geometry.
 OGRERR_NONE on success or an error code.
 """
 function ogr_g_transform(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_Transform, libgdal),
-            OGRErr,
-            (OGRGeometryH, OGRCoordinateTransformationH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_Transform, libgdal), OGRErr, (OGRGeometryH, OGRCoordinateTransformationH), arg1, arg2))
 end
 
 """
@@ -25387,15 +17596,7 @@ Transform geometry to new spatial reference system.
 OGRERR_NONE on success, or an error code.
 """
 function ogr_g_transformto(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_TransformTo, libgdal),
-            OGRErr,
-            (OGRGeometryH, OGRSpatialReferenceH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_TransformTo, libgdal), OGRErr, (OGRGeometryH, OGRSpatialReferenceH), arg1, arg2))
 end
 
 const OGRGeomTransformer = Cvoid
@@ -25411,26 +17612,14 @@ Create a geometry transformer.
 
 ### Parameters
 * **hCT**: Coordinate transformation object (will be cloned) or NULL.
-* **papszOptions**: NULL terminated list of options, or NULL. Supported options are: 
-
-WRAPDATELINE=YES 
-
-
-DATELINEOFFSET=longitude_gap_in_degree. Defaults to 10.
+* **papszOptions**: NULL terminated list of options, or NULL.
 
 ### Returns
 transformer object to free with OGR_GeomTransformer_Destroy()
 """
 function ogr_geomtransformer_create(arg1, papszOptions)
-    aftercare(
-        ccall(
-            (:OGR_GeomTransformer_Create, libgdal),
-            OGRGeomTransformerH,
-            (OGRCoordinateTransformationH, CSLConstList),
-            arg1,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:OGR_GeomTransformer_Create, libgdal), OGRGeomTransformerH,
+                           (OGRCoordinateTransformationH, CSLConstList), arg1, papszOptions))
 end
 
 """
@@ -25447,15 +17636,8 @@ Transforms a geometry.
 a new geometry (or NULL) to destroy with OGR_G_DestroyGeometry()
 """
 function ogr_geomtransformer_transform(hTransformer, hGeom)
-    aftercare(
-        ccall(
-            (:OGR_GeomTransformer_Transform, libgdal),
-            OGRGeometryH,
-            (OGRGeomTransformerH, OGRGeometryH),
-            hTransformer,
-            hGeom,
-        ),
-    )
+    return aftercare(ccall((:OGR_GeomTransformer_Transform, libgdal), OGRGeometryH, (OGRGeomTransformerH, OGRGeometryH),
+                           hTransformer, hGeom))
 end
 
 """
@@ -25467,14 +17649,7 @@ Destroy a geometry transformer allocated with OGR_GeomTransformer_Create()
 * **hTransformer**: transformer object.
 """
 function ogr_geomtransformer_destroy(hTransformer)
-    aftercare(
-        ccall(
-            (:OGR_GeomTransformer_Destroy, libgdal),
-            Cvoid,
-            (OGRGeomTransformerH,),
-            hTransformer,
-        ),
-    )
+    return aftercare(ccall((:OGR_GeomTransformer_Destroy, libgdal), Cvoid, (OGRGeomTransformerH,), hTransformer))
 end
 
 """
@@ -25491,15 +17666,7 @@ Compute a simplified geometry.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_simplify(hThis, tolerance)
-    aftercare(
-        ccall(
-            (:OGR_G_Simplify, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, Cdouble),
-            hThis,
-            tolerance,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_Simplify, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble), hThis, tolerance))
 end
 
 """
@@ -25516,15 +17683,7 @@ Simplify the geometry while preserving topology.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_simplifypreservetopology(hThis, tolerance)
-    aftercare(
-        ccall(
-            (:OGR_G_SimplifyPreserveTopology, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, Cdouble),
-            hThis,
-            tolerance,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_SimplifyPreserveTopology, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble), hThis, tolerance))
 end
 
 """
@@ -25543,16 +17702,8 @@ Return a Delaunay triangulation of the vertices of the geometry.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_delaunaytriangulation(hThis, dfTolerance, bOnlyEdges)
-    aftercare(
-        ccall(
-            (:OGR_G_DelaunayTriangulation, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, Cdouble, Cint),
-            hThis,
-            dfTolerance,
-            bOnlyEdges,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_DelaunayTriangulation, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble, Cint), hThis, dfTolerance,
+                           bOnlyEdges))
 end
 
 """
@@ -25566,15 +17717,7 @@ Modify the geometry such it has no segment longer then the given distance.
 * **dfMaxLength**: the maximum distance between 2 points after segmentization
 """
 function ogr_g_segmentize(hGeom, dfMaxLength)
-    aftercare(
-        ccall(
-            (:OGR_G_Segmentize, libgdal),
-            Cvoid,
-            (OGRGeometryH, Cdouble),
-            hGeom,
-            dfMaxLength,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_Segmentize, libgdal), Cvoid, (OGRGeometryH, Cdouble), hGeom, dfMaxLength))
 end
 
 """
@@ -25591,9 +17734,7 @@ Do these features intersect?
 TRUE if the geometries intersect, otherwise FALSE.
 """
 function ogr_g_intersects(arg1, arg2)
-    aftercare(
-        ccall((:OGR_G_Intersects, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_G_Intersects, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -25610,9 +17751,7 @@ Returns TRUE if two geometries are equivalent.
 TRUE if equivalent or FALSE otherwise.
 """
 function ogr_g_equals(arg1, arg2)
-    aftercare(
-        ccall((:OGR_G_Equals, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_G_Equals, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -25629,9 +17768,7 @@ Test for disjointness.
 TRUE if they are disjoint, otherwise FALSE.
 """
 function ogr_g_disjoint(arg1, arg2)
-    aftercare(
-        ccall((:OGR_G_Disjoint, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_G_Disjoint, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -25648,9 +17785,7 @@ Test for touching.
 TRUE if they are touching, otherwise FALSE.
 """
 function ogr_g_touches(arg1, arg2)
-    aftercare(
-        ccall((:OGR_G_Touches, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_G_Touches, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -25667,9 +17802,7 @@ Test for crossing.
 TRUE if they are crossing, otherwise FALSE.
 """
 function ogr_g_crosses(arg1, arg2)
-    aftercare(
-        ccall((:OGR_G_Crosses, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_G_Crosses, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -25686,9 +17819,7 @@ Test for containment.
 TRUE if hThis is within hOther, otherwise FALSE.
 """
 function ogr_g_within(arg1, arg2)
-    aftercare(
-        ccall((:OGR_G_Within, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_G_Within, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -25705,9 +17836,7 @@ Test for containment.
 TRUE if hThis contains hOther geometry, otherwise FALSE.
 """
 function ogr_g_contains(arg1, arg2)
-    aftercare(
-        ccall((:OGR_G_Contains, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_G_Contains, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -25724,9 +17853,7 @@ Test for overlap.
 TRUE if they are overlapping, otherwise FALSE.
 """
 function ogr_g_overlaps(arg1, arg2)
-    aftercare(
-        ccall((:OGR_G_Overlaps, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_G_Overlaps, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -25741,7 +17868,7 @@ Compute boundary.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_boundary(arg1)
-    aftercare(ccall((:OGR_G_Boundary, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_Boundary, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -25756,7 +17883,7 @@ Compute convex hull.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_convexhull(arg1)
-    aftercare(ccall((:OGR_G_ConvexHull, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_ConvexHull, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -25775,16 +17902,7 @@ Compute "concave hull" of a geometry.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_concavehull(arg1, dfRatio, bAllowHoles)
-    aftercare(
-        ccall(
-            (:OGR_G_ConcaveHull, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, Cdouble, Bool),
-            arg1,
-            dfRatio,
-            bAllowHoles,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_ConcaveHull, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble, Bool), arg1, dfRatio, bAllowHoles))
 end
 
 """
@@ -25803,16 +17921,7 @@ Compute buffer of geometry.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_buffer(arg1, dfDist, nQuadSegs)
-    aftercare(
-        ccall(
-            (:OGR_G_Buffer, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, Cdouble, Cint),
-            arg1,
-            dfDist,
-            nQuadSegs,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_Buffer, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble, Cint), arg1, dfDist, nQuadSegs))
 end
 
 """
@@ -25831,16 +17940,8 @@ Compute buffer of geometry.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_bufferex(arg1, dfDist, papszOptions)
-    aftercare(
-        ccall(
-            (:OGR_G_BufferEx, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, Cdouble, CSLConstList),
-            arg1,
-            dfDist,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_BufferEx, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble, CSLConstList), arg1, dfDist,
+                           papszOptions))
 end
 
 """
@@ -25857,15 +17958,7 @@ Compute intersection.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if there is not intersection of if an error occurs.
 """
 function ogr_g_intersection(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_Intersection, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, OGRGeometryH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_Intersection, libgdal), OGRGeometryH, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -25882,15 +17975,7 @@ Compute union.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_union(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_Union, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, OGRGeometryH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_Union, libgdal), OGRGeometryH, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -25905,7 +17990,7 @@ Compute union using cascading.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_unioncascaded(arg1)
-    aftercare(ccall((:OGR_G_UnionCascaded, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_UnionCascaded, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -25920,7 +18005,7 @@ Returns the union of all components of a single geometry.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_unaryunion(arg1)
-    aftercare(ccall((:OGR_G_UnaryUnion, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_UnaryUnion, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -25935,7 +18020,7 @@ Returns a point guaranteed to lie on the surface.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_pointonsurface(arg1)
-    aftercare(ccall((:OGR_G_PointOnSurface, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_PointOnSurface, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -25952,15 +18037,7 @@ Compute difference.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if the difference is empty or if an error occurs.
 """
 function ogr_g_difference(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_Difference, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, OGRGeometryH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_Difference, libgdal), OGRGeometryH, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -25977,15 +18054,7 @@ Compute symmetric difference.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if the difference is empty or if an error occurs.
 """
 function ogr_g_symdifference(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_SymDifference, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, OGRGeometryH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_SymDifference, libgdal), OGRGeometryH, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -26002,15 +18071,7 @@ Compute distance between two geometries.
 the distance between the geometries or -1 if an error occurs.
 """
 function ogr_g_distance(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_Distance, libgdal),
-            Cdouble,
-            (OGRGeometryH, OGRGeometryH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_Distance, libgdal), Cdouble, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -26027,15 +18088,7 @@ Returns the 3D distance between two geometries.
 distance between the two geometries
 """
 function ogr_g_distance3d(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_Distance3D, libgdal),
-            Cdouble,
-            (OGRGeometryH, OGRGeometryH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_Distance3D, libgdal), Cdouble, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -26050,7 +18103,7 @@ Compute length of a geometry.
 the length or 0.0 for unsupported geometry types.
 """
 function ogr_g_length(arg1)
-    aftercare(ccall((:OGR_G_Length, libgdal), Cdouble, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_Length, libgdal), Cdouble, (OGRGeometryH,), arg1))
 end
 
 """
@@ -26065,7 +18118,7 @@ Get the length of the curve, considered as a geodesic line on the underlying ell
 the length or a negative value for unsupported geometry types.
 """
 function ogr_g_geodesiclength(arg1)
-    aftercare(ccall((:OGR_G_GeodesicLength, libgdal), Cdouble, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_GeodesicLength, libgdal), Cdouble, (OGRGeometryH,), arg1))
 end
 
 """
@@ -26080,7 +18133,7 @@ Compute geometry area.
 the area of the geometry in square units of the spatial reference system in use, or 0.0 for unsupported geometry types.
 """
 function ogr_g_area(arg1)
-    aftercare(ccall((:OGR_G_Area, libgdal), Cdouble, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_Area, libgdal), Cdouble, (OGRGeometryH,), arg1))
 end
 
 """
@@ -26095,7 +18148,7 @@ Compute geometry area, considered as a surface on the underlying ellipsoid of th
 the area, or a negative value in case of error (unsupported geometry type, no SRS attached, etc.)
 """
 function ogr_g_geodesicarea(arg1)
-    aftercare(ccall((:OGR_G_GeodesicArea, libgdal), Cdouble, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_GeodesicArea, libgdal), Cdouble, (OGRGeometryH,), arg1))
 end
 
 """
@@ -26107,7 +18160,7 @@ Returns true if the ring has clockwise winding (or less than 2 points)
 * **hGeom**: handle to a curve geometry
 """
 function ogr_g_isclockwise(hGeom)
-    aftercare(ccall((:OGR_G_IsClockwise, libgdal), Bool, (OGRGeometryH,), hGeom))
+    return aftercare(ccall((:OGR_G_IsClockwise, libgdal), Bool, (OGRGeometryH,), hGeom))
 end
 
 """
@@ -26120,9 +18173,7 @@ Compute the geometry centroid.
 OGRERR_NONE on success or OGRERR_FAILURE on error.
 """
 function ogr_g_centroid(arg1, arg2)
-    aftercare(
-        ccall((:OGR_G_Centroid, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_G_Centroid, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -26139,15 +18190,7 @@ Fetch point at given distance along curve.
 a point or NULL.
 """
 function ogr_g_value(arg1, dfDistance)
-    aftercare(
-        ccall(
-            (:OGR_G_Value, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, Cdouble),
-            arg1,
-            dfDistance,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_Value, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble), arg1, dfDistance))
 end
 
 """
@@ -26159,7 +18202,7 @@ Clear geometry information.
 * **hGeom**: handle on the geometry to empty.
 """
 function ogr_g_empty(arg1)
-    aftercare(ccall((:OGR_G_Empty, libgdal), Cvoid, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_Empty, libgdal), Cvoid, (OGRGeometryH,), arg1))
 end
 
 """
@@ -26174,7 +18217,7 @@ Test if the geometry is empty.
 TRUE if the geometry has no points, otherwise FALSE.
 """
 function ogr_g_isempty(arg1)
-    aftercare(ccall((:OGR_G_IsEmpty, libgdal), Cint, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_IsEmpty, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -26189,7 +18232,7 @@ Test if the geometry is valid.
 TRUE if the geometry has no points, otherwise FALSE.
 """
 function ogr_g_isvalid(arg1)
-    aftercare(ccall((:OGR_G_IsValid, libgdal), Cint, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_IsValid, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -26204,7 +18247,7 @@ Attempts to make an invalid geometry valid without losing vertices.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_makevalid(arg1)
-    aftercare(ccall((:OGR_G_MakeValid, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_MakeValid, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -26221,15 +18264,7 @@ Attempts to make an invalid geometry valid without losing vertices.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_makevalidex(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_MakeValidEx, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, CSLConstList),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_MakeValidEx, libgdal), OGRGeometryH, (OGRGeometryH, CSLConstList), arg1, arg2))
 end
 
 """
@@ -26244,7 +18279,7 @@ Attempts to bring geometry into normalized/canonical form.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_normalize(arg1)
-    aftercare(ccall((:OGR_G_Normalize, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_Normalize, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -26259,7 +18294,7 @@ Returns TRUE if the geometry is simple.
 TRUE if object is simple, otherwise FALSE.
 """
 function ogr_g_issimple(arg1)
-    aftercare(ccall((:OGR_G_IsSimple, libgdal), Cint, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_IsSimple, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -26271,10 +18306,10 @@ Test if the geometry is a ring.
 * **hGeom**: The Geometry to test.
 
 ### Returns
-TRUE if the geometry has no points, otherwise FALSE.
+TRUE if the coordinates of the geometry form a ring, by checking length and closure (self-intersection is not checked), otherwise FALSE.
 """
 function ogr_g_isring(arg1)
-    aftercare(ccall((:OGR_G_IsRing, libgdal), Cint, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_IsRing, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -26293,16 +18328,7 @@ Set the geometry's precision, rounding all its coordinates to the precision grid
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_setprecision(arg1, dfGridSize, nFlags)
-    aftercare(
-        ccall(
-            (:OGR_G_SetPrecision, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, Cdouble, Cint),
-            arg1,
-            dfGridSize,
-            nFlags,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_SetPrecision, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble, Cint), arg1, dfGridSize, nFlags))
 end
 
 """
@@ -26317,7 +18343,7 @@ Polygonizes a set of sparse edges.
 a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
 """
 function ogr_g_polygonize(arg1)
-    aftercare(ccall((:OGR_G_Polygonize, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_Polygonize, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -26326,15 +18352,11 @@ end
 ` Doxygen_Suppress `
 """
 function ogr_g_intersect(arg1, arg2)
-    aftercare(
-        ccall((:OGR_G_Intersect, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_G_Intersect, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 function ogr_g_equal(arg1, arg2)
-    aftercare(
-        ccall((:OGR_G_Equal, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_G_Equal, libgdal), Cint, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -26344,15 +18366,7 @@ end
 Compute symmetric difference (deprecated)
 """
 function ogr_g_symmetricdifference(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_SymmetricDifference, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, OGRGeometryH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_SymmetricDifference, libgdal), OGRGeometryH, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -26361,7 +18375,7 @@ end
 Compute geometry area (deprecated)
 """
 function ogr_g_getarea(arg1)
-    aftercare(ccall((:OGR_G_GetArea, libgdal), Cdouble, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_GetArea, libgdal), Cdouble, (OGRGeometryH,), arg1))
 end
 
 """
@@ -26370,7 +18384,7 @@ end
 Compute boundary (deprecated)
 """
 function ogr_g_getboundary(arg1)
-    aftercare(ccall((:OGR_G_GetBoundary, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_GetBoundary, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -26379,7 +18393,7 @@ end
 ` `
 """
 function ogr_g_getpointcount(arg1)
-    aftercare(ccall((:OGR_G_GetPointCount, libgdal), Cint, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_GetPointCount, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -26406,20 +18420,8 @@ Returns all points of line string.
 the number of points
 """
 function ogr_g_getpoints(hGeom, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride)
-    aftercare(
-        ccall(
-            (:OGR_G_GetPoints, libgdal),
-            Cint,
-            (OGRGeometryH, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint),
-            hGeom,
-            pabyX,
-            nXStride,
-            pabyY,
-            nYStride,
-            pabyZ,
-            nZStride,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_GetPoints, libgdal), Cint, (OGRGeometryH, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint),
+                           hGeom, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride))
 end
 
 """
@@ -26449,43 +18451,10 @@ Returns all points of line string.
 ### Returns
 the number of points
 """
-function ogr_g_getpointszm(
-    hGeom,
-    pabyX,
-    nXStride,
-    pabyY,
-    nYStride,
-    pabyZ,
-    nZStride,
-    pabyM,
-    nMStride,
-)
-    aftercare(
-        ccall(
-            (:OGR_G_GetPointsZM, libgdal),
-            Cint,
-            (
-                OGRGeometryH,
-                Ptr{Cvoid},
-                Cint,
-                Ptr{Cvoid},
-                Cint,
-                Ptr{Cvoid},
-                Cint,
-                Ptr{Cvoid},
-                Cint,
-            ),
-            hGeom,
-            pabyX,
-            nXStride,
-            pabyY,
-            nYStride,
-            pabyZ,
-            nZStride,
-            pabyM,
-            nMStride,
-        ),
-    )
+function ogr_g_getpointszm(hGeom, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride, pabyM, nMStride)
+    return aftercare(ccall((:OGR_G_GetPointsZM, libgdal), Cint,
+                           (OGRGeometryH, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint), hGeom, pabyX,
+                           nXStride, pabyY, nYStride, pabyZ, nZStride, pabyM, nMStride))
 end
 
 """
@@ -26502,7 +18471,7 @@ Fetch the x coordinate of a point from a Point or a LineString/LinearRing geomet
 the X coordinate of this point.
 """
 function ogr_g_getx(arg1, arg2)
-    aftercare(ccall((:OGR_G_GetX, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2))
+    return aftercare(ccall((:OGR_G_GetX, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -26519,7 +18488,7 @@ Fetch the x coordinate of a point from a Point or a LineString/LinearRing geomet
 the Y coordinate of this point.
 """
 function ogr_g_gety(arg1, arg2)
-    aftercare(ccall((:OGR_G_GetY, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2))
+    return aftercare(ccall((:OGR_G_GetY, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -26536,7 +18505,7 @@ Fetch the z coordinate of a point from a Point or a LineString/LinearRing geomet
 the Z coordinate of this point.
 """
 function ogr_g_getz(arg1, arg2)
-    aftercare(ccall((:OGR_G_GetZ, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2))
+    return aftercare(ccall((:OGR_G_GetZ, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -26553,7 +18522,7 @@ Fetch the m coordinate of a point from a geometry.
 the M coordinate of this point.
 """
 function ogr_g_getm(arg1, arg2)
-    aftercare(ccall((:OGR_G_GetM, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2))
+    return aftercare(ccall((:OGR_G_GetM, libgdal), Cdouble, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -26573,18 +18542,8 @@ Fetch a point in line string or a point geometry.
 * **pdfZ**: value of z coordinate.
 """
 function ogr_g_getpoint(arg1, iPoint, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:OGR_G_GetPoint, libgdal),
-            Cvoid,
-            (OGRGeometryH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}),
-            arg1,
-            iPoint,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_GetPoint, libgdal), Cvoid, (OGRGeometryH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}), arg1,
+                           iPoint, arg3, arg4, arg5))
 end
 
 """
@@ -26606,19 +18565,9 @@ Fetch a point in line string or a point geometry.
 * **pdfM**: value of m coordinate.
 """
 function ogr_g_getpointzm(arg1, iPoint, arg3, arg4, arg5, arg6)
-    aftercare(
-        ccall(
-            (:OGR_G_GetPointZM, libgdal),
-            Cvoid,
-            (OGRGeometryH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}),
-            arg1,
-            iPoint,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_GetPointZM, libgdal), Cvoid,
+                           (OGRGeometryH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}), arg1, iPoint, arg3, arg4,
+                           arg5, arg6))
 end
 
 """
@@ -26632,15 +18581,7 @@ Set number of points in a geometry.
 * **nNewPointCount**: the new number of points for geometry.
 """
 function ogr_g_setpointcount(hGeom, nNewPointCount)
-    aftercare(
-        ccall(
-            (:OGR_G_SetPointCount, libgdal),
-            Cvoid,
-            (OGRGeometryH, Cint),
-            hGeom,
-            nNewPointCount,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_SetPointCount, libgdal), Cvoid, (OGRGeometryH, Cint), hGeom, nNewPointCount))
 end
 
 """
@@ -26660,18 +18601,8 @@ Set the location of a vertex in a point or linestring geometry.
 * **dfZ**: input Z coordinate to assign (defaults to zero).
 """
 function ogr_g_setpoint(arg1, iPoint, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:OGR_G_SetPoint, libgdal),
-            Cvoid,
-            (OGRGeometryH, Cint, Cdouble, Cdouble, Cdouble),
-            arg1,
-            iPoint,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_SetPoint, libgdal), Cvoid, (OGRGeometryH, Cint, Cdouble, Cdouble, Cdouble), arg1, iPoint, arg3,
+                           arg4, arg5))
 end
 
 """
@@ -26689,17 +18620,7 @@ Set the location of a vertex in a point or linestring geometry.
 * **dfY**: input Y coordinate to assign.
 """
 function ogr_g_setpoint_2d(arg1, iPoint, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OGR_G_SetPoint_2D, libgdal),
-            Cvoid,
-            (OGRGeometryH, Cint, Cdouble, Cdouble),
-            arg1,
-            iPoint,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_SetPoint_2D, libgdal), Cvoid, (OGRGeometryH, Cint, Cdouble, Cdouble), arg1, iPoint, arg3, arg4))
 end
 
 """
@@ -26719,18 +18640,8 @@ Set the location of a vertex in a point or linestring geometry.
 * **dfM**: input M coordinate to assign.
 """
 function ogr_g_setpointm(arg1, iPoint, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:OGR_G_SetPointM, libgdal),
-            Cvoid,
-            (OGRGeometryH, Cint, Cdouble, Cdouble, Cdouble),
-            arg1,
-            iPoint,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_SetPointM, libgdal), Cvoid, (OGRGeometryH, Cint, Cdouble, Cdouble, Cdouble), arg1, iPoint, arg3,
+                           arg4, arg5))
 end
 
 """
@@ -26752,19 +18663,8 @@ Set the location of a vertex in a point or linestring geometry.
 * **dfM**: input M coordinate to assign.
 """
 function ogr_g_setpointzm(arg1, iPoint, arg3, arg4, arg5, arg6)
-    aftercare(
-        ccall(
-            (:OGR_G_SetPointZM, libgdal),
-            Cvoid,
-            (OGRGeometryH, Cint, Cdouble, Cdouble, Cdouble, Cdouble),
-            arg1,
-            iPoint,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_SetPointZM, libgdal), Cvoid, (OGRGeometryH, Cint, Cdouble, Cdouble, Cdouble, Cdouble), arg1,
+                           iPoint, arg3, arg4, arg5, arg6))
 end
 
 """
@@ -26782,17 +18682,7 @@ Add a point to a geometry (line string or point).
 * **dfZ**: z coordinate of point to add.
 """
 function ogr_g_addpoint(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OGR_G_AddPoint, libgdal),
-            Cvoid,
-            (OGRGeometryH, Cdouble, Cdouble, Cdouble),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_AddPoint, libgdal), Cvoid, (OGRGeometryH, Cdouble, Cdouble, Cdouble), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -26808,16 +18698,7 @@ Add a point to a geometry (line string or point).
 * **dfY**: y coordinate of point to add.
 """
 function ogr_g_addpoint_2d(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_G_AddPoint_2D, libgdal),
-            Cvoid,
-            (OGRGeometryH, Cdouble, Cdouble),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_AddPoint_2D, libgdal), Cvoid, (OGRGeometryH, Cdouble, Cdouble), arg1, arg2, arg3))
 end
 
 """
@@ -26835,17 +18716,7 @@ Add a point to a geometry (line string or point).
 * **dfM**: m coordinate of point to add.
 """
 function ogr_g_addpointm(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OGR_G_AddPointM, libgdal),
-            Cvoid,
-            (OGRGeometryH, Cdouble, Cdouble, Cdouble),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_AddPointM, libgdal), Cvoid, (OGRGeometryH, Cdouble, Cdouble, Cdouble), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -26865,18 +18736,8 @@ Add a point to a geometry (line string or point).
 * **dfM**: m coordinate of point to add.
 """
 function ogr_g_addpointzm(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:OGR_G_AddPointZM, libgdal),
-            Cvoid,
-            (OGRGeometryH, Cdouble, Cdouble, Cdouble, Cdouble),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_AddPointZM, libgdal), Cvoid, (OGRGeometryH, Cdouble, Cdouble, Cdouble, Cdouble), arg1, arg2,
+                           arg3, arg4, arg5))
 end
 
 """
@@ -26901,31 +18762,10 @@ Assign all points in a point or a line string geometry.
 * **pabyZ**: list of Z coordinates (double values) of points being assigned (defaults to NULL for 2D objects).
 * **nZStride**: the number of bytes between 2 elements of pabyZ.
 """
-function ogr_g_setpoints(
-    hGeom,
-    nPointsIn,
-    pabyX,
-    nXStride,
-    pabyY,
-    nYStride,
-    pabyZ,
-    nZStride,
-)
-    aftercare(
-        ccall(
-            (:OGR_G_SetPoints, libgdal),
-            Cvoid,
-            (OGRGeometryH, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint),
-            hGeom,
-            nPointsIn,
-            pabyX,
-            nXStride,
-            pabyY,
-            nYStride,
-            pabyZ,
-            nZStride,
-        ),
-    )
+function ogr_g_setpoints(hGeom, nPointsIn, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride)
+    return aftercare(ccall((:OGR_G_SetPoints, libgdal), Cvoid,
+                           (OGRGeometryH, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint), hGeom, nPointsIn, pabyX,
+                           nXStride, pabyY, nYStride, pabyZ, nZStride))
 end
 
 """
@@ -26954,46 +18794,10 @@ Assign all points in a point or a line string geometry.
 * **pM**: list of M coordinates (double values) of points being assigned (if not NULL, upgrades the geometry to have M coordinate).
 * **nMStride**: the number of bytes between 2 elements of pM.
 """
-function ogr_g_setpointszm(
-    hGeom,
-    nPointsIn,
-    pabyX,
-    nXStride,
-    pabyY,
-    nYStride,
-    pabyZ,
-    nZStride,
-    pabyM,
-    nMStride,
-)
-    aftercare(
-        ccall(
-            (:OGR_G_SetPointsZM, libgdal),
-            Cvoid,
-            (
-                OGRGeometryH,
-                Cint,
-                Ptr{Cvoid},
-                Cint,
-                Ptr{Cvoid},
-                Cint,
-                Ptr{Cvoid},
-                Cint,
-                Ptr{Cvoid},
-                Cint,
-            ),
-            hGeom,
-            nPointsIn,
-            pabyX,
-            nXStride,
-            pabyY,
-            nYStride,
-            pabyZ,
-            nZStride,
-            pabyM,
-            nMStride,
-        ),
-    )
+function ogr_g_setpointszm(hGeom, nPointsIn, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride, pabyM, nMStride)
+    return aftercare(ccall((:OGR_G_SetPointsZM, libgdal), Cvoid,
+                           (OGRGeometryH, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint), hGeom,
+                           nPointsIn, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride, pabyM, nMStride))
 end
 
 """
@@ -27005,7 +18809,7 @@ Swap x and y coordinates.
 * **hGeom**: geometry.
 """
 function ogr_g_swapxy(hGeom)
-    aftercare(ccall((:OGR_G_SwapXY, libgdal), Cvoid, (OGRGeometryH,), hGeom))
+    return aftercare(ccall((:OGR_G_SwapXY, libgdal), Cvoid, (OGRGeometryH,), hGeom))
 end
 
 """
@@ -27020,7 +18824,7 @@ Fetch the number of elements in a geometry or number of geometries in container.
 the number of elements.
 """
 function ogr_g_getgeometrycount(arg1)
-    aftercare(ccall((:OGR_G_GetGeometryCount, libgdal), Cint, (OGRGeometryH,), arg1))
+    return aftercare(ccall((:OGR_G_GetGeometryCount, libgdal), Cint, (OGRGeometryH,), arg1))
 end
 
 """
@@ -27037,15 +18841,7 @@ Fetch geometry from a geometry container.
 handle to the requested geometry.
 """
 function ogr_g_getgeometryref(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_GetGeometryRef, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_GetGeometryRef, libgdal), OGRGeometryH, (OGRGeometryH, Cint), arg1, arg2))
 end
 
 """
@@ -27062,15 +18858,7 @@ Add a geometry to a geometry container.
 OGRERR_NONE if successful, or OGRERR_UNSUPPORTED_GEOMETRY_TYPE if the geometry type is illegal for the type of existing geometry.
 """
 function ogr_g_addgeometry(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_AddGeometry, libgdal),
-            OGRErr,
-            (OGRGeometryH, OGRGeometryH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_AddGeometry, libgdal), OGRErr, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -27087,15 +18875,7 @@ Add a geometry directly to an existing geometry container.
 OGRERR_NONE if successful, or OGRERR_UNSUPPORTED_GEOMETRY_TYPE if the geometry type is illegal for the type of geometry container.
 """
 function ogr_g_addgeometrydirectly(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_G_AddGeometryDirectly, libgdal),
-            OGRErr,
-            (OGRGeometryH, OGRGeometryH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_AddGeometryDirectly, libgdal), OGRErr, (OGRGeometryH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -27114,16 +18894,7 @@ Remove a geometry from an exiting geometry container.
 OGRERR_NONE if successful, or OGRERR_FAILURE if the index is out of range.
 """
 function ogr_g_removegeometry(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_G_RemoveGeometry, libgdal),
-            OGRErr,
-            (OGRGeometryH, Cint, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_RemoveGeometry, libgdal), OGRErr, (OGRGeometryH, Cint, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -27140,15 +18911,7 @@ Returns if this geometry is or has curve geometry.
 TRUE if this geometry is or has curve geometry.
 """
 function ogr_g_hascurvegeometry(arg1, bLookForNonLinear)
-    aftercare(
-        ccall(
-            (:OGR_G_HasCurveGeometry, libgdal),
-            Cint,
-            (OGRGeometryH, Cint),
-            arg1,
-            bLookForNonLinear,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_HasCurveGeometry, libgdal), Cint, (OGRGeometryH, Cint), arg1, bLookForNonLinear))
 end
 
 """
@@ -27167,16 +18930,8 @@ Return, possibly approximate, linear version of this geometry.
 a new geometry.
 """
 function ogr_g_getlineargeometry(hGeom, dfMaxAngleStepSizeDegrees, papszOptions)
-    aftercare(
-        ccall(
-            (:OGR_G_GetLinearGeometry, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, Cdouble, Ptr{Cstring}),
-            hGeom,
-            dfMaxAngleStepSizeDegrees,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_GetLinearGeometry, libgdal), OGRGeometryH, (OGRGeometryH, Cdouble, Ptr{Cstring}), hGeom,
+                           dfMaxAngleStepSizeDegrees, papszOptions))
 end
 
 """
@@ -27193,15 +18948,7 @@ Return curve version of this geometry.
 a new geometry.
 """
 function ogr_g_getcurvegeometry(hGeom, papszOptions)
-    aftercare(
-        ccall(
-            (:OGR_G_GetCurveGeometry, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, Ptr{Cstring}),
-            hGeom,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:OGR_G_GetCurveGeometry, libgdal), OGRGeometryH, (OGRGeometryH, Ptr{Cstring}), hGeom, papszOptions))
 end
 
 """
@@ -27223,25 +18970,9 @@ Build a ring from a bunch of arcs.
 ### Returns
 a handle to the new geometry, a polygon.
 """
-function ogrbuildpolygonfromedges(
-    hLinesAsCollection,
-    bBestEffort,
-    bAutoClose,
-    dfTolerance,
-    peErr,
-)
-    aftercare(
-        ccall(
-            (:OGRBuildPolygonFromEdges, libgdal),
-            OGRGeometryH,
-            (OGRGeometryH, Cint, Cint, Cdouble, Ptr{OGRErr}),
-            hLinesAsCollection,
-            bBestEffort,
-            bAutoClose,
-            dfTolerance,
-            peErr,
-        ),
-    )
+function ogrbuildpolygonfromedges(hLinesAsCollection, bBestEffort, bAutoClose, dfTolerance, peErr)
+    return aftercare(ccall((:OGRBuildPolygonFromEdges, libgdal), OGRGeometryH, (OGRGeometryH, Cint, Cint, Cdouble, Ptr{OGRErr}),
+                           hLinesAsCollection, bBestEffort, bAutoClose, dfTolerance, peErr))
 end
 
 """
@@ -27250,21 +18981,14 @@ end
 ` Doxygen_Suppress `
 """
 function ogrsetgenerate_db2_v72_byte_order(bGenerate_DB2_V72_BYTE_ORDER)
-    aftercare(
-        ccall(
-            (:OGRSetGenerate_DB2_V72_BYTE_ORDER, libgdal),
-            OGRErr,
-            (Cint,),
-            bGenerate_DB2_V72_BYTE_ORDER,
-        ),
-    )
+    return aftercare(ccall((:OGRSetGenerate_DB2_V72_BYTE_ORDER, libgdal), OGRErr, (Cint,), bGenerate_DB2_V72_BYTE_ORDER))
 end
 
 """
     OGRGetGenerate_DB2_V72_BYTE_ORDER() -> int
 """
 function ogrgetgenerate_db2_v72_byte_order()
-    aftercare(ccall((:OGRGetGenerate_DB2_V72_BYTE_ORDER, libgdal), Cint, ()))
+    return aftercare(ccall((:OGRGetGenerate_DB2_V72_BYTE_ORDER, libgdal), Cint, ()))
 end
 
 """
@@ -27273,9 +18997,7 @@ end
 ` `
 """
 function ogrsetnonlineargeometriesenabledflag(bFlag)
-    aftercare(
-        ccall((:OGRSetNonLinearGeometriesEnabledFlag, libgdal), Cvoid, (Cint,), bFlag),
-    )
+    return aftercare(ccall((:OGRSetNonLinearGeometriesEnabledFlag, libgdal), Cvoid, (Cint,), bFlag))
 end
 
 """
@@ -27284,7 +19006,7 @@ end
 Get flag to enable/disable returning non-linear geometries in the C API.
 """
 function ogrgetnonlineargeometriesenabledflag()
-    aftercare(ccall((:OGRGetNonLinearGeometriesEnabledFlag, libgdal), Cint, ()))
+    return aftercare(ccall((:OGRGetNonLinearGeometriesEnabledFlag, libgdal), Cint, ()))
 end
 
 const _OGRPreparedGeometry = Cvoid
@@ -27301,7 +19023,7 @@ Returns if GEOS has prepared geometry support.
 TRUE or FALSE
 """
 function ogrhaspreparedgeometrysupport()
-    aftercare(ccall((:OGRHasPreparedGeometrySupport, libgdal), Cint, ()))
+    return aftercare(ccall((:OGRHasPreparedGeometrySupport, libgdal), Cint, ()))
 end
 
 """
@@ -27316,14 +19038,7 @@ Creates a prepared geometry.
 handle to a prepared geometry.
 """
 function ogrcreatepreparedgeometry(hGeom)
-    aftercare(
-        ccall(
-            (:OGRCreatePreparedGeometry, libgdal),
-            OGRPreparedGeometryH,
-            (OGRGeometryH,),
-            hGeom,
-        ),
-    )
+    return aftercare(ccall((:OGRCreatePreparedGeometry, libgdal), OGRPreparedGeometryH, (OGRGeometryH,), hGeom))
 end
 
 """
@@ -27335,14 +19050,7 @@ Destroys a prepared geometry.
 * **hPreparedGeom**: prepared geometry.
 """
 function ogrdestroypreparedgeometry(hPreparedGeom)
-    aftercare(
-        ccall(
-            (:OGRDestroyPreparedGeometry, libgdal),
-            Cvoid,
-            (OGRPreparedGeometryH,),
-            hPreparedGeom,
-        ),
-    )
+    return aftercare(ccall((:OGRDestroyPreparedGeometry, libgdal), Cvoid, (OGRPreparedGeometryH,), hPreparedGeom))
 end
 
 """
@@ -27359,15 +19067,8 @@ Returns whether a prepared geometry intersects with a geometry.
 TRUE or FALSE.
 """
 function ogrpreparedgeometryintersects(hPreparedGeom, hOtherGeom)
-    aftercare(
-        ccall(
-            (:OGRPreparedGeometryIntersects, libgdal),
-            Cint,
-            (OGRPreparedGeometryH, OGRGeometryH),
-            hPreparedGeom,
-            hOtherGeom,
-        ),
-    )
+    return aftercare(ccall((:OGRPreparedGeometryIntersects, libgdal), Cint, (OGRPreparedGeometryH, OGRGeometryH), hPreparedGeom,
+                           hOtherGeom))
 end
 
 """
@@ -27384,15 +19085,8 @@ Returns whether a prepared geometry contains a geometry.
 TRUE or FALSE.
 """
 function ogrpreparedgeometrycontains(hPreparedGeom, hOtherGeom)
-    aftercare(
-        ccall(
-            (:OGRPreparedGeometryContains, libgdal),
-            Cint,
-            (OGRPreparedGeometryH, OGRGeometryH),
-            hPreparedGeom,
-            hOtherGeom,
-        ),
-    )
+    return aftercare(ccall((:OGRPreparedGeometryContains, libgdal), Cint, (OGRPreparedGeometryH, OGRGeometryH), hPreparedGeom,
+                           hOtherGeom))
 end
 
 "Opaque type for a field definition (OGRFieldDefn)"
@@ -27456,15 +19150,7 @@ Create a new field definition.
 handle to the new field definition.
 """
 function ogr_fld_create(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_Fld_Create, libgdal),
-            OGRFieldDefnH,
-            (Cstring, OGRFieldType),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_Fld_Create, libgdal), OGRFieldDefnH, (Cstring, OGRFieldType), arg1, arg2))
 end
 
 """
@@ -27476,7 +19162,7 @@ Destroy a field definition.
 * **hDefn**: handle to the field definition to destroy.
 """
 function ogr_fld_destroy(arg1)
-    aftercare(ccall((:OGR_Fld_Destroy, libgdal), Cvoid, (OGRFieldDefnH,), arg1))
+    return aftercare(ccall((:OGR_Fld_Destroy, libgdal), Cvoid, (OGRFieldDefnH,), arg1))
 end
 
 """
@@ -27490,9 +19176,7 @@ Reset the name of this field.
 * **pszName**: the new name to apply.
 """
 function ogr_fld_setname(arg1, arg2)
-    aftercare(
-        ccall((:OGR_Fld_SetName, libgdal), Cvoid, (OGRFieldDefnH, Cstring), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_Fld_SetName, libgdal), Cvoid, (OGRFieldDefnH, Cstring), arg1, arg2))
 end
 
 """
@@ -27507,7 +19191,7 @@ Fetch name of this field.
 the name of the field definition.
 """
 function ogr_fld_getnameref(arg1)
-    aftercare(ccall((:OGR_Fld_GetNameRef, libgdal), Cstring, (OGRFieldDefnH,), arg1), false)
+    return aftercare(ccall((:OGR_Fld_GetNameRef, libgdal), Cstring, (OGRFieldDefnH,), arg1), false)
 end
 
 """
@@ -27521,15 +19205,7 @@ Reset the alternative name (or "alias") for this field.
 * **pszAlternativeName**: the new alternative name to apply.
 """
 function ogr_fld_setalternativename(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_Fld_SetAlternativeName, libgdal),
-            Cvoid,
-            (OGRFieldDefnH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_Fld_SetAlternativeName, libgdal), Cvoid, (OGRFieldDefnH, Cstring), arg1, arg2))
 end
 
 """
@@ -27544,10 +19220,7 @@ Fetch the alternative name (or "alias") for this field.
 the alternative name of the field definition.
 """
 function ogr_fld_getalternativenameref(arg1)
-    aftercare(
-        ccall((:OGR_Fld_GetAlternativeNameRef, libgdal), Cstring, (OGRFieldDefnH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:OGR_Fld_GetAlternativeNameRef, libgdal), Cstring, (OGRFieldDefnH,), arg1), false)
 end
 
 """
@@ -27562,7 +19235,7 @@ Fetch type of this field.
 field type.
 """
 function ogr_fld_gettype(arg1)
-    aftercare(ccall((:OGR_Fld_GetType, libgdal), OGRFieldType, (OGRFieldDefnH,), arg1))
+    return aftercare(ccall((:OGR_Fld_GetType, libgdal), OGRFieldType, (OGRFieldDefnH,), arg1))
 end
 
 """
@@ -27576,15 +19249,7 @@ Set the type of this field.
 * **eType**: the new field type.
 """
 function ogr_fld_settype(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_Fld_SetType, libgdal),
-            Cvoid,
-            (OGRFieldDefnH, OGRFieldType),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_Fld_SetType, libgdal), Cvoid, (OGRFieldDefnH, OGRFieldType), arg1, arg2))
 end
 
 """
@@ -27626,9 +19291,7 @@ Fetch subtype of this field.
 field subtype.
 """
 function ogr_fld_getsubtype(arg1)
-    aftercare(
-        ccall((:OGR_Fld_GetSubType, libgdal), OGRFieldSubType, (OGRFieldDefnH,), arg1),
-    )
+    return aftercare(ccall((:OGR_Fld_GetSubType, libgdal), OGRFieldSubType, (OGRFieldDefnH,), arg1))
 end
 
 """
@@ -27642,15 +19305,7 @@ Set the subtype of this field.
 * **eSubType**: the new field subtype.
 """
 function ogr_fld_setsubtype(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_Fld_SetSubType, libgdal),
-            Cvoid,
-            (OGRFieldDefnH, OGRFieldSubType),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_Fld_SetSubType, libgdal), Cvoid, (OGRFieldDefnH, OGRFieldSubType), arg1, arg2))
 end
 
 """
@@ -27676,9 +19331,7 @@ Get the justification for this field.
 the justification.
 """
 function ogr_fld_getjustify(arg1)
-    aftercare(
-        ccall((:OGR_Fld_GetJustify, libgdal), OGRJustification, (OGRFieldDefnH,), arg1),
-    )
+    return aftercare(ccall((:OGR_Fld_GetJustify, libgdal), OGRJustification, (OGRFieldDefnH,), arg1))
 end
 
 """
@@ -27692,15 +19345,7 @@ Set the justification for this field.
 * **eJustify**: the new justification.
 """
 function ogr_fld_setjustify(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_Fld_SetJustify, libgdal),
-            Cvoid,
-            (OGRFieldDefnH, OGRJustification),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_Fld_SetJustify, libgdal), Cvoid, (OGRFieldDefnH, OGRJustification), arg1, arg2))
 end
 
 """
@@ -27715,7 +19360,7 @@ Get the formatting width for this field.
 the width, zero means no specified width.
 """
 function ogr_fld_getwidth(arg1)
-    aftercare(ccall((:OGR_Fld_GetWidth, libgdal), Cint, (OGRFieldDefnH,), arg1))
+    return aftercare(ccall((:OGR_Fld_GetWidth, libgdal), Cint, (OGRFieldDefnH,), arg1))
 end
 
 """
@@ -27729,7 +19374,7 @@ Set the formatting width for this field in characters.
 * **nNewWidth**: the new width.
 """
 function ogr_fld_setwidth(arg1, arg2)
-    aftercare(ccall((:OGR_Fld_SetWidth, libgdal), Cvoid, (OGRFieldDefnH, Cint), arg1, arg2))
+    return aftercare(ccall((:OGR_Fld_SetWidth, libgdal), Cvoid, (OGRFieldDefnH, Cint), arg1, arg2))
 end
 
 """
@@ -27744,7 +19389,7 @@ Get the formatting precision for this field.
 the precision.
 """
 function ogr_fld_getprecision(arg1)
-    aftercare(ccall((:OGR_Fld_GetPrecision, libgdal), Cint, (OGRFieldDefnH,), arg1))
+    return aftercare(ccall((:OGR_Fld_GetPrecision, libgdal), Cint, (OGRFieldDefnH,), arg1))
 end
 
 """
@@ -27758,9 +19403,7 @@ Set the formatting precision for this field in characters.
 * **nPrecision**: the new precision.
 """
 function ogr_fld_setprecision(arg1, arg2)
-    aftercare(
-        ccall((:OGR_Fld_SetPrecision, libgdal), Cvoid, (OGRFieldDefnH, Cint), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_Fld_SetPrecision, libgdal), Cvoid, (OGRFieldDefnH, Cint), arg1, arg2))
 end
 
 """
@@ -27775,7 +19418,7 @@ Get the time zone flag.
 the time zone flag.
 """
 function ogr_fld_gettzflag(arg1)
-    aftercare(ccall((:OGR_Fld_GetTZFlag, libgdal), Cint, (OGRFieldDefnH,), arg1))
+    return aftercare(ccall((:OGR_Fld_GetTZFlag, libgdal), Cint, (OGRFieldDefnH,), arg1))
 end
 
 """
@@ -27789,9 +19432,7 @@ Set the formatting precision for this field in characters.
 * **nTZFlag**: the new time zone flag.
 """
 function ogr_fld_settzflag(arg1, arg2)
-    aftercare(
-        ccall((:OGR_Fld_SetTZFlag, libgdal), Cvoid, (OGRFieldDefnH, Cint), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_Fld_SetTZFlag, libgdal), Cvoid, (OGRFieldDefnH, Cint), arg1, arg2))
 end
 
 """
@@ -27813,19 +19454,8 @@ Set defining parameters for a field in one call.
 * **eJustifyIn**: the formatting justification (OJLeft or OJRight), defaults to OJUndefined.
 """
 function ogr_fld_set(arg1, arg2, arg3, arg4, arg5, arg6)
-    aftercare(
-        ccall(
-            (:OGR_Fld_Set, libgdal),
-            Cvoid,
-            (OGRFieldDefnH, Cstring, OGRFieldType, Cint, Cint, OGRJustification),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-        ),
-    )
+    return aftercare(ccall((:OGR_Fld_Set, libgdal), Cvoid, (OGRFieldDefnH, Cstring, OGRFieldType, Cint, Cint, OGRJustification),
+                           arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 """
@@ -27840,7 +19470,7 @@ Return whether this field should be omitted when fetching features.
 ignore state
 """
 function ogr_fld_isignored(hDefn)
-    aftercare(ccall((:OGR_Fld_IsIgnored, libgdal), Cint, (OGRFieldDefnH,), hDefn))
+    return aftercare(ccall((:OGR_Fld_IsIgnored, libgdal), Cint, (OGRFieldDefnH,), hDefn))
 end
 
 """
@@ -27854,9 +19484,7 @@ Set whether this field should be omitted when fetching features.
 * **ignore**: ignore state
 """
 function ogr_fld_setignored(hDefn, arg2)
-    aftercare(
-        ccall((:OGR_Fld_SetIgnored, libgdal), Cvoid, (OGRFieldDefnH, Cint), hDefn, arg2),
-    )
+    return aftercare(ccall((:OGR_Fld_SetIgnored, libgdal), Cvoid, (OGRFieldDefnH, Cint), hDefn, arg2))
 end
 
 """
@@ -27871,7 +19499,7 @@ Return whether this field can receive null values.
 TRUE if the field is authorized to be null.
 """
 function ogr_fld_isnullable(hDefn)
-    aftercare(ccall((:OGR_Fld_IsNullable, libgdal), Cint, (OGRFieldDefnH,), hDefn))
+    return aftercare(ccall((:OGR_Fld_IsNullable, libgdal), Cint, (OGRFieldDefnH,), hDefn))
 end
 
 """
@@ -27885,9 +19513,7 @@ Set whether this field can receive null values.
 * **bNullableIn**: FALSE if the field must have a not-null constraint.
 """
 function ogr_fld_setnullable(hDefn, arg2)
-    aftercare(
-        ccall((:OGR_Fld_SetNullable, libgdal), Cvoid, (OGRFieldDefnH, Cint), hDefn, arg2),
-    )
+    return aftercare(ccall((:OGR_Fld_SetNullable, libgdal), Cvoid, (OGRFieldDefnH, Cint), hDefn, arg2))
 end
 
 """
@@ -27902,7 +19528,7 @@ Return whether this field has a unique constraint.
 TRUE if the field has a unique constraint.
 """
 function ogr_fld_isunique(hDefn)
-    aftercare(ccall((:OGR_Fld_IsUnique, libgdal), Cint, (OGRFieldDefnH,), hDefn))
+    return aftercare(ccall((:OGR_Fld_IsUnique, libgdal), Cint, (OGRFieldDefnH,), hDefn))
 end
 
 """
@@ -27916,9 +19542,7 @@ Set whether this field has a unique constraint.
 * **bUniqueIn**: TRUE if the field must have a unique constraint.
 """
 function ogr_fld_setunique(hDefn, arg2)
-    aftercare(
-        ccall((:OGR_Fld_SetUnique, libgdal), Cvoid, (OGRFieldDefnH, Cint), hDefn, arg2),
-    )
+    return aftercare(ccall((:OGR_Fld_SetUnique, libgdal), Cvoid, (OGRFieldDefnH, Cint), hDefn, arg2))
 end
 
 """
@@ -27933,10 +19557,7 @@ Get default field value.
 default field value or NULL.
 """
 function ogr_fld_getdefault(hDefn)
-    aftercare(
-        ccall((:OGR_Fld_GetDefault, libgdal), Cstring, (OGRFieldDefnH,), hDefn),
-        false,
-    )
+    return aftercare(ccall((:OGR_Fld_GetDefault, libgdal), Cstring, (OGRFieldDefnH,), hDefn), false)
 end
 
 """
@@ -27950,9 +19571,7 @@ Set default field value.
 * **pszDefault**: new default field value or NULL pointer.
 """
 function ogr_fld_setdefault(hDefn, arg2)
-    aftercare(
-        ccall((:OGR_Fld_SetDefault, libgdal), Cvoid, (OGRFieldDefnH, Cstring), hDefn, arg2),
-    )
+    return aftercare(ccall((:OGR_Fld_SetDefault, libgdal), Cvoid, (OGRFieldDefnH, Cstring), hDefn, arg2))
 end
 
 """
@@ -27967,9 +19586,7 @@ Returns whether the default value is driver specific.
 TRUE if the default value is driver specific.
 """
 function ogr_fld_isdefaultdriverspecific(hDefn)
-    aftercare(
-        ccall((:OGR_Fld_IsDefaultDriverSpecific, libgdal), Cint, (OGRFieldDefnH,), hDefn),
-    )
+    return aftercare(ccall((:OGR_Fld_IsDefaultDriverSpecific, libgdal), Cint, (OGRFieldDefnH,), hDefn))
 end
 
 """
@@ -27984,10 +19601,7 @@ Return the name of the field domain for this field.
 the field domain name, or an empty string if there is none.
 """
 function ogr_fld_getdomainname(hDefn)
-    aftercare(
-        ccall((:OGR_Fld_GetDomainName, libgdal), Cstring, (OGRFieldDefnH,), hDefn),
-        false,
-    )
+    return aftercare(ccall((:OGR_Fld_GetDomainName, libgdal), Cstring, (OGRFieldDefnH,), hDefn), false)
 end
 
 """
@@ -28001,15 +19615,7 @@ Set the name of the field domain for this field.
 * **pszFieldName**: Field domain name.
 """
 function ogr_fld_setdomainname(hDefn, arg2)
-    aftercare(
-        ccall(
-            (:OGR_Fld_SetDomainName, libgdal),
-            Cvoid,
-            (OGRFieldDefnH, Cstring),
-            hDefn,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_Fld_SetDomainName, libgdal), Cvoid, (OGRFieldDefnH, Cstring), hDefn, arg2))
 end
 
 """
@@ -28024,10 +19630,7 @@ Return the (optional) comment for this field.
 the comment, or an empty string if there is none.
 """
 function ogr_fld_getcomment(hDefn)
-    aftercare(
-        ccall((:OGR_Fld_GetComment, libgdal), Cstring, (OGRFieldDefnH,), hDefn),
-        false,
-    )
+    return aftercare(ccall((:OGR_Fld_GetComment, libgdal), Cstring, (OGRFieldDefnH,), hDefn), false)
 end
 
 """
@@ -28041,9 +19644,7 @@ Set the comment for this field.
 * **pszComment**: Field comment.
 """
 function ogr_fld_setcomment(hDefn, arg2)
-    aftercare(
-        ccall((:OGR_Fld_SetComment, libgdal), Cvoid, (OGRFieldDefnH, Cstring), hDefn, arg2),
-    )
+    return aftercare(ccall((:OGR_Fld_SetComment, libgdal), Cvoid, (OGRFieldDefnH, Cstring), hDefn, arg2))
 end
 
 """
@@ -28058,10 +19659,7 @@ Fetch human readable name for a field type.
 the name.
 """
 function ogr_getfieldtypename(arg1)
-    aftercare(
-        ccall((:OGR_GetFieldTypeName, libgdal), Cstring, (OGRFieldType,), arg1),
-        false,
-    )
+    return aftercare(ccall((:OGR_GetFieldTypeName, libgdal), Cstring, (OGRFieldType,), arg1), false)
 end
 
 """
@@ -28076,10 +19674,7 @@ Fetch human readable name for a field subtype.
 the name.
 """
 function ogr_getfieldsubtypename(arg1)
-    aftercare(
-        ccall((:OGR_GetFieldSubTypeName, libgdal), Cstring, (OGRFieldSubType,), arg1),
-        false,
-    )
+    return aftercare(ccall((:OGR_GetFieldSubTypeName, libgdal), Cstring, (OGRFieldSubType,), arg1), false)
 end
 
 """
@@ -28096,15 +19691,7 @@ Return if type and subtype are compatible.
 TRUE if type and subtype are compatible
 """
 function ogr_aretypesubtypecompatible(eType, eSubType)
-    aftercare(
-        ccall(
-            (:OGR_AreTypeSubTypeCompatible, libgdal),
-            Cint,
-            (OGRFieldType, OGRFieldSubType),
-            eType,
-            eSubType,
-        ),
-    )
+    return aftercare(ccall((:OGR_AreTypeSubTypeCompatible, libgdal), Cint, (OGRFieldType, OGRFieldSubType), eType, eSubType))
 end
 
 """
@@ -28121,15 +19708,7 @@ Create a new field geometry definition.
 handle to the new field definition.
 """
 function ogr_gfld_create(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_GFld_Create, libgdal),
-            OGRGeomFieldDefnH,
-            (Cstring, OGRwkbGeometryType),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_GFld_Create, libgdal), OGRGeomFieldDefnH, (Cstring, OGRwkbGeometryType), arg1, arg2))
 end
 
 """
@@ -28141,7 +19720,7 @@ Destroy a geometry field definition.
 * **hDefn**: handle to the geometry field definition to destroy.
 """
 function ogr_gfld_destroy(arg1)
-    aftercare(ccall((:OGR_GFld_Destroy, libgdal), Cvoid, (OGRGeomFieldDefnH,), arg1))
+    return aftercare(ccall((:OGR_GFld_Destroy, libgdal), Cvoid, (OGRGeomFieldDefnH,), arg1))
 end
 
 """
@@ -28155,15 +19734,7 @@ Reset the name of this field.
 * **pszName**: the new name to apply.
 """
 function ogr_gfld_setname(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_GFld_SetName, libgdal),
-            Cvoid,
-            (OGRGeomFieldDefnH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_GFld_SetName, libgdal), Cvoid, (OGRGeomFieldDefnH, Cstring), arg1, arg2))
 end
 
 """
@@ -28178,10 +19749,7 @@ Fetch name of this field.
 the name of the geometry field definition.
 """
 function ogr_gfld_getnameref(arg1)
-    aftercare(
-        ccall((:OGR_GFld_GetNameRef, libgdal), Cstring, (OGRGeomFieldDefnH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:OGR_GFld_GetNameRef, libgdal), Cstring, (OGRGeomFieldDefnH,), arg1), false)
 end
 
 """
@@ -28196,9 +19764,7 @@ Fetch geometry type of this field.
 field geometry type.
 """
 function ogr_gfld_gettype(arg1)
-    aftercare(
-        ccall((:OGR_GFld_GetType, libgdal), OGRwkbGeometryType, (OGRGeomFieldDefnH,), arg1),
-    )
+    return aftercare(ccall((:OGR_GFld_GetType, libgdal), OGRwkbGeometryType, (OGRGeomFieldDefnH,), arg1))
 end
 
 """
@@ -28212,15 +19778,7 @@ Set the geometry type of this field.
 * **eType**: the new field geometry type.
 """
 function ogr_gfld_settype(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_GFld_SetType, libgdal),
-            Cvoid,
-            (OGRGeomFieldDefnH, OGRwkbGeometryType),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_GFld_SetType, libgdal), Cvoid, (OGRGeomFieldDefnH, OGRwkbGeometryType), arg1, arg2))
 end
 
 """
@@ -28235,14 +19793,7 @@ Fetch spatial reference system of this field.
 a reference to the field spatial reference system. It should not be modified.
 """
 function ogr_gfld_getspatialref(arg1)
-    aftercare(
-        ccall(
-            (:OGR_GFld_GetSpatialRef, libgdal),
-            OGRSpatialReferenceH,
-            (OGRGeomFieldDefnH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGR_GFld_GetSpatialRef, libgdal), OGRSpatialReferenceH, (OGRGeomFieldDefnH,), arg1))
 end
 
 """
@@ -28256,15 +19807,7 @@ Set the spatial reference of this field.
 * **hSRS**: the new SRS to apply.
 """
 function ogr_gfld_setspatialref(arg1, hSRS)
-    aftercare(
-        ccall(
-            (:OGR_GFld_SetSpatialRef, libgdal),
-            Cvoid,
-            (OGRGeomFieldDefnH, OGRSpatialReferenceH),
-            arg1,
-            hSRS,
-        ),
-    )
+    return aftercare(ccall((:OGR_GFld_SetSpatialRef, libgdal), Cvoid, (OGRGeomFieldDefnH, OGRSpatialReferenceH), arg1, hSRS))
 end
 
 """
@@ -28279,7 +19822,7 @@ Return whether this geometry field can receive null values.
 TRUE if the field is authorized to be null.
 """
 function ogr_gfld_isnullable(hDefn)
-    aftercare(ccall((:OGR_GFld_IsNullable, libgdal), Cint, (OGRGeomFieldDefnH,), hDefn))
+    return aftercare(ccall((:OGR_GFld_IsNullable, libgdal), Cint, (OGRGeomFieldDefnH,), hDefn))
 end
 
 """
@@ -28293,15 +19836,7 @@ Set whether this geometry field can receive null values.
 * **bNullableIn**: FALSE if the field must have a not-null constraint.
 """
 function ogr_gfld_setnullable(hDefn, arg2)
-    aftercare(
-        ccall(
-            (:OGR_GFld_SetNullable, libgdal),
-            Cvoid,
-            (OGRGeomFieldDefnH, Cint),
-            hDefn,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_GFld_SetNullable, libgdal), Cvoid, (OGRGeomFieldDefnH, Cint), hDefn, arg2))
 end
 
 """
@@ -28316,7 +19851,7 @@ Return whether this field should be omitted when fetching features.
 ignore state
 """
 function ogr_gfld_isignored(hDefn)
-    aftercare(ccall((:OGR_GFld_IsIgnored, libgdal), Cint, (OGRGeomFieldDefnH,), hDefn))
+    return aftercare(ccall((:OGR_GFld_IsIgnored, libgdal), Cint, (OGRGeomFieldDefnH,), hDefn))
 end
 
 """
@@ -28330,15 +19865,7 @@ Set whether this field should be omitted when fetching features.
 * **ignore**: ignore state
 """
 function ogr_gfld_setignored(hDefn, arg2)
-    aftercare(
-        ccall(
-            (:OGR_GFld_SetIgnored, libgdal),
-            Cvoid,
-            (OGRGeomFieldDefnH, Cint),
-            hDefn,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_GFld_SetIgnored, libgdal), Cvoid, (OGRGeomFieldDefnH, Cint), hDefn, arg2))
 end
 
 """
@@ -28353,14 +19880,7 @@ Return the coordinate precision associated to this geometry field.
 the coordinate precision
 """
 function ogr_gfld_getcoordinateprecision(arg1)
-    aftercare(
-        ccall(
-            (:OGR_GFld_GetCoordinatePrecision, libgdal),
-            OGRGeomCoordinatePrecisionH,
-            (OGRGeomFieldDefnH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGR_GFld_GetCoordinatePrecision, libgdal), OGRGeomCoordinatePrecisionH, (OGRGeomFieldDefnH,), arg1))
 end
 
 """
@@ -28374,15 +19894,8 @@ Set coordinate precision associated to this geometry field.
 * **hGeomCoordPrec**: Coordinate precision. Must not be NULL.
 """
 function ogr_gfld_setcoordinateprecision(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_GFld_SetCoordinatePrecision, libgdal),
-            Cvoid,
-            (OGRGeomFieldDefnH, OGRGeomCoordinatePrecisionH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_GFld_SetCoordinatePrecision, libgdal), Cvoid, (OGRGeomFieldDefnH, OGRGeomCoordinatePrecisionH),
+                           arg1, arg2))
 end
 
 """
@@ -28397,7 +19910,7 @@ Create a new feature definition object to hold the field definitions.
 handle to the newly created feature definition.
 """
 function ogr_fd_create(arg1)
-    aftercare(ccall((:OGR_FD_Create, libgdal), OGRFeatureDefnH, (Cstring,), arg1))
+    return aftercare(ccall((:OGR_FD_Create, libgdal), OGRFeatureDefnH, (Cstring,), arg1))
 end
 
 """
@@ -28409,7 +19922,7 @@ Destroy a feature definition object and release all memory associated with it.
 * **hDefn**: handle to the feature definition to be destroyed.
 """
 function ogr_fd_destroy(arg1)
-    aftercare(ccall((:OGR_FD_Destroy, libgdal), Cvoid, (OGRFeatureDefnH,), arg1))
+    return aftercare(ccall((:OGR_FD_Destroy, libgdal), Cvoid, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -28421,7 +19934,7 @@ Drop a reference, and destroy if unreferenced.
 * **hDefn**: handle to the feature definition to be released.
 """
 function ogr_fd_release(arg1)
-    aftercare(ccall((:OGR_FD_Release, libgdal), Cvoid, (OGRFeatureDefnH,), arg1))
+    return aftercare(ccall((:OGR_FD_Release, libgdal), Cvoid, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -28436,7 +19949,7 @@ Get name of the OGRFeatureDefn passed as an argument.
 the name. This name is internal and should not be modified, or freed.
 """
 function ogr_fd_getname(arg1)
-    aftercare(ccall((:OGR_FD_GetName, libgdal), Cstring, (OGRFeatureDefnH,), arg1), false)
+    return aftercare(ccall((:OGR_FD_GetName, libgdal), Cstring, (OGRFeatureDefnH,), arg1), false)
 end
 
 """
@@ -28451,7 +19964,7 @@ Fetch number of fields on the passed feature definition.
 count of fields.
 """
 function ogr_fd_getfieldcount(arg1)
-    aftercare(ccall((:OGR_FD_GetFieldCount, libgdal), Cint, (OGRFeatureDefnH,), arg1))
+    return aftercare(ccall((:OGR_FD_GetFieldCount, libgdal), Cint, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -28468,15 +19981,7 @@ Fetch field definition of the passed feature definition.
 a handle to an internal field definition object or NULL if invalid index. This object should not be modified or freed by the application.
 """
 function ogr_fd_getfielddefn(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_FD_GetFieldDefn, libgdal),
-            OGRFieldDefnH,
-            (OGRFeatureDefnH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_FD_GetFieldDefn, libgdal), OGRFieldDefnH, (OGRFeatureDefnH, Cint), arg1, arg2))
 end
 
 """
@@ -28493,15 +19998,7 @@ Find field by name.
 the field index, or -1 if no match found.
 """
 function ogr_fd_getfieldindex(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_FD_GetFieldIndex, libgdal),
-            Cint,
-            (OGRFeatureDefnH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_FD_GetFieldIndex, libgdal), Cint, (OGRFeatureDefnH, Cstring), arg1, arg2))
 end
 
 """
@@ -28515,15 +20012,7 @@ Add a new field definition to the passed feature definition.
 * **hNewField**: handle to the new field definition.
 """
 function ogr_fd_addfielddefn(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_FD_AddFieldDefn, libgdal),
-            Cvoid,
-            (OGRFeatureDefnH, OGRFieldDefnH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_FD_AddFieldDefn, libgdal), Cvoid, (OGRFeatureDefnH, OGRFieldDefnH), arg1, arg2))
 end
 
 """
@@ -28540,15 +20029,7 @@ Delete an existing field definition.
 OGRERR_NONE in case of success.
 """
 function ogr_fd_deletefielddefn(hDefn, iField)
-    aftercare(
-        ccall(
-            (:OGR_FD_DeleteFieldDefn, libgdal),
-            OGRErr,
-            (OGRFeatureDefnH, Cint),
-            hDefn,
-            iField,
-        ),
-    )
+    return aftercare(ccall((:OGR_FD_DeleteFieldDefn, libgdal), OGRErr, (OGRFeatureDefnH, Cint), hDefn, iField))
 end
 
 """
@@ -28565,15 +20046,7 @@ Reorder the field definitions in the array of the feature definition.
 OGRERR_NONE in case of success.
 """
 function ogr_fd_reorderfielddefns(hDefn, panMap)
-    aftercare(
-        ccall(
-            (:OGR_FD_ReorderFieldDefns, libgdal),
-            OGRErr,
-            (OGRFeatureDefnH, Ptr{Cint}),
-            hDefn,
-            panMap,
-        ),
-    )
+    return aftercare(ccall((:OGR_FD_ReorderFieldDefns, libgdal), OGRErr, (OGRFeatureDefnH, Ptr{Cint}), hDefn, panMap))
 end
 
 """
@@ -28588,9 +20061,7 @@ Fetch the geometry base type of the passed feature definition.
 the base type for all geometry related to this definition.
 """
 function ogr_fd_getgeomtype(arg1)
-    aftercare(
-        ccall((:OGR_FD_GetGeomType, libgdal), OGRwkbGeometryType, (OGRFeatureDefnH,), arg1),
-    )
+    return aftercare(ccall((:OGR_FD_GetGeomType, libgdal), OGRwkbGeometryType, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -28604,15 +20075,7 @@ Assign the base geometry type for the passed layer (the same as the feature defi
 * **eType**: the new type to assign.
 """
 function ogr_fd_setgeomtype(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_FD_SetGeomType, libgdal),
-            Cvoid,
-            (OGRFeatureDefnH, OGRwkbGeometryType),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_FD_SetGeomType, libgdal), Cvoid, (OGRFeatureDefnH, OGRwkbGeometryType), arg1, arg2))
 end
 
 """
@@ -28627,7 +20090,7 @@ Determine whether the geometry can be omitted when fetching features.
 ignore state
 """
 function ogr_fd_isgeometryignored(arg1)
-    aftercare(ccall((:OGR_FD_IsGeometryIgnored, libgdal), Cint, (OGRFeatureDefnH,), arg1))
+    return aftercare(ccall((:OGR_FD_IsGeometryIgnored, libgdal), Cint, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -28641,15 +20104,7 @@ Set whether the geometry can be omitted when fetching features.
 * **bIgnore**: ignore state
 """
 function ogr_fd_setgeometryignored(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_FD_SetGeometryIgnored, libgdal),
-            Cvoid,
-            (OGRFeatureDefnH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_FD_SetGeometryIgnored, libgdal), Cvoid, (OGRFeatureDefnH, Cint), arg1, arg2))
 end
 
 """
@@ -28664,7 +20119,7 @@ Determine whether the style can be omitted when fetching features.
 ignore state
 """
 function ogr_fd_isstyleignored(arg1)
-    aftercare(ccall((:OGR_FD_IsStyleIgnored, libgdal), Cint, (OGRFeatureDefnH,), arg1))
+    return aftercare(ccall((:OGR_FD_IsStyleIgnored, libgdal), Cint, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -28678,15 +20133,7 @@ Set whether the style can be omitted when fetching features.
 * **bIgnore**: ignore state
 """
 function ogr_fd_setstyleignored(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_FD_SetStyleIgnored, libgdal),
-            Cvoid,
-            (OGRFeatureDefnH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_FD_SetStyleIgnored, libgdal), Cvoid, (OGRFeatureDefnH, Cint), arg1, arg2))
 end
 
 """
@@ -28701,7 +20148,7 @@ Increments the reference count by one.
 the updated reference count.
 """
 function ogr_fd_reference(arg1)
-    aftercare(ccall((:OGR_FD_Reference, libgdal), Cint, (OGRFeatureDefnH,), arg1))
+    return aftercare(ccall((:OGR_FD_Reference, libgdal), Cint, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -28716,7 +20163,7 @@ Decrements the reference count by one.
 the updated reference count.
 """
 function ogr_fd_dereference(arg1)
-    aftercare(ccall((:OGR_FD_Dereference, libgdal), Cint, (OGRFeatureDefnH,), arg1))
+    return aftercare(ccall((:OGR_FD_Dereference, libgdal), Cint, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -28731,7 +20178,7 @@ Fetch current reference count.
 the current reference count.
 """
 function ogr_fd_getreferencecount(arg1)
-    aftercare(ccall((:OGR_FD_GetReferenceCount, libgdal), Cint, (OGRFeatureDefnH,), arg1))
+    return aftercare(ccall((:OGR_FD_GetReferenceCount, libgdal), Cint, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -28746,7 +20193,7 @@ Fetch number of geometry fields on the passed feature definition.
 count of geometry fields.
 """
 function ogr_fd_getgeomfieldcount(hFDefn)
-    aftercare(ccall((:OGR_FD_GetGeomFieldCount, libgdal), Cint, (OGRFeatureDefnH,), hFDefn))
+    return aftercare(ccall((:OGR_FD_GetGeomFieldCount, libgdal), Cint, (OGRFeatureDefnH,), hFDefn))
 end
 
 """
@@ -28763,15 +20210,7 @@ Fetch geometry field definition of the passed feature definition.
 a handle to an internal field definition object or NULL if invalid index. This object should not be modified or freed by the application.
 """
 function ogr_fd_getgeomfielddefn(hFDefn, i)
-    aftercare(
-        ccall(
-            (:OGR_FD_GetGeomFieldDefn, libgdal),
-            OGRGeomFieldDefnH,
-            (OGRFeatureDefnH, Cint),
-            hFDefn,
-            i,
-        ),
-    )
+    return aftercare(ccall((:OGR_FD_GetGeomFieldDefn, libgdal), OGRGeomFieldDefnH, (OGRFeatureDefnH, Cint), hFDefn, i))
 end
 
 """
@@ -28788,15 +20227,7 @@ Find geometry field by name.
 the geometry field index, or -1 if no match found.
 """
 function ogr_fd_getgeomfieldindex(hFDefn, pszName)
-    aftercare(
-        ccall(
-            (:OGR_FD_GetGeomFieldIndex, libgdal),
-            Cint,
-            (OGRFeatureDefnH, Cstring),
-            hFDefn,
-            pszName,
-        ),
-    )
+    return aftercare(ccall((:OGR_FD_GetGeomFieldIndex, libgdal), Cint, (OGRFeatureDefnH, Cstring), hFDefn, pszName))
 end
 
 """
@@ -28810,15 +20241,7 @@ Add a new field definition to the passed feature definition.
 * **hNewGeomField**: handle to the new field definition.
 """
 function ogr_fd_addgeomfielddefn(hFDefn, hGFldDefn)
-    aftercare(
-        ccall(
-            (:OGR_FD_AddGeomFieldDefn, libgdal),
-            Cvoid,
-            (OGRFeatureDefnH, OGRGeomFieldDefnH),
-            hFDefn,
-            hGFldDefn,
-        ),
-    )
+    return aftercare(ccall((:OGR_FD_AddGeomFieldDefn, libgdal), Cvoid, (OGRFeatureDefnH, OGRGeomFieldDefnH), hFDefn, hGFldDefn))
 end
 
 """
@@ -28835,15 +20258,7 @@ Delete an existing geometry field definition.
 OGRERR_NONE in case of success.
 """
 function ogr_fd_deletegeomfielddefn(hFDefn, iGeomField)
-    aftercare(
-        ccall(
-            (:OGR_FD_DeleteGeomFieldDefn, libgdal),
-            OGRErr,
-            (OGRFeatureDefnH, Cint),
-            hFDefn,
-            iGeomField,
-        ),
-    )
+    return aftercare(ccall((:OGR_FD_DeleteGeomFieldDefn, libgdal), OGRErr, (OGRFeatureDefnH, Cint), hFDefn, iGeomField))
 end
 
 """
@@ -28860,15 +20275,7 @@ Test if the feature definition is identical to the other one.
 TRUE if the feature definition is identical to the other one.
 """
 function ogr_fd_issame(hFDefn, hOtherFDefn)
-    aftercare(
-        ccall(
-            (:OGR_FD_IsSame, libgdal),
-            Cint,
-            (OGRFeatureDefnH, OGRFeatureDefnH),
-            hFDefn,
-            hOtherFDefn,
-        ),
-    )
+    return aftercare(ccall((:OGR_FD_IsSame, libgdal), Cint, (OGRFeatureDefnH, OGRFeatureDefnH), hFDefn, hOtherFDefn))
 end
 
 """
@@ -28883,7 +20290,7 @@ Feature factory.
 a handle to the new feature object with null fields and no geometry, or, starting with GDAL 2.1, NULL in case out of memory situation.
 """
 function ogr_f_create(arg1)
-    aftercare(ccall((:OGR_F_Create, libgdal), OGRFeatureH, (OGRFeatureDefnH,), arg1))
+    return aftercare(ccall((:OGR_F_Create, libgdal), OGRFeatureH, (OGRFeatureDefnH,), arg1))
 end
 
 """
@@ -28898,7 +20305,7 @@ Fetch feature definition.
 a handle to the feature definition object on which feature depends.
 """
 function ogr_f_getdefnref(arg1)
-    aftercare(ccall((:OGR_F_GetDefnRef, libgdal), OGRFeatureDefnH, (OGRFeatureH,), arg1))
+    return aftercare(ccall((:OGR_F_GetDefnRef, libgdal), OGRFeatureDefnH, (OGRFeatureH,), arg1))
 end
 
 """
@@ -28915,15 +20322,7 @@ Set feature geometry.
 OGRERR_NONE if successful, or OGR_UNSUPPORTED_GEOMETRY_TYPE if the geometry type is illegal for the OGRFeatureDefn (checking not yet implemented).
 """
 function ogr_f_setgeometrydirectly(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_F_SetGeometryDirectly, libgdal),
-            OGRErr,
-            (OGRFeatureH, OGRGeometryH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetGeometryDirectly, libgdal), OGRErr, (OGRFeatureH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -28940,15 +20339,7 @@ Set feature geometry.
 OGRERR_NONE if successful, or OGR_UNSUPPORTED_GEOMETRY_TYPE if the geometry type is illegal for the OGRFeatureDefn (checking not yet implemented).
 """
 function ogr_f_setgeometry(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_F_SetGeometry, libgdal),
-            OGRErr,
-            (OGRFeatureH, OGRGeometryH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetGeometry, libgdal), OGRErr, (OGRFeatureH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -28963,7 +20354,7 @@ Fetch a handle to feature geometry.
 a handle to internal feature geometry. This object should not be modified.
 """
 function ogr_f_getgeometryref(arg1)
-    aftercare(ccall((:OGR_F_GetGeometryRef, libgdal), OGRGeometryH, (OGRFeatureH,), arg1))
+    return aftercare(ccall((:OGR_F_GetGeometryRef, libgdal), OGRGeometryH, (OGRFeatureH,), arg1))
 end
 
 """
@@ -28978,7 +20369,7 @@ Take away ownership of geometry.
 the pointer to the stolen geometry.
 """
 function ogr_f_stealgeometry(arg1)
-    aftercare(ccall((:OGR_F_StealGeometry, libgdal), OGRGeometryH, (OGRFeatureH,), arg1))
+    return aftercare(ccall((:OGR_F_StealGeometry, libgdal), OGRGeometryH, (OGRFeatureH,), arg1))
 end
 
 """
@@ -28995,15 +20386,7 @@ Take away ownership of geometry.
 the pointer to the stolen geometry.
 """
 function ogr_f_stealgeometryex(arg1, iGeomField)
-    aftercare(
-        ccall(
-            (:OGR_F_StealGeometryEx, libgdal),
-            OGRGeometryH,
-            (OGRFeatureH, Cint),
-            arg1,
-            iGeomField,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_StealGeometryEx, libgdal), OGRGeometryH, (OGRFeatureH, Cint), arg1, iGeomField))
 end
 
 """
@@ -29018,7 +20401,7 @@ Duplicate feature.
 a handle to the new feature, exactly matching this feature.
 """
 function ogr_f_clone(arg1)
-    aftercare(ccall((:OGR_F_Clone, libgdal), OGRFeatureH, (OGRFeatureH,), arg1))
+    return aftercare(ccall((:OGR_F_Clone, libgdal), OGRFeatureH, (OGRFeatureH,), arg1))
 end
 
 """
@@ -29035,7 +20418,7 @@ Test if two features are the same.
 TRUE if they are equal, otherwise FALSE.
 """
 function ogr_f_equal(arg1, arg2)
-    aftercare(ccall((:OGR_F_Equal, libgdal), Cint, (OGRFeatureH, OGRFeatureH), arg1, arg2))
+    return aftercare(ccall((:OGR_F_Equal, libgdal), Cint, (OGRFeatureH, OGRFeatureH), arg1, arg2))
 end
 
 """
@@ -29050,7 +20433,7 @@ Fetch number of fields on this feature This will always be the same as the field
 count of fields.
 """
 function ogr_f_getfieldcount(arg1)
-    aftercare(ccall((:OGR_F_GetFieldCount, libgdal), Cint, (OGRFeatureH,), arg1))
+    return aftercare(ccall((:OGR_F_GetFieldCount, libgdal), Cint, (OGRFeatureH,), arg1))
 end
 
 """
@@ -29067,15 +20450,7 @@ Fetch definition for this field.
 a handle to the field definition (from the OGRFeatureDefn). This is an internal reference, and should not be deleted or modified.
 """
 function ogr_f_getfielddefnref(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_F_GetFieldDefnRef, libgdal),
-            OGRFieldDefnH,
-            (OGRFeatureH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_GetFieldDefnRef, libgdal), OGRFieldDefnH, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -29092,9 +20467,7 @@ Fetch the field index given field name.
 the field index, or -1 if no matching field is found.
 """
 function ogr_f_getfieldindex(arg1, arg2)
-    aftercare(
-        ccall((:OGR_F_GetFieldIndex, libgdal), Cint, (OGRFeatureH, Cstring), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_F_GetFieldIndex, libgdal), Cint, (OGRFeatureH, Cstring), arg1, arg2))
 end
 
 """
@@ -29111,7 +20484,7 @@ Test if a field has ever been assigned a value or not.
 TRUE if the field has been set, otherwise false.
 """
 function ogr_f_isfieldset(arg1, arg2)
-    aftercare(ccall((:OGR_F_IsFieldSet, libgdal), Cint, (OGRFeatureH, Cint), arg1, arg2))
+    return aftercare(ccall((:OGR_F_IsFieldSet, libgdal), Cint, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -29125,7 +20498,7 @@ Clear a field, marking it as unset.
 * **iField**: the field to unset.
 """
 function ogr_f_unsetfield(arg1, arg2)
-    aftercare(ccall((:OGR_F_UnsetField, libgdal), Cvoid, (OGRFeatureH, Cint), arg1, arg2))
+    return aftercare(ccall((:OGR_F_UnsetField, libgdal), Cvoid, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -29142,7 +20515,7 @@ Test if a field is null.
 TRUE if the field is null, otherwise false.
 """
 function ogr_f_isfieldnull(arg1, arg2)
-    aftercare(ccall((:OGR_F_IsFieldNull, libgdal), Cint, (OGRFeatureH, Cint), arg1, arg2))
+    return aftercare(ccall((:OGR_F_IsFieldNull, libgdal), Cint, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -29159,15 +20532,7 @@ Test if a field is set and not null.
 TRUE if the field is set and not null, otherwise false.
 """
 function ogr_f_isfieldsetandnotnull(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_F_IsFieldSetAndNotNull, libgdal),
-            Cint,
-            (OGRFeatureH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_IsFieldSetAndNotNull, libgdal), Cint, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -29181,7 +20546,7 @@ Clear a field, marking it as null.
 * **iField**: the field to set to null.
 """
 function ogr_f_setfieldnull(arg1, arg2)
-    aftercare(ccall((:OGR_F_SetFieldNull, libgdal), Cvoid, (OGRFeatureH, Cint), arg1, arg2))
+    return aftercare(ccall((:OGR_F_SetFieldNull, libgdal), Cvoid, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -29198,13 +20563,13 @@ function Base.getproperty(x::Ptr{OGRField}, f::Symbol)
     f === :Integer64 && return Ptr{GIntBig}(x + 0)
     f === :Real && return Ptr{Cdouble}(x + 0)
     f === :String && return Ptr{Cstring}(x + 0)
-    f === :IntegerList && return Ptr{__JL_Ctag_164}(x + 0)
-    f === :Integer64List && return Ptr{__JL_Ctag_165}(x + 0)
-    f === :RealList && return Ptr{__JL_Ctag_166}(x + 0)
-    f === :StringList && return Ptr{__JL_Ctag_167}(x + 0)
-    f === :Binary && return Ptr{__JL_Ctag_168}(x + 0)
-    f === :Set && return Ptr{__JL_Ctag_169}(x + 0)
-    f === :Date && return Ptr{__JL_Ctag_170}(x + 0)
+    f === :IntegerList && return Ptr{__JL_Ctag_224}(x + 0)
+    f === :Integer64List && return Ptr{__JL_Ctag_225}(x + 0)
+    f === :RealList && return Ptr{__JL_Ctag_226}(x + 0)
+    f === :StringList && return Ptr{__JL_Ctag_227}(x + 0)
+    f === :Binary && return Ptr{__JL_Ctag_228}(x + 0)
+    f === :Set && return Ptr{__JL_Ctag_229}(x + 0)
+    f === :Date && return Ptr{__JL_Ctag_230}(x + 0)
     return getfield(x, f)
 end
 
@@ -29216,7 +20581,7 @@ function Base.getproperty(x::OGRField, f::Symbol)
 end
 
 function Base.setproperty!(x::Ptr{OGRField}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
+    return unsafe_store!(getproperty(x, f), v)
 end
 
 """
@@ -29233,15 +20598,7 @@ Fetch a handle to the internal field value given the index.
 the returned handle is to an internal data structure, and should not be freed, or modified.
 """
 function ogr_f_getrawfieldref(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_F_GetRawFieldRef, libgdal),
-            Ptr{OGRField},
-            (OGRFeatureH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_GetRawFieldRef, libgdal), Ptr{OGRField}, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -29253,7 +20610,7 @@ Returns whether a raw field is unset.
 * **puField**: pointer to raw field.
 """
 function ogr_rawfield_isunset(arg1)
-    aftercare(ccall((:OGR_RawField_IsUnset, libgdal), Cint, (Ptr{OGRField},), arg1))
+    return aftercare(ccall((:OGR_RawField_IsUnset, libgdal), Cint, (Ptr{OGRField},), arg1))
 end
 
 """
@@ -29265,7 +20622,7 @@ Returns whether a raw field is null.
 * **puField**: pointer to raw field.
 """
 function ogr_rawfield_isnull(arg1)
-    aftercare(ccall((:OGR_RawField_IsNull, libgdal), Cint, (Ptr{OGRField},), arg1))
+    return aftercare(ccall((:OGR_RawField_IsNull, libgdal), Cint, (Ptr{OGRField},), arg1))
 end
 
 """
@@ -29277,7 +20634,7 @@ Mark a raw field as unset.
 * **puField**: pointer to raw field.
 """
 function ogr_rawfield_setunset(arg1)
-    aftercare(ccall((:OGR_RawField_SetUnset, libgdal), Cvoid, (Ptr{OGRField},), arg1))
+    return aftercare(ccall((:OGR_RawField_SetUnset, libgdal), Cvoid, (Ptr{OGRField},), arg1))
 end
 
 """
@@ -29289,7 +20646,7 @@ Mark a raw field as null.
 * **puField**: pointer to raw field.
 """
 function ogr_rawfield_setnull(arg1)
-    aftercare(ccall((:OGR_RawField_SetNull, libgdal), Cvoid, (Ptr{OGRField},), arg1))
+    return aftercare(ccall((:OGR_RawField_SetNull, libgdal), Cvoid, (Ptr{OGRField},), arg1))
 end
 
 """
@@ -29306,9 +20663,7 @@ Fetch field value as integer.
 the field value.
 """
 function ogr_f_getfieldasinteger(arg1, arg2)
-    aftercare(
-        ccall((:OGR_F_GetFieldAsInteger, libgdal), Cint, (OGRFeatureH, Cint), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_F_GetFieldAsInteger, libgdal), Cint, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -29325,15 +20680,7 @@ Fetch field value as integer 64 bit.
 the field value.
 """
 function ogr_f_getfieldasinteger64(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_F_GetFieldAsInteger64, libgdal),
-            GIntBig,
-            (OGRFeatureH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_GetFieldAsInteger64, libgdal), GIntBig, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -29350,9 +20697,7 @@ Fetch field value as a double.
 the field value.
 """
 function ogr_f_getfieldasdouble(arg1, arg2)
-    aftercare(
-        ccall((:OGR_F_GetFieldAsDouble, libgdal), Cdouble, (OGRFeatureH, Cint), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_F_GetFieldAsDouble, libgdal), Cdouble, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -29369,10 +20714,7 @@ Fetch field value as a string.
 the field value. This string is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function ogr_f_getfieldasstring(arg1, arg2)
-    aftercare(
-        ccall((:OGR_F_GetFieldAsString, libgdal), Cstring, (OGRFeatureH, Cint), arg1, arg2),
-        false,
-    )
+    return aftercare(ccall((:OGR_F_GetFieldAsString, libgdal), Cstring, (OGRFeatureH, Cint), arg1, arg2), false)
 end
 
 """
@@ -29391,17 +20733,8 @@ Fetch OFTDateTime field value as a ISO8601 representation.
 the field value. This string is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function ogr_f_getfieldasiso8601datetime(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_F_GetFieldAsISO8601DateTime, libgdal),
-            Cstring,
-            (OGRFeatureH, Cint, CSLConstList),
-            arg1,
-            arg2,
-            arg3,
-        ),
-        false,
-    )
+    return aftercare(ccall((:OGR_F_GetFieldAsISO8601DateTime, libgdal), Cstring, (OGRFeatureH, Cint, CSLConstList), arg1, arg2,
+                           arg3), false)
 end
 
 """
@@ -29420,16 +20753,7 @@ Fetch field value as a list of integers.
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief. If *pnCount is zero on return the returned pointer may be NULL or non-NULL.
 """
 function ogr_f_getfieldasintegerlist(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_F_GetFieldAsIntegerList, libgdal),
-            Ptr{Cint},
-            (OGRFeatureH, Cint, Ptr{Cint}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_GetFieldAsIntegerList, libgdal), Ptr{Cint}, (OGRFeatureH, Cint, Ptr{Cint}), arg1, arg2, arg3))
 end
 
 """
@@ -29448,16 +20772,8 @@ Fetch field value as a list of 64 bit integers.
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief. If *pnCount is zero on return the returned pointer may be NULL or non-NULL.
 """
 function ogr_f_getfieldasinteger64list(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_F_GetFieldAsInteger64List, libgdal),
-            Ptr{GIntBig},
-            (OGRFeatureH, Cint, Ptr{Cint}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_GetFieldAsInteger64List, libgdal), Ptr{GIntBig}, (OGRFeatureH, Cint, Ptr{Cint}), arg1, arg2,
+                           arg3))
 end
 
 """
@@ -29476,16 +20792,7 @@ Fetch field value as a list of doubles.
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief. If *pnCount is zero on return the returned pointer may be NULL or non-NULL.
 """
 function ogr_f_getfieldasdoublelist(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_F_GetFieldAsDoubleList, libgdal),
-            Ptr{Cdouble},
-            (OGRFeatureH, Cint, Ptr{Cint}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_GetFieldAsDoubleList, libgdal), Ptr{Cdouble}, (OGRFeatureH, Cint, Ptr{Cint}), arg1, arg2, arg3))
 end
 
 """
@@ -29502,15 +20809,7 @@ Fetch field value as a list of strings.
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function ogr_f_getfieldasstringlist(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_F_GetFieldAsStringList, libgdal),
-            Ptr{Cstring},
-            (OGRFeatureH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_GetFieldAsStringList, libgdal), Ptr{Cstring}, (OGRFeatureH, Cint), arg1, arg2))
 end
 
 """
@@ -29529,16 +20828,7 @@ Fetch field value as binary.
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function ogr_f_getfieldasbinary(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_F_GetFieldAsBinary, libgdal),
-            Ptr{GByte},
-            (OGRFeatureH, Cint, Ptr{Cint}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_GetFieldAsBinary, libgdal), Ptr{GByte}, (OGRFeatureH, Cint, Ptr{Cint}), arg1, arg2, arg3))
 end
 
 """
@@ -29569,32 +20859,9 @@ Fetch field value as date and time.
 TRUE on success or FALSE on failure.
 """
 function ogr_f_getfieldasdatetime(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
-    aftercare(
-        ccall(
-            (:OGR_F_GetFieldAsDateTime, libgdal),
-            Cint,
-            (
-                OGRFeatureH,
-                Cint,
-                Ptr{Cint},
-                Ptr{Cint},
-                Ptr{Cint},
-                Ptr{Cint},
-                Ptr{Cint},
-                Ptr{Cint},
-                Ptr{Cint},
-            ),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-            arg7,
-            arg8,
-            arg9,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_GetFieldAsDateTime, libgdal), Cint,
+                           (OGRFeatureH, Cint, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}), arg1,
+                           arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9))
 end
 
 """
@@ -29624,43 +20891,10 @@ Fetch field value as date and time.
 ### Returns
 TRUE on success or FALSE on failure.
 """
-function ogr_f_getfieldasdatetimeex(
-    hFeat,
-    iField,
-    pnYear,
-    pnMonth,
-    pnDay,
-    pnHour,
-    pnMinute,
-    pfSecond,
-    pnTZFlag,
-)
-    aftercare(
-        ccall(
-            (:OGR_F_GetFieldAsDateTimeEx, libgdal),
-            Cint,
-            (
-                OGRFeatureH,
-                Cint,
-                Ptr{Cint},
-                Ptr{Cint},
-                Ptr{Cint},
-                Ptr{Cint},
-                Ptr{Cint},
-                Ptr{Cfloat},
-                Ptr{Cint},
-            ),
-            hFeat,
-            iField,
-            pnYear,
-            pnMonth,
-            pnDay,
-            pnHour,
-            pnMinute,
-            pfSecond,
-            pnTZFlag,
-        ),
-    )
+function ogr_f_getfieldasdatetimeex(hFeat, iField, pnYear, pnMonth, pnDay, pnHour, pnMinute, pfSecond, pnTZFlag)
+    return aftercare(ccall((:OGR_F_GetFieldAsDateTimeEx, libgdal), Cint,
+                           (OGRFeatureH, Cint, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cfloat}, Ptr{Cint}),
+                           hFeat, iField, pnYear, pnMonth, pnDay, pnHour, pnMinute, pfSecond, pnTZFlag))
 end
 
 """
@@ -29676,16 +20910,7 @@ Set field to integer value.
 * **nValue**: the value to assign.
 """
 function ogr_f_setfieldinteger(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_F_SetFieldInteger, libgdal),
-            Cvoid,
-            (OGRFeatureH, Cint, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetFieldInteger, libgdal), Cvoid, (OGRFeatureH, Cint, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -29701,16 +20926,7 @@ Set field to 64 bit integer value.
 * **nValue**: the value to assign.
 """
 function ogr_f_setfieldinteger64(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_F_SetFieldInteger64, libgdal),
-            Cvoid,
-            (OGRFeatureH, Cint, GIntBig),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetFieldInteger64, libgdal), Cvoid, (OGRFeatureH, Cint, GIntBig), arg1, arg2, arg3))
 end
 
 """
@@ -29726,16 +20942,7 @@ Set field to double value.
 * **dfValue**: the value to assign.
 """
 function ogr_f_setfielddouble(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_F_SetFieldDouble, libgdal),
-            Cvoid,
-            (OGRFeatureH, Cint, Cdouble),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetFieldDouble, libgdal), Cvoid, (OGRFeatureH, Cint, Cdouble), arg1, arg2, arg3))
 end
 
 """
@@ -29751,16 +20958,7 @@ Set field to string value.
 * **pszValue**: the value to assign.
 """
 function ogr_f_setfieldstring(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_F_SetFieldString, libgdal),
-            Cvoid,
-            (OGRFeatureH, Cint, Cstring),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetFieldString, libgdal), Cvoid, (OGRFeatureH, Cint, Cstring), arg1, arg2, arg3))
 end
 
 """
@@ -29778,17 +20976,8 @@ Set field to list of integers value.
 * **panValues**: the values to assign.
 """
 function ogr_f_setfieldintegerlist(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OGR_F_SetFieldIntegerList, libgdal),
-            Cvoid,
-            (OGRFeatureH, Cint, Cint, Ptr{Cint}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetFieldIntegerList, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Ptr{Cint}), arg1, arg2, arg3,
+                           arg4))
 end
 
 """
@@ -29806,17 +20995,8 @@ Set field to list of 64 bit integers value.
 * **panValues**: the values to assign.
 """
 function ogr_f_setfieldinteger64list(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OGR_F_SetFieldInteger64List, libgdal),
-            Cvoid,
-            (OGRFeatureH, Cint, Cint, Ptr{GIntBig}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetFieldInteger64List, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Ptr{GIntBig}), arg1, arg2,
+                           arg3, arg4))
 end
 
 """
@@ -29834,17 +21014,8 @@ Set field to list of doubles value.
 * **padfValues**: the values to assign.
 """
 function ogr_f_setfielddoublelist(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OGR_F_SetFieldDoubleList, libgdal),
-            Cvoid,
-            (OGRFeatureH, Cint, Cint, Ptr{Cdouble}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetFieldDoubleList, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Ptr{Cdouble}), arg1, arg2, arg3,
+                           arg4))
 end
 
 """
@@ -29860,16 +21031,7 @@ Set field to list of strings value.
 * **papszValues**: the values to assign. List of NUL-terminated string, ending with a NULL pointer.
 """
 function ogr_f_setfieldstringlist(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_F_SetFieldStringList, libgdal),
-            Cvoid,
-            (OGRFeatureH, Cint, CSLConstList),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetFieldStringList, libgdal), Cvoid, (OGRFeatureH, Cint, CSLConstList), arg1, arg2, arg3))
 end
 
 """
@@ -29885,16 +21047,7 @@ Set field.
 * **psValue**: handle on the value to assign.
 """
 function ogr_f_setfieldraw(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_F_SetFieldRaw, libgdal),
-            Cvoid,
-            (OGRFeatureH, Cint, Ptr{OGRField}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetFieldRaw, libgdal), Cvoid, (OGRFeatureH, Cint, Ptr{OGRField}), arg1, arg2, arg3))
 end
 
 """
@@ -29912,17 +21065,7 @@ Set field to binary data.
 * **pabyData**: the data to apply.
 """
 function ogr_f_setfieldbinary(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OGR_F_SetFieldBinary, libgdal),
-            Cvoid,
-            (OGRFeatureH, Cint, Cint, Ptr{Cvoid}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetFieldBinary, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Ptr{Cvoid}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -29950,22 +21093,8 @@ Set field to datetime.
 * **nTZFlag**: (0=unknown, 1=localtime, 100=GMT, see data model for details)
 """
 function ogr_f_setfielddatetime(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
-    aftercare(
-        ccall(
-            (:OGR_F_SetFieldDateTime, libgdal),
-            Cvoid,
-            (OGRFeatureH, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-            arg7,
-            arg8,
-            arg9,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetFieldDateTime, libgdal), Cvoid, (OGRFeatureH, Cint, Cint, Cint, Cint, Cint, Cint, Cint, Cint),
+                           arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9))
 end
 
 """
@@ -29993,22 +21122,9 @@ Set field to datetime.
 * **nTZFlag**: (0=unknown, 1=localtime, 100=GMT, see data model for details)
 """
 function ogr_f_setfielddatetimeex(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9)
-    aftercare(
-        ccall(
-            (:OGR_F_SetFieldDateTimeEx, libgdal),
-            Cvoid,
-            (OGRFeatureH, Cint, Cint, Cint, Cint, Cint, Cint, Cfloat, Cint),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-            arg7,
-            arg8,
-            arg9,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetFieldDateTimeEx, libgdal), Cvoid,
+                           (OGRFeatureH, Cint, Cint, Cint, Cint, Cint, Cint, Cfloat, Cint), arg1, arg2, arg3, arg4, arg5, arg6,
+                           arg7, arg8, arg9))
 end
 
 """
@@ -30023,7 +21139,7 @@ Fetch number of geometry fields on this feature This will always be the same as 
 count of geometry fields.
 """
 function ogr_f_getgeomfieldcount(hFeat)
-    aftercare(ccall((:OGR_F_GetGeomFieldCount, libgdal), Cint, (OGRFeatureH,), hFeat))
+    return aftercare(ccall((:OGR_F_GetGeomFieldCount, libgdal), Cint, (OGRFeatureH,), hFeat))
 end
 
 """
@@ -30040,15 +21156,7 @@ Fetch definition for this geometry field.
 a handle to the field definition (from the OGRFeatureDefn). This is an internal reference, and should not be deleted or modified.
 """
 function ogr_f_getgeomfielddefnref(hFeat, iField)
-    aftercare(
-        ccall(
-            (:OGR_F_GetGeomFieldDefnRef, libgdal),
-            OGRGeomFieldDefnH,
-            (OGRFeatureH, Cint),
-            hFeat,
-            iField,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_GetGeomFieldDefnRef, libgdal), OGRGeomFieldDefnH, (OGRFeatureH, Cint), hFeat, iField))
 end
 
 """
@@ -30065,15 +21173,7 @@ Fetch the geometry field index given geometry field name.
 the geometry field index, or -1 if no matching geometry field is found.
 """
 function ogr_f_getgeomfieldindex(hFeat, pszName)
-    aftercare(
-        ccall(
-            (:OGR_F_GetGeomFieldIndex, libgdal),
-            Cint,
-            (OGRFeatureH, Cstring),
-            hFeat,
-            pszName,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_GetGeomFieldIndex, libgdal), Cint, (OGRFeatureH, Cstring), hFeat, pszName))
 end
 
 """
@@ -30090,15 +21190,7 @@ Fetch a handle to feature geometry.
 a handle to internal feature geometry. This object should not be modified.
 """
 function ogr_f_getgeomfieldref(hFeat, iField)
-    aftercare(
-        ccall(
-            (:OGR_F_GetGeomFieldRef, libgdal),
-            OGRGeometryH,
-            (OGRFeatureH, Cint),
-            hFeat,
-            iField,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_GetGeomFieldRef, libgdal), OGRGeometryH, (OGRFeatureH, Cint), hFeat, iField))
 end
 
 """
@@ -30117,16 +21209,7 @@ Set feature geometry of a specified geometry field.
 OGRERR_NONE if successful, or OGRERR_FAILURE if the index is invalid, or OGR_UNSUPPORTED_GEOMETRY_TYPE if the geometry type is illegal for the OGRFeatureDefn (checking not yet implemented).
 """
 function ogr_f_setgeomfielddirectly(hFeat, iField, hGeom)
-    aftercare(
-        ccall(
-            (:OGR_F_SetGeomFieldDirectly, libgdal),
-            OGRErr,
-            (OGRFeatureH, Cint, OGRGeometryH),
-            hFeat,
-            iField,
-            hGeom,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetGeomFieldDirectly, libgdal), OGRErr, (OGRFeatureH, Cint, OGRGeometryH), hFeat, iField, hGeom))
 end
 
 """
@@ -30145,16 +21228,7 @@ Set feature geometry of a specified geometry field.
 OGRERR_NONE if successful, or OGR_UNSUPPORTED_GEOMETRY_TYPE if the geometry type is illegal for the OGRFeatureDefn (checking not yet implemented).
 """
 function ogr_f_setgeomfield(hFeat, iField, hGeom)
-    aftercare(
-        ccall(
-            (:OGR_F_SetGeomField, libgdal),
-            OGRErr,
-            (OGRFeatureH, Cint, OGRGeometryH),
-            hFeat,
-            iField,
-            hGeom,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetGeomField, libgdal), OGRErr, (OGRFeatureH, Cint, OGRGeometryH), hFeat, iField, hGeom))
 end
 
 """
@@ -30169,7 +21243,7 @@ Get feature identifier.
 feature id or OGRNullFID if none has been assigned.
 """
 function ogr_f_getfid(arg1)
-    aftercare(ccall((:OGR_F_GetFID, libgdal), GIntBig, (OGRFeatureH,), arg1))
+    return aftercare(ccall((:OGR_F_GetFID, libgdal), GIntBig, (OGRFeatureH,), arg1))
 end
 
 """
@@ -30186,7 +21260,7 @@ Set the feature identifier.
 On success OGRERR_NONE, or on failure some other value.
 """
 function ogr_f_setfid(arg1, arg2)
-    aftercare(ccall((:OGR_F_SetFID, libgdal), OGRErr, (OGRFeatureH, GIntBig), arg1, arg2))
+    return aftercare(ccall((:OGR_F_SetFID, libgdal), OGRErr, (OGRFeatureH, GIntBig), arg1, arg2))
 end
 
 """
@@ -30200,15 +21274,7 @@ Dump this feature in a human readable form.
 * **fpOut**: the stream to write to, such as strout.
 """
 function ogr_f_dumpreadable(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_F_DumpReadable, libgdal),
-            Cvoid,
-            (OGRFeatureH, Ptr{Libc.FILE}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_DumpReadable, libgdal), Cvoid, (OGRFeatureH, Ptr{Libc.FILE}), arg1, arg2))
 end
 
 """
@@ -30225,16 +21291,7 @@ Dump this feature in a human readable form.
 a string with the feature representation (to be freed with CPLFree())
 """
 function ogr_f_dumpreadableasstring(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_F_DumpReadableAsString, libgdal),
-            Cstring,
-            (OGRFeatureH, CSLConstList),
-            arg1,
-            arg2,
-        ),
-        false,
-    )
+    return aftercare(ccall((:OGR_F_DumpReadableAsString, libgdal), Cstring, (OGRFeatureH, CSLConstList), arg1, arg2), false)
 end
 
 """
@@ -30253,16 +21310,7 @@ Set one feature from another.
 OGRERR_NONE if the operation succeeds, even if some values are not transferred, otherwise an error code.
 """
 function ogr_f_setfrom(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_F_SetFrom, libgdal),
-            OGRErr,
-            (OGRFeatureH, OGRFeatureH, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetFrom, libgdal), OGRErr, (OGRFeatureH, OGRFeatureH, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -30283,17 +21331,8 @@ Set one feature from another.
 OGRERR_NONE if the operation succeeds, even if some values are not transferred, otherwise an error code.
 """
 function ogr_f_setfromwithmap(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OGR_F_SetFromWithMap, libgdal),
-            OGRErr,
-            (OGRFeatureH, OGRFeatureH, Cint, Ptr{Cint}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetFromWithMap, libgdal), OGRErr, (OGRFeatureH, OGRFeatureH, Cint, Ptr{Cint}), arg1, arg2, arg3,
+                           arg4))
 end
 
 """
@@ -30308,7 +21347,7 @@ Fetch style string for this feature.
 a reference to a representation in string format, or NULL if there isn't one.
 """
 function ogr_f_getstylestring(arg1)
-    aftercare(ccall((:OGR_F_GetStyleString, libgdal), Cstring, (OGRFeatureH,), arg1), false)
+    return aftercare(ccall((:OGR_F_GetStyleString, libgdal), Cstring, (OGRFeatureH,), arg1), false)
 end
 
 """
@@ -30322,9 +21361,7 @@ Set feature style string.
 * **pszStyle**: the style string to apply to this feature, cannot be NULL.
 """
 function ogr_f_setstylestring(arg1, arg2)
-    aftercare(
-        ccall((:OGR_F_SetStyleString, libgdal), Cvoid, (OGRFeatureH, Cstring), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_F_SetStyleString, libgdal), Cvoid, (OGRFeatureH, Cstring), arg1, arg2))
 end
 
 """
@@ -30338,15 +21375,7 @@ Set feature style string.
 * **pszStyle**: the style string to apply to this feature, cannot be NULL.
 """
 function ogr_f_setstylestringdirectly(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_F_SetStyleStringDirectly, libgdal),
-            Cvoid,
-            (OGRFeatureH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetStyleStringDirectly, libgdal), Cvoid, (OGRFeatureH, Cstring), arg1, arg2))
 end
 
 """
@@ -30355,7 +21384,7 @@ end
 Return style table
 """
 function ogr_f_getstyletable(arg1)
-    aftercare(ccall((:OGR_F_GetStyleTable, libgdal), OGRStyleTableH, (OGRFeatureH,), arg1))
+    return aftercare(ccall((:OGR_F_GetStyleTable, libgdal), OGRStyleTableH, (OGRFeatureH,), arg1))
 end
 
 """
@@ -30364,15 +21393,7 @@ end
 Set style table and take ownership
 """
 function ogr_f_setstyletabledirectly(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_F_SetStyleTableDirectly, libgdal),
-            Cvoid,
-            (OGRFeatureH, OGRStyleTableH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetStyleTableDirectly, libgdal), Cvoid, (OGRFeatureH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -30381,15 +21402,7 @@ end
 Set style table
 """
 function ogr_f_setstyletable(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_F_SetStyleTable, libgdal),
-            Cvoid,
-            (OGRFeatureH, OGRStyleTableH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetStyleTable, libgdal), Cvoid, (OGRFeatureH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -30404,7 +21417,7 @@ Returns the native data for the feature.
 a string with the native data, or NULL if there is none.
 """
 function ogr_f_getnativedata(arg1)
-    aftercare(ccall((:OGR_F_GetNativeData, libgdal), Cstring, (OGRFeatureH,), arg1), false)
+    return aftercare(ccall((:OGR_F_GetNativeData, libgdal), Cstring, (OGRFeatureH,), arg1), false)
 end
 
 """
@@ -30418,9 +21431,7 @@ Sets the native data for the feature.
 * **pszNativeData**: a string with the native data, or NULL if there is none.
 """
 function ogr_f_setnativedata(arg1, arg2)
-    aftercare(
-        ccall((:OGR_F_SetNativeData, libgdal), Cvoid, (OGRFeatureH, Cstring), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_F_SetNativeData, libgdal), Cvoid, (OGRFeatureH, Cstring), arg1, arg2))
 end
 
 """
@@ -30435,10 +21446,7 @@ Returns the native media type for the feature.
 a string with the native media type, or NULL if there is none.
 """
 function ogr_f_getnativemediatype(arg1)
-    aftercare(
-        ccall((:OGR_F_GetNativeMediaType, libgdal), Cstring, (OGRFeatureH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:OGR_F_GetNativeMediaType, libgdal), Cstring, (OGRFeatureH,), arg1), false)
 end
 
 """
@@ -30452,15 +21460,7 @@ Sets the native media type for the feature.
 * **pszNativeMediaType**: a string with the native media type, or NULL if there is none.
 """
 function ogr_f_setnativemediatype(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_F_SetNativeMediaType, libgdal),
-            Cvoid,
-            (OGRFeatureH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_SetNativeMediaType, libgdal), Cvoid, (OGRFeatureH, Cstring), arg1, arg2))
 end
 
 """
@@ -30476,16 +21476,8 @@ Fill unset fields with default values that might be defined.
 * **papszOptions**: unused currently. Must be set to NULL.
 """
 function ogr_f_fillunsetwithdefault(hFeat, bNotNullableOnly, papszOptions)
-    aftercare(
-        ccall(
-            (:OGR_F_FillUnsetWithDefault, libgdal),
-            Cvoid,
-            (OGRFeatureH, Cint, Ptr{Cstring}),
-            hFeat,
-            bNotNullableOnly,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_FillUnsetWithDefault, libgdal), Cvoid, (OGRFeatureH, Cint, Ptr{Cstring}), hFeat,
+                           bNotNullableOnly, papszOptions))
 end
 
 """
@@ -30504,16 +21496,7 @@ Validate that a feature meets constraints of its schema.
 TRUE if all enabled validation tests pass.
 """
 function ogr_f_validate(arg1, nValidateFlags, bEmitError)
-    aftercare(
-        ccall(
-            (:OGR_F_Validate, libgdal),
-            Cint,
-            (OGRFeatureH, Cint, Cint),
-            arg1,
-            nValidateFlags,
-            bEmitError,
-        ),
-    )
+    return aftercare(ccall((:OGR_F_Validate, libgdal), Cint, (OGRFeatureH, Cint, Cint), arg1, nValidateFlags, bEmitError))
 end
 
 """
@@ -30525,7 +21508,7 @@ Destroy a field domain.
 * **hFieldDomain**: the field domain.
 """
 function ogr_flddomain_destroy(arg1)
-    aftercare(ccall((:OGR_FldDomain_Destroy, libgdal), Cvoid, (OGRFieldDomainH,), arg1))
+    return aftercare(ccall((:OGR_FldDomain_Destroy, libgdal), Cvoid, (OGRFieldDomainH,), arg1))
 end
 
 """
@@ -30540,10 +21523,7 @@ Get the name of the field domain.
 the field domain name.
 """
 function ogr_flddomain_getname(arg1)
-    aftercare(
-        ccall((:OGR_FldDomain_GetName, libgdal), Cstring, (OGRFieldDomainH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:OGR_FldDomain_GetName, libgdal), Cstring, (OGRFieldDomainH,), arg1), false)
 end
 
 """
@@ -30558,10 +21538,7 @@ Get the description of the field domain.
 the field domain description (might be empty string).
 """
 function ogr_flddomain_getdescription(arg1)
-    aftercare(
-        ccall((:OGR_FldDomain_GetDescription, libgdal), Cstring, (OGRFieldDomainH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:OGR_FldDomain_GetDescription, libgdal), Cstring, (OGRFieldDomainH,), arg1), false)
 end
 
 """
@@ -30595,14 +21572,7 @@ Get the type of the field domain.
 the type of the field domain.
 """
 function ogr_flddomain_getdomaintype(arg1)
-    aftercare(
-        ccall(
-            (:OGR_FldDomain_GetDomainType, libgdal),
-            OGRFieldDomainType,
-            (OGRFieldDomainH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGR_FldDomain_GetDomainType, libgdal), OGRFieldDomainType, (OGRFieldDomainH,), arg1))
 end
 
 """
@@ -30617,14 +21587,7 @@ Get the field type of the field domain.
 the field type of the field domain.
 """
 function ogr_flddomain_getfieldtype(arg1)
-    aftercare(
-        ccall(
-            (:OGR_FldDomain_GetFieldType, libgdal),
-            OGRFieldType,
-            (OGRFieldDomainH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGR_FldDomain_GetFieldType, libgdal), OGRFieldType, (OGRFieldDomainH,), arg1))
 end
 
 """
@@ -30639,14 +21602,7 @@ Get the field subtype of the field domain.
 the field subtype of the field domain.
 """
 function ogr_flddomain_getfieldsubtype(arg1)
-    aftercare(
-        ccall(
-            (:OGR_FldDomain_GetFieldSubType, libgdal),
-            OGRFieldSubType,
-            (OGRFieldDomainH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGR_FldDomain_GetFieldSubType, libgdal), OGRFieldSubType, (OGRFieldDomainH,), arg1))
 end
 
 """
@@ -30682,14 +21638,7 @@ Get the split policy of the field domain.
 the split policy of the field domain.
 """
 function ogr_flddomain_getsplitpolicy(arg1)
-    aftercare(
-        ccall(
-            (:OGR_FldDomain_GetSplitPolicy, libgdal),
-            OGRFieldDomainSplitPolicy,
-            (OGRFieldDomainH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGR_FldDomain_GetSplitPolicy, libgdal), OGRFieldDomainSplitPolicy, (OGRFieldDomainH,), arg1))
 end
 
 """
@@ -30703,15 +21652,8 @@ Set the split policy of the field domain.
 * **policy**: the split policy of the field domain.
 """
 function ogr_flddomain_setsplitpolicy(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_FldDomain_SetSplitPolicy, libgdal),
-            Cvoid,
-            (OGRFieldDomainH, OGRFieldDomainSplitPolicy),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_FldDomain_SetSplitPolicy, libgdal), Cvoid, (OGRFieldDomainH, OGRFieldDomainSplitPolicy), arg1,
+                           arg2))
 end
 
 """
@@ -30747,14 +21689,7 @@ Get the merge policy of the field domain.
 the merge policy of the field domain.
 """
 function ogr_flddomain_getmergepolicy(arg1)
-    aftercare(
-        ccall(
-            (:OGR_FldDomain_GetMergePolicy, libgdal),
-            OGRFieldDomainMergePolicy,
-            (OGRFieldDomainH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGR_FldDomain_GetMergePolicy, libgdal), OGRFieldDomainMergePolicy, (OGRFieldDomainH,), arg1))
 end
 
 """
@@ -30768,15 +21703,8 @@ Set the merge policy of the field domain.
 * **policy**: the merge policy of the field domain.
 """
 function ogr_flddomain_setmergepolicy(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_FldDomain_SetMergePolicy, libgdal),
-            Cvoid,
-            (OGRFieldDomainH, OGRFieldDomainMergePolicy),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_FldDomain_SetMergePolicy, libgdal), Cvoid, (OGRFieldDomainH, OGRFieldDomainMergePolicy), arg1,
+                           arg2))
 end
 
 """
@@ -30815,25 +21743,10 @@ Creates a new coded field domain.
 ### Returns
 a new handle that should be freed with OGR_FldDomain_Destroy(), or NULL in case of error.
 """
-function ogr_codedflddomain_create(
-    pszName,
-    pszDescription,
-    eFieldType,
-    eFieldSubType,
-    enumeration,
-)
-    aftercare(
-        ccall(
-            (:OGR_CodedFldDomain_Create, libgdal),
-            OGRFieldDomainH,
-            (Cstring, Cstring, OGRFieldType, OGRFieldSubType, Ptr{OGRCodedValue}),
-            pszName,
-            pszDescription,
-            eFieldType,
-            eFieldSubType,
-            enumeration,
-        ),
-    )
+function ogr_codedflddomain_create(pszName, pszDescription, eFieldType, eFieldSubType, enumeration)
+    return aftercare(ccall((:OGR_CodedFldDomain_Create, libgdal), OGRFieldDomainH,
+                           (Cstring, Cstring, OGRFieldType, OGRFieldSubType, Ptr{OGRCodedValue}), pszName, pszDescription,
+                           eFieldType, eFieldSubType, enumeration))
 end
 
 """
@@ -30848,14 +21761,7 @@ Get the enumeration as (code, value) pairs.
 the (code, value) pairs, or nullptr in case of error.
 """
 function ogr_codedflddomain_getenumeration(arg1)
-    aftercare(
-        ccall(
-            (:OGR_CodedFldDomain_GetEnumeration, libgdal),
-            Ptr{OGRCodedValue},
-            (OGRFieldDomainH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OGR_CodedFldDomain_GetEnumeration, libgdal), Ptr{OGRCodedValue}, (OGRFieldDomainH,), arg1))
 end
 
 """
@@ -30883,40 +21789,11 @@ Creates a new range field domain.
 ### Returns
 a new handle that should be freed with OGR_FldDomain_Destroy()
 """
-function ogr_rangeflddomain_create(
-    pszName,
-    pszDescription,
-    eFieldType,
-    eFieldSubType,
-    psMin,
-    bMinIsInclusive,
-    psMax,
-    bMaxIsInclusive,
-)
-    aftercare(
-        ccall(
-            (:OGR_RangeFldDomain_Create, libgdal),
-            OGRFieldDomainH,
-            (
-                Cstring,
-                Cstring,
-                OGRFieldType,
-                OGRFieldSubType,
-                Ptr{OGRField},
-                Bool,
-                Ptr{OGRField},
-                Bool,
-            ),
-            pszName,
-            pszDescription,
-            eFieldType,
-            eFieldSubType,
-            psMin,
-            bMinIsInclusive,
-            psMax,
-            bMaxIsInclusive,
-        ),
-    )
+function ogr_rangeflddomain_create(pszName, pszDescription, eFieldType, eFieldSubType, psMin, bMinIsInclusive, psMax,
+                                   bMaxIsInclusive)
+    return aftercare(ccall((:OGR_RangeFldDomain_Create, libgdal), OGRFieldDomainH,
+                           (Cstring, Cstring, OGRFieldType, OGRFieldSubType, Ptr{OGRField}, Bool, Ptr{OGRField}, Bool), pszName,
+                           pszDescription, eFieldType, eFieldSubType, psMin, bMinIsInclusive, psMax, bMaxIsInclusive))
 end
 
 """
@@ -30933,15 +21810,8 @@ Get the minimum value.
 the minimum value.
 """
 function ogr_rangeflddomain_getmin(arg1, pbIsInclusiveOut)
-    aftercare(
-        ccall(
-            (:OGR_RangeFldDomain_GetMin, libgdal),
-            Ptr{OGRField},
-            (OGRFieldDomainH, Ptr{Bool}),
-            arg1,
-            pbIsInclusiveOut,
-        ),
-    )
+    return aftercare(ccall((:OGR_RangeFldDomain_GetMin, libgdal), Ptr{OGRField}, (OGRFieldDomainH, Ptr{Bool}), arg1,
+                           pbIsInclusiveOut))
 end
 
 """
@@ -30958,15 +21828,8 @@ Get the maximum value.
 the maximum value.
 """
 function ogr_rangeflddomain_getmax(arg1, pbIsInclusiveOut)
-    aftercare(
-        ccall(
-            (:OGR_RangeFldDomain_GetMax, libgdal),
-            Ptr{OGRField},
-            (OGRFieldDomainH, Ptr{Bool}),
-            arg1,
-            pbIsInclusiveOut,
-        ),
-    )
+    return aftercare(ccall((:OGR_RangeFldDomain_GetMax, libgdal), Ptr{OGRField}, (OGRFieldDomainH, Ptr{Bool}), arg1,
+                           pbIsInclusiveOut))
 end
 
 """
@@ -30988,25 +21851,10 @@ Creates a new glob field domain.
 ### Returns
 a new handle that should be freed with OGR_FldDomain_Destroy()
 """
-function ogr_globflddomain_create(
-    pszName,
-    pszDescription,
-    eFieldType,
-    eFieldSubType,
-    pszGlob,
-)
-    aftercare(
-        ccall(
-            (:OGR_GlobFldDomain_Create, libgdal),
-            OGRFieldDomainH,
-            (Cstring, Cstring, OGRFieldType, OGRFieldSubType, Cstring),
-            pszName,
-            pszDescription,
-            eFieldType,
-            eFieldSubType,
-            pszGlob,
-        ),
-    )
+function ogr_globflddomain_create(pszName, pszDescription, eFieldType, eFieldSubType, pszGlob)
+    return aftercare(ccall((:OGR_GlobFldDomain_Create, libgdal), OGRFieldDomainH,
+                           (Cstring, Cstring, OGRFieldType, OGRFieldSubType, Cstring), pszName, pszDescription, eFieldType,
+                           eFieldSubType, pszGlob))
 end
 
 """
@@ -31021,10 +21869,7 @@ Get the glob expression.
 the glob expression, or nullptr in case of error
 """
 function ogr_globflddomain_getglob(arg1)
-    aftercare(
-        ccall((:OGR_GlobFldDomain_GetGlob, libgdal), Cstring, (OGRFieldDomainH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:OGR_GlobFldDomain_GetGlob, libgdal), Cstring, (OGRFieldDomainH,), arg1), false)
 end
 
 "Opaque type for a OGR datasource (OGRDataSource)"
@@ -31045,7 +21890,7 @@ Return the layer name.
 the layer name (must not been freed)
 """
 function ogr_l_getname(arg1)
-    aftercare(ccall((:OGR_L_GetName, libgdal), Cstring, (OGRLayerH,), arg1), false)
+    return aftercare(ccall((:OGR_L_GetName, libgdal), Cstring, (OGRLayerH,), arg1), false)
 end
 
 """
@@ -31060,7 +21905,7 @@ Return the layer geometry type.
 the geometry type
 """
 function ogr_l_getgeomtype(arg1)
-    aftercare(ccall((:OGR_L_GetGeomType, libgdal), OGRwkbGeometryType, (OGRLayerH,), arg1))
+    return aftercare(ccall((:OGR_L_GetGeomType, libgdal), OGRwkbGeometryType, (OGRLayerH,), arg1))
 end
 
 """
@@ -31099,27 +21944,10 @@ Get actual geometry types found in features.
 ### Returns
 an array of *pnEntryCount that must be freed with CPLFree(), or NULL in case of error
 """
-function ogr_l_getgeometrytypes(
-    hLayer,
-    iGeomField,
-    nFlags,
-    pnEntryCount,
-    pfnProgress,
-    pProgressData,
-)
-    aftercare(
-        ccall(
-            (:OGR_L_GetGeometryTypes, libgdal),
-            Ptr{OGRGeometryTypeCounter},
-            (OGRLayerH, Cint, Cint, Ptr{Cint}, GDALProgressFunc, Any),
-            hLayer,
-            iGeomField,
-            nFlags,
-            pnEntryCount,
-            pfnProgress,
-            pProgressData,
-        ),
-    )
+function ogr_l_getgeometrytypes(hLayer, iGeomField, nFlags, pnEntryCount, pfnProgress, pProgressData)
+    return aftercare(ccall((:OGR_L_GetGeometryTypes, libgdal), Ptr{OGRGeometryTypeCounter},
+                           (OGRLayerH, Cint, Cint, Ptr{Cint}, GDALProgressFunc, Any), hLayer, iGeomField, nFlags, pnEntryCount,
+                           pfnProgress, pProgressData))
 end
 
 """
@@ -31134,7 +21962,7 @@ This function returns the current spatial filter for this layer.
 a handle to the spatial filter geometry.
 """
 function ogr_l_getspatialfilter(arg1)
-    aftercare(ccall((:OGR_L_GetSpatialFilter, libgdal), OGRGeometryH, (OGRLayerH,), arg1))
+    return aftercare(ccall((:OGR_L_GetSpatialFilter, libgdal), OGRGeometryH, (OGRLayerH,), arg1))
 end
 
 """
@@ -31148,15 +21976,7 @@ Set a new spatial filter.
 * **hGeom**: handle to the geometry to use as a filtering region. NULL may be passed indicating that the current spatial filter should be cleared, but no new one instituted.
 """
 function ogr_l_setspatialfilter(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_L_SetSpatialFilter, libgdal),
-            Cvoid,
-            (OGRLayerH, OGRGeometryH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_SetSpatialFilter, libgdal), Cvoid, (OGRLayerH, OGRGeometryH), arg1, arg2))
 end
 
 """
@@ -31176,18 +21996,8 @@ Set a new rectangular spatial filter.
 * **dfMaxY**: the maximum Y coordinate for the rectangular region.
 """
 function ogr_l_setspatialfilterrect(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:OGR_L_SetSpatialFilterRect, libgdal),
-            Cvoid,
-            (OGRLayerH, Cdouble, Cdouble, Cdouble, Cdouble),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_SetSpatialFilterRect, libgdal), Cvoid, (OGRLayerH, Cdouble, Cdouble, Cdouble, Cdouble), arg1,
+                           arg2, arg3, arg4, arg5))
 end
 
 """
@@ -31203,16 +22013,7 @@ Set a new spatial filter.
 * **hGeom**: handle to the geometry to use as a filtering region. NULL may be passed indicating that the current spatial filter should be cleared, but no new one instituted.
 """
 function ogr_l_setspatialfilterex(arg1, iGeomField, hGeom)
-    aftercare(
-        ccall(
-            (:OGR_L_SetSpatialFilterEx, libgdal),
-            Cvoid,
-            (OGRLayerH, Cint, OGRGeometryH),
-            arg1,
-            iGeomField,
-            hGeom,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_SetSpatialFilterEx, libgdal), Cvoid, (OGRLayerH, Cint, OGRGeometryH), arg1, iGeomField, hGeom))
 end
 
 """
@@ -31234,19 +22035,8 @@ Set a new rectangular spatial filter.
 * **dfMaxY**: the maximum Y coordinate for the rectangular region.
 """
 function ogr_l_setspatialfilterrectex(arg1, iGeomField, dfMinX, dfMinY, dfMaxX, dfMaxY)
-    aftercare(
-        ccall(
-            (:OGR_L_SetSpatialFilterRectEx, libgdal),
-            Cvoid,
-            (OGRLayerH, Cint, Cdouble, Cdouble, Cdouble, Cdouble),
-            arg1,
-            iGeomField,
-            dfMinX,
-            dfMinY,
-            dfMaxX,
-            dfMaxY,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_SetSpatialFilterRectEx, libgdal), Cvoid, (OGRLayerH, Cint, Cdouble, Cdouble, Cdouble, Cdouble),
+                           arg1, iGeomField, dfMinX, dfMinY, dfMaxX, dfMaxY))
 end
 
 """
@@ -31263,15 +22053,7 @@ Set a new attribute query.
 OGRERR_NONE if successfully installed, or an error code if the query expression is in error, or some other failure occurs.
 """
 function ogr_l_setattributefilter(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_L_SetAttributeFilter, libgdal),
-            OGRErr,
-            (OGRLayerH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_SetAttributeFilter, libgdal), OGRErr, (OGRLayerH, Cstring), arg1, arg2))
 end
 
 struct ArrowArrayStream
@@ -31298,16 +22080,8 @@ Get a Arrow C stream.
 true in case of success.
 """
 function ogr_l_getarrowstream(hLayer, out_stream, papszOptions)
-    aftercare(
-        ccall(
-            (:OGR_L_GetArrowStream, libgdal),
-            Bool,
-            (OGRLayerH, Ptr{ArrowArrayStream}, Ptr{Cstring}),
-            hLayer,
-            out_stream,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_GetArrowStream, libgdal), Bool, (OGRLayerH, Ptr{ArrowArrayStream}, Ptr{Cstring}), hLayer,
+                           out_stream, papszOptions))
 end
 
 struct ArrowSchema
@@ -31340,17 +22114,8 @@ Returns whether the provided ArrowSchema is supported for writing.
 true if the ArrowSchema is supported for writing.
 """
 function ogr_l_isarrowschemasupported(hLayer, schema, papszOptions, ppszErrorMsg)
-    aftercare(
-        ccall(
-            (:OGR_L_IsArrowSchemaSupported, libgdal),
-            Bool,
-            (OGRLayerH, Ptr{ArrowSchema}, Ptr{Cstring}, Ptr{Cstring}),
-            hLayer,
-            schema,
-            papszOptions,
-            ppszErrorMsg,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_IsArrowSchemaSupported, libgdal), Bool,
+                           (OGRLayerH, Ptr{ArrowSchema}, Ptr{Cstring}, Ptr{Cstring}), hLayer, schema, papszOptions, ppszErrorMsg))
 end
 
 """
@@ -31369,16 +22134,8 @@ Creates a field from an ArrowSchema.
 true in case of success
 """
 function ogr_l_createfieldfromarrowschema(hLayer, schema, papszOptions)
-    aftercare(
-        ccall(
-            (:OGR_L_CreateFieldFromArrowSchema, libgdal),
-            Bool,
-            (OGRLayerH, Ptr{ArrowSchema}, Ptr{Cstring}),
-            hLayer,
-            schema,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_CreateFieldFromArrowSchema, libgdal), Bool, (OGRLayerH, Ptr{ArrowSchema}, Ptr{Cstring}), hLayer,
+                           schema, papszOptions))
 end
 
 struct ArrowArray
@@ -31412,17 +22169,8 @@ Writes a batch of rows from an ArrowArray.
 true in case of success
 """
 function ogr_l_writearrowbatch(hLayer, schema, array, papszOptions)
-    aftercare(
-        ccall(
-            (:OGR_L_WriteArrowBatch, libgdal),
-            Bool,
-            (OGRLayerH, Ptr{ArrowSchema}, Ptr{ArrowArray}, Ptr{Cstring}),
-            hLayer,
-            schema,
-            array,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_WriteArrowBatch, libgdal), Bool, (OGRLayerH, Ptr{ArrowSchema}, Ptr{ArrowArray}, Ptr{Cstring}),
+                           hLayer, schema, array, papszOptions))
 end
 
 """
@@ -31439,9 +22187,7 @@ Move read cursor to the nIndex'th feature in the current resultset.
 OGRERR_NONE on success or an error code.
 """
 function ogr_l_setnextbyindex(arg1, arg2)
-    aftercare(
-        ccall((:OGR_L_SetNextByIndex, libgdal), OGRErr, (OGRLayerH, GIntBig), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_L_SetNextByIndex, libgdal), OGRErr, (OGRLayerH, GIntBig), arg1, arg2))
 end
 
 """
@@ -31458,9 +22204,7 @@ Fetch a feature by its identifier.
 a handle to a feature now owned by the caller, or NULL on failure.
 """
 function ogr_l_getfeature(arg1, arg2)
-    aftercare(
-        ccall((:OGR_L_GetFeature, libgdal), OGRFeatureH, (OGRLayerH, GIntBig), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_L_GetFeature, libgdal), OGRFeatureH, (OGRLayerH, GIntBig), arg1, arg2))
 end
 
 """
@@ -31477,9 +22221,7 @@ Rewrite/replace an existing feature.
 OGRERR_NONE if the operation works, otherwise an appropriate error code (e.g OGRERR_NON_EXISTING_FEATURE if the feature does not exist).
 """
 function ogr_l_setfeature(arg1, arg2)
-    aftercare(
-        ccall((:OGR_L_SetFeature, libgdal), OGRErr, (OGRLayerH, OGRFeatureH), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_L_SetFeature, libgdal), OGRErr, (OGRLayerH, OGRFeatureH), arg1, arg2))
 end
 
 """
@@ -31496,15 +22238,7 @@ Create and write a new feature within a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_createfeature(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_L_CreateFeature, libgdal),
-            OGRErr,
-            (OGRLayerH, OGRFeatureH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_CreateFeature, libgdal), OGRErr, (OGRLayerH, OGRFeatureH), arg1, arg2))
 end
 
 """
@@ -31521,9 +22255,7 @@ Delete feature from layer.
 OGRERR_NONE if the operation works, otherwise an appropriate error code (e.g OGRERR_NON_EXISTING_FEATURE if the feature does not exist).
 """
 function ogr_l_deletefeature(arg1, arg2)
-    aftercare(
-        ccall((:OGR_L_DeleteFeature, libgdal), OGRErr, (OGRLayerH, GIntBig), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_L_DeleteFeature, libgdal), OGRErr, (OGRLayerH, GIntBig), arg1, arg2))
 end
 
 """
@@ -31540,15 +22272,7 @@ Rewrite/replace an existing feature or create a new feature within a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_upsertfeature(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_L_UpsertFeature, libgdal),
-            OGRErr,
-            (OGRLayerH, OGRFeatureH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_UpsertFeature, libgdal), OGRErr, (OGRLayerH, OGRFeatureH), arg1, arg2))
 end
 
 """
@@ -31574,29 +22298,11 @@ Update (part of) an existing feature.
 ### Returns
 OGRERR_NONE if the operation works, otherwise an appropriate error code (e.g OGRERR_NON_EXISTING_FEATURE if the feature does not exist).
 """
-function ogr_l_updatefeature(
-    arg1,
-    arg2,
-    nUpdatedFieldsCount,
-    panUpdatedFieldsIdx,
-    nUpdatedGeomFieldsCount,
-    panUpdatedGeomFieldsIdx,
-    bUpdateStyleString,
-)
-    aftercare(
-        ccall(
-            (:OGR_L_UpdateFeature, libgdal),
-            OGRErr,
-            (OGRLayerH, OGRFeatureH, Cint, Ptr{Cint}, Cint, Ptr{Cint}, Bool),
-            arg1,
-            arg2,
-            nUpdatedFieldsCount,
-            panUpdatedFieldsIdx,
-            nUpdatedGeomFieldsCount,
-            panUpdatedGeomFieldsIdx,
-            bUpdateStyleString,
-        ),
-    )
+function ogr_l_updatefeature(arg1, arg2, nUpdatedFieldsCount, panUpdatedFieldsIdx, nUpdatedGeomFieldsCount, panUpdatedGeomFieldsIdx,
+                             bUpdateStyleString)
+    return aftercare(ccall((:OGR_L_UpdateFeature, libgdal), OGRErr,
+                           (OGRLayerH, OGRFeatureH, Cint, Ptr{Cint}, Cint, Ptr{Cint}, Bool), arg1, arg2, nUpdatedFieldsCount,
+                           panUpdatedFieldsIdx, nUpdatedGeomFieldsCount, panUpdatedGeomFieldsIdx, bUpdateStyleString))
 end
 
 """
@@ -31611,7 +22317,7 @@ Fetch the schema information for this layer.
 a handle to the feature definition.
 """
 function ogr_l_getlayerdefn(arg1)
-    aftercare(ccall((:OGR_L_GetLayerDefn, libgdal), OGRFeatureDefnH, (OGRLayerH,), arg1))
+    return aftercare(ccall((:OGR_L_GetLayerDefn, libgdal), OGRFeatureDefnH, (OGRLayerH,), arg1))
 end
 
 """
@@ -31626,9 +22332,7 @@ Fetch the spatial reference system for this layer.
 spatial reference, or NULL if there isn't one.
 """
 function ogr_l_getspatialref(arg1)
-    aftercare(
-        ccall((:OGR_L_GetSpatialRef, libgdal), OGRSpatialReferenceH, (OGRLayerH,), arg1),
-    )
+    return aftercare(ccall((:OGR_L_GetSpatialRef, libgdal), OGRSpatialReferenceH, (OGRLayerH,), arg1))
 end
 
 """
@@ -31647,16 +22351,8 @@ Get the list of SRS supported.
 list of supported SRS, to be freed with OSRFreeSRSArray(), or nullptr
 """
 function ogr_l_getsupportedsrslist(hLayer, iGeomField, pnCount)
-    aftercare(
-        ccall(
-            (:OGR_L_GetSupportedSRSList, libgdal),
-            Ptr{OGRSpatialReferenceH},
-            (OGRLayerH, Cint, Ptr{Cint}),
-            hLayer,
-            iGeomField,
-            pnCount,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_GetSupportedSRSList, libgdal), Ptr{OGRSpatialReferenceH}, (OGRLayerH, Cint, Ptr{Cint}), hLayer,
+                           iGeomField, pnCount))
 end
 
 """
@@ -31675,16 +22371,8 @@ Change the active SRS.
 OGRERR_NONE in case of success, OGRERR_FAILURE if the passed SRS is not in GetSupportedSRSList().
 """
 function ogr_l_setactivesrs(hLayer, iGeomField, hSRS)
-    aftercare(
-        ccall(
-            (:OGR_L_SetActiveSRS, libgdal),
-            OGRErr,
-            (OGRLayerH, Cint, OGRSpatialReferenceH),
-            hLayer,
-            iGeomField,
-            hSRS,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_SetActiveSRS, libgdal), OGRErr, (OGRLayerH, Cint, OGRSpatialReferenceH), hLayer, iGeomField,
+                           hSRS))
 end
 
 """
@@ -31698,16 +22386,7 @@ Find the index of field in a layer.
 field index, or -1 if the field doesn't exist
 """
 function ogr_l_findfieldindex(arg1, arg2, bExactMatch)
-    aftercare(
-        ccall(
-            (:OGR_L_FindFieldIndex, libgdal),
-            Cint,
-            (OGRLayerH, Cstring, Cint),
-            arg1,
-            arg2,
-            bExactMatch,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_FindFieldIndex, libgdal), Cint, (OGRLayerH, Cstring, Cint), arg1, arg2, bExactMatch))
 end
 
 """
@@ -31724,9 +22403,7 @@ Fetch the feature count in this layer.
 feature count, -1 if count not known.
 """
 function ogr_l_getfeaturecount(arg1, arg2)
-    aftercare(
-        ccall((:OGR_L_GetFeatureCount, libgdal), GIntBig, (OGRLayerH, Cint), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_L_GetFeatureCount, libgdal), GIntBig, (OGRLayerH, Cint), arg1, arg2))
 end
 
 """
@@ -31745,16 +22422,7 @@ Fetch the extent of this layer.
 OGRERR_NONE on success, OGRERR_FAILURE if extent not known.
 """
 function ogr_l_getextent(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_L_GetExtent, libgdal),
-            OGRErr,
-            (OGRLayerH, Ptr{OGREnvelope}, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_GetExtent, libgdal), OGRErr, (OGRLayerH, Ptr{OGREnvelope}, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -31775,17 +22443,8 @@ Fetch the extent of this layer, on the specified geometry field.
 OGRERR_NONE on success, OGRERR_FAILURE if extent not known.
 """
 function ogr_l_getextentex(arg1, iGeomField, psExtent, bForce)
-    aftercare(
-        ccall(
-            (:OGR_L_GetExtentEx, libgdal),
-            OGRErr,
-            (OGRLayerH, Cint, Ptr{OGREnvelope}, Cint),
-            arg1,
-            iGeomField,
-            psExtent,
-            bForce,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_GetExtentEx, libgdal), OGRErr, (OGRLayerH, Cint, Ptr{OGREnvelope}, Cint), arg1, iGeomField,
+                           psExtent, bForce))
 end
 
 """
@@ -31806,17 +22465,8 @@ Fetch the 3D extent of this layer, on the specified geometry field.
 OGRERR_NONE on success or an error code in case of failure.
 """
 function ogr_l_getextent3d(hLayer, iGeomField, psExtent3D, bForce)
-    aftercare(
-        ccall(
-            (:OGR_L_GetExtent3D, libgdal),
-            OGRErr,
-            (OGRLayerH, Cint, Ptr{OGREnvelope3D}, Cint),
-            hLayer,
-            iGeomField,
-            psExtent3D,
-            bForce,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_GetExtent3D, libgdal), OGRErr, (OGRLayerH, Cint, Ptr{OGREnvelope3D}, Cint), hLayer, iGeomField,
+                           psExtent3D, bForce))
 end
 
 """
@@ -31833,9 +22483,7 @@ Test if this layer supported the named capability.
 TRUE if the layer has the requested capability, or FALSE otherwise. OGRLayers will return FALSE for any unrecognized capabilities.
 """
 function ogr_l_testcapability(arg1, arg2)
-    aftercare(
-        ccall((:OGR_L_TestCapability, libgdal), Cint, (OGRLayerH, Cstring), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_L_TestCapability, libgdal), Cint, (OGRLayerH, Cstring), arg1, arg2))
 end
 
 """
@@ -31854,16 +22502,7 @@ Create a new field on a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_createfield(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_L_CreateField, libgdal),
-            OGRErr,
-            (OGRLayerH, OGRFieldDefnH, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_CreateField, libgdal), OGRErr, (OGRLayerH, OGRFieldDefnH, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -31882,16 +22521,8 @@ Create a new geometry field on a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_creategeomfield(hLayer, hFieldDefn, bForce)
-    aftercare(
-        ccall(
-            (:OGR_L_CreateGeomField, libgdal),
-            OGRErr,
-            (OGRLayerH, OGRGeomFieldDefnH, Cint),
-            hLayer,
-            hFieldDefn,
-            bForce,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_CreateGeomField, libgdal), OGRErr, (OGRLayerH, OGRGeomFieldDefnH, Cint), hLayer, hFieldDefn,
+                           bForce))
 end
 
 """
@@ -31908,7 +22539,7 @@ Delete an existing field on a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_deletefield(arg1, iField)
-    aftercare(ccall((:OGR_L_DeleteField, libgdal), OGRErr, (OGRLayerH, Cint), arg1, iField))
+    return aftercare(ccall((:OGR_L_DeleteField, libgdal), OGRErr, (OGRLayerH, Cint), arg1, iField))
 end
 
 """
@@ -31925,15 +22556,7 @@ Reorder all the fields of a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_reorderfields(arg1, panMap)
-    aftercare(
-        ccall(
-            (:OGR_L_ReorderFields, libgdal),
-            OGRErr,
-            (OGRLayerH, Ptr{Cint}),
-            arg1,
-            panMap,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_ReorderFields, libgdal), OGRErr, (OGRLayerH, Ptr{Cint}), arg1, panMap))
 end
 
 """
@@ -31952,16 +22575,7 @@ Reorder an existing field on a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_reorderfield(arg1, iOldFieldPos, iNewFieldPos)
-    aftercare(
-        ccall(
-            (:OGR_L_ReorderField, libgdal),
-            OGRErr,
-            (OGRLayerH, Cint, Cint),
-            arg1,
-            iOldFieldPos,
-            iNewFieldPos,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_ReorderField, libgdal), OGRErr, (OGRLayerH, Cint, Cint), arg1, iOldFieldPos, iNewFieldPos))
 end
 
 """
@@ -31982,17 +22596,8 @@ Alter the definition of an existing field on a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_alterfielddefn(arg1, iField, hNewFieldDefn, nFlags)
-    aftercare(
-        ccall(
-            (:OGR_L_AlterFieldDefn, libgdal),
-            OGRErr,
-            (OGRLayerH, Cint, OGRFieldDefnH, Cint),
-            arg1,
-            iField,
-            hNewFieldDefn,
-            nFlags,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_AlterFieldDefn, libgdal), OGRErr, (OGRLayerH, Cint, OGRFieldDefnH, Cint), arg1, iField,
+                           hNewFieldDefn, nFlags))
 end
 
 """
@@ -32013,17 +22618,8 @@ Alter the definition of an existing geometry field on a layer.
 OGRERR_NONE on success.
 """
 function ogr_l_altergeomfielddefn(arg1, iField, hNewGeomFieldDefn, nFlags)
-    aftercare(
-        ccall(
-            (:OGR_L_AlterGeomFieldDefn, libgdal),
-            OGRErr,
-            (OGRLayerH, Cint, OGRGeomFieldDefnH, Cint),
-            arg1,
-            iField,
-            hNewGeomFieldDefn,
-            nFlags,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_AlterGeomFieldDefn, libgdal), OGRErr, (OGRLayerH, Cint, OGRGeomFieldDefnH, Cint), arg1, iField,
+                           hNewGeomFieldDefn, nFlags))
 end
 
 """
@@ -32038,7 +22634,7 @@ For datasources which support transactions, StartTransaction creates a transacti
 OGRERR_NONE on success.
 """
 function ogr_l_starttransaction(arg1)
-    aftercare(ccall((:OGR_L_StartTransaction, libgdal), OGRErr, (OGRLayerH,), arg1))
+    return aftercare(ccall((:OGR_L_StartTransaction, libgdal), OGRErr, (OGRLayerH,), arg1))
 end
 
 """
@@ -32053,7 +22649,7 @@ For datasources which support transactions, CommitTransaction commits a transact
 OGRERR_NONE on success.
 """
 function ogr_l_committransaction(arg1)
-    aftercare(ccall((:OGR_L_CommitTransaction, libgdal), OGRErr, (OGRLayerH,), arg1))
+    return aftercare(ccall((:OGR_L_CommitTransaction, libgdal), OGRErr, (OGRLayerH,), arg1))
 end
 
 """
@@ -32068,7 +22664,7 @@ For datasources which support transactions, RollbackTransaction will roll back a
 OGRERR_NONE on success.
 """
 function ogr_l_rollbacktransaction(arg1)
-    aftercare(ccall((:OGR_L_RollbackTransaction, libgdal), OGRErr, (OGRLayerH,), arg1))
+    return aftercare(ccall((:OGR_L_RollbackTransaction, libgdal), OGRErr, (OGRLayerH,), arg1))
 end
 
 """
@@ -32085,9 +22681,7 @@ Rename layer.
 OGRERR_NONE in case of success
 """
 function ogr_l_rename(hLayer, pszNewName)
-    aftercare(
-        ccall((:OGR_L_Rename, libgdal), OGRErr, (OGRLayerH, Cstring), hLayer, pszNewName),
-    )
+    return aftercare(ccall((:OGR_L_Rename, libgdal), OGRErr, (OGRLayerH, Cstring), hLayer, pszNewName))
 end
 
 """
@@ -32096,21 +22690,21 @@ end
 ` Doxygen_Suppress `
 """
 function ogr_l_reference(arg1)
-    aftercare(ccall((:OGR_L_Reference, libgdal), Cint, (OGRLayerH,), arg1))
+    return aftercare(ccall((:OGR_L_Reference, libgdal), Cint, (OGRLayerH,), arg1))
 end
 
 """
     OGR_L_Dereference(OGRLayerH hLayer) -> int
 """
 function ogr_l_dereference(arg1)
-    aftercare(ccall((:OGR_L_Dereference, libgdal), Cint, (OGRLayerH,), arg1))
+    return aftercare(ccall((:OGR_L_Dereference, libgdal), Cint, (OGRLayerH,), arg1))
 end
 
 """
     OGR_L_GetRefCount(OGRLayerH hLayer) -> int
 """
 function ogr_l_getrefcount(arg1)
-    aftercare(ccall((:OGR_L_GetRefCount, libgdal), Cint, (OGRLayerH,), arg1))
+    return aftercare(ccall((:OGR_L_GetRefCount, libgdal), Cint, (OGRLayerH,), arg1))
 end
 
 """
@@ -32119,7 +22713,7 @@ end
 ` `
 """
 function ogr_l_synctodisk(arg1)
-    aftercare(ccall((:OGR_L_SyncToDisk, libgdal), OGRErr, (OGRLayerH,), arg1))
+    return aftercare(ccall((:OGR_L_SyncToDisk, libgdal), OGRErr, (OGRLayerH,), arg1))
 end
 
 """
@@ -32128,7 +22722,7 @@ end
 ` Doxygen_Suppress `
 """
 function ogr_l_getfeaturesread(arg1)
-    aftercare(ccall((:OGR_L_GetFeaturesRead, libgdal), GIntBig, (OGRLayerH,), arg1))
+    return aftercare(ccall((:OGR_L_GetFeaturesRead, libgdal), GIntBig, (OGRLayerH,), arg1))
 end
 
 """
@@ -32137,7 +22731,7 @@ end
 ` `
 """
 function ogr_l_getfidcolumn(arg1)
-    aftercare(ccall((:OGR_L_GetFIDColumn, libgdal), Cstring, (OGRLayerH,), arg1), false)
+    return aftercare(ccall((:OGR_L_GetFIDColumn, libgdal), Cstring, (OGRLayerH,), arg1), false)
 end
 
 """
@@ -32152,10 +22746,7 @@ This method returns the name of the underlying database column being used as the
 geometry column name.
 """
 function ogr_l_getgeometrycolumn(arg1)
-    aftercare(
-        ccall((:OGR_L_GetGeometryColumn, libgdal), Cstring, (OGRLayerH,), arg1),
-        false,
-    )
+    return aftercare(ccall((:OGR_L_GetGeometryColumn, libgdal), Cstring, (OGRLayerH,), arg1), false)
 end
 
 """
@@ -32164,7 +22755,7 @@ end
 Get style table
 """
 function ogr_l_getstyletable(arg1)
-    aftercare(ccall((:OGR_L_GetStyleTable, libgdal), OGRStyleTableH, (OGRLayerH,), arg1))
+    return aftercare(ccall((:OGR_L_GetStyleTable, libgdal), OGRStyleTableH, (OGRLayerH,), arg1))
 end
 
 """
@@ -32173,15 +22764,7 @@ end
 Set style table (and take ownership)
 """
 function ogr_l_setstyletabledirectly(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_L_SetStyleTableDirectly, libgdal),
-            Cvoid,
-            (OGRLayerH, OGRStyleTableH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_SetStyleTableDirectly, libgdal), Cvoid, (OGRLayerH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -32190,15 +22773,7 @@ end
 Set style table
 """
 function ogr_l_setstyletable(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_L_SetStyleTable, libgdal),
-            Cvoid,
-            (OGRLayerH, OGRStyleTableH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_SetStyleTable, libgdal), Cvoid, (OGRLayerH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -32215,15 +22790,7 @@ Set which fields can be omitted when retrieving features from the layer.
 OGRERR_NONE if all field names have been resolved (even if the driver does not support this method)
 """
 function ogr_l_setignoredfields(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_L_SetIgnoredFields, libgdal),
-            OGRErr,
-            (OGRLayerH, Ptr{Cstring}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_SetIgnoredFields, libgdal), OGRErr, (OGRLayerH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -32248,19 +22815,9 @@ Intersection of two layers.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function ogr_l_intersection(arg1, arg2, arg3, arg4, arg5, arg6)
-    aftercare(
-        ccall(
-            (:OGR_L_Intersection, libgdal),
-            OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_Intersection, libgdal), OGRErr,
+                           (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any), arg1, arg2, arg3, arg4, arg5,
+                           arg6))
 end
 
 """
@@ -32285,19 +22842,8 @@ Union of two layers.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function ogr_l_union(arg1, arg2, arg3, arg4, arg5, arg6)
-    aftercare(
-        ccall(
-            (:OGR_L_Union, libgdal),
-            OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_Union, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
+                           arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 """
@@ -32322,19 +22868,9 @@ Symmetrical difference of two layers.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function ogr_l_symdifference(arg1, arg2, arg3, arg4, arg5, arg6)
-    aftercare(
-        ccall(
-            (:OGR_L_SymDifference, libgdal),
-            OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_SymDifference, libgdal), OGRErr,
+                           (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any), arg1, arg2, arg3, arg4, arg5,
+                           arg6))
 end
 
 """
@@ -32359,19 +22895,9 @@ Identify the features of this layer with the ones from the identity layer.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function ogr_l_identity(arg1, arg2, arg3, arg4, arg5, arg6)
-    aftercare(
-        ccall(
-            (:OGR_L_Identity, libgdal),
-            OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_Identity, libgdal), OGRErr,
+                           (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any), arg1, arg2, arg3, arg4, arg5,
+                           arg6))
 end
 
 """
@@ -32396,19 +22922,8 @@ Update this layer with features from the update layer.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function ogr_l_update(arg1, arg2, arg3, arg4, arg5, arg6)
-    aftercare(
-        ccall(
-            (:OGR_L_Update, libgdal),
-            OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_Update, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
+                           arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 """
@@ -32433,19 +22948,8 @@ Clip off areas that are not covered by the method layer.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function ogr_l_clip(arg1, arg2, arg3, arg4, arg5, arg6)
-    aftercare(
-        ccall(
-            (:OGR_L_Clip, libgdal),
-            OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_Clip, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
+                           arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 """
@@ -32470,19 +22974,8 @@ Remove areas that are covered by the method layer.
 an error code if there was an error or the execution was interrupted, OGRERR_NONE otherwise.
 """
 function ogr_l_erase(arg1, arg2, arg3, arg4, arg5, arg6)
-    aftercare(
-        ccall(
-            (:OGR_L_Erase, libgdal),
-            OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-        ),
-    )
+    return aftercare(ccall((:OGR_L_Erase, libgdal), OGRErr, (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
+                           arg1, arg2, arg3, arg4, arg5, arg6))
 end
 
 """
@@ -32494,7 +22987,7 @@ Closes opened datasource and releases allocated resources.
 * **hDS**: handle to allocated datasource object.
 """
 function ogr_ds_destroy(arg1)
-    aftercare(ccall((:OGR_DS_Destroy, libgdal), Cvoid, (OGRDataSourceH,), arg1))
+    return aftercare(ccall((:OGR_DS_Destroy, libgdal), Cvoid, (OGRDataSourceH,), arg1))
 end
 
 """
@@ -32509,7 +23002,7 @@ Returns the name of the data source.
 pointer to an internal name string which should not be modified or freed by the caller.
 """
 function ogr_ds_getname(arg1)
-    aftercare(ccall((:OGR_DS_GetName, libgdal), Cstring, (OGRDataSourceH,), arg1), false)
+    return aftercare(ccall((:OGR_DS_GetName, libgdal), Cstring, (OGRDataSourceH,), arg1), false)
 end
 
 """
@@ -32524,7 +23017,7 @@ Get the number of layers in this data source.
 layer count.
 """
 function ogr_ds_getlayercount(arg1)
-    aftercare(ccall((:OGR_DS_GetLayerCount, libgdal), Cint, (OGRDataSourceH,), arg1))
+    return aftercare(ccall((:OGR_DS_GetLayerCount, libgdal), Cint, (OGRDataSourceH,), arg1))
 end
 
 """
@@ -32541,9 +23034,7 @@ Fetch a layer by index.
 a handle to the layer, or NULL if iLayer is out of range or an error occurs.
 """
 function ogr_ds_getlayer(arg1, arg2)
-    aftercare(
-        ccall((:OGR_DS_GetLayer, libgdal), OGRLayerH, (OGRDataSourceH, Cint), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_DS_GetLayer, libgdal), OGRLayerH, (OGRDataSourceH, Cint), arg1, arg2))
 end
 
 """
@@ -32560,15 +23051,7 @@ Fetch a layer by name.
 a handle to the layer, or NULL if the layer is not found or an error occurs.
 """
 function ogr_ds_getlayerbyname(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_DS_GetLayerByName, libgdal),
-            OGRLayerH,
-            (OGRDataSourceH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_DS_GetLayerByName, libgdal), OGRLayerH, (OGRDataSourceH, Cstring), arg1, arg2))
 end
 
 """
@@ -32585,9 +23068,7 @@ Delete the indicated layer from the datasource.
 OGRERR_NONE on success, or OGRERR_UNSUPPORTED_OPERATION if deleting layers is not supported for this datasource.
 """
 function ogr_ds_deletelayer(arg1, arg2)
-    aftercare(
-        ccall((:OGR_DS_DeleteLayer, libgdal), OGRErr, (OGRDataSourceH, Cint), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_DS_DeleteLayer, libgdal), OGRErr, (OGRDataSourceH, Cint), arg1, arg2))
 end
 
 """
@@ -32602,7 +23083,7 @@ Returns the driver that the dataset was opened with.
 NULL if driver info is not available, or pointer to a driver owned by the OGRSFDriverManager.
 """
 function ogr_ds_getdriver(arg1)
-    aftercare(ccall((:OGR_DS_GetDriver, libgdal), OGRSFDriverH, (OGRDataSourceH,), arg1))
+    return aftercare(ccall((:OGR_DS_GetDriver, libgdal), OGRSFDriverH, (OGRDataSourceH,), arg1))
 end
 
 """
@@ -32625,24 +23106,9 @@ This function attempts to create a new layer on the data source with the indicat
 NULL is returned on failure, or a new OGRLayer handle on success.
 """
 function ogr_ds_createlayer(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:OGR_DS_CreateLayer, libgdal),
-            OGRLayerH,
-            (
-                OGRDataSourceH,
-                Cstring,
-                OGRSpatialReferenceH,
-                OGRwkbGeometryType,
-                Ptr{Cstring},
-            ),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:OGR_DS_CreateLayer, libgdal), OGRLayerH,
+                           (OGRDataSourceH, Cstring, OGRSpatialReferenceH, OGRwkbGeometryType, Ptr{Cstring}), arg1, arg2, arg3,
+                           arg4, arg5))
 end
 
 """
@@ -32663,17 +23129,8 @@ Duplicate an existing layer.
 a handle to the layer, or NULL if an error occurs.
 """
 function ogr_ds_copylayer(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OGR_DS_CopyLayer, libgdal),
-            OGRLayerH,
-            (OGRDataSourceH, OGRLayerH, Cstring, Ptr{Cstring}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OGR_DS_CopyLayer, libgdal), OGRLayerH, (OGRDataSourceH, OGRLayerH, Cstring, Ptr{Cstring}), arg1, arg2,
+                           arg3, arg4))
 end
 
 """
@@ -32690,15 +23147,7 @@ Test if capability is available.
 TRUE if capability available otherwise FALSE.
 """
 function ogr_ds_testcapability(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_DS_TestCapability, libgdal),
-            Cint,
-            (OGRDataSourceH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_DS_TestCapability, libgdal), Cint, (OGRDataSourceH, Cstring), arg1, arg2))
 end
 
 """
@@ -32719,17 +23168,8 @@ Execute an SQL statement against the data store.
 a handle to a OGRLayer containing the results of the query. Deallocate with OGR_DS_ReleaseResultSet().
 """
 function ogr_ds_executesql(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OGR_DS_ExecuteSQL, libgdal),
-            OGRLayerH,
-            (OGRDataSourceH, Cstring, OGRGeometryH, Cstring),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OGR_DS_ExecuteSQL, libgdal), OGRLayerH, (OGRDataSourceH, Cstring, OGRGeometryH, Cstring), arg1, arg2,
+                           arg3, arg4))
 end
 
 """
@@ -32743,15 +23183,7 @@ Release results of OGR_DS_ExecuteSQL().
 * **hLayer**: handle to the result of a previous OGR_DS_ExecuteSQL() call.
 """
 function ogr_ds_releaseresultset(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_DS_ReleaseResultSet, libgdal),
-            Cvoid,
-            (OGRDataSourceH, OGRLayerH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_DS_ReleaseResultSet, libgdal), Cvoid, (OGRDataSourceH, OGRLayerH), arg1, arg2))
 end
 
 """
@@ -32760,28 +23192,28 @@ end
 ` Doxygen_Suppress `
 """
 function ogr_ds_reference(arg1)
-    aftercare(ccall((:OGR_DS_Reference, libgdal), Cint, (OGRDataSourceH,), arg1))
+    return aftercare(ccall((:OGR_DS_Reference, libgdal), Cint, (OGRDataSourceH,), arg1))
 end
 
 """
     OGR_DS_Dereference(OGRDataSourceH hDataSource) -> int
 """
 function ogr_ds_dereference(arg1)
-    aftercare(ccall((:OGR_DS_Dereference, libgdal), Cint, (OGRDataSourceH,), arg1))
+    return aftercare(ccall((:OGR_DS_Dereference, libgdal), Cint, (OGRDataSourceH,), arg1))
 end
 
 """
     OGR_DS_GetRefCount(OGRDataSourceH hDataSource) -> int
 """
 function ogr_ds_getrefcount(arg1)
-    aftercare(ccall((:OGR_DS_GetRefCount, libgdal), Cint, (OGRDataSourceH,), arg1))
+    return aftercare(ccall((:OGR_DS_GetRefCount, libgdal), Cint, (OGRDataSourceH,), arg1))
 end
 
 """
     OGR_DS_GetSummaryRefCount(OGRDataSourceH hDataSource) -> int
 """
 function ogr_ds_getsummaryrefcount(arg1)
-    aftercare(ccall((:OGR_DS_GetSummaryRefCount, libgdal), Cint, (OGRDataSourceH,), arg1))
+    return aftercare(ccall((:OGR_DS_GetSummaryRefCount, libgdal), Cint, (OGRDataSourceH,), arg1))
 end
 
 """
@@ -32792,7 +23224,7 @@ end
 Flush pending changes to disk. See GDALDataset::FlushCache()
 """
 function ogr_ds_synctodisk(arg1)
-    aftercare(ccall((:OGR_DS_SyncToDisk, libgdal), OGRErr, (OGRDataSourceH,), arg1))
+    return aftercare(ccall((:OGR_DS_SyncToDisk, libgdal), OGRErr, (OGRDataSourceH,), arg1))
 end
 
 """
@@ -32801,9 +23233,7 @@ end
 Get style table
 """
 function ogr_ds_getstyletable(arg1)
-    aftercare(
-        ccall((:OGR_DS_GetStyleTable, libgdal), OGRStyleTableH, (OGRDataSourceH,), arg1),
-    )
+    return aftercare(ccall((:OGR_DS_GetStyleTable, libgdal), OGRStyleTableH, (OGRDataSourceH,), arg1))
 end
 
 """
@@ -32812,15 +23242,7 @@ end
 Set style table (and take ownership)
 """
 function ogr_ds_setstyletabledirectly(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_DS_SetStyleTableDirectly, libgdal),
-            Cvoid,
-            (OGRDataSourceH, OGRStyleTableH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_DS_SetStyleTableDirectly, libgdal), Cvoid, (OGRDataSourceH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -32829,15 +23251,7 @@ end
 Set style table
 """
 function ogr_ds_setstyletable(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_DS_SetStyleTable, libgdal),
-            Cvoid,
-            (OGRDataSourceH, OGRStyleTableH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_DS_SetStyleTable, libgdal), Cvoid, (OGRDataSourceH, OGRStyleTableH), arg1, arg2))
 end
 
 """
@@ -32852,7 +23266,7 @@ Fetch name of driver (file format).
 driver name. This is an internal string and should not be modified or freed.
 """
 function ogr_dr_getname(arg1)
-    aftercare(ccall((:OGR_Dr_GetName, libgdal), Cstring, (OGRSFDriverH,), arg1), false)
+    return aftercare(ccall((:OGR_Dr_GetName, libgdal), Cstring, (OGRSFDriverH,), arg1), false)
 end
 
 """
@@ -32871,16 +23285,7 @@ Attempt to open file with this driver.
 NULL on error or if the pass name is not supported by this driver, otherwise a handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
 """
 function ogr_dr_open(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_Dr_Open, libgdal),
-            OGRDataSourceH,
-            (OGRSFDriverH, Cstring, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_Dr_Open, libgdal), OGRDataSourceH, (OGRSFDriverH, Cstring, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -32897,9 +23302,7 @@ Test if capability is available.
 TRUE if capability available otherwise FALSE.
 """
 function ogr_dr_testcapability(arg1, arg2)
-    aftercare(
-        ccall((:OGR_Dr_TestCapability, libgdal), Cint, (OGRSFDriverH, Cstring), arg1, arg2),
-    )
+    return aftercare(ccall((:OGR_Dr_TestCapability, libgdal), Cint, (OGRSFDriverH, Cstring), arg1, arg2))
 end
 
 """
@@ -32918,16 +23321,8 @@ This function attempts to create a new data source based on the passed driver.
 NULL is returned on failure, or a new OGRDataSource handle on success.
 """
 function ogr_dr_createdatasource(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGR_Dr_CreateDataSource, libgdal),
-            OGRDataSourceH,
-            (OGRSFDriverH, Cstring, Ptr{Cstring}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGR_Dr_CreateDataSource, libgdal), OGRDataSourceH, (OGRSFDriverH, Cstring, Ptr{Cstring}), arg1, arg2,
+                           arg3))
 end
 
 """
@@ -32948,17 +23343,8 @@ This function creates a new datasource by copying all the layers from the source
 NULL is returned on failure, or a new OGRDataSource handle on success.
 """
 function ogr_dr_copydatasource(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OGR_Dr_CopyDataSource, libgdal),
-            OGRDataSourceH,
-            (OGRSFDriverH, OGRDataSourceH, Cstring, Ptr{Cstring}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OGR_Dr_CopyDataSource, libgdal), OGRDataSourceH, (OGRSFDriverH, OGRDataSourceH, Cstring, Ptr{Cstring}),
+                           arg1, arg2, arg3, arg4))
 end
 
 """
@@ -32975,15 +23361,7 @@ Delete a datasource.
 OGRERR_NONE on success, and OGRERR_UNSUPPORTED_OPERATION if this is not supported by this driver.
 """
 function ogr_dr_deletedatasource(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OGR_Dr_DeleteDataSource, libgdal),
-            OGRErr,
-            (OGRSFDriverH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OGR_Dr_DeleteDataSource, libgdal), OGRErr, (OGRSFDriverH, Cstring), arg1, arg2))
 end
 
 """
@@ -33002,16 +23380,7 @@ Open a file / data source with one of the registered drivers.
 NULL on error or if the pass name is not supported by this driver, otherwise a handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
 """
 function ogropen(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGROpen, libgdal),
-            OGRDataSourceH,
-            (Cstring, Cint, Ptr{OGRSFDriverH}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGROpen, libgdal), OGRDataSourceH, (Cstring, Cint, Ptr{OGRSFDriverH}), arg1, arg2, arg3))
 end
 
 """
@@ -33030,16 +23399,7 @@ Open a file / data source with one of the registered drivers if not already open
 NULL on error or if the pass name is not supported by this driver, otherwise a handle to a GDALDataset. This GDALDataset should be closed by deleting the object when it is no longer needed.
 """
 function ogropenshared(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OGROpenShared, libgdal),
-            OGRDataSourceH,
-            (Cstring, Cint, Ptr{OGRSFDriverH}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OGROpenShared, libgdal), OGRDataSourceH, (Cstring, Cint, Ptr{OGRSFDriverH}), arg1, arg2, arg3))
 end
 
 """
@@ -33054,7 +23414,7 @@ Drop a reference to this datasource, and if the reference count drops to zero cl
 OGRERR_NONE on success or an error code.
 """
 function ogrreleasedatasource(arg1)
-    aftercare(ccall((:OGRReleaseDataSource, libgdal), OGRErr, (OGRDataSourceH,), arg1))
+    return aftercare(ccall((:OGRReleaseDataSource, libgdal), OGRErr, (OGRDataSourceH,), arg1))
 end
 
 """
@@ -33063,11 +23423,11 @@ end
 ` Doxygen_Suppress `
 """
 function ogrregisterdriver(arg1)
-    aftercare(ccall((:OGRRegisterDriver, libgdal), Cvoid, (OGRSFDriverH,), arg1))
+    return aftercare(ccall((:OGRRegisterDriver, libgdal), Cvoid, (OGRSFDriverH,), arg1))
 end
 
 function ogrderegisterdriver(arg1)
-    aftercare(ccall((:OGRDeregisterDriver, libgdal), Cvoid, (OGRSFDriverH,), arg1))
+    return aftercare(ccall((:OGRDeregisterDriver, libgdal), Cvoid, (OGRSFDriverH,), arg1))
 end
 
 """
@@ -33076,7 +23436,7 @@ end
 ` `
 """
 function ogrgetdrivercount()
-    aftercare(ccall((:OGRGetDriverCount, libgdal), Cint, ()))
+    return aftercare(ccall((:OGRGetDriverCount, libgdal), Cint, ()))
 end
 
 """
@@ -33091,7 +23451,7 @@ Fetch the indicated driver.
 handle to the driver, or NULL if iDriver is out of range.
 """
 function ogrgetdriver(arg1)
-    aftercare(ccall((:OGRGetDriver, libgdal), OGRSFDriverH, (Cint,), arg1))
+    return aftercare(ccall((:OGRGetDriver, libgdal), OGRSFDriverH, (Cint,), arg1))
 end
 
 """
@@ -33106,7 +23466,7 @@ Fetch the indicated driver.
 the driver, or NULL if no driver with that name is found
 """
 function ogrgetdriverbyname(arg1)
-    aftercare(ccall((:OGRGetDriverByName, libgdal), OGRSFDriverH, (Cstring,), arg1))
+    return aftercare(ccall((:OGRGetDriverByName, libgdal), OGRSFDriverH, (Cstring,), arg1))
 end
 
 """
@@ -33115,11 +23475,11 @@ end
 ` Doxygen_Suppress `
 """
 function ogrgetopendscount()
-    aftercare(ccall((:OGRGetOpenDSCount, libgdal), Cint, ()))
+    return aftercare(ccall((:OGRGetOpenDSCount, libgdal), Cint, ()))
 end
 
 function ogrgetopends(iDS)
-    aftercare(ccall((:OGRGetOpenDS, libgdal), OGRDataSourceH, (Cint,), iDS))
+    return aftercare(ccall((:OGRGetOpenDS, libgdal), OGRDataSourceH, (Cint,), iDS))
 end
 
 """
@@ -33128,7 +23488,7 @@ end
 ` `
 """
 function ogrregisterall()
-    aftercare(ccall((:OGRRegisterAll, libgdal), Cvoid, ()))
+    return aftercare(ccall((:OGRRegisterAll, libgdal), Cvoid, ()))
 end
 
 """
@@ -33137,7 +23497,7 @@ end
 Clean-up all drivers (including raster ones starting with GDAL 2.0. See [`GDALDestroyDriverManager`](@ref)()
 """
 function ogrcleanupall()
-    aftercare(ccall((:OGRCleanupAll, libgdal), Cvoid, ()))
+    return aftercare(ccall((:OGRCleanupAll, libgdal), Cvoid, ()))
 end
 
 "Style manager opaque type"
@@ -33158,9 +23518,7 @@ OGRStyleMgr factory.
 a handle to the new style manager object.
 """
 function ogr_sm_create(hStyleTable)
-    aftercare(
-        ccall((:OGR_SM_Create, libgdal), OGRStyleMgrH, (OGRStyleTableH,), hStyleTable),
-    )
+    return aftercare(ccall((:OGR_SM_Create, libgdal), OGRStyleMgrH, (OGRStyleTableH,), hStyleTable))
 end
 
 """
@@ -33172,7 +23530,7 @@ Destroy Style Manager.
 * **hSM**: handle to the style manager to destroy.
 """
 function ogr_sm_destroy(hSM)
-    aftercare(ccall((:OGR_SM_Destroy, libgdal), Cvoid, (OGRStyleMgrH,), hSM))
+    return aftercare(ccall((:OGR_SM_Destroy, libgdal), Cvoid, (OGRStyleMgrH,), hSM))
 end
 
 """
@@ -33189,16 +23547,7 @@ Initialize style manager from the style string of a feature.
 a reference to the style string read from the feature, or NULL in case of error.
 """
 function ogr_sm_initfromfeature(hSM, hFeat)
-    aftercare(
-        ccall(
-            (:OGR_SM_InitFromFeature, libgdal),
-            Cstring,
-            (OGRStyleMgrH, OGRFeatureH),
-            hSM,
-            hFeat,
-        ),
-        false,
-    )
+    return aftercare(ccall((:OGR_SM_InitFromFeature, libgdal), Cstring, (OGRStyleMgrH, OGRFeatureH), hSM, hFeat), false)
 end
 
 """
@@ -33215,15 +23564,7 @@ Initialize style manager from the style string.
 TRUE on success, FALSE on errors.
 """
 function ogr_sm_initstylestring(hSM, pszStyleString)
-    aftercare(
-        ccall(
-            (:OGR_SM_InitStyleString, libgdal),
-            Cint,
-            (OGRStyleMgrH, Cstring),
-            hSM,
-            pszStyleString,
-        ),
-    )
+    return aftercare(ccall((:OGR_SM_InitStyleString, libgdal), Cint, (OGRStyleMgrH, Cstring), hSM, pszStyleString))
 end
 
 """
@@ -33240,15 +23581,7 @@ Get the number of parts in a style.
 the number of parts (style tools) in the style.
 """
 function ogr_sm_getpartcount(hSM, pszStyleString)
-    aftercare(
-        ccall(
-            (:OGR_SM_GetPartCount, libgdal),
-            Cint,
-            (OGRStyleMgrH, Cstring),
-            hSM,
-            pszStyleString,
-        ),
-    )
+    return aftercare(ccall((:OGR_SM_GetPartCount, libgdal), Cint, (OGRStyleMgrH, Cstring), hSM, pszStyleString))
 end
 
 """
@@ -33267,16 +23600,7 @@ Fetch a part (style tool) from the current style.
 OGRStyleToolH of the requested part (style tools) or NULL on error.
 """
 function ogr_sm_getpart(hSM, nPartId, pszStyleString)
-    aftercare(
-        ccall(
-            (:OGR_SM_GetPart, libgdal),
-            OGRStyleToolH,
-            (OGRStyleMgrH, Cint, Cstring),
-            hSM,
-            nPartId,
-            pszStyleString,
-        ),
-    )
+    return aftercare(ccall((:OGR_SM_GetPart, libgdal), OGRStyleToolH, (OGRStyleMgrH, Cint, Cstring), hSM, nPartId, pszStyleString))
 end
 
 """
@@ -33293,9 +23617,7 @@ Add a part (style tool) to the current style.
 TRUE on success, FALSE on errors.
 """
 function ogr_sm_addpart(hSM, hST)
-    aftercare(
-        ccall((:OGR_SM_AddPart, libgdal), Cint, (OGRStyleMgrH, OGRStyleToolH), hSM, hST),
-    )
+    return aftercare(ccall((:OGR_SM_AddPart, libgdal), Cint, (OGRStyleMgrH, OGRStyleToolH), hSM, hST))
 end
 
 """
@@ -33314,16 +23636,7 @@ Add a style to the current style table.
 TRUE on success, FALSE on errors.
 """
 function ogr_sm_addstyle(hSM, pszStyleName, pszStyleString)
-    aftercare(
-        ccall(
-            (:OGR_SM_AddStyle, libgdal),
-            Cint,
-            (OGRStyleMgrH, Cstring, Cstring),
-            hSM,
-            pszStyleName,
-            pszStyleString,
-        ),
-    )
+    return aftercare(ccall((:OGR_SM_AddStyle, libgdal), Cint, (OGRStyleMgrH, Cstring, Cstring), hSM, pszStyleName, pszStyleString))
 end
 
 """
@@ -33364,7 +23677,7 @@ OGRStyleTool factory.
 a handle to the new style tool object or NULL if the creation failed.
 """
 function ogr_st_create(eClassId)
-    aftercare(ccall((:OGR_ST_Create, libgdal), OGRStyleToolH, (OGRSTClassId,), eClassId))
+    return aftercare(ccall((:OGR_ST_Create, libgdal), OGRStyleToolH, (OGRSTClassId,), eClassId))
 end
 
 """
@@ -33376,7 +23689,7 @@ Destroy Style Tool.
 * **hST**: handle to the style tool to destroy.
 """
 function ogr_st_destroy(hST)
-    aftercare(ccall((:OGR_ST_Destroy, libgdal), Cvoid, (OGRStyleToolH,), hST))
+    return aftercare(ccall((:OGR_ST_Destroy, libgdal), Cvoid, (OGRStyleToolH,), hST))
 end
 
 """
@@ -33391,7 +23704,7 @@ Determine type of Style Tool.
 the style tool type, one of OGRSTCPen (1), OGRSTCBrush (2), OGRSTCSymbol (3) or OGRSTCLabel (4). Returns OGRSTCNone (0) if the OGRStyleToolH is invalid.
 """
 function ogr_st_gettype(hST)
-    aftercare(ccall((:OGR_ST_GetType, libgdal), OGRSTClassId, (OGRStyleToolH,), hST))
+    return aftercare(ccall((:OGR_ST_GetType, libgdal), OGRSTClassId, (OGRStyleToolH,), hST))
 end
 
 """
@@ -33432,7 +23745,7 @@ Get Style Tool units.
 the style tool units.
 """
 function ogr_st_getunit(hST)
-    aftercare(ccall((:OGR_ST_GetUnit, libgdal), OGRSTUnitId, (OGRStyleToolH,), hST))
+    return aftercare(ccall((:OGR_ST_GetUnit, libgdal), OGRSTUnitId, (OGRStyleToolH,), hST))
 end
 
 """
@@ -33448,16 +23761,8 @@ Set Style Tool units.
 * **dfGroundPaperScale**: ground to paper scale factor.
 """
 function ogr_st_setunit(hST, eUnit, dfGroundPaperScale)
-    aftercare(
-        ccall(
-            (:OGR_ST_SetUnit, libgdal),
-            Cvoid,
-            (OGRStyleToolH, OGRSTUnitId, Cdouble),
-            hST,
-            eUnit,
-            dfGroundPaperScale,
-        ),
-    )
+    return aftercare(ccall((:OGR_ST_SetUnit, libgdal), Cvoid, (OGRStyleToolH, OGRSTUnitId, Cdouble), hST, eUnit,
+                           dfGroundPaperScale))
 end
 
 """
@@ -33476,17 +23781,8 @@ Get Style Tool parameter value as string.
 the parameter value as string and sets bValueIsNull.
 """
 function ogr_st_getparamstr(hST, eParam, bValueIsNull)
-    aftercare(
-        ccall(
-            (:OGR_ST_GetParamStr, libgdal),
-            Cstring,
-            (OGRStyleToolH, Cint, Ptr{Cint}),
-            hST,
-            eParam,
-            bValueIsNull,
-        ),
-        false,
-    )
+    return aftercare(ccall((:OGR_ST_GetParamStr, libgdal), Cstring, (OGRStyleToolH, Cint, Ptr{Cint}), hST, eParam, bValueIsNull),
+                     false)
 end
 
 """
@@ -33505,16 +23801,7 @@ Get Style Tool parameter value as an integer.
 the parameter value as integer and sets bValueIsNull.
 """
 function ogr_st_getparamnum(hST, eParam, bValueIsNull)
-    aftercare(
-        ccall(
-            (:OGR_ST_GetParamNum, libgdal),
-            Cint,
-            (OGRStyleToolH, Cint, Ptr{Cint}),
-            hST,
-            eParam,
-            bValueIsNull,
-        ),
-    )
+    return aftercare(ccall((:OGR_ST_GetParamNum, libgdal), Cint, (OGRStyleToolH, Cint, Ptr{Cint}), hST, eParam, bValueIsNull))
 end
 
 """
@@ -33533,16 +23820,7 @@ Get Style Tool parameter value as a double.
 the parameter value as double and sets bValueIsNull.
 """
 function ogr_st_getparamdbl(hST, eParam, bValueIsNull)
-    aftercare(
-        ccall(
-            (:OGR_ST_GetParamDbl, libgdal),
-            Cdouble,
-            (OGRStyleToolH, Cint, Ptr{Cint}),
-            hST,
-            eParam,
-            bValueIsNull,
-        ),
-    )
+    return aftercare(ccall((:OGR_ST_GetParamDbl, libgdal), Cdouble, (OGRStyleToolH, Cint, Ptr{Cint}), hST, eParam, bValueIsNull))
 end
 
 """
@@ -33558,16 +23836,7 @@ Set Style Tool parameter value from a string.
 * **pszValue**: the new parameter value
 """
 function ogr_st_setparamstr(hST, eParam, pszValue)
-    aftercare(
-        ccall(
-            (:OGR_ST_SetParamStr, libgdal),
-            Cvoid,
-            (OGRStyleToolH, Cint, Cstring),
-            hST,
-            eParam,
-            pszValue,
-        ),
-    )
+    return aftercare(ccall((:OGR_ST_SetParamStr, libgdal), Cvoid, (OGRStyleToolH, Cint, Cstring), hST, eParam, pszValue))
 end
 
 """
@@ -33583,16 +23852,7 @@ Set Style Tool parameter value from an integer.
 * **nValue**: the new parameter value
 """
 function ogr_st_setparamnum(hST, eParam, nValue)
-    aftercare(
-        ccall(
-            (:OGR_ST_SetParamNum, libgdal),
-            Cvoid,
-            (OGRStyleToolH, Cint, Cint),
-            hST,
-            eParam,
-            nValue,
-        ),
-    )
+    return aftercare(ccall((:OGR_ST_SetParamNum, libgdal), Cvoid, (OGRStyleToolH, Cint, Cint), hST, eParam, nValue))
 end
 
 """
@@ -33608,16 +23868,7 @@ Set Style Tool parameter value from a double.
 * **dfValue**: the new parameter value
 """
 function ogr_st_setparamdbl(hST, eParam, dfValue)
-    aftercare(
-        ccall(
-            (:OGR_ST_SetParamDbl, libgdal),
-            Cvoid,
-            (OGRStyleToolH, Cint, Cdouble),
-            hST,
-            eParam,
-            dfValue,
-        ),
-    )
+    return aftercare(ccall((:OGR_ST_SetParamDbl, libgdal), Cvoid, (OGRStyleToolH, Cint, Cdouble), hST, eParam, dfValue))
 end
 
 """
@@ -33632,10 +23883,7 @@ Get the style string for this Style Tool.
 the style string for this style tool or "" if the hST is invalid.
 """
 function ogr_st_getstylestring(hST)
-    aftercare(
-        ccall((:OGR_ST_GetStyleString, libgdal), Cstring, (OGRStyleToolH,), hST),
-        false,
-    )
+    return aftercare(ccall((:OGR_ST_GetStyleString, libgdal), Cstring, (OGRStyleToolH,), hST), false)
 end
 
 """
@@ -33660,19 +23908,9 @@ Return the r,g,b,a components of a color encoded in #RRGGBB[AA] format.
 TRUE if the color could be successfully parsed, or FALSE in case of errors.
 """
 function ogr_st_getrgbfromstring(hST, pszColor, pnRed, pnGreen, pnBlue, pnAlpha)
-    aftercare(
-        ccall(
-            (:OGR_ST_GetRGBFromString, libgdal),
-            Cint,
-            (OGRStyleToolH, Cstring, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}),
-            hST,
-            pszColor,
-            pnRed,
-            pnGreen,
-            pnBlue,
-            pnAlpha,
-        ),
-    )
+    return aftercare(ccall((:OGR_ST_GetRGBFromString, libgdal), Cint,
+                           (OGRStyleToolH, Cstring, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}, Ptr{Cint}), hST, pszColor, pnRed, pnGreen,
+                           pnBlue, pnAlpha))
 end
 
 """
@@ -33684,7 +23922,7 @@ OGRStyleTable factory.
 a handle to the new style table object.
 """
 function ogr_stbl_create()
-    aftercare(ccall((:OGR_STBL_Create, libgdal), OGRStyleTableH, ()))
+    return aftercare(ccall((:OGR_STBL_Create, libgdal), OGRStyleTableH, ()))
 end
 
 """
@@ -33696,7 +23934,7 @@ Destroy Style Table.
 * **hSTBL**: handle to the style table to destroy.
 """
 function ogr_stbl_destroy(hSTBL)
-    aftercare(ccall((:OGR_STBL_Destroy, libgdal), Cvoid, (OGRStyleTableH,), hSTBL))
+    return aftercare(ccall((:OGR_STBL_Destroy, libgdal), Cvoid, (OGRStyleTableH,), hSTBL))
 end
 
 """
@@ -33715,16 +23953,8 @@ Add a new style in the table.
 TRUE on success, FALSE on error
 """
 function ogr_stbl_addstyle(hStyleTable, pszName, pszStyleString)
-    aftercare(
-        ccall(
-            (:OGR_STBL_AddStyle, libgdal),
-            Cint,
-            (OGRStyleTableH, Cstring, Cstring),
-            hStyleTable,
-            pszName,
-            pszStyleString,
-        ),
-    )
+    return aftercare(ccall((:OGR_STBL_AddStyle, libgdal), Cint, (OGRStyleTableH, Cstring, Cstring), hStyleTable, pszName,
+                           pszStyleString))
 end
 
 """
@@ -33741,15 +23971,7 @@ Save a style table to a file.
 TRUE on success, FALSE on error
 """
 function ogr_stbl_savestyletable(hStyleTable, pszFilename)
-    aftercare(
-        ccall(
-            (:OGR_STBL_SaveStyleTable, libgdal),
-            Cint,
-            (OGRStyleTableH, Cstring),
-            hStyleTable,
-            pszFilename,
-        ),
-    )
+    return aftercare(ccall((:OGR_STBL_SaveStyleTable, libgdal), Cint, (OGRStyleTableH, Cstring), hStyleTable, pszFilename))
 end
 
 """
@@ -33766,15 +23988,7 @@ Load a style table from a file.
 TRUE on success, FALSE on error
 """
 function ogr_stbl_loadstyletable(hStyleTable, pszFilename)
-    aftercare(
-        ccall(
-            (:OGR_STBL_LoadStyleTable, libgdal),
-            Cint,
-            (OGRStyleTableH, Cstring),
-            hStyleTable,
-            pszFilename,
-        ),
-    )
+    return aftercare(ccall((:OGR_STBL_LoadStyleTable, libgdal), Cint, (OGRStyleTableH, Cstring), hStyleTable, pszFilename))
 end
 
 """
@@ -33791,16 +24005,7 @@ Get a style string by name.
 the style string matching the name or NULL if not found or error.
 """
 function ogr_stbl_find(hStyleTable, pszName)
-    aftercare(
-        ccall(
-            (:OGR_STBL_Find, libgdal),
-            Cstring,
-            (OGRStyleTableH, Cstring),
-            hStyleTable,
-            pszName,
-        ),
-        false,
-    )
+    return aftercare(ccall((:OGR_STBL_Find, libgdal), Cstring, (OGRStyleTableH, Cstring), hStyleTable, pszName), false)
 end
 
 """
@@ -33812,14 +24017,7 @@ Reset the next style pointer to 0.
 * **hStyleTable**: handle to the style table.
 """
 function ogr_stbl_resetstylestringreading(hStyleTable)
-    aftercare(
-        ccall(
-            (:OGR_STBL_ResetStyleStringReading, libgdal),
-            Cvoid,
-            (OGRStyleTableH,),
-            hStyleTable,
-        ),
-    )
+    return aftercare(ccall((:OGR_STBL_ResetStyleStringReading, libgdal), Cvoid, (OGRStyleTableH,), hStyleTable))
 end
 
 """
@@ -33834,10 +24032,7 @@ Get the next style string from the table.
 the next style string or NULL on error.
 """
 function ogr_stbl_getnextstyle(hStyleTable)
-    aftercare(
-        ccall((:OGR_STBL_GetNextStyle, libgdal), Cstring, (OGRStyleTableH,), hStyleTable),
-        false,
-    )
+    return aftercare(ccall((:OGR_STBL_GetNextStyle, libgdal), Cstring, (OGRStyleTableH,), hStyleTable), false)
 end
 
 """
@@ -33852,15 +24047,7 @@ Get the style name of the last style string fetched with OGR_STBL_GetNextStyle.
 the Name of the last style string or NULL on error.
 """
 function ogr_stbl_getlaststylename(hStyleTable)
-    aftercare(
-        ccall(
-            (:OGR_STBL_GetLastStyleName, libgdal),
-            Cstring,
-            (OGRStyleTableH,),
-            hStyleTable,
-        ),
-        false,
-    )
+    return aftercare(ccall((:OGR_STBL_GetLastStyleName, libgdal), Cstring, (OGRStyleTableH,), hStyleTable), false)
 end
 
 """
@@ -33875,9 +24062,7 @@ Returns the 2D geometry type corresponding to the passed geometry type.
 2D geometry type corresponding to the passed geometry type.
 """
 function ogr_gt_flatten(eType)
-    aftercare(
-        ccall((:OGR_GT_Flatten, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType),
-    )
+    return aftercare(ccall((:OGR_GT_Flatten, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType))
 end
 
 """
@@ -33892,7 +24077,7 @@ Return if the geometry type is a 3D geometry type.
 TRUE if the geometry type is a 3D geometry type.
 """
 function ogr_gt_hasz(eType)
-    aftercare(ccall((:OGR_GT_HasZ, libgdal), Cint, (OGRwkbGeometryType,), eType))
+    return aftercare(ccall((:OGR_GT_HasZ, libgdal), Cint, (OGRwkbGeometryType,), eType))
 end
 
 """
@@ -33907,9 +24092,7 @@ Returns the 3D geometry type corresponding to the passed geometry type.
 3D geometry type corresponding to the passed geometry type.
 """
 function ogr_gt_setz(eType)
-    aftercare(
-        ccall((:OGR_GT_SetZ, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType),
-    )
+    return aftercare(ccall((:OGR_GT_SetZ, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType))
 end
 
 """
@@ -33924,7 +24107,7 @@ Return if the geometry type is a measured type.
 TRUE if the geometry type is a measured type.
 """
 function ogr_gt_hasm(eType)
-    aftercare(ccall((:OGR_GT_HasM, libgdal), Cint, (OGRwkbGeometryType,), eType))
+    return aftercare(ccall((:OGR_GT_HasM, libgdal), Cint, (OGRwkbGeometryType,), eType))
 end
 
 """
@@ -33939,9 +24122,7 @@ Returns the measured geometry type corresponding to the passed geometry type.
 measured geometry type corresponding to the passed geometry type.
 """
 function ogr_gt_setm(eType)
-    aftercare(
-        ccall((:OGR_GT_SetM, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType),
-    )
+    return aftercare(ccall((:OGR_GT_SetM, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType))
 end
 
 """
@@ -33957,16 +24138,8 @@ The purpose of this method is to ensure that calling code will run with the GDAL
 * `pszCallingComponentName`: If not NULL, in case of version mismatch, the method will issue a failure mentioning the name of the calling component.
 """
 function gdalcheckversion(nVersionMajor, nVersionMinor, pszCallingComponentName)
-    aftercare(
-        ccall(
-            (:GDALCheckVersion, libgdal),
-            Cint,
-            (Cint, Cint, Cstring),
-            nVersionMajor,
-            nVersionMinor,
-            pszCallingComponentName,
-        ),
-    )
+    return aftercare(ccall((:GDALCheckVersion, libgdal), Cint, (Cint, Cint, Cstring), nVersionMajor, nVersionMinor,
+                           pszCallingComponentName))
 end
 
 """
@@ -33975,7 +24148,7 @@ end
 ` Doxygen_Suppress `
 """
 function ogrmalloc(arg1)
-    aftercare(ccall((:OGRMalloc, libgdal), Ptr{Cvoid}, (Csize_t,), arg1))
+    return aftercare(ccall((:OGRMalloc, libgdal), Ptr{Cvoid}, (Csize_t,), arg1))
 end
 
 """
@@ -33983,7 +24156,7 @@ end
               size_t size) -> void *
 """
 function ogrcalloc(arg1, arg2)
-    aftercare(ccall((:OGRCalloc, libgdal), Ptr{Cvoid}, (Csize_t, Csize_t), arg1, arg2))
+    return aftercare(ccall((:OGRCalloc, libgdal), Ptr{Cvoid}, (Csize_t, Csize_t), arg1, arg2))
 end
 
 """
@@ -33991,18 +24164,18 @@ end
                size_t size) -> void *
 """
 function ogrrealloc(arg1, arg2)
-    aftercare(ccall((:OGRRealloc, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t), arg1, arg2))
+    return aftercare(ccall((:OGRRealloc, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t), arg1, arg2))
 end
 
 function ogrstrdup(arg1)
-    aftercare(ccall((:OGRStrdup, libgdal), Cstring, (Cstring,), arg1), false)
+    return aftercare(ccall((:OGRStrdup, libgdal), Cstring, (Cstring,), arg1), false)
 end
 
 """
     OGRFree(void * pMemory) -> void
 """
 function ogrfree(arg1)
-    aftercare(ccall((:OGRFree, libgdal), Cvoid, (Ptr{Cvoid},), arg1))
+    return aftercare(ccall((:OGRFree, libgdal), Cvoid, (Ptr{Cvoid},), arg1))
 end
 
 "Type for a OGR boolean"
@@ -34020,10 +24193,7 @@ Fetch a human readable name corresponding to an OGRwkbGeometryType value.
 internal human readable string, or NULL on failure.
 """
 function ogrgeometrytypetoname(eType)
-    aftercare(
-        ccall((:OGRGeometryTypeToName, libgdal), Cstring, (OGRwkbGeometryType,), eType),
-        false,
-    )
+    return aftercare(ccall((:OGRGeometryTypeToName, libgdal), Cstring, (OGRwkbGeometryType,), eType), false)
 end
 
 """
@@ -34040,15 +24210,8 @@ Find common geometry type.
 the merged geometry type.
 """
 function ogrmergegeometrytypes(eMain, eExtra)
-    aftercare(
-        ccall(
-            (:OGRMergeGeometryTypes, libgdal),
-            OGRwkbGeometryType,
-            (OGRwkbGeometryType, OGRwkbGeometryType),
-            eMain,
-            eExtra,
-        ),
-    )
+    return aftercare(ccall((:OGRMergeGeometryTypes, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType, OGRwkbGeometryType), eMain,
+                           eExtra))
 end
 
 """
@@ -34067,16 +24230,8 @@ Find common geometry type.
 the merged geometry type.
 """
 function ogrmergegeometrytypesex(eMain, eExtra, bAllowPromotingToCurves)
-    aftercare(
-        ccall(
-            (:OGRMergeGeometryTypesEx, libgdal),
-            OGRwkbGeometryType,
-            (OGRwkbGeometryType, OGRwkbGeometryType, Cint),
-            eMain,
-            eExtra,
-            bAllowPromotingToCurves,
-        ),
-    )
+    return aftercare(ccall((:OGRMergeGeometryTypesEx, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType, OGRwkbGeometryType, Cint),
+                           eMain, eExtra, bAllowPromotingToCurves))
 end
 
 """
@@ -34095,16 +24250,8 @@ Returns a XY, XYZ, XYM or XYZM geometry type depending on parameter.
 Output geometry type.
 """
 function ogr_gt_setmodifier(eType, bSetZ, bSetM)
-    aftercare(
-        ccall(
-            (:OGR_GT_SetModifier, libgdal),
-            OGRwkbGeometryType,
-            (OGRwkbGeometryType, Cint, Cint),
-            eType,
-            bSetZ,
-            bSetM,
-        ),
-    )
+    return aftercare(ccall((:OGR_GT_SetModifier, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType, Cint, Cint), eType, bSetZ,
+                           bSetM))
 end
 
 """
@@ -34121,15 +24268,7 @@ Returns if a type is a subclass of another one.
 TRUE if eType is a subclass of eSuperType.
 """
 function ogr_gt_issubclassof(eType, eSuperType)
-    aftercare(
-        ccall(
-            (:OGR_GT_IsSubClassOf, libgdal),
-            Cint,
-            (OGRwkbGeometryType, OGRwkbGeometryType),
-            eType,
-            eSuperType,
-        ),
-    )
+    return aftercare(ccall((:OGR_GT_IsSubClassOf, libgdal), Cint, (OGRwkbGeometryType, OGRwkbGeometryType), eType, eSuperType))
 end
 
 """
@@ -34144,7 +24283,7 @@ Return if a geometry type is an instance of Curve.
 TRUE if the geometry type is an instance of Curve
 """
 function ogr_gt_iscurve(arg1)
-    aftercare(ccall((:OGR_GT_IsCurve, libgdal), Cint, (OGRwkbGeometryType,), arg1))
+    return aftercare(ccall((:OGR_GT_IsCurve, libgdal), Cint, (OGRwkbGeometryType,), arg1))
 end
 
 """
@@ -34159,7 +24298,7 @@ Return if a geometry type is an instance of Surface.
 TRUE if the geometry type is an instance of Surface
 """
 function ogr_gt_issurface(arg1)
-    aftercare(ccall((:OGR_GT_IsSurface, libgdal), Cint, (OGRwkbGeometryType,), arg1))
+    return aftercare(ccall((:OGR_GT_IsSurface, libgdal), Cint, (OGRwkbGeometryType,), arg1))
 end
 
 """
@@ -34174,7 +24313,7 @@ Return if a geometry type is a non-linear geometry type.
 TRUE if the geometry type is a non-linear geometry type.
 """
 function ogr_gt_isnonlinear(arg1)
-    aftercare(ccall((:OGR_GT_IsNonLinear, libgdal), Cint, (OGRwkbGeometryType,), arg1))
+    return aftercare(ccall((:OGR_GT_IsNonLinear, libgdal), Cint, (OGRwkbGeometryType,), arg1))
 end
 
 """
@@ -34189,14 +24328,7 @@ Returns the collection type that can contain the passed geometry type.
 the collection type that can contain the passed geometry type or wkbUnknown
 """
 function ogr_gt_getcollection(eType)
-    aftercare(
-        ccall(
-            (:OGR_GT_GetCollection, libgdal),
-            OGRwkbGeometryType,
-            (OGRwkbGeometryType,),
-            eType,
-        ),
-    )
+    return aftercare(ccall((:OGR_GT_GetCollection, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType))
 end
 
 """
@@ -34211,14 +24343,7 @@ Returns the curve geometry type that can contain the passed geometry type.
 the curve type that can contain the passed geometry type
 """
 function ogr_gt_getcurve(eType)
-    aftercare(
-        ccall(
-            (:OGR_GT_GetCurve, libgdal),
-            OGRwkbGeometryType,
-            (OGRwkbGeometryType,),
-            eType,
-        ),
-    )
+    return aftercare(ccall((:OGR_GT_GetCurve, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType))
 end
 
 """
@@ -34233,14 +24358,7 @@ Returns the non-curve geometry type that can contain the passed geometry type.
 the non-curve type that can contain the passed geometry type
 """
 function ogr_gt_getlinear(eType)
-    aftercare(
-        ccall(
-            (:OGR_GT_GetLinear, libgdal),
-            OGRwkbGeometryType,
-            (OGRwkbGeometryType,),
-            eType,
-        ),
-    )
+    return aftercare(ccall((:OGR_GT_GetLinear, libgdal), OGRwkbGeometryType, (OGRwkbGeometryType,), eType))
 end
 
 """
@@ -34249,7 +24367,7 @@ end
 Return the number of milliseconds from a datetime with decimal seconds
 """
 function ogr_get_ms(fSec)
-    aftercare(ccall((:OGR_GET_MS, libgdal), Cint, (Cfloat,), fSec))
+    return aftercare(ccall((:OGR_GET_MS, libgdal), Cint, (Cfloat,), fSec))
 end
 
 """
@@ -34268,16 +24386,7 @@ Parse date string.
 TRUE if apparently successful or FALSE on failure.
 """
 function ogrparsedate(pszInput, psOutput, nOptions)
-    aftercare(
-        ccall(
-            (:OGRParseDate, libgdal),
-            Cint,
-            (Cstring, Ptr{OGRField}, Cint),
-            pszInput,
-            psOutput,
-            nOptions,
-        ),
-    )
+    return aftercare(ccall((:OGRParseDate, libgdal), Cint, (Cstring, Ptr{OGRField}, Cint), pszInput, psOutput, nOptions))
 end
 
 """
@@ -34450,7 +24559,7 @@ Get runtime version information.
 an internal string containing the requested information.
 """
 function gdalversioninfo(arg1)
-    aftercare(ccall((:GDALVersionInfo, libgdal), Cstring, (Cstring,), arg1), false)
+    return aftercare(ccall((:GDALVersionInfo, libgdal), Cstring, (Cstring,), arg1), false)
 end
 
 """
@@ -34487,10 +24596,7 @@ Return the string representation for the OGRAxisOrientation enumeration.
 an internal string
 """
 function osraxisenumtoname(eOrientation)
-    aftercare(
-        ccall((:OSRAxisEnumToName, libgdal), Cstring, (OGRAxisOrientation,), eOrientation),
-        false,
-    )
+    return aftercare(ccall((:OSRAxisEnumToName, libgdal), Cstring, (OGRAxisOrientation,), eOrientation), false)
 end
 
 """
@@ -34502,7 +24608,7 @@ Set the search path(s) for PROJ resource files.
 * **papszPaths**: NULL terminated list of directory paths.
 """
 function osrsetprojsearchpaths(papszPaths)
-    aftercare(ccall((:OSRSetPROJSearchPaths, libgdal), Cvoid, (Ptr{Cstring},), papszPaths))
+    return aftercare(ccall((:OSRSetPROJSearchPaths, libgdal), Cvoid, (Ptr{Cstring},), papszPaths))
 end
 
 """
@@ -34514,7 +24620,7 @@ Get the search path(s) for PROJ resource files.
 NULL terminated list of directory paths. To be freed with CSLDestroy()
 """
 function osrgetprojsearchpaths()
-    aftercare(ccall((:OSRGetPROJSearchPaths, libgdal), Ptr{Cstring}, ()))
+    return aftercare(ccall((:OSRGetPROJSearchPaths, libgdal), Ptr{Cstring}, ()))
 end
 
 """
@@ -34526,7 +24632,7 @@ Set list of PROJ auxiliary database filenames.
 * **papszAux**: NULL-terminated list of auxiliary database filenames, or NULL
 """
 function osrsetprojauxdbpaths(papszPaths)
-    aftercare(ccall((:OSRSetPROJAuxDbPaths, libgdal), Cvoid, (Ptr{Cstring},), papszPaths))
+    return aftercare(ccall((:OSRSetPROJAuxDbPaths, libgdal), Cvoid, (Ptr{Cstring},), papszPaths))
 end
 
 """
@@ -34538,7 +24644,7 @@ Get PROJ auxiliary database filenames.
 NULL terminated list of PROJ auxiliary database filenames. To be freed with CSLDestroy()
 """
 function osrgetprojauxdbpaths()
-    aftercare(ccall((:OSRGetPROJAuxDbPaths, libgdal), Ptr{Cstring}, ()))
+    return aftercare(ccall((:OSRGetPROJAuxDbPaths, libgdal), Ptr{Cstring}, ()))
 end
 
 """
@@ -34550,7 +24656,7 @@ Enable or disable PROJ networking capabilities.
 * **enabled**: Set to TRUE to enable networking capabilities.
 """
 function osrsetprojenablenetwork(enabled)
-    aftercare(ccall((:OSRSetPROJEnableNetwork, libgdal), Cvoid, (Cint,), enabled))
+    return aftercare(ccall((:OSRSetPROJEnableNetwork, libgdal), Cvoid, (Cint,), enabled))
 end
 
 """
@@ -34562,7 +24668,7 @@ Get whether PROJ networking capabilities are enabled.
 TRUE if PROJ networking capabilities are enabled.
 """
 function osrgetprojenablenetwork()
-    aftercare(ccall((:OSRGetPROJEnableNetwork, libgdal), Cint, ()))
+    return aftercare(ccall((:OSRGetPROJEnableNetwork, libgdal), Cint, ()))
 end
 
 """
@@ -34578,16 +24684,7 @@ Get the PROJ version.
 * **pnPatch**: Pointer to patch version number, or NULL
 """
 function osrgetprojversion(pnMajor, pnMinor, pnPatch)
-    aftercare(
-        ccall(
-            (:OSRGetPROJVersion, libgdal),
-            Cvoid,
-            (Ptr{Cint}, Ptr{Cint}, Ptr{Cint}),
-            pnMajor,
-            pnMinor,
-            pnPatch,
-        ),
-    )
+    return aftercare(ccall((:OSRGetPROJVersion, libgdal), Cvoid, (Ptr{Cint}, Ptr{Cint}, Ptr{Cint}), pnMajor, pnMinor, pnPatch))
 end
 
 """
@@ -34596,9 +24693,7 @@ end
 Constructor.
 """
 function osrnewspatialreference(arg1)
-    aftercare(
-        ccall((:OSRNewSpatialReference, libgdal), OGRSpatialReferenceH, (Cstring,), arg1),
-    )
+    return aftercare(ccall((:OSRNewSpatialReference, libgdal), OGRSpatialReferenceH, (Cstring,), arg1))
 end
 
 """
@@ -34607,14 +24702,7 @@ end
 Make a duplicate of the GEOGCS node of this OGRSpatialReference object.
 """
 function osrclonegeogcs(arg1)
-    aftercare(
-        ccall(
-            (:OSRCloneGeogCS, libgdal),
-            OGRSpatialReferenceH,
-            (OGRSpatialReferenceH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OSRCloneGeogCS, libgdal), OGRSpatialReferenceH, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -34623,9 +24711,7 @@ end
 Make a duplicate of this OGRSpatialReference.
 """
 function osrclone(arg1)
-    aftercare(
-        ccall((:OSRClone, libgdal), OGRSpatialReferenceH, (OGRSpatialReferenceH,), arg1),
-    )
+    return aftercare(ccall((:OSRClone, libgdal), OGRSpatialReferenceH, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -34637,9 +24723,7 @@ OGRSpatialReference destructor.
 * **hSRS**: the object to delete
 """
 function osrdestroyspatialreference(arg1)
-    aftercare(
-        ccall((:OSRDestroySpatialReference, libgdal), Cvoid, (OGRSpatialReferenceH,), arg1),
-    )
+    return aftercare(ccall((:OSRDestroySpatialReference, libgdal), Cvoid, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -34648,7 +24732,7 @@ end
 Increments the reference count by one.
 """
 function osrreference(arg1)
-    aftercare(ccall((:OSRReference, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
+    return aftercare(ccall((:OSRReference, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -34657,7 +24741,7 @@ end
 Decrements the reference count by one.
 """
 function osrdereference(arg1)
-    aftercare(ccall((:OSRDereference, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
+    return aftercare(ccall((:OSRDereference, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -34666,7 +24750,7 @@ end
 Decrements the reference count by one, and destroy if zero.
 """
 function osrrelease(arg1)
-    aftercare(ccall((:OSRRelease, libgdal), Cvoid, (OGRSpatialReferenceH,), arg1))
+    return aftercare(ccall((:OSRRelease, libgdal), Cvoid, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -34675,7 +24759,7 @@ end
 Validate SRS tokens.
 """
 function osrvalidate(arg1)
-    aftercare(ccall((:OSRValidate, libgdal), OGRErr, (OGRSpatialReferenceH,), arg1))
+    return aftercare(ccall((:OSRValidate, libgdal), OGRErr, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -34685,15 +24769,7 @@ end
 Initialize SRS based on EPSG geographic, projected or vertical CRS code.
 """
 function osrimportfromepsg(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRImportFromEPSG, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRImportFromEPSG, libgdal), OGRErr, (OGRSpatialReferenceH, Cint), arg1, arg2))
 end
 
 """
@@ -34703,15 +24779,7 @@ end
 Initialize SRS based on EPSG geographic, projected or vertical CRS code.
 """
 function osrimportfromepsga(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRImportFromEPSGA, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cint),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRImportFromEPSGA, libgdal), OGRErr, (OGRSpatialReferenceH, Cint), arg1, arg2))
 end
 
 """
@@ -34721,15 +24789,7 @@ end
 Import from WKT string.
 """
 function osrimportfromwkt(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRImportFromWkt, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Ptr{Cstring}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRImportFromWkt, libgdal), OGRErr, (OGRSpatialReferenceH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -34739,15 +24799,7 @@ end
 Import PROJ coordinate string.
 """
 function osrimportfromproj4(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRImportFromProj4, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRImportFromProj4, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring), arg1, arg2))
 end
 
 """
@@ -34757,15 +24809,7 @@ end
 Import coordinate system from ESRI .prj format(s).
 """
 function osrimportfromesri(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRImportFromESRI, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Ptr{Cstring}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRImportFromESRI, libgdal), OGRErr, (OGRSpatialReferenceH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -34777,17 +24821,8 @@ end
 Import coordinate system from PCI projection definition.
 """
 function osrimportfrompci(hSRS, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OSRImportFromPCI, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, Cstring, Ptr{Cdouble}),
-            hSRS,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OSRImportFromPCI, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring, Cstring, Ptr{Cdouble}), hSRS, arg2,
+                           arg3, arg4))
 end
 
 """
@@ -34800,18 +24835,8 @@ end
 Import coordinate system from USGS projection definition.
 """
 function osrimportfromusgs(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:OSRImportFromUSGS, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Clong, Clong, Ptr{Cdouble}, Clong),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:OSRImportFromUSGS, libgdal), OGRErr, (OGRSpatialReferenceH, Clong, Clong, Ptr{Cdouble}, Clong), arg1,
+                           arg2, arg3, arg4, arg5))
 end
 
 """
@@ -34821,15 +24846,7 @@ end
 Import coordinate system from XML format (GML only currently).
 """
 function osrimportfromxml(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRImportFromXML, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRImportFromXML, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring), arg1, arg2))
 end
 
 """
@@ -34848,16 +24865,7 @@ Read SRS from WKT dictionary.
 OGRERR_NONE on success, or OGRERR_SRS_UNSUPPORTED if the code isn't found, and OGRERR_SRS_FAILURE if something more dramatic goes wrong.
 """
 function osrimportfromdict(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OSRImportFromDict, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, Cstring),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OSRImportFromDict, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring, Cstring), arg1, arg2, arg3))
 end
 
 """
@@ -34870,18 +24878,8 @@ end
 Import coordinate system from "Panorama" GIS projection definition.
 """
 function osrimportfrompanorama(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:OSRImportFromPanorama, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Clong, Clong, Clong, Ptr{Cdouble}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:OSRImportFromPanorama, libgdal), OGRErr, (OGRSpatialReferenceH, Clong, Clong, Clong, Ptr{Cdouble}),
+                           arg1, arg2, arg3, arg4, arg5))
 end
 
 """
@@ -34898,15 +24896,7 @@ Import coordinate system from OziExplorer projection definition.
 OGRERR_NONE on success or an error code in case of failure.
 """
 function osrimportfromozi(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRImportFromOzi, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Ptr{Cstring}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRImportFromOzi, libgdal), OGRErr, (OGRSpatialReferenceH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -34916,15 +24906,7 @@ end
 Import Mapinfo style CoordSys definition.
 """
 function osrimportfrommicoordsys(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRImportFromMICoordSys, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRImportFromMICoordSys, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring), arg1, arg2))
 end
 
 """
@@ -34936,17 +24918,8 @@ end
 Create OGR WKT from ERMapper projection definitions.
 """
 function osrimportfromerm(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OSRImportFromERM, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, Cstring, Cstring),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OSRImportFromERM, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring, Cstring, Cstring), arg1, arg2,
+                           arg3, arg4))
 end
 
 """
@@ -34956,15 +24929,7 @@ end
 Set spatial reference from a URL.
 """
 function osrimportfromurl(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRImportFromUrl, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRImportFromUrl, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring), arg1, arg2))
 end
 
 """
@@ -34975,16 +24940,8 @@ end
 Import a CRS from netCDF CF-1 definitions.
 """
 function osrimportfromcf1(arg1, papszKeyValues, pszUnits)
-    aftercare(
-        ccall(
-            (:OSRImportFromCF1, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, CSLConstList, Cstring),
-            arg1,
-            papszKeyValues,
-            pszUnits,
-        ),
-    )
+    return aftercare(ccall((:OSRImportFromCF1, libgdal), OGRErr, (OGRSpatialReferenceH, CSLConstList, Cstring), arg1,
+                           papszKeyValues, pszUnits))
 end
 
 """
@@ -34994,15 +24951,7 @@ end
 Convert this SRS into WKT 1 format.
 """
 function osrexporttowkt(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRExportToWkt, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Ptr{Cstring}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRExportToWkt, libgdal), OGRErr, (OGRSpatialReferenceH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -35013,16 +24962,8 @@ end
 Convert this SRS into WKT format.
 """
 function osrexporttowktex(arg1, ppszResult, papszOptions)
-    aftercare(
-        ccall(
-            (:OSRExportToWktEx, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Ptr{Cstring}, Ptr{Cstring}),
-            arg1,
-            ppszResult,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:OSRExportToWktEx, libgdal), OGRErr, (OGRSpatialReferenceH, Ptr{Cstring}, Ptr{Cstring}), arg1,
+                           ppszResult, papszOptions))
 end
 
 """
@@ -35033,16 +24974,7 @@ end
 Convert this SRS into a nicely formatted WKT 1 string for display to a person.
 """
 function osrexporttoprettywkt(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OSRExportToPrettyWkt, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Ptr{Cstring}, Cint),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OSRExportToPrettyWkt, libgdal), OGRErr, (OGRSpatialReferenceH, Ptr{Cstring}, Cint), arg1, arg2, arg3))
 end
 
 """
@@ -35053,16 +24985,8 @@ end
 Convert this SRS into PROJJSON format.
 """
 function osrexporttoprojjson(hSRS, ppszReturn, papszOptions)
-    aftercare(
-        ccall(
-            (:OSRExportToPROJJSON, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Ptr{Cstring}, Ptr{Cstring}),
-            hSRS,
-            ppszReturn,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:OSRExportToPROJJSON, libgdal), OGRErr, (OGRSpatialReferenceH, Ptr{Cstring}, Ptr{Cstring}), hSRS,
+                           ppszReturn, papszOptions))
 end
 
 """
@@ -35072,15 +24996,7 @@ end
 Export coordinate system in PROJ.4 legacy format.
 """
 function osrexporttoproj4(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRExportToProj4, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Ptr{Cstring}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRExportToProj4, libgdal), OGRErr, (OGRSpatialReferenceH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -35092,17 +25008,8 @@ end
 Export coordinate system in PCI projection definition.
 """
 function osrexporttopci(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OSRExportToPCI, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Ptr{Cstring}, Ptr{Cstring}, Ptr{Ptr{Cdouble}}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OSRExportToPCI, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Ptr{Cstring}, Ptr{Cstring}, Ptr{Ptr{Cdouble}}), arg1, arg2, arg3, arg4))
 end
 
 """
@@ -35115,18 +25022,9 @@ end
 Export coordinate system in USGS GCTP projection definition.
 """
 function osrexporttousgs(arg1, arg2, arg3, arg4, arg5)
-    aftercare(
-        ccall(
-            (:OSRExportToUSGS, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Ptr{Clong}, Ptr{Clong}, Ptr{Ptr{Cdouble}}, Ptr{Clong}),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-        ),
-    )
+    return aftercare(ccall((:OSRExportToUSGS, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Ptr{Clong}, Ptr{Clong}, Ptr{Ptr{Cdouble}}, Ptr{Clong}), arg1, arg2, arg3, arg4,
+                           arg5))
 end
 
 """
@@ -35137,16 +25035,7 @@ end
 Export coordinate system in XML format.
 """
 function osrexporttoxml(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OSRExportToXML, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Ptr{Cstring}, Cstring),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OSRExportToXML, libgdal), OGRErr, (OGRSpatialReferenceH, Ptr{Cstring}, Cstring), arg1, arg2, arg3))
 end
 
 """
@@ -35160,26 +25049,9 @@ end
 Export coordinate system in "Panorama" GIS projection definition.
 """
 function osrexporttopanorama(arg1, arg2, arg3, arg4, arg5, arg6)
-    aftercare(
-        ccall(
-            (:OSRExportToPanorama, libgdal),
-            OGRErr,
-            (
-                OGRSpatialReferenceH,
-                Ptr{Clong},
-                Ptr{Clong},
-                Ptr{Clong},
-                Ptr{Clong},
-                Ptr{Cdouble},
-            ),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-        ),
-    )
+    return aftercare(ccall((:OSRExportToPanorama, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Ptr{Clong}, Ptr{Clong}, Ptr{Clong}, Ptr{Clong}, Ptr{Cdouble}), arg1, arg2, arg3,
+                           arg4, arg5, arg6))
 end
 
 """
@@ -35189,15 +25061,7 @@ end
 Export coordinate system in Mapinfo style CoordSys format.
 """
 function osrexporttomicoordsys(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRExportToMICoordSys, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Ptr{Cstring}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRExportToMICoordSys, libgdal), OGRErr, (OGRSpatialReferenceH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -35209,17 +25073,8 @@ end
 Convert coordinate system to ERMapper format.
 """
 function osrexporttoerm(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OSRExportToERM, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, Cstring, Cstring),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OSRExportToERM, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring, Cstring, Cstring), arg1, arg2, arg3,
+                           arg4))
 end
 
 """
@@ -35232,24 +25087,9 @@ end
 Export a CRS to netCDF CF-1 definitions.
 """
 function osrexporttocf1(arg1, ppszGridMappingName, ppapszKeyValues, ppszUnits, papszOptions)
-    aftercare(
-        ccall(
-            (:OSRExportToCF1, libgdal),
-            OGRErr,
-            (
-                OGRSpatialReferenceH,
-                Ptr{Cstring},
-                Ptr{Ptr{Cstring}},
-                Ptr{Cstring},
-                CSLConstList,
-            ),
-            arg1,
-            ppszGridMappingName,
-            ppapszKeyValues,
-            ppszUnits,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:OSRExportToCF1, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Ptr{Cstring}, Ptr{Ptr{Cstring}}, Ptr{Cstring}, CSLConstList), arg1,
+                           ppszGridMappingName, ppapszKeyValues, ppszUnits, papszOptions))
 end
 
 """
@@ -35258,7 +25098,7 @@ end
 Convert in place to ESRI WKT format.
 """
 function osrmorphtoesri(arg1)
-    aftercare(ccall((:OSRMorphToESRI, libgdal), OGRErr, (OGRSpatialReferenceH,), arg1))
+    return aftercare(ccall((:OSRMorphToESRI, libgdal), OGRErr, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -35267,7 +25107,7 @@ end
 Convert in place from ESRI WKT format.
 """
 function osrmorphfromesri(arg1)
-    aftercare(ccall((:OSRMorphFromESRI, libgdal), OGRErr, (OGRSpatialReferenceH,), arg1))
+    return aftercare(ccall((:OSRMorphFromESRI, libgdal), OGRErr, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -35276,7 +25116,7 @@ end
 Convert a compound cs into a horizontal CS.
 """
 function osrstripvertical(arg1)
-    aftercare(ccall((:OSRStripVertical, libgdal), OGRErr, (OGRSpatialReferenceH,), arg1))
+    return aftercare(ccall((:OSRStripVertical, libgdal), OGRErr, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -35295,16 +25135,8 @@ Convert to another equivalent projection.
 a new SRS, or NULL in case of error.
 """
 function osrconverttootherprojection(hSRS, pszTargetProjection, papszOptions)
-    aftercare(
-        ccall(
-            (:OSRConvertToOtherProjection, libgdal),
-            OGRSpatialReferenceH,
-            (OGRSpatialReferenceH, Cstring, Ptr{Cstring}),
-            hSRS,
-            pszTargetProjection,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:OSRConvertToOtherProjection, libgdal), OGRSpatialReferenceH,
+                           (OGRSpatialReferenceH, Cstring, Ptr{Cstring}), hSRS, pszTargetProjection, papszOptions))
 end
 
 """
@@ -35313,7 +25145,7 @@ end
 Return the CRS name.
 """
 function osrgetname(hSRS)
-    aftercare(ccall((:OSRGetName, libgdal), Cstring, (OGRSpatialReferenceH,), hSRS), false)
+    return aftercare(ccall((:OSRGetName, libgdal), Cstring, (OGRSpatialReferenceH,), hSRS), false)
 end
 
 """
@@ -35324,16 +25156,8 @@ end
 Set attribute value in spatial reference.
 """
 function osrsetattrvalue(hSRS, pszNodePath, pszNewNodeValue)
-    aftercare(
-        ccall(
-            (:OSRSetAttrValue, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, Cstring),
-            hSRS,
-            pszNodePath,
-            pszNewNodeValue,
-        ),
-    )
+    return aftercare(ccall((:OSRSetAttrValue, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring, Cstring), hSRS, pszNodePath,
+                           pszNewNodeValue))
 end
 
 """
@@ -35344,17 +25168,8 @@ end
 Fetch indicated attribute of named node.
 """
 function osrgetattrvalue(hSRS, pszName, iChild)
-    aftercare(
-        ccall(
-            (:OSRGetAttrValue, libgdal),
-            Cstring,
-            (OGRSpatialReferenceH, Cstring, Cint),
-            hSRS,
-            pszName,
-            iChild,
-        ),
-        false,
-    )
+    return aftercare(ccall((:OSRGetAttrValue, libgdal), Cstring, (OGRSpatialReferenceH, Cstring, Cint), hSRS, pszName, iChild),
+                     false)
 end
 
 """
@@ -35365,16 +25180,7 @@ end
 Set the angular units for the geographic coordinate system.
 """
 function osrsetangularunits(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OSRSetAngularUnits, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, Cdouble),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OSRSetAngularUnits, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring, Cdouble), arg1, arg2, arg3))
 end
 
 """
@@ -35384,15 +25190,7 @@ end
 Fetch angular geographic coordinate system units.
 """
 function osrgetangularunits(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRGetAngularUnits, libgdal),
-            Cdouble,
-            (OGRSpatialReferenceH, Ptr{Cstring}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRGetAngularUnits, libgdal), Cdouble, (OGRSpatialReferenceH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -35403,16 +25201,7 @@ end
 Set the linear units for the projection.
 """
 function osrsetlinearunits(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OSRSetLinearUnits, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, Cdouble),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OSRSetLinearUnits, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring, Cdouble), arg1, arg2, arg3))
 end
 
 """
@@ -35424,17 +25213,8 @@ end
 Set the linear units for the target node.
 """
 function osrsettargetlinearunits(arg1, arg2, arg3, arg4)
-    aftercare(
-        ccall(
-            (:OSRSetTargetLinearUnits, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, Cstring, Cdouble),
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OSRSetTargetLinearUnits, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring, Cstring, Cdouble), arg1,
+                           arg2, arg3, arg4))
 end
 
 """
@@ -35445,16 +25225,8 @@ end
 Set the linear units for the projection.
 """
 function osrsetlinearunitsandupdateparameters(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OSRSetLinearUnitsAndUpdateParameters, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, Cdouble),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OSRSetLinearUnitsAndUpdateParameters, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring, Cdouble), arg1,
+                           arg2, arg3))
 end
 
 """
@@ -35464,15 +25236,7 @@ end
 Fetch linear projection units.
 """
 function osrgetlinearunits(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRGetLinearUnits, libgdal),
-            Cdouble,
-            (OGRSpatialReferenceH, Ptr{Cstring}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRGetLinearUnits, libgdal), Cdouble, (OGRSpatialReferenceH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -35483,16 +25247,8 @@ end
 Fetch linear projection units.
 """
 function osrgettargetlinearunits(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OSRGetTargetLinearUnits, libgdal),
-            Cdouble,
-            (OGRSpatialReferenceH, Cstring, Ptr{Cstring}),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OSRGetTargetLinearUnits, libgdal), Cdouble, (OGRSpatialReferenceH, Cstring, Ptr{Cstring}), arg1, arg2,
+                           arg3))
 end
 
 """
@@ -35502,15 +25258,7 @@ end
 Fetch prime meridian info.
 """
 function osrgetprimemeridian(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRGetPrimeMeridian, libgdal),
-            Cdouble,
-            (OGRSpatialReferenceH, Ptr{Cstring}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRGetPrimeMeridian, libgdal), Cdouble, (OGRSpatialReferenceH, Ptr{Cstring}), arg1, arg2))
 end
 
 """
@@ -35519,7 +25267,7 @@ end
 Check if geographic coordinate system.
 """
 function osrisgeographic(arg1)
-    aftercare(ccall((:OSRIsGeographic, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
+    return aftercare(ccall((:OSRIsGeographic, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -35528,9 +25276,7 @@ end
 Check if the CRS is a derived geographic coordinate system.
 """
 function osrisderivedgeographic(arg1)
-    aftercare(
-        ccall((:OSRIsDerivedGeographic, libgdal), Cint, (OGRSpatialReferenceH,), arg1),
-    )
+    return aftercare(ccall((:OSRIsDerivedGeographic, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -35539,7 +25285,7 @@ end
 Check if local coordinate system.
 """
 function osrislocal(arg1)
-    aftercare(ccall((:OSRIsLocal, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
+    return aftercare(ccall((:OSRIsLocal, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -35548,7 +25294,7 @@ end
 Check if projected coordinate system.
 """
 function osrisprojected(arg1)
-    aftercare(ccall((:OSRIsProjected, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
+    return aftercare(ccall((:OSRIsProjected, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -35557,7 +25303,7 @@ end
 Check if the CRS is a derived projected coordinate system.
 """
 function osrisderivedprojected(arg1)
-    aftercare(ccall((:OSRIsDerivedProjected, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
+    return aftercare(ccall((:OSRIsDerivedProjected, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -35566,7 +25312,7 @@ end
 Check if the coordinate system is compound.
 """
 function osriscompound(arg1)
-    aftercare(ccall((:OSRIsCompound, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
+    return aftercare(ccall((:OSRIsCompound, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -35575,7 +25321,7 @@ end
 Check if geocentric coordinate system.
 """
 function osrisgeocentric(arg1)
-    aftercare(ccall((:OSRIsGeocentric, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
+    return aftercare(ccall((:OSRIsGeocentric, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -35584,7 +25330,7 @@ end
 Check if vertical coordinate system.
 """
 function osrisvertical(arg1)
-    aftercare(ccall((:OSRIsVertical, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
+    return aftercare(ccall((:OSRIsVertical, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -35593,7 +25339,7 @@ end
 Check if a CRS is a dynamic CRS.
 """
 function osrisdynamic(arg1)
-    aftercare(ccall((:OSRIsDynamic, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
+    return aftercare(ccall((:OSRIsDynamic, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -35602,9 +25348,7 @@ end
 Check if a CRS has at least an associated point motion operation.
 """
 function osrhaspointmotionoperation(arg1)
-    aftercare(
-        ccall((:OSRHasPointMotionOperation, libgdal), Cint, (OGRSpatialReferenceH,), arg1),
-    )
+    return aftercare(ccall((:OSRHasPointMotionOperation, libgdal), Cint, (OGRSpatialReferenceH,), arg1))
 end
 
 """
@@ -35614,15 +25358,7 @@ end
 Do the GeogCS'es match?
 """
 function osrissamegeogcs(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRIsSameGeogCS, libgdal),
-            Cint,
-            (OGRSpatialReferenceH, OGRSpatialReferenceH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRIsSameGeogCS, libgdal), Cint, (OGRSpatialReferenceH, OGRSpatialReferenceH), arg1, arg2))
 end
 
 """
@@ -35632,15 +25368,7 @@ end
 Do the VertCS'es match?
 """
 function osrissamevertcs(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRIsSameVertCS, libgdal),
-            Cint,
-            (OGRSpatialReferenceH, OGRSpatialReferenceH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRIsSameVertCS, libgdal), Cint, (OGRSpatialReferenceH, OGRSpatialReferenceH), arg1, arg2))
 end
 
 """
@@ -35650,15 +25378,7 @@ end
 Do these two spatial references describe the same system ?
 """
 function osrissame(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRIsSame, libgdal),
-            Cint,
-            (OGRSpatialReferenceH, OGRSpatialReferenceH),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRIsSame, libgdal), Cint, (OGRSpatialReferenceH, OGRSpatialReferenceH), arg1, arg2))
 end
 
 """
@@ -35669,16 +25389,8 @@ end
 Do these two spatial references describe the same system ?
 """
 function osrissameex(arg1, arg2, papszOptions)
-    aftercare(
-        ccall(
-            (:OSRIsSameEx, libgdal),
-            Cint,
-            (OGRSpatialReferenceH, OGRSpatialReferenceH, Ptr{Cstring}),
-            arg1,
-            arg2,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:OSRIsSameEx, libgdal), Cint, (OGRSpatialReferenceH, OGRSpatialReferenceH, Ptr{Cstring}), arg1, arg2,
+                           papszOptions))
 end
 
 """
@@ -35688,15 +25400,7 @@ end
 Set the coordinate epoch, as decimal year.
 """
 function osrsetcoordinateepoch(hSRS, dfCoordinateEpoch)
-    aftercare(
-        ccall(
-            (:OSRSetCoordinateEpoch, libgdal),
-            Cvoid,
-            (OGRSpatialReferenceH, Cdouble),
-            hSRS,
-            dfCoordinateEpoch,
-        ),
-    )
+    return aftercare(ccall((:OSRSetCoordinateEpoch, libgdal), Cvoid, (OGRSpatialReferenceH, Cdouble), hSRS, dfCoordinateEpoch))
 end
 
 """
@@ -35705,9 +25409,7 @@ end
 Get the coordinate epoch, as decimal year.
 """
 function osrgetcoordinateepoch(hSRS)
-    aftercare(
-        ccall((:OSRGetCoordinateEpoch, libgdal), Cdouble, (OGRSpatialReferenceH,), hSRS),
-    )
+    return aftercare(ccall((:OSRGetCoordinateEpoch, libgdal), Cdouble, (OGRSpatialReferenceH,), hSRS))
 end
 
 """
@@ -35717,15 +25419,7 @@ end
 Set the user visible LOCAL_CS name.
 """
 function osrsetlocalcs(hSRS, pszName)
-    aftercare(
-        ccall(
-            (:OSRSetLocalCS, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring),
-            hSRS,
-            pszName,
-        ),
-    )
+    return aftercare(ccall((:OSRSetLocalCS, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring), hSRS, pszName))
 end
 
 """
@@ -35735,15 +25429,7 @@ end
 Set the user visible PROJCS name.
 """
 function osrsetprojcs(hSRS, pszName)
-    aftercare(
-        ccall(
-            (:OSRSetProjCS, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring),
-            hSRS,
-            pszName,
-        ),
-    )
+    return aftercare(ccall((:OSRSetProjCS, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring), hSRS, pszName))
 end
 
 """
@@ -35753,15 +25439,7 @@ end
 Set the user visible PROJCS name.
 """
 function osrsetgeoccs(hSRS, pszName)
-    aftercare(
-        ccall(
-            (:OSRSetGeocCS, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring),
-            hSRS,
-            pszName,
-        ),
-    )
+    return aftercare(ccall((:OSRSetGeocCS, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring), hSRS, pszName))
 end
 
 """
@@ -35771,15 +25449,7 @@ end
 Set a GeogCS based on well known name.
 """
 function osrsetwellknowngeogcs(hSRS, pszName)
-    aftercare(
-        ccall(
-            (:OSRSetWellKnownGeogCS, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring),
-            hSRS,
-            pszName,
-        ),
-    )
+    return aftercare(ccall((:OSRSetWellKnownGeogCS, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring), hSRS, pszName))
 end
 
 """
@@ -35789,15 +25459,7 @@ end
 Set spatial reference from various text formats.
 """
 function osrsetfromuserinput(hSRS, arg2)
-    aftercare(
-        ccall(
-            (:OSRSetFromUserInput, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring),
-            hSRS,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRSetFromUserInput, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring), hSRS, arg2))
 end
 
 """
@@ -35808,16 +25470,8 @@ end
 Set spatial reference from various text formats.
 """
 function osrsetfromuserinputex(hSRS, arg2, papszOptions)
-    aftercare(
-        ccall(
-            (:OSRSetFromUserInputEx, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, CSLConstList),
-            hSRS,
-            arg2,
-            papszOptions,
-        ),
-    )
+    return aftercare(ccall((:OSRSetFromUserInputEx, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring, CSLConstList), hSRS, arg2,
+                           papszOptions))
 end
 
 """
@@ -35827,15 +25481,7 @@ end
 Copy GEOGCS from another OGRSpatialReference.
 """
 function osrcopygeogcsfrom(hSRS, hSrcSRS)
-    aftercare(
-        ccall(
-            (:OSRCopyGeogCSFrom, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, OGRSpatialReferenceH),
-            hSRS,
-            hSrcSRS,
-        ),
-    )
+    return aftercare(ccall((:OSRCopyGeogCSFrom, libgdal), OGRErr, (OGRSpatialReferenceH, OGRSpatialReferenceH), hSRS, hSrcSRS))
 end
 
 """
@@ -35851,30 +25497,9 @@ end
 Set the Bursa-Wolf conversion to WGS84.
 """
 function osrsettowgs84(hSRS, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
-    aftercare(
-        ccall(
-            (:OSRSetTOWGS84, libgdal),
-            OGRErr,
-            (
-                OGRSpatialReferenceH,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-            ),
-            hSRS,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-            arg7,
-            arg8,
-        ),
-    )
+    return aftercare(ccall((:OSRSetTOWGS84, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, arg2, arg3,
+                           arg4, arg5, arg6, arg7, arg8))
 end
 
 """
@@ -35885,16 +25510,7 @@ end
 Fetch TOWGS84 parameters, if available.
 """
 function osrgettowgs84(hSRS, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OSRGetTOWGS84, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Ptr{Cdouble}, Cint),
-            hSRS,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OSRGetTOWGS84, libgdal), OGRErr, (OGRSpatialReferenceH, Ptr{Cdouble}, Cint), hSRS, arg2, arg3))
 end
 
 """
@@ -35903,9 +25519,7 @@ end
 Try to add a a 3-parameter or 7-parameter Helmert transformation to WGS84.
 """
 function osraddguessedtowgs84(hSRS)
-    aftercare(
-        ccall((:OSRAddGuessedTOWGS84, libgdal), OGRErr, (OGRSpatialReferenceH,), hSRS),
-    )
+    return aftercare(ccall((:OSRAddGuessedTOWGS84, libgdal), OGRErr, (OGRSpatialReferenceH,), hSRS))
 end
 
 """
@@ -35917,17 +25531,9 @@ end
 Setup a compound coordinate system.
 """
 function osrsetcompoundcs(hSRS, pszName, hHorizSRS, hVertSRS)
-    aftercare(
-        ccall(
-            (:OSRSetCompoundCS, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, OGRSpatialReferenceH, OGRSpatialReferenceH),
-            hSRS,
-            pszName,
-            hHorizSRS,
-            hVertSRS,
-        ),
-    )
+    return aftercare(ccall((:OSRSetCompoundCS, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cstring, OGRSpatialReferenceH, OGRSpatialReferenceH), hSRS, pszName, hHorizSRS,
+                           hVertSRS))
 end
 
 """
@@ -35937,15 +25543,7 @@ end
 "Promotes" a 2D CRS to a 3D CRS one.
 """
 function osrpromoteto3d(hSRS, pszName)
-    aftercare(
-        ccall(
-            (:OSRPromoteTo3D, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring),
-            hSRS,
-            pszName,
-        ),
-    )
+    return aftercare(ccall((:OSRPromoteTo3D, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring), hSRS, pszName))
 end
 
 """
@@ -35955,15 +25553,7 @@ end
 "Demote" a 3D CRS to a 2D CRS one.
 """
 function osrdemoteto2d(hSRS, pszName)
-    aftercare(
-        ccall(
-            (:OSRDemoteTo2D, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring),
-            hSRS,
-            pszName,
-        ),
-    )
+    return aftercare(ccall((:OSRDemoteTo2D, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring), hSRS, pszName))
 end
 
 """
@@ -35980,46 +25570,12 @@ end
 
 Set geographic coordinate system.
 """
-function osrsetgeogcs(
-    hSRS,
-    pszGeogName,
-    pszDatumName,
-    pszEllipsoidName,
-    dfSemiMajor,
-    dfInvFlattening,
-    pszPMName,
-    dfPMOffset,
-    pszUnits,
-    dfConvertToRadians,
-)
-    aftercare(
-        ccall(
-            (:OSRSetGeogCS, libgdal),
-            OGRErr,
-            (
-                OGRSpatialReferenceH,
-                Cstring,
-                Cstring,
-                Cstring,
-                Cdouble,
-                Cdouble,
-                Cstring,
-                Cdouble,
-                Cstring,
-                Cdouble,
-            ),
-            hSRS,
-            pszGeogName,
-            pszDatumName,
-            pszEllipsoidName,
-            dfSemiMajor,
-            dfInvFlattening,
-            pszPMName,
-            dfPMOffset,
-            pszUnits,
-            dfConvertToRadians,
-        ),
-    )
+function osrsetgeogcs(hSRS, pszGeogName, pszDatumName, pszEllipsoidName, dfSemiMajor, dfInvFlattening, pszPMName, dfPMOffset,
+                      pszUnits, dfConvertToRadians)
+    return aftercare(ccall((:OSRSetGeogCS, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cstring, Cstring, Cstring, Cdouble, Cdouble, Cstring, Cdouble, Cstring, Cdouble),
+                           hSRS, pszGeogName, pszDatumName, pszEllipsoidName, dfSemiMajor, dfInvFlattening, pszPMName, dfPMOffset,
+                           pszUnits, dfConvertToRadians))
 end
 
 """
@@ -36031,17 +25587,8 @@ end
 Setup the vertical coordinate system.
 """
 function osrsetvertcs(hSRS, pszVertCSName, pszVertDatumName, nVertDatumType)
-    aftercare(
-        ccall(
-            (:OSRSetVertCS, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, Cstring, Cint),
-            hSRS,
-            pszVertCSName,
-            pszVertDatumName,
-            nVertDatumType,
-        ),
-    )
+    return aftercare(ccall((:OSRSetVertCS, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring, Cstring, Cint), hSRS, pszVertCSName,
+                           pszVertDatumName, nVertDatumType))
 end
 
 """
@@ -36051,15 +25598,7 @@ end
 Get spheroid semi major axis.
 """
 function osrgetsemimajor(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRGetSemiMajor, libgdal),
-            Cdouble,
-            (OGRSpatialReferenceH, Ptr{OGRErr}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRGetSemiMajor, libgdal), Cdouble, (OGRSpatialReferenceH, Ptr{OGRErr}), arg1, arg2))
 end
 
 """
@@ -36069,15 +25608,7 @@ end
 Get spheroid semi minor axis.
 """
 function osrgetsemiminor(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRGetSemiMinor, libgdal),
-            Cdouble,
-            (OGRSpatialReferenceH, Ptr{OGRErr}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRGetSemiMinor, libgdal), Cdouble, (OGRSpatialReferenceH, Ptr{OGRErr}), arg1, arg2))
 end
 
 """
@@ -36087,15 +25618,7 @@ end
 Get spheroid inverse flattening.
 """
 function osrgetinvflattening(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRGetInvFlattening, libgdal),
-            Cdouble,
-            (OGRSpatialReferenceH, Ptr{OGRErr}),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRGetInvFlattening, libgdal), Cdouble, (OGRSpatialReferenceH, Ptr{OGRErr}), arg1, arg2))
 end
 
 """
@@ -36107,17 +25630,8 @@ end
 Set the authority for a node.
 """
 function osrsetauthority(hSRS, pszTargetKey, pszAuthority, nCode)
-    aftercare(
-        ccall(
-            (:OSRSetAuthority, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, Cstring, Cint),
-            hSRS,
-            pszTargetKey,
-            pszAuthority,
-            nCode,
-        ),
-    )
+    return aftercare(ccall((:OSRSetAuthority, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring, Cstring, Cint), hSRS, pszTargetKey,
+                           pszAuthority, nCode))
 end
 
 """
@@ -36127,16 +25641,7 @@ end
 Get the authority code for a node.
 """
 function osrgetauthoritycode(hSRS, pszTargetKey)
-    aftercare(
-        ccall(
-            (:OSRGetAuthorityCode, libgdal),
-            Cstring,
-            (OGRSpatialReferenceH, Cstring),
-            hSRS,
-            pszTargetKey,
-        ),
-        false,
-    )
+    return aftercare(ccall((:OSRGetAuthorityCode, libgdal), Cstring, (OGRSpatialReferenceH, Cstring), hSRS, pszTargetKey), false)
 end
 
 """
@@ -36146,16 +25651,7 @@ end
 Get the authority name for a node.
 """
 function osrgetauthorityname(hSRS, pszTargetKey)
-    aftercare(
-        ccall(
-            (:OSRGetAuthorityName, libgdal),
-            Cstring,
-            (OGRSpatialReferenceH, Cstring),
-            hSRS,
-            pszTargetKey,
-        ),
-        false,
-    )
+    return aftercare(ccall((:OSRGetAuthorityName, libgdal), Cstring, (OGRSpatialReferenceH, Cstring), hSRS, pszTargetKey), false)
 end
 
 """
@@ -36168,34 +25664,10 @@ end
 
 Return the area of use of the CRS.
 """
-function osrgetareaofuse(
-    hSRS,
-    pdfWestLongitudeDeg,
-    pdfSouthLatitudeDeg,
-    pdfEastLongitudeDeg,
-    pdfNorthLatitudeDeg,
-    ppszAreaName,
-)
-    aftercare(
-        ccall(
-            (:OSRGetAreaOfUse, libgdal),
-            Cint,
-            (
-                OGRSpatialReferenceH,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cstring},
-            ),
-            hSRS,
-            pdfWestLongitudeDeg,
-            pdfSouthLatitudeDeg,
-            pdfEastLongitudeDeg,
-            pdfNorthLatitudeDeg,
-            ppszAreaName,
-        ),
-    )
+function osrgetareaofuse(hSRS, pdfWestLongitudeDeg, pdfSouthLatitudeDeg, pdfEastLongitudeDeg, pdfNorthLatitudeDeg, ppszAreaName)
+    return aftercare(ccall((:OSRGetAreaOfUse, libgdal), Cint,
+                           (OGRSpatialReferenceH, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cstring}), hSRS,
+                           pdfWestLongitudeDeg, pdfSouthLatitudeDeg, pdfEastLongitudeDeg, pdfNorthLatitudeDeg, ppszAreaName))
 end
 
 """
@@ -36205,15 +25677,7 @@ end
 Set a projection name.
 """
 function osrsetprojection(arg1, arg2)
-    aftercare(
-        ccall(
-            (:OSRSetProjection, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring),
-            arg1,
-            arg2,
-        ),
-    )
+    return aftercare(ccall((:OSRSetProjection, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring), arg1, arg2))
 end
 
 """
@@ -36224,16 +25688,7 @@ end
 Set a projection parameter value.
 """
 function osrsetprojparm(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OSRSetProjParm, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, Cdouble),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OSRSetProjParm, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring, Cdouble), arg1, arg2, arg3))
 end
 
 """
@@ -36245,17 +25700,8 @@ end
 Fetch a projection parameter value.
 """
 function osrgetprojparm(hSRS, pszParamName, dfDefault, arg4)
-    aftercare(
-        ccall(
-            (:OSRGetProjParm, libgdal),
-            Cdouble,
-            (OGRSpatialReferenceH, Cstring, Cdouble, Ptr{OGRErr}),
-            hSRS,
-            pszParamName,
-            dfDefault,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OSRGetProjParm, libgdal), Cdouble, (OGRSpatialReferenceH, Cstring, Cdouble, Ptr{OGRErr}), hSRS,
+                           pszParamName, dfDefault, arg4))
 end
 
 """
@@ -36266,16 +25712,7 @@ end
 Set a projection parameter with a normalized value.
 """
 function osrsetnormprojparm(arg1, arg2, arg3)
-    aftercare(
-        ccall(
-            (:OSRSetNormProjParm, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, Cdouble),
-            arg1,
-            arg2,
-            arg3,
-        ),
-    )
+    return aftercare(ccall((:OSRSetNormProjParm, libgdal), OGRErr, (OGRSpatialReferenceH, Cstring, Cdouble), arg1, arg2, arg3))
 end
 
 """
@@ -36287,17 +25724,8 @@ end
 This function is the same as OGRSpatialReference::
 """
 function osrgetnormprojparm(hSRS, pszParamName, dfDefault, arg4)
-    aftercare(
-        ccall(
-            (:OSRGetNormProjParm, libgdal),
-            Cdouble,
-            (OGRSpatialReferenceH, Cstring, Cdouble, Ptr{OGRErr}),
-            hSRS,
-            pszParamName,
-            dfDefault,
-            arg4,
-        ),
-    )
+    return aftercare(ccall((:OSRGetNormProjParm, libgdal), Cdouble, (OGRSpatialReferenceH, Cstring, Cdouble, Ptr{OGRErr}), hSRS,
+                           pszParamName, dfDefault, arg4))
 end
 
 """
@@ -36308,16 +25736,7 @@ end
 Set UTM projection definition.
 """
 function osrsetutm(hSRS, nZone, bNorth)
-    aftercare(
-        ccall(
-            (:OSRSetUTM, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cint, Cint),
-            hSRS,
-            nZone,
-            bNorth,
-        ),
-    )
+    return aftercare(ccall((:OSRSetUTM, libgdal), OGRErr, (OGRSpatialReferenceH, Cint, Cint), hSRS, nZone, bNorth))
 end
 
 """
@@ -36327,15 +25746,7 @@ end
 Get utm zone information.
 """
 function osrgetutmzone(hSRS, pbNorth)
-    aftercare(
-        ccall(
-            (:OSRGetUTMZone, libgdal),
-            Cint,
-            (OGRSpatialReferenceH, Ptr{Cint}),
-            hSRS,
-            pbNorth,
-        ),
-    )
+    return aftercare(ccall((:OSRGetUTMZone, libgdal), Cint, (OGRSpatialReferenceH, Ptr{Cint}), hSRS, pbNorth))
 end
 
 """
@@ -36346,16 +25757,7 @@ end
 Set State Plane projection definition.
 """
 function osrsetstateplane(hSRS, nZone, bNAD83)
-    aftercare(
-        ccall(
-            (:OSRSetStatePlane, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cint, Cint),
-            hSRS,
-            nZone,
-            bNAD83,
-        ),
-    )
+    return aftercare(ccall((:OSRSetStatePlane, libgdal), OGRErr, (OGRSpatialReferenceH, Cint, Cint), hSRS, nZone, bNAD83))
 end
 
 """
@@ -36368,18 +25770,8 @@ end
 Set State Plane projection definition.
 """
 function osrsetstateplanewithunits(hSRS, nZone, bNAD83, pszOverrideUnitName, dfOverrideUnit)
-    aftercare(
-        ccall(
-            (:OSRSetStatePlaneWithUnits, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cint, Cint, Cstring, Cdouble),
-            hSRS,
-            nZone,
-            bNAD83,
-            pszOverrideUnitName,
-            dfOverrideUnit,
-        ),
-    )
+    return aftercare(ccall((:OSRSetStatePlaneWithUnits, libgdal), OGRErr, (OGRSpatialReferenceH, Cint, Cint, Cstring, Cdouble),
+                           hSRS, nZone, bNAD83, pszOverrideUnitName, dfOverrideUnit))
 end
 
 """
@@ -36388,7 +25780,7 @@ end
 Set EPSG authority info if possible.
 """
 function osrautoidentifyepsg(hSRS)
-    aftercare(ccall((:OSRAutoIdentifyEPSG, libgdal), OGRErr, (OGRSpatialReferenceH,), hSRS))
+    return aftercare(ccall((:OSRAutoIdentifyEPSG, libgdal), OGRErr, (OGRSpatialReferenceH,), hSRS))
 end
 
 """
@@ -36409,17 +25801,9 @@ Try to identify a match between the passed SRS and a related SRS in a catalog.
 an array of SRS that match the passed SRS, or NULL. Must be freed with OSRFreeSRSArray()
 """
 function osrfindmatches(hSRS, papszOptions, pnEntries, ppanMatchConfidence)
-    aftercare(
-        ccall(
-            (:OSRFindMatches, libgdal),
-            Ptr{OGRSpatialReferenceH},
-            (OGRSpatialReferenceH, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{Cint}}),
-            hSRS,
-            papszOptions,
-            pnEntries,
-            ppanMatchConfidence,
-        ),
-    )
+    return aftercare(ccall((:OSRFindMatches, libgdal), Ptr{OGRSpatialReferenceH},
+                           (OGRSpatialReferenceH, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{Cint}}), hSRS, papszOptions, pnEntries,
+                           ppanMatchConfidence))
 end
 
 """
@@ -36431,9 +25815,7 @@ Free return of OSRIdentifyMatches()
 * **pahSRS**: array of SRS (must be NULL terminated)
 """
 function osrfreesrsarray(pahSRS)
-    aftercare(
-        ccall((:OSRFreeSRSArray, libgdal), Cvoid, (Ptr{OGRSpatialReferenceH},), pahSRS),
-    )
+    return aftercare(ccall((:OSRFreeSRSArray, libgdal), Cvoid, (Ptr{OGRSpatialReferenceH},), pahSRS))
 end
 
 """
@@ -36442,9 +25824,7 @@ end
 This function returns TRUE if this geographic coordinate system should be treated as having lat/long coordinate ordering.
 """
 function osrepsgtreatsaslatlong(hSRS)
-    aftercare(
-        ccall((:OSREPSGTreatsAsLatLong, libgdal), Cint, (OGRSpatialReferenceH,), hSRS),
-    )
+    return aftercare(ccall((:OSREPSGTreatsAsLatLong, libgdal), Cint, (OGRSpatialReferenceH,), hSRS))
 end
 
 """
@@ -36453,14 +25833,7 @@ end
 This function returns TRUE if this projected coordinate system should be treated as having northing/easting coordinate ordering.
 """
 function osrepsgtreatsasnorthingeasting(hSRS)
-    aftercare(
-        ccall(
-            (:OSREPSGTreatsAsNorthingEasting, libgdal),
-            Cint,
-            (OGRSpatialReferenceH,),
-            hSRS,
-        ),
-    )
+    return aftercare(ccall((:OSREPSGTreatsAsNorthingEasting, libgdal), Cint, (OGRSpatialReferenceH,), hSRS))
 end
 
 """
@@ -36472,18 +25845,8 @@ end
 Fetch the orientation of one axis.
 """
 function osrgetaxis(hSRS, pszTargetKey, iAxis, peOrientation)
-    aftercare(
-        ccall(
-            (:OSRGetAxis, libgdal),
-            Cstring,
-            (OGRSpatialReferenceH, Cstring, Cint, Ptr{OGRAxisOrientation}),
-            hSRS,
-            pszTargetKey,
-            iAxis,
-            peOrientation,
-        ),
-        false,
-    )
+    return aftercare(ccall((:OSRGetAxis, libgdal), Cstring, (OGRSpatialReferenceH, Cstring, Cint, Ptr{OGRAxisOrientation}), hSRS,
+                           pszTargetKey, iAxis, peOrientation), false)
 end
 
 """
@@ -36492,7 +25855,7 @@ end
 Return the number of axis of the coordinate system of the CRS.
 """
 function osrgetaxescount(hSRS)
-    aftercare(ccall((:OSRGetAxesCount, libgdal), Cint, (OGRSpatialReferenceH,), hSRS))
+    return aftercare(ccall((:OSRGetAxesCount, libgdal), Cint, (OGRSpatialReferenceH,), hSRS))
 end
 
 """
@@ -36505,34 +25868,10 @@ end
 
 Set the axes for a coordinate system.
 """
-function osrsetaxes(
-    hSRS,
-    pszTargetKey,
-    pszXAxisName,
-    eXAxisOrientation,
-    pszYAxisName,
-    eYAxisOrientation,
-)
-    aftercare(
-        ccall(
-            (:OSRSetAxes, libgdal),
-            OGRErr,
-            (
-                OGRSpatialReferenceH,
-                Cstring,
-                Cstring,
-                OGRAxisOrientation,
-                Cstring,
-                OGRAxisOrientation,
-            ),
-            hSRS,
-            pszTargetKey,
-            pszXAxisName,
-            eXAxisOrientation,
-            pszYAxisName,
-            eYAxisOrientation,
-        ),
-    )
+function osrsetaxes(hSRS, pszTargetKey, pszXAxisName, eXAxisOrientation, pszYAxisName, eYAxisOrientation)
+    return aftercare(ccall((:OSRSetAxes, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cstring, Cstring, OGRAxisOrientation, Cstring, OGRAxisOrientation), hSRS,
+                           pszTargetKey, pszXAxisName, eXAxisOrientation, pszYAxisName, eYAxisOrientation))
 end
 
 """
@@ -36558,14 +25897,7 @@ end
 Return the data axis to CRS axis mapping strategy.
 """
 function osrgetaxismappingstrategy(hSRS)
-    aftercare(
-        ccall(
-            (:OSRGetAxisMappingStrategy, libgdal),
-            OSRAxisMappingStrategy,
-            (OGRSpatialReferenceH,),
-            hSRS,
-        ),
-    )
+    return aftercare(ccall((:OSRGetAxisMappingStrategy, libgdal), OSRAxisMappingStrategy, (OGRSpatialReferenceH,), hSRS))
 end
 
 """
@@ -36575,15 +25907,8 @@ end
 Set the data axis to CRS axis mapping strategy.
 """
 function osrsetaxismappingstrategy(hSRS, strategy)
-    aftercare(
-        ccall(
-            (:OSRSetAxisMappingStrategy, libgdal),
-            Cvoid,
-            (OGRSpatialReferenceH, OSRAxisMappingStrategy),
-            hSRS,
-            strategy,
-        ),
-    )
+    return aftercare(ccall((:OSRSetAxisMappingStrategy, libgdal), Cvoid, (OGRSpatialReferenceH, OSRAxisMappingStrategy), hSRS,
+                           strategy))
 end
 
 """
@@ -36593,15 +25918,7 @@ end
 Return the data axis to SRS axis mapping.
 """
 function osrgetdataaxistosrsaxismapping(hSRS, pnCount)
-    aftercare(
-        ccall(
-            (:OSRGetDataAxisToSRSAxisMapping, libgdal),
-            Ptr{Cint},
-            (OGRSpatialReferenceH, Ptr{Cint}),
-            hSRS,
-            pnCount,
-        ),
-    )
+    return aftercare(ccall((:OSRGetDataAxisToSRSAxisMapping, libgdal), Ptr{Cint}, (OGRSpatialReferenceH, Ptr{Cint}), hSRS, pnCount))
 end
 
 """
@@ -36612,16 +25929,8 @@ end
 Set a custom data axis to CRS axis mapping.
 """
 function osrsetdataaxistosrsaxismapping(hSRS, nMappingSize, panMapping)
-    aftercare(
-        ccall(
-            (:OSRSetDataAxisToSRSAxisMapping, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cint, Ptr{Cint}),
-            hSRS,
-            nMappingSize,
-            panMapping,
-        ),
-    )
+    return aftercare(ccall((:OSRSetDataAxisToSRSAxisMapping, libgdal), OGRErr, (OGRSpatialReferenceH, Cint, Ptr{Cint}), hSRS,
+                           nMappingSize, panMapping))
 end
 
 """
@@ -36629,29 +25938,10 @@ end
 
 Albers Conic Equal Area
 """
-function osrsetacea(
-    hSRS,
-    dfStdP1,
-    dfStdP2,
-    dfCenterLat,
-    dfCenterLong,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetACEA, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfStdP1,
-            dfStdP2,
-            dfCenterLat,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetacea(hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetACEA, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfStdP2,
+                           dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -36660,18 +25950,8 @@ end
 Azimuthal Equidistant
 """
 function osrsetae(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetAE, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetAE, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -36679,25 +25959,9 @@ end
 
 Bonne
 """
-function osrsetbonne(
-    hSRS,
-    dfStandardParallel,
-    dfCentralMeridian,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetBonne, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfStandardParallel,
-            dfCentralMeridian,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetbonne(hSRS, dfStandardParallel, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetBonne, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfStandardParallel, dfCentralMeridian, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -36706,18 +25970,8 @@ end
 Cylindrical Equal Area
 """
 function osrsetcea(hSRS, dfStdP1, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetCEA, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfStdP1,
-            dfCentralMeridian,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetCEA, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1,
+                           dfCentralMeridian, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -36726,18 +25980,8 @@ end
 Cassini-Soldner
 """
 function osrsetcs(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetCS, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetCS, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -36745,29 +25989,10 @@ end
 
 Equidistant Conic
 """
-function osrsetec(
-    hSRS,
-    dfStdP1,
-    dfStdP2,
-    dfCenterLat,
-    dfCenterLong,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetEC, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfStdP1,
-            dfStdP2,
-            dfCenterLat,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetec(hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetEC, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfStdP2,
+                           dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -36776,18 +26001,8 @@ end
 Eckert I-VI
 """
 function osrseteckert(hSRS, nVariation, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetEckert, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cint, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            nVariation,
-            dfCentralMeridian,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetEckert, libgdal), OGRErr, (OGRSpatialReferenceH, Cint, Cdouble, Cdouble, Cdouble), hSRS,
+                           nVariation, dfCentralMeridian, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -36796,17 +26011,8 @@ end
 Eckert IV
 """
 function osrseteckertiv(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetEckertIV, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCentralMeridian,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetEckertIV, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCentralMeridian, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -36815,17 +26021,8 @@ end
 Eckert VI
 """
 function osrseteckertvi(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetEckertVI, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCentralMeridian,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetEckertVI, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCentralMeridian, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -36833,25 +26030,9 @@ end
 
 Equirectangular
 """
-function osrsetequirectangular(
-    hSRS,
-    dfCenterLat,
-    dfCenterLong,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetEquirectangular, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetequirectangular(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetEquirectangular, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
+                           hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -36859,27 +26040,10 @@ end
 
 Equirectangular generalized form
 """
-function osrsetequirectangular2(
-    hSRS,
-    dfCenterLat,
-    dfCenterLong,
-    dfPseudoStdParallel1,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetEquirectangular2, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfPseudoStdParallel1,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetequirectangular2(hSRS, dfCenterLat, dfCenterLong, dfPseudoStdParallel1, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetEquirectangular2, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong,
+                           dfPseudoStdParallel1, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -36888,17 +26052,8 @@ end
 Gall Stereograpic
 """
 function osrsetgs(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetGS, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCentralMeridian,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetGS, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble), hSRS, dfCentralMeridian,
+                           dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -36907,17 +26062,8 @@ end
 Goode Homolosine
 """
 function osrsetgh(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetGH, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCentralMeridian,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetGH, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble), hSRS, dfCentralMeridian,
+                           dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -36926,7 +26072,7 @@ end
 Interrupted Goode Homolosine
 """
 function osrsetigh(hSRS)
-    aftercare(ccall((:OSRSetIGH, libgdal), OGRErr, (OGRSpatialReferenceH,), hSRS))
+    return aftercare(ccall((:OSRSetIGH, libgdal), OGRErr, (OGRSpatialReferenceH,), hSRS))
 end
 
 """
@@ -36934,25 +26080,9 @@ end
 
 GEOS - Geostationary Satellite View
 """
-function osrsetgeos(
-    hSRS,
-    dfCentralMeridian,
-    dfSatelliteHeight,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetGEOS, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCentralMeridian,
-            dfSatelliteHeight,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetgeos(hSRS, dfCentralMeridian, dfSatelliteHeight, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetGEOS, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCentralMeridian, dfSatelliteHeight, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -36960,27 +26090,10 @@ end
 
 Gauss Schreiber Transverse Mercator
 """
-function osrsetgaussschreibertmercator(
-    hSRS,
-    dfCenterLat,
-    dfCenterLong,
-    dfScale,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetGaussSchreiberTMercator, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfScale,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetgaussschreibertmercator(hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetGaussSchreiberTMercator, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong,
+                           dfScale, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -36989,18 +26102,8 @@ end
 Gnomonic
 """
 function osrsetgnomonic(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetGnomonic, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetGnomonic, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37008,40 +26111,10 @@ end
 
 Hotine Oblique Mercator using azimuth angle
 """
-function osrsethom(
-    hSRS,
-    dfCenterLat,
-    dfCenterLong,
-    dfAzimuth,
-    dfRectToSkew,
-    dfScale,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetHOM, libgdal),
-            OGRErr,
-            (
-                OGRSpatialReferenceH,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-            ),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfAzimuth,
-            dfRectToSkew,
-            dfScale,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsethom(hSRS, dfCenterLat, dfCenterLong, dfAzimuth, dfRectToSkew, dfScale, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetHOM, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat,
+                           dfCenterLong, dfAzimuth, dfRectToSkew, dfScale, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37056,40 +26129,10 @@ end
 
 Set an Oblique Mercator projection using azimuth angle.
 """
-function osrsethomac(
-    hSRS,
-    dfCenterLat,
-    dfCenterLong,
-    dfAzimuth,
-    dfRectToSkew,
-    dfScale,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetHOMAC, libgdal),
-            OGRErr,
-            (
-                OGRSpatialReferenceH,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-            ),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfAzimuth,
-            dfRectToSkew,
-            dfScale,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsethomac(hSRS, dfCenterLat, dfCenterLong, dfAzimuth, dfRectToSkew, dfScale, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetHOMAC, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat,
+                           dfCenterLong, dfAzimuth, dfRectToSkew, dfScale, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37097,43 +26140,10 @@ end
 
 Hotine Oblique Mercator using two points on centerline
 """
-function osrsethom2pno(
-    hSRS,
-    dfCenterLat,
-    dfLat1,
-    dfLong1,
-    dfLat2,
-    dfLong2,
-    dfScale,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetHOM2PNO, libgdal),
-            OGRErr,
-            (
-                OGRSpatialReferenceH,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-            ),
-            hSRS,
-            dfCenterLat,
-            dfLat1,
-            dfLong1,
-            dfLat2,
-            dfLong2,
-            dfScale,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsethom2pno(hSRS, dfCenterLat, dfLat1, dfLong1, dfLat2, dfLong2, dfScale, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetHOM2PNO, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCenterLat, dfLat1, dfLong1, dfLat2, dfLong2, dfScale, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37141,27 +26151,10 @@ end
 
 International Map of the World Polyconic
 """
-function osrsetiwmpolyconic(
-    hSRS,
-    dfLat1,
-    dfLat2,
-    dfCenterLong,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetIWMPolyconic, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfLat1,
-            dfLat2,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetiwmpolyconic(hSRS, dfLat1, dfLat2, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetIWMPolyconic, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfLat1, dfLat2, dfCenterLong,
+                           dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37169,40 +26162,10 @@ end
 
 Krovak Oblique Conic Conformal
 """
-function osrsetkrovak(
-    hSRS,
-    dfCenterLat,
-    dfCenterLong,
-    dfAzimuth,
-    dfPseudoStdParallelLat,
-    dfScale,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetKrovak, libgdal),
-            OGRErr,
-            (
-                OGRSpatialReferenceH,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-            ),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfAzimuth,
-            dfPseudoStdParallelLat,
-            dfScale,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetkrovak(hSRS, dfCenterLat, dfCenterLong, dfAzimuth, dfPseudoStdParallelLat, dfScale, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetKrovak, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat,
+                           dfCenterLong, dfAzimuth, dfPseudoStdParallelLat, dfScale, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37211,18 +26174,8 @@ end
 Lambert Azimuthal Equal-Area
 """
 function osrsetlaea(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetLAEA, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetLAEA, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37230,29 +26183,10 @@ end
 
 Lambert Conformal Conic
 """
-function osrsetlcc(
-    hSRS,
-    dfStdP1,
-    dfStdP2,
-    dfCenterLat,
-    dfCenterLong,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetLCC, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfStdP1,
-            dfStdP2,
-            dfCenterLat,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetlcc(hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetLCC, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfStdP2,
+                           dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37260,27 +26194,9 @@ end
 
 Lambert Conformal Conic 1SP
 """
-function osrsetlcc1sp(
-    hSRS,
-    dfCenterLat,
-    dfCenterLong,
-    dfScale,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetLCC1SP, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfScale,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetlcc1sp(hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetLCC1SP, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
+                           hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37288,29 +26204,10 @@ end
 
 Lambert Conformal Conic (Belgium)
 """
-function osrsetlccb(
-    hSRS,
-    dfStdP1,
-    dfStdP2,
-    dfCenterLat,
-    dfCenterLong,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetLCCB, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfStdP1,
-            dfStdP2,
-            dfCenterLat,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetlccb(hSRS, dfStdP1, dfStdP2, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetLCCB, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfStdP2,
+                           dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37319,18 +26216,8 @@ end
 Miller Cylindrical
 """
 function osrsetmc(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetMC, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetMC, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37338,27 +26225,9 @@ end
 
 Mercator
 """
-function osrsetmercator(
-    hSRS,
-    dfCenterLat,
-    dfCenterLong,
-    dfScale,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetMercator, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfScale,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetmercator(hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetMercator, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
+                           hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37366,27 +26235,10 @@ end
 
 Mercator 2SP
 """
-function osrsetmercator2sp(
-    hSRS,
-    dfStdP1,
-    dfCenterLat,
-    dfCenterLong,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetMercator2SP, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfStdP1,
-            dfCenterLat,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetmercator2sp(hSRS, dfStdP1, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetMercator2SP, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfStdP1, dfCenterLat,
+                           dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37395,17 +26247,8 @@ end
 Mollweide
 """
 function osrsetmollweide(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetMollweide, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCentralMeridian,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetMollweide, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCentralMeridian, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37414,18 +26257,8 @@ end
 New Zealand Map Grid
 """
 function osrsetnzmg(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetNZMG, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetNZMG, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37434,19 +26267,8 @@ end
 Oblique Stereographic
 """
 function osrsetos(hSRS, dfOriginLat, dfCMeridian, dfScale, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetOS, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfOriginLat,
-            dfCMeridian,
-            dfScale,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetOS, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfOriginLat, dfCMeridian, dfScale, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37454,25 +26276,9 @@ end
 
 Orthographic
 """
-function osrsetorthographic(
-    hSRS,
-    dfCenterLat,
-    dfCenterLong,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetOrthographic, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetorthographic(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetOrthographic, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37481,18 +26287,8 @@ end
 Polyconic
 """
 function osrsetpolyconic(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetPolyconic, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetPolyconic, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37501,19 +26297,8 @@ end
 Polar Stereographic
 """
 function osrsetps(hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetPS, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfScale,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetPS, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37522,17 +26307,8 @@ end
 Robinson
 """
 function osrsetrobinson(hSRS, dfCenterLong, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetRobinson, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetRobinson, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37541,17 +26317,8 @@ end
 Sinusoidal
 """
 function osrsetsinusoidal(hSRS, dfCenterLong, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetSinusoidal, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetSinusoidal, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37559,27 +26326,10 @@ end
 
 Stereographic
 """
-function osrsetstereographic(
-    hSRS,
-    dfCenterLat,
-    dfCenterLong,
-    dfScale,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetStereographic, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfScale,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetstereographic(hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetStereographic, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLat, dfCenterLong,
+                           dfScale, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37587,25 +26337,9 @@ end
 
 Swiss Oblique Cylindrical
 """
-function osrsetsoc(
-    hSRS,
-    dfLatitudeOfOrigin,
-    dfCentralMeridian,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetSOC, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfLatitudeOfOrigin,
-            dfCentralMeridian,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetsoc(hSRS, dfLatitudeOfOrigin, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetSOC, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfLatitudeOfOrigin, dfCentralMeridian, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37616,19 +26350,8 @@ Transverse Mercator
 Special processing available for Transverse Mercator with GDAL >= 1.10 and PROJ >= 4.8 : see OGRSpatialReference::exportToProj4().
 """
 function osrsettm(hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetTM, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfScale,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetTM, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37636,29 +26359,10 @@ end
 
 Transverse Mercator variant
 """
-function osrsettmvariant(
-    hSRS,
-    pszVariantName,
-    dfCenterLat,
-    dfCenterLong,
-    dfScale,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetTMVariant, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cstring, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            pszVariantName,
-            dfCenterLat,
-            dfCenterLong,
-            dfScale,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsettmvariant(hSRS, pszVariantName, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetTMVariant, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cstring, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, pszVariantName,
+                           dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37667,18 +26371,8 @@ end
 Tunesia Mining Grid
 """
 function osrsettmg(hSRS, dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetTMG, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetTMG, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfCenterLat, dfCenterLong, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37686,27 +26380,9 @@ end
 
 Transverse Mercator (South Oriented)
 """
-function osrsettmso(
-    hSRS,
-    dfCenterLat,
-    dfCenterLong,
-    dfScale,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetTMSO, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-            dfScale,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsettmso(hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing)
+    return aftercare(ccall((:OSRSetTMSO, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
+                           hSRS, dfCenterLat, dfCenterLong, dfScale, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37715,20 +26391,9 @@ end
 TPED (Two Point Equi Distant)
 """
 function osrsettped(hSRS, dfLat1, dfLong1, dfLat2, dfLong2, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetTPED, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfLat1,
-            dfLong1,
-            dfLat2,
-            dfLong2,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetTPED, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfLat1, dfLong1,
+                           dfLat2, dfLong2, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37737,17 +26402,8 @@ end
 VanDerGrinten
 """
 function osrsetvdg(hSRS, dfCenterLong, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetVDG, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLong,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetVDG, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble), hSRS, dfCenterLong,
+                           dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37756,18 +26412,8 @@ end
 Wagner I -- VII
 """
 function osrsetwagner(hSRS, nVariation, dfCenterLat, dfFalseEasting, dfFalseNorthing)
-    aftercare(
-        ccall(
-            (:OSRSetWagner, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cint, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            nVariation,
-            dfCenterLat,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+    return aftercare(ccall((:OSRSetWagner, libgdal), OGRErr, (OGRSpatialReferenceH, Cint, Cdouble, Cdouble, Cdouble), hSRS,
+                           nVariation, dfCenterLat, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37776,16 +26422,8 @@ end
 Quadrilateralized Spherical Cube
 """
 function osrsetqsc(hSRS, dfCenterLat, dfCenterLong)
-    aftercare(
-        ccall(
-            (:OSRSetQSC, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble),
-            hSRS,
-            dfCenterLat,
-            dfCenterLong,
-        ),
-    )
+    return aftercare(ccall((:OSRSetQSC, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble), hSRS, dfCenterLat,
+                           dfCenterLong))
 end
 
 """
@@ -37794,18 +26432,8 @@ end
 Spherical, Cross-track, Height
 """
 function osrsetsch(hSRS, dfPegLat, dfPegLong, dfPegHeading, dfPegHgt)
-    aftercare(
-        ccall(
-            (:OSRSetSCH, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfPegLat,
-            dfPegLong,
-            dfPegHeading,
-            dfPegHgt,
-        ),
-    )
+    return aftercare(ccall((:OSRSetSCH, libgdal), OGRErr, (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble), hSRS,
+                           dfPegLat, dfPegLong, dfPegHeading, dfPegHgt))
 end
 
 """
@@ -37813,29 +26441,11 @@ end
 
 Vertical Perspective / Near-sided Perspective
 """
-function osrsetverticalperspective(
-    hSRS,
-    dfTopoOriginLat,
-    dfTopoOriginLon,
-    dfTopoOriginHeight,
-    dfViewPointHeight,
-    dfFalseEasting,
-    dfFalseNorthing,
-)
-    aftercare(
-        ccall(
-            (:OSRSetVerticalPerspective, libgdal),
-            OGRErr,
-            (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble),
-            hSRS,
-            dfTopoOriginLat,
-            dfTopoOriginLon,
-            dfTopoOriginHeight,
-            dfViewPointHeight,
-            dfFalseEasting,
-            dfFalseNorthing,
-        ),
-    )
+function osrsetverticalperspective(hSRS, dfTopoOriginLat, dfTopoOriginLon, dfTopoOriginHeight, dfViewPointHeight, dfFalseEasting,
+                                   dfFalseNorthing)
+    return aftercare(ccall((:OSRSetVerticalPerspective, libgdal), OGRErr,
+                           (OGRSpatialReferenceH, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble, Cdouble), hSRS, dfTopoOriginLat,
+                           dfTopoOriginLon, dfTopoOriginHeight, dfViewPointHeight, dfFalseEasting, dfFalseNorthing))
 end
 
 """
@@ -37852,15 +26462,7 @@ Compute inverse flattening from semi-major and semi-minor axis.
 inverse flattening, or 0 if both axis are equal.
 """
 function osrcalcinvflattening(dfSemiMajor, dfSemiMinor)
-    aftercare(
-        ccall(
-            (:OSRCalcInvFlattening, libgdal),
-            Cdouble,
-            (Cdouble, Cdouble),
-            dfSemiMajor,
-            dfSemiMinor,
-        ),
-    )
+    return aftercare(ccall((:OSRCalcInvFlattening, libgdal), Cdouble, (Cdouble, Cdouble), dfSemiMajor, dfSemiMinor))
 end
 
 """
@@ -37877,15 +26479,8 @@ Compute semi-minor axis from semi-major axis and inverse flattening.
 semi-minor axis
 """
 function osrcalcsemiminorfrominvflattening(dfSemiMajor, dfInvFlattening)
-    aftercare(
-        ccall(
-            (:OSRCalcSemiMinorFromInvFlattening, libgdal),
-            Cdouble,
-            (Cdouble, Cdouble),
-            dfSemiMajor,
-            dfInvFlattening,
-        ),
-    )
+    return aftercare(ccall((:OSRCalcSemiMinorFromInvFlattening, libgdal), Cdouble, (Cdouble, Cdouble), dfSemiMajor,
+                           dfInvFlattening))
 end
 
 """
@@ -37894,7 +26489,7 @@ end
 Cleanup cached SRS related memory.
 """
 function osrcleanup()
-    aftercare(ccall((:OSRCleanup, libgdal), Cvoid, ()))
+    return aftercare(ccall((:OSRCleanup, libgdal), Cvoid, ()))
 end
 
 """
@@ -37977,16 +26572,8 @@ Enumerate CRS objects from the database.
 an array of OSRCRSInfo* pointers to be freed with OSRDestroyCRSInfoList(), or NULL in case of error.
 """
 function osrgetcrsinfolistfromdatabase(pszAuthName, params, pnOutResultCount)
-    aftercare(
-        ccall(
-            (:OSRGetCRSInfoListFromDatabase, libgdal),
-            Ptr{Ptr{OSRCRSInfo}},
-            (Cstring, Ptr{OSRCRSListParameters}, Ptr{Cint}),
-            pszAuthName,
-            params,
-            pnOutResultCount,
-        ),
-    )
+    return aftercare(ccall((:OSRGetCRSInfoListFromDatabase, libgdal), Ptr{Ptr{OSRCRSInfo}},
+                           (Cstring, Ptr{OSRCRSListParameters}, Ptr{Cint}), pszAuthName, params, pnOutResultCount))
 end
 
 """
@@ -37995,9 +26582,7 @@ end
 Destroy the result returned by OSRGetCRSInfoListFromDatabase().
 """
 function osrdestroycrsinfolist(list)
-    aftercare(
-        ccall((:OSRDestroyCRSInfoList, libgdal), Cvoid, (Ptr{Ptr{OSRCRSInfo}},), list),
-    )
+    return aftercare(ccall((:OSRDestroyCRSInfoList, libgdal), Cvoid, (Ptr{Ptr{OSRCRSInfo}},), list))
 end
 
 """
@@ -38009,7 +26594,7 @@ Return the list of CRS authorities used in the PROJ database.
 nullptr in case of error, or a NULL terminated list of strings to free with CSLDestroy()
 """
 function osrgetauthoritylistfromdatabase()
-    aftercare(ccall((:OSRGetAuthorityListFromDatabase, libgdal), Ptr{Cstring}, ()))
+    return aftercare(ccall((:OSRGetAuthorityListFromDatabase, libgdal), Ptr{Cstring}, ()))
 end
 
 """
@@ -38026,15 +26611,8 @@ Create transformation object.
 NULL on failure or a ready to use transformation object.
 """
 function octnewcoordinatetransformation(hSourceSRS, hTargetSRS)
-    aftercare(
-        ccall(
-            (:OCTNewCoordinateTransformation, libgdal),
-            OGRCoordinateTransformationH,
-            (OGRSpatialReferenceH, OGRSpatialReferenceH),
-            hSourceSRS,
-            hTargetSRS,
-        ),
-    )
+    return aftercare(ccall((:OCTNewCoordinateTransformation, libgdal), OGRCoordinateTransformationH,
+                           (OGRSpatialReferenceH, OGRSpatialReferenceH), hSourceSRS, hTargetSRS))
 end
 
 const OGRCoordinateTransformationOptions = Cvoid
@@ -38048,13 +26626,7 @@ const OGRCoordinateTransformationOptionsH = Ptr{OGRCoordinateTransformationOptio
 Create coordinate transformation options.
 """
 function octnewcoordinatetransformationoptions()
-    aftercare(
-        ccall(
-            (:OCTNewCoordinateTransformationOptions, libgdal),
-            OGRCoordinateTransformationOptionsH,
-            (),
-        ),
-    )
+    return aftercare(ccall((:OCTNewCoordinateTransformationOptions, libgdal), OGRCoordinateTransformationOptionsH, ()))
 end
 
 """
@@ -38065,16 +26637,8 @@ end
 Sets a coordinate operation.
 """
 function octcoordinatetransformationoptionssetoperation(hOptions, pszCO, bReverseCO)
-    aftercare(
-        ccall(
-            (:OCTCoordinateTransformationOptionsSetOperation, libgdal),
-            Cint,
-            (OGRCoordinateTransformationOptionsH, Cstring, Cint),
-            hOptions,
-            pszCO,
-            bReverseCO,
-        ),
-    )
+    return aftercare(ccall((:OCTCoordinateTransformationOptionsSetOperation, libgdal), Cint,
+                           (OGRCoordinateTransformationOptionsH, Cstring, Cint), hOptions, pszCO, bReverseCO))
 end
 
 """
@@ -38086,25 +26650,11 @@ end
 
 Sets an area of interest.
 """
-function octcoordinatetransformationoptionssetareaofinterest(
-    hOptions,
-    dfWestLongitudeDeg,
-    dfSouthLatitudeDeg,
-    dfEastLongitudeDeg,
-    dfNorthLatitudeDeg,
-)
-    aftercare(
-        ccall(
-            (:OCTCoordinateTransformationOptionsSetAreaOfInterest, libgdal),
-            Cint,
-            (OGRCoordinateTransformationOptionsH, Cdouble, Cdouble, Cdouble, Cdouble),
-            hOptions,
-            dfWestLongitudeDeg,
-            dfSouthLatitudeDeg,
-            dfEastLongitudeDeg,
-            dfNorthLatitudeDeg,
-        ),
-    )
+function octcoordinatetransformationoptionssetareaofinterest(hOptions, dfWestLongitudeDeg, dfSouthLatitudeDeg, dfEastLongitudeDeg,
+                                                             dfNorthLatitudeDeg)
+    return aftercare(ccall((:OCTCoordinateTransformationOptionsSetAreaOfInterest, libgdal), Cint,
+                           (OGRCoordinateTransformationOptionsH, Cdouble, Cdouble, Cdouble, Cdouble), hOptions, dfWestLongitudeDeg,
+                           dfSouthLatitudeDeg, dfEastLongitudeDeg, dfNorthLatitudeDeg))
 end
 
 """
@@ -38114,15 +26664,8 @@ end
 Sets the desired accuracy for coordinate operations.
 """
 function octcoordinatetransformationoptionssetdesiredaccuracy(hOptions, dfAccuracy)
-    aftercare(
-        ccall(
-            (:OCTCoordinateTransformationOptionsSetDesiredAccuracy, libgdal),
-            Cint,
-            (OGRCoordinateTransformationOptionsH, Cdouble),
-            hOptions,
-            dfAccuracy,
-        ),
-    )
+    return aftercare(ccall((:OCTCoordinateTransformationOptionsSetDesiredAccuracy, libgdal), Cint,
+                           (OGRCoordinateTransformationOptionsH, Cdouble), hOptions, dfAccuracy))
 end
 
 """
@@ -38132,15 +26675,8 @@ end
 Sets whether ballpark transformations are allowed.
 """
 function octcoordinatetransformationoptionssetballparkallowed(hOptions, bAllowBallpark)
-    aftercare(
-        ccall(
-            (:OCTCoordinateTransformationOptionsSetBallparkAllowed, libgdal),
-            Cint,
-            (OGRCoordinateTransformationOptionsH, Cint),
-            hOptions,
-            bAllowBallpark,
-        ),
-    )
+    return aftercare(ccall((:OCTCoordinateTransformationOptionsSetBallparkAllowed, libgdal), Cint,
+                           (OGRCoordinateTransformationOptionsH, Cint), hOptions, bAllowBallpark))
 end
 
 """
@@ -38150,15 +26686,8 @@ end
 Sets whether only the "best" operation(s) should be used.
 """
 function octcoordinatetransformationoptionssetonlybest(hOptions, bOnlyBest)
-    aftercare(
-        ccall(
-            (:OCTCoordinateTransformationOptionsSetOnlyBest, libgdal),
-            Cint,
-            (OGRCoordinateTransformationOptionsH, Bool),
-            hOptions,
-            bOnlyBest,
-        ),
-    )
+    return aftercare(ccall((:OCTCoordinateTransformationOptionsSetOnlyBest, libgdal), Cint,
+                           (OGRCoordinateTransformationOptionsH, Bool), hOptions, bOnlyBest))
 end
 
 """
@@ -38167,14 +26696,8 @@ end
 Destroy coordinate transformation options.
 """
 function octdestroycoordinatetransformationoptions(arg1)
-    aftercare(
-        ccall(
-            (:OCTDestroyCoordinateTransformationOptions, libgdal),
-            Cvoid,
-            (OGRCoordinateTransformationOptionsH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OCTDestroyCoordinateTransformationOptions, libgdal), Cvoid, (OGRCoordinateTransformationOptionsH,),
+                           arg1))
 end
 
 """
@@ -38193,20 +26716,9 @@ Create transformation object.
 NULL on failure or a ready to use transformation object.
 """
 function octnewcoordinatetransformationex(hSourceSRS, hTargetSRS, hOptions)
-    aftercare(
-        ccall(
-            (:OCTNewCoordinateTransformationEx, libgdal),
-            OGRCoordinateTransformationH,
-            (
-                OGRSpatialReferenceH,
-                OGRSpatialReferenceH,
-                OGRCoordinateTransformationOptionsH,
-            ),
-            hSourceSRS,
-            hTargetSRS,
-            hOptions,
-        ),
-    )
+    return aftercare(ccall((:OCTNewCoordinateTransformationEx, libgdal), OGRCoordinateTransformationH,
+                           (OGRSpatialReferenceH, OGRSpatialReferenceH, OGRCoordinateTransformationOptionsH), hSourceSRS,
+                           hTargetSRS, hOptions))
 end
 
 """
@@ -38218,14 +26730,7 @@ Clone transformation object.
 handle to transformation's clone or NULL on error, must be freed with OCTDestroyCoordinateTransformation
 """
 function octclone(hTransform)
-    aftercare(
-        ccall(
-            (:OCTClone, libgdal),
-            OGRCoordinateTransformationH,
-            (OGRCoordinateTransformationH,),
-            hTransform,
-        ),
-    )
+    return aftercare(ccall((:OCTClone, libgdal), OGRCoordinateTransformationH, (OGRCoordinateTransformationH,), hTransform))
 end
 
 """
@@ -38237,14 +26742,7 @@ Transformation's source coordinate system reference.
 handle to transformation's source coordinate system or NULL if not present.
 """
 function octgetsourcecs(hTransform)
-    aftercare(
-        ccall(
-            (:OCTGetSourceCS, libgdal),
-            OGRSpatialReferenceH,
-            (OGRCoordinateTransformationH,),
-            hTransform,
-        ),
-    )
+    return aftercare(ccall((:OCTGetSourceCS, libgdal), OGRSpatialReferenceH, (OGRCoordinateTransformationH,), hTransform))
 end
 
 """
@@ -38256,14 +26754,7 @@ Transformation's target coordinate system reference.
 handle to transformation's target coordinate system or NULL if not present.
 """
 function octgettargetcs(hTransform)
-    aftercare(
-        ccall(
-            (:OCTGetTargetCS, libgdal),
-            OGRSpatialReferenceH,
-            (OGRCoordinateTransformationH,),
-            hTransform,
-        ),
-    )
+    return aftercare(ccall((:OCTGetTargetCS, libgdal), OGRSpatialReferenceH, (OGRCoordinateTransformationH,), hTransform))
 end
 
 """
@@ -38275,14 +26766,7 @@ Inverse transformation object.
 handle to inverse transformation or NULL on error, must be freed with OCTDestroyCoordinateTransformation
 """
 function octgetinverse(hTransform)
-    aftercare(
-        ccall(
-            (:OCTGetInverse, libgdal),
-            OGRCoordinateTransformationH,
-            (OGRCoordinateTransformationH,),
-            hTransform,
-        ),
-    )
+    return aftercare(ccall((:OCTGetInverse, libgdal), OGRCoordinateTransformationH, (OGRCoordinateTransformationH,), hTransform))
 end
 
 """
@@ -38294,14 +26778,7 @@ OGRCoordinateTransformation destructor.
 * **hCT**: the object to delete
 """
 function octdestroycoordinatetransformation(arg1)
-    aftercare(
-        ccall(
-            (:OCTDestroyCoordinateTransformation, libgdal),
-            Cvoid,
-            (OGRCoordinateTransformationH,),
-            arg1,
-        ),
-    )
+    return aftercare(ccall((:OCTDestroyCoordinateTransformation, libgdal), Cvoid, (OGRCoordinateTransformationH,), arg1))
 end
 
 """
@@ -38324,18 +26801,8 @@ Transform an array of points.
 TRUE if a transformation could be found (but not all points may have necessarily succeed to transform), otherwise FALSE.
 """
 function octtransform(hCT, nCount, x, y, z)
-    aftercare(
-        ccall(
-            (:OCTTransform, libgdal),
-            Cint,
-            (OGRCoordinateTransformationH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}),
-            hCT,
-            nCount,
-            x,
-            y,
-            z,
-        ),
-    )
+    return aftercare(ccall((:OCTTransform, libgdal), Cint,
+                           (OGRCoordinateTransformationH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}), hCT, nCount, x, y, z))
 end
 
 """
@@ -38360,26 +26827,9 @@ Transform an array of points.
 TRUE if a transformation could be found (but not all points may have necessarily succeed to transform), otherwise FALSE.
 """
 function octtransformex(hCT, nCount, x, y, z, pabSuccess)
-    aftercare(
-        ccall(
-            (:OCTTransformEx, libgdal),
-            Cint,
-            (
-                OGRCoordinateTransformationH,
-                Cint,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cint},
-            ),
-            hCT,
-            nCount,
-            x,
-            y,
-            z,
-            pabSuccess,
-        ),
-    )
+    return aftercare(ccall((:OCTTransformEx, libgdal), Cint,
+                           (OGRCoordinateTransformationH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}), hCT, nCount,
+                           x, y, z, pabSuccess))
 end
 
 """
@@ -38406,28 +26856,9 @@ Transform an array of points.
 TRUE if a transformation could be found (but not all points may have necessarily succeed to transform), otherwise FALSE.
 """
 function octtransform4d(hCT, nCount, x, y, z, t, pabSuccess)
-    aftercare(
-        ccall(
-            (:OCTTransform4D, libgdal),
-            Cint,
-            (
-                OGRCoordinateTransformationH,
-                Cint,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cint},
-            ),
-            hCT,
-            nCount,
-            x,
-            y,
-            z,
-            t,
-            pabSuccess,
-        ),
-    )
+    return aftercare(ccall((:OCTTransform4D, libgdal), Cint,
+                           (OGRCoordinateTransformationH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}),
+                           hCT, nCount, x, y, z, t, pabSuccess))
 end
 
 """
@@ -38454,28 +26885,9 @@ Transform an array of points.
 TRUE if a transformation could be found (but not all points may have necessarily succeed to transform), otherwise FALSE.
 """
 function octtransform4dwitherrorcodes(hCT, nCount, x, y, z, t, panErrorCodes)
-    aftercare(
-        ccall(
-            (:OCTTransform4DWithErrorCodes, libgdal),
-            Cint,
-            (
-                OGRCoordinateTransformationH,
-                Cint,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cint},
-            ),
-            hCT,
-            nCount,
-            x,
-            y,
-            z,
-            t,
-            panErrorCodes,
-        ),
-    )
+    return aftercare(ccall((:OCTTransform4DWithErrorCodes, libgdal), Cint,
+                           (OGRCoordinateTransformationH, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}),
+                           hCT, nCount, x, y, z, t, panErrorCodes))
 end
 
 """
@@ -38507,183 +26919,148 @@ Transform boundary.
 ### Returns
 TRUE if successful. FALSE if failures encountered.
 """
-function octtransformbounds(
-    hCT,
-    xmin,
-    ymin,
-    xmax,
-    ymax,
-    out_xmin,
-    out_ymin,
-    out_xmax,
-    out_ymax,
-    densify_pts,
-)
-    aftercare(
-        ccall(
-            (:OCTTransformBounds, libgdal),
-            Cint,
-            (
-                OGRCoordinateTransformationH,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Cdouble,
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Ptr{Cdouble},
-                Cint,
-            ),
-            hCT,
-            xmin,
-            ymin,
-            xmax,
-            ymax,
-            out_xmin,
-            out_ymin,
-            out_xmax,
-            out_ymax,
-            densify_pts,
-        ),
-    )
+function octtransformbounds(hCT, xmin, ymin, xmax, ymax, out_xmin, out_ymin, out_xmax, out_ymax, densify_pts)
+    return aftercare(ccall((:OCTTransformBounds, libgdal), Cint,
+                           (OGRCoordinateTransformationH, Cdouble, Cdouble, Cdouble, Cdouble, Ptr{Cdouble}, Ptr{Cdouble},
+                            Ptr{Cdouble}, Ptr{Cdouble}, Cint), hCT, xmin, ymin, xmax, ymax, out_xmin, out_ymin, out_xmax, out_ymax,
+                           densify_pts))
 end
 
-struct __JL_Ctag_164
+struct __JL_Ctag_224
     nCount::Cint
     paList::Ptr{Cint}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_164}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_224}, f::Symbol)
     f === :nCount && return Ptr{Cint}(x + 0)
     f === :paList && return Ptr{Ptr{Cint}}(x + 8)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_164, f::Symbol)
-    r = Ref{__JL_Ctag_164}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_164}, r)
+function Base.getproperty(x::__JL_Ctag_224, f::Symbol)
+    r = Ref{__JL_Ctag_224}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_224}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_164}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_224}, f::Symbol, v)
+    return unsafe_store!(getproperty(x, f), v)
 end
 
-struct __JL_Ctag_165
+struct __JL_Ctag_225
     nCount::Cint
     paList::Ptr{GIntBig}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_165}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_225}, f::Symbol)
     f === :nCount && return Ptr{Cint}(x + 0)
     f === :paList && return Ptr{Ptr{GIntBig}}(x + 8)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_165, f::Symbol)
-    r = Ref{__JL_Ctag_165}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_165}, r)
+function Base.getproperty(x::__JL_Ctag_225, f::Symbol)
+    r = Ref{__JL_Ctag_225}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_225}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_165}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_225}, f::Symbol, v)
+    return unsafe_store!(getproperty(x, f), v)
 end
 
-struct __JL_Ctag_166
+struct __JL_Ctag_226
     nCount::Cint
     paList::Ptr{Cdouble}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_166}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_226}, f::Symbol)
     f === :nCount && return Ptr{Cint}(x + 0)
     f === :paList && return Ptr{Ptr{Cdouble}}(x + 8)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_166, f::Symbol)
-    r = Ref{__JL_Ctag_166}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_166}, r)
+function Base.getproperty(x::__JL_Ctag_226, f::Symbol)
+    r = Ref{__JL_Ctag_226}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_226}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_166}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_226}, f::Symbol, v)
+    return unsafe_store!(getproperty(x, f), v)
 end
 
-struct __JL_Ctag_167
+struct __JL_Ctag_227
     nCount::Cint
     paList::Ptr{Cstring}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_167}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_227}, f::Symbol)
     f === :nCount && return Ptr{Cint}(x + 0)
     f === :paList && return Ptr{Ptr{Cstring}}(x + 8)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_167, f::Symbol)
-    r = Ref{__JL_Ctag_167}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_167}, r)
+function Base.getproperty(x::__JL_Ctag_227, f::Symbol)
+    r = Ref{__JL_Ctag_227}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_227}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_167}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_227}, f::Symbol, v)
+    return unsafe_store!(getproperty(x, f), v)
 end
 
-struct __JL_Ctag_168
+struct __JL_Ctag_228
     nCount::Cint
     paData::Ptr{GByte}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_168}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_228}, f::Symbol)
     f === :nCount && return Ptr{Cint}(x + 0)
     f === :paData && return Ptr{Ptr{GByte}}(x + 8)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_168, f::Symbol)
-    r = Ref{__JL_Ctag_168}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_168}, r)
+function Base.getproperty(x::__JL_Ctag_228, f::Symbol)
+    r = Ref{__JL_Ctag_228}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_228}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_168}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_228}, f::Symbol, v)
+    return unsafe_store!(getproperty(x, f), v)
 end
 
-struct __JL_Ctag_169
+struct __JL_Ctag_229
     nMarker1::Cint
     nMarker2::Cint
     nMarker3::Cint
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_169}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_229}, f::Symbol)
     f === :nMarker1 && return Ptr{Cint}(x + 0)
     f === :nMarker2 && return Ptr{Cint}(x + 4)
     f === :nMarker3 && return Ptr{Cint}(x + 8)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_169, f::Symbol)
-    r = Ref{__JL_Ctag_169}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_169}, r)
+function Base.getproperty(x::__JL_Ctag_229, f::Symbol)
+    r = Ref{__JL_Ctag_229}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_229}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_169}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_229}, f::Symbol, v)
+    return unsafe_store!(getproperty(x, f), v)
 end
 
-struct __JL_Ctag_170
+struct __JL_Ctag_230
     Year::GInt16
     Month::GByte
     Day::GByte
@@ -38694,7 +27071,7 @@ struct __JL_Ctag_170
     Second::Cfloat
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_170}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_230}, f::Symbol)
     f === :Year && return Ptr{GInt16}(x + 0)
     f === :Month && return Ptr{GByte}(x + 2)
     f === :Day && return Ptr{GByte}(x + 3)
@@ -38706,22 +27083,22 @@ function Base.getproperty(x::Ptr{__JL_Ctag_170}, f::Symbol)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_170, f::Symbol)
-    r = Ref{__JL_Ctag_170}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_170}, r)
+function Base.getproperty(x::__JL_Ctag_230, f::Symbol)
+    r = Ref{__JL_Ctag_230}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_230}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_170}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_230}, f::Symbol, v)
+    return unsafe_store!(getproperty(x, f), v)
 end
 
 const GDAL_PREFIX = "/workspace/destdir"
 
 const SIZEOF_INT = 4
 
-const SIZEOF_UNSIGNED_LONG = 4
+const SIZEOF_UNSIGNED_LONG = 8
 
 const SIZEOF_VOIDP = 8
 
@@ -38787,7 +27164,7 @@ const GINT64_MAX = GINTBIG_MAX
 
 const GUINT64_MAX = GUINTBIG_MAX
 
-const CPL_FRMT_GB_WITHOUT_PREFIX = "I64"
+const CPL_FRMT_GB_WITHOUT_PREFIX = "ll"
 
 const CPL_IS_LSB = 1
 
@@ -38815,9 +27192,7 @@ const GDAL_VERSION_REV = 0
 
 const GDAL_VERSION_BUILD = 0
 
-const GDAL_VERSION_NUM =
-    GDAL_COMPUTE_VERSION(GDAL_VERSION_MAJOR, GDAL_VERSION_MINOR, GDAL_VERSION_REV) +
-    GDAL_VERSION_BUILD
+const GDAL_VERSION_NUM = GDAL_COMPUTE_VERSION(GDAL_VERSION_MAJOR, GDAL_VERSION_MINOR, GDAL_VERSION_REV) + GDAL_VERSION_BUILD
 
 const GDAL_RELEASE_DATE = 20241101
 
@@ -39161,19 +27536,9 @@ const ALTER_ALTERNATIVE_NAME_FLAG = 0x80
 
 const ALTER_COMMENT_FLAG = 0x0100
 
-const ALTER_ALL_FLAG =
-    (
-        (
-            (
-                (
-                    (
-                        ((ALTER_NAME_FLAG | ALTER_TYPE_FLAG) | ALTER_WIDTH_PRECISION_FLAG) |
-                        ALTER_NULLABLE_FLAG
-                    ) | ALTER_DEFAULT_FLAG
-                ) | ALTER_UNIQUE_FLAG
-            ) | ALTER_DOMAIN_FLAG
-        ) | ALTER_ALTERNATIVE_NAME_FLAG
-    ) | ALTER_COMMENT_FLAG
+const ALTER_ALL_FLAG = (((((((ALTER_NAME_FLAG | ALTER_TYPE_FLAG) | ALTER_WIDTH_PRECISION_FLAG) | ALTER_NULLABLE_FLAG) |
+                           ALTER_DEFAULT_FLAG) | ALTER_UNIQUE_FLAG) | ALTER_DOMAIN_FLAG) | ALTER_ALTERNATIVE_NAME_FLAG) |
+                       ALTER_COMMENT_FLAG
 
 const ALTER_GEOM_FIELD_DEFN_NAME_FLAG = 0x1000
 
@@ -39185,13 +27550,9 @@ const ALTER_GEOM_FIELD_DEFN_SRS_FLAG = 0x8000
 
 const ALTER_GEOM_FIELD_DEFN_SRS_COORD_EPOCH_FLAG = 0x00010000
 
-const ALTER_GEOM_FIELD_DEFN_ALL_FLAG =
-    (
-        (
-            (ALTER_GEOM_FIELD_DEFN_NAME_FLAG | ALTER_GEOM_FIELD_DEFN_TYPE_FLAG) |
-            ALTER_GEOM_FIELD_DEFN_NULLABLE_FLAG
-        ) | ALTER_GEOM_FIELD_DEFN_SRS_FLAG
-    ) | ALTER_GEOM_FIELD_DEFN_SRS_COORD_EPOCH_FLAG
+const ALTER_GEOM_FIELD_DEFN_ALL_FLAG = (((ALTER_GEOM_FIELD_DEFN_NAME_FLAG | ALTER_GEOM_FIELD_DEFN_TYPE_FLAG) |
+                                         ALTER_GEOM_FIELD_DEFN_NULLABLE_FLAG) | ALTER_GEOM_FIELD_DEFN_SRS_FLAG) |
+                                       ALTER_GEOM_FIELD_DEFN_SRS_COORD_EPOCH_FLAG
 
 const OGR_F_VAL_NULL = 0x00000001
 

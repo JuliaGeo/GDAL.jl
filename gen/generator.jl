@@ -30,28 +30,23 @@ global_logger(logger)
 include(joinpath(@__DIR__, "doc.jl"))
 
 includedir = joinpath(GDAL_jll.artifact_dir, "include")
-headerfiles =
-    joinpath.(
-        includedir,
-        [
-            "cpl_conv.h",
-            "cpl_error.h",
-            "cpl_minixml.h",
-            "cpl_port.h",
-            "cpl_progress.h",
-            "cpl_virtualmem.h",
-            "cpl_vsi.h",
-            "gdal.h",
-            "gdal_alg.h",
-            "gdalwarper.h",
-            "gdal_vrt.h",
-            "gdal_utils.h",
-            "ogr_api.h",
-            "ogr_core.h",
-            "ogr_srs_api.h",
-            "ogr_recordbatch.h",
-        ],
-    )
+headerfiles = joinpath.(includedir,
+                        ["cpl_conv.h",
+                         "cpl_error.h",
+                         "cpl_minixml.h",
+                         "cpl_port.h",
+                         "cpl_progress.h",
+                         "cpl_virtualmem.h",
+                         "cpl_vsi.h",
+                         "gdal.h",
+                         "gdal_alg.h",
+                         "gdalwarper.h",
+                         "gdal_vrt.h",
+                         "gdal_utils.h",
+                         "ogr_api.h",
+                         "ogr_core.h",
+                         "ogr_srs_api.h",
+                         "ogr_recordbatch.h"])
 
 for headerfile in headerfiles
     if !isfile(headerfile)
@@ -91,14 +86,14 @@ function rewriter(xs::Vector)
         x2 = rewriter(x)
         push!(rewritten, x2)
     end
-    rewritten
+    return rewritten
 end
 
 "Rewrite expressions in the ways listed at the top of this file."
 function rewriter(x::Expr)
     if @capture(x, function f_(fargs__)
-        ccall(fname_, rettype_, argtypes_, argvalues__)
-    end)
+                    return ccall(fname_, rettype_, argtypes_, argvalues__)
+                end)
         # it is a function wrapper around a ccall
 
         # lowercase the function name
@@ -108,8 +103,8 @@ function rewriter(x::Expr)
         # https://julialang.org/blog/2013/05/callback/#passing_closures_via_pass-through_pointers
         # The callback always follows the GDALProgressFunc type
         i = findfirst(==(:GDALProgressFunc), argtypes.args)
-        if !isnothing(i) && argtypes.args[i+1] == :(Ptr{Cvoid})
-            argtypes.args[i+1] = :Any
+        if !isnothing(i) && argtypes.args[i + 1] == :(Ptr{Cvoid})
+            argtypes.args[i + 1] = :Any
         end
 
         # bind the ccall such that we can easily wrap it
@@ -133,9 +128,9 @@ function rewriter(x::Expr)
         end
 
         # stitch the modified function expression back together
-        :(function $f2($(fargs...))
-            $cc2
-        end) |> prettify
+        prettify(:(function $f2($(fargs...))
+                       return $cc2
+                   end))
     else
         # do not modify expressions that are no ccall function wrappers
         x
@@ -155,14 +150,12 @@ function header_outputfile(h)
     end
 end
 
-
 function rewriter(dag::Clang.ExprDAG)
     for node in get_nodes(dag)
         # Macros are not generated, so no need to skip
         map!(rewriter, node.exprs, node.exprs)
     end
 end
-
 
 # do not wrap, handled in prologue.jl
 @add_def stat

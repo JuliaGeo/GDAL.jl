@@ -45,7 +45,7 @@ function __init__()
     osrsetprojsearchpaths([PROJ_LIB[]])
 
     # register all known configured GDAL drivers
-    gdalallregister()
+    return gdalallregister()
 end
 
 end # module

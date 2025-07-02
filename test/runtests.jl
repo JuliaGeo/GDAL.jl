@@ -1,9 +1,8 @@
 using GDAL
 using Test
-import Aqua
+using Aqua: Aqua
 
 @testset "GDAL" begin
-
     version = GDAL.gdalversioninfo("--version")
     n_gdal_driver = GDAL.gdalgetdrivercount()
     n_ogr_driver = GDAL.ogrgetdrivercount()
@@ -37,7 +36,7 @@ import Aqua
     @test GDAL.ogr_gfld_gettype(gfld) == GDAL.wkbPolygon
 
     cd(dirname(@__FILE__)) do
-        rm("tmp", recursive = true, force = true)
+        rm("tmp"; recursive=true, force=true)
         mkpath("tmp") # ensure it exists
         include("tutorial_raster.jl")
         include("tutorial_vector.jl")
@@ -45,7 +44,7 @@ import Aqua
         include("gdal_utils.jl")
         include("gdal_jll_utils.jl")
         include("drivers.jl")
-        include("error.jl")
+        return include("error.jl")
     end
 
     GDAL.gdaldestroydrivermanager()
