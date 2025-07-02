@@ -19,9 +19,26 @@ function cplverifyconfiguration()
 end
 
 """
-    cplgetconfigoption(arg1, arg2)
+    cplisdebugenabled()
 
 ` `
+"""
+function cplisdebugenabled()
+    aftercare(ccall((:CPLIsDebugEnabled, libgdal), Bool, ()))
+end
+
+"""
+    CPLGetConfigOption(const char * pszKey,
+                       const char * pszDefault) -> const char *
+
+Get the value of a configuration option.
+
+### Parameters
+* **pszKey**: the key of the option to retrieve
+* **pszDefault**: a default value if the key does not match existing defined options (may be NULL)
+
+### Returns
+the value associated to the key, or the default value if not found
 """
 function cplgetconfigoption(arg1, arg2)
     aftercare(
@@ -102,6 +119,22 @@ function cplsetthreadlocalconfigoption(pszKey, pszValue)
             pszValue,
         ),
     )
+end
+
+function cpldeclareknownconfigoption(pszKey, pszDefinition)
+    aftercare(
+        ccall(
+            (:CPLDeclareKnownConfigOption, libgdal),
+            Cvoid,
+            (Cstring, Cstring),
+            pszKey,
+            pszDefinition,
+        ),
+    )
+end
+
+function cplgetknownconfigoptions()
+    aftercare(ccall((:CPLGetKnownConfigOptions, libgdal), Ptr{Cstring}, ()))
 end
 
 "Callback for [`CPLSubscribeToSetConfigOption`](@ref)()"
@@ -1028,21 +1061,6 @@ function cplgetdirname(arg1)
 end
 
 """
-    CPLGetFilename(const char * pszFullFilename) -> const char *
-
-Extract non-directory portion of filename.
-
-### Parameters
-* **pszFullFilename**: the full filename potentially including a path.
-
-### Returns
-just the non-directory portion of the path (points back into original string).
-"""
-function cplgetfilename(arg1)
-    aftercare(ccall((:CPLGetFilename, libgdal), Cstring, (Cstring,), arg1), false)
-end
-
-"""
     CPLGetBasename(const char * pszFullFilename) -> const char *
 
 Extract basename (non-directory, non-extension) portion of filename.
@@ -1070,18 +1088,6 @@ just the extension portion of the path in an internal string which must not be f
 """
 function cplgetextension(arg1)
     aftercare(ccall((:CPLGetExtension, libgdal), Cstring, (Cstring,), arg1), false)
-end
-
-"""
-    CPLGetCurrentDir() -> char *
-
-Get the current working directory name.
-
-### Returns
-a pointer to buffer, containing current working directory path or NULL in case of error. User is responsible to free that buffer after usage with CPLFree() function. If HAVE_GETCWD macro is not defined, the function returns NULL.
-"""
-function cplgetcurrentdir()
-    aftercare(ccall((:CPLGetCurrentDir, libgdal), Cstring, ()), false)
 end
 
 """
@@ -1189,6 +1195,107 @@ function cplprojectrelativefilename(pszProjectDir, pszSecondaryFilename)
 end
 
 """
+    CPLCleanTrailingSlash(const char * pszPath) -> const char *
+
+Remove trailing forward/backward slash from the path for UNIX/Windows resp.
+
+### Parameters
+* **pszPath**: the path to be cleaned up
+
+### Returns
+Path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call.
+"""
+function cplcleantrailingslash(arg1)
+    aftercare(ccall((:CPLCleanTrailingSlash, libgdal), Cstring, (Cstring,), arg1), false)
+end
+
+"""
+    CPLGenerateTempFilename(const char * pszStem) -> const char *
+
+Generate temporary file name.
+
+### Parameters
+* **pszStem**: if non-NULL this will be part of the filename.
+
+### Returns
+a filename which is valid till the next CPL call in this thread.
+"""
+function cplgeneratetempfilename(pszStem)
+    aftercare(
+        ccall((:CPLGenerateTempFilename, libgdal), Cstring, (Cstring,), pszStem),
+        false,
+    )
+end
+
+"""
+    CPLExpandTilde(const char * pszFilename) -> const char *
+
+Expands ~/ at start of filename.
+
+### Parameters
+* **pszFilename**: filename potentially starting with ~/
+
+### Returns
+an expanded filename.
+"""
+function cplexpandtilde(pszFilename)
+    aftercare(ccall((:CPLExpandTilde, libgdal), Cstring, (Cstring,), pszFilename), false)
+end
+
+"""
+    CPLLaunderForFilename(const char * pszName,
+                          const char * pszOutputPath) -> const char *
+
+Launder a string to be compatible of a filename.
+
+### Parameters
+* **pszName**: The input string to launder.
+* **pszOutputPath**: The directory where the file would be created. Unused for now. May be NULL.
+
+### Returns
+the laundered name.
+"""
+function cpllaunderforfilename(pszName, pszOutputPath)
+    aftercare(
+        ccall(
+            (:CPLLaunderForFilename, libgdal),
+            Cstring,
+            (Cstring, Cstring),
+            pszName,
+            pszOutputPath,
+        ),
+        false,
+    )
+end
+
+"""
+    CPLGetCurrentDir() -> char *
+
+Get the current working directory name.
+
+### Returns
+a pointer to buffer, containing current working directory path or NULL in case of error. User is responsible to free that buffer after usage with CPLFree() function. If HAVE_GETCWD macro is not defined, the function returns NULL.
+"""
+function cplgetcurrentdir()
+    aftercare(ccall((:CPLGetCurrentDir, libgdal), Cstring, ()), false)
+end
+
+"""
+    CPLGetFilename(const char * pszFullFilename) -> const char *
+
+Extract non-directory portion of filename.
+
+### Parameters
+* **pszFullFilename**: the full filename potentially including a path.
+
+### Returns
+just the non-directory portion of the path (points back into original string).
+"""
+function cplgetfilename(arg1)
+    aftercare(ccall((:CPLGetFilename, libgdal), Cstring, (Cstring,), arg1), false)
+end
+
+"""
     CPLIsFilenameRelative(const char * pszFilename) -> int
 
 Is filename relative or absolute?
@@ -1230,21 +1337,6 @@ function cplextractrelativepath(arg1, arg2, arg3)
         ),
         false,
     )
-end
-
-"""
-    CPLCleanTrailingSlash(const char * pszPath) -> const char *
-
-Remove trailing forward/backward slash from the path for UNIX/Windows resp.
-
-### Parameters
-* **pszPath**: the path to be cleaned up
-
-### Returns
-Path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call.
-"""
-function cplcleantrailingslash(arg1)
-    aftercare(ccall((:CPLCleanTrailingSlash, libgdal), Cstring, (Cstring,), arg1), false)
 end
 
 """
@@ -1301,39 +1393,6 @@ function cplcheckforfile(pszFilename, papszSiblingList)
 end
 
 """
-    CPLGenerateTempFilename(const char * pszStem) -> const char *
-
-Generate temporary file name.
-
-### Parameters
-* **pszStem**: if non-NULL this will be part of the filename.
-
-### Returns
-a filename which is valid till the next CPL call in this thread.
-"""
-function cplgeneratetempfilename(pszStem)
-    aftercare(
-        ccall((:CPLGenerateTempFilename, libgdal), Cstring, (Cstring,), pszStem),
-        false,
-    )
-end
-
-"""
-    CPLExpandTilde(const char * pszFilename) -> const char *
-
-Expands ~/ at start of filename.
-
-### Parameters
-* **pszFilename**: filename potentially starting with ~/
-
-### Returns
-an expanded filename.
-"""
-function cplexpandtilde(pszFilename)
-    aftercare(ccall((:CPLExpandTilde, libgdal), Cstring, (Cstring,), pszFilename), false)
-end
-
-"""
     CPLGetHomeDir() -> const char *
 
 Return the path to the home directory.
@@ -1343,32 +1402,6 @@ the home directory, or NULL.
 """
 function cplgethomedir()
     aftercare(ccall((:CPLGetHomeDir, libgdal), Cstring, ()), false)
-end
-
-"""
-    CPLLaunderForFilename(const char * pszName,
-                          const char * pszOutputPath) -> const char *
-
-Launder a string to be compatible of a filename.
-
-### Parameters
-* **pszName**: The input string to launder.
-* **pszOutputPath**: The directory where the file would be created. Unused for now. May be NULL.
-
-### Returns
-the laundered name.
-"""
-function cpllaunderforfilename(pszName, pszOutputPath)
-    aftercare(
-        ccall(
-            (:CPLLaunderForFilename, libgdal),
-            Cstring,
-            (Cstring, Cstring),
-            pszName,
-            pszOutputPath,
-        ),
-        false,
-    )
 end
 
 "Callback for [`CPLPushFileFinder`](@ref)"
@@ -1624,6 +1657,19 @@ function cpldectopackeddms(dfDec)
 end
 
 """
+    CPLErr
+
+Error category
+"""
+@cenum CPLErr::UInt32 begin
+    CE_None = 0
+    CE_Debug = 1
+    CE_Warning = 2
+    CE_Failure = 3
+    CE_Fatal = 4
+end
+
+"""
     CPLStringToComplex(const char * pszString,
                        double * pdfReal,
                        double * pdfImag) -> void
@@ -1634,7 +1680,7 @@ function cplstringtocomplex(pszString, pdfReal, pdfImag)
     aftercare(
         ccall(
             (:CPLStringToComplex, libgdal),
-            Cvoid,
+            CPLErr,
             (Cstring, Ptr{Cdouble}, Ptr{Cdouble}),
             pszString,
             pdfReal,
@@ -1712,6 +1758,51 @@ function cplsymlink(pszOldPath, pszNewPath, papszOptions)
 end
 
 """
+    CPLLockFileStatus
+
+Return code of [`CPLLockFileEx`](@ref)().
+
+| Enumerator                        | Note                                   |
+| :-------------------------------- | :------------------------------------- |
+| CLFS\\_OK                         | [`CPLLockFileEx`](@ref)() succeeded.   |
+| CLFS\\_CANNOT\\_CREATE\\_LOCK     | Lock file creation failed.             |
+| CLFS\\_LOCK\\_BUSY                | Lock already taken (and still alive).  |
+| CLFS\\_API\\_MISUSE               | API misuse.                            |
+| CLFS\\_THREAD\\_CREATION\\_FAILED | Thread creation failed.                |
+"""
+@cenum CPLLockFileStatus::UInt32 begin
+    CLFS_OK = 0
+    CLFS_CANNOT_CREATE_LOCK = 1
+    CLFS_LOCK_BUSY = 2
+    CLFS_API_MISUSE = 3
+    CLFS_THREAD_CREATION_FAILED = 4
+end
+
+const CPLLockFileStruct = Cvoid
+
+"Handle type returned by [`CPLLockFileEx`](@ref)()"
+const CPLLockFileHandle = Ptr{CPLLockFileStruct}
+
+function cpllockfileex(pszLockFileName, phLockFileHandle, papszOptions)
+    aftercare(
+        ccall(
+            (:CPLLockFileEx, libgdal),
+            CPLLockFileStatus,
+            (Cstring, Ptr{CPLLockFileHandle}, CSLConstList),
+            pszLockFileName,
+            phLockFileHandle,
+            papszOptions,
+        ),
+    )
+end
+
+function cplunlockfileex(hLockFileHandle)
+    aftercare(
+        ccall((:CPLUnlockFileEx, libgdal), Cvoid, (CPLLockFileHandle,), hLockFileHandle),
+    )
+end
+
+"""
     cplcreatezip(pszZipFilename, papszOptions)
 
 ` `
@@ -1726,19 +1817,6 @@ function cplcreatezip(pszZipFilename, papszOptions)
             papszOptions,
         ),
     )
-end
-
-"""
-    CPLErr
-
-Error category
-"""
-@cenum CPLErr::UInt32 begin
-    CE_None = 0
-    CE_Debug = 1
-    CE_Warning = 2
-    CE_Failure = 3
-    CE_Fatal = 4
 end
 
 """
@@ -2010,6 +2088,10 @@ function cplispoweroftwo(i)
     aftercare(ccall((:CPLIsPowerOfTwo, libgdal), Cint, (Cuint,), i))
 end
 
+function cplisinteractive(f)
+    aftercare(ccall((:CPLIsInteractive, libgdal), Bool, (Ptr{Libc.FILE},), f))
+end
+
 "Error number"
 const CPLErrorNum = Cint
 
@@ -2120,6 +2202,17 @@ end
 function cplquieterrorhandler(arg1, arg2, arg3)
     ccall(
         (:CPLQuietErrorHandler, libgdal),
+        Cvoid,
+        (CPLErr, CPLErrorNum, Cstring),
+        arg1,
+        arg2,
+        arg3,
+    )
+end
+
+function cplquietwarningserrorhandler(arg1, arg2, arg3)
+    ccall(
+        (:CPLQuietWarningsErrorHandler, libgdal),
         Cvoid,
         (CPLErr, CPLErrorNum, Cstring),
         arg1,
@@ -4684,6 +4777,20 @@ function vsisiblingfiles(pszPath)
     aftercare(ccall((:VSISiblingFiles, libgdal), Ptr{Cstring}, (Cstring,), pszPath))
 end
 
+function vsiglob(pszPattern, papszOptions, pProgressFunc, pProgressData)
+    aftercare(
+        ccall(
+            (:VSIGlob, libgdal),
+            Ptr{Cstring},
+            (Cstring, Ptr{Cstring}, GDALProgressFunc, Any),
+            pszPattern,
+            papszOptions,
+            pProgressFunc,
+            pProgressData,
+        ),
+    )
+end
+
 """
     VSIGetDirectorySeparator(const char * pszPath) -> const char *
 
@@ -4893,6 +5000,21 @@ Rename a file.
 """
 function vsirename(oldpath, newpath)
     aftercare(ccall((:VSIRename, libgdal), Cint, (Cstring, Cstring), oldpath, newpath))
+end
+
+function vsimove(oldpath, newpath, papszOptions, pProgressFunc, pProgressData)
+    aftercare(
+        ccall(
+            (:VSIMove, libgdal),
+            Cint,
+            (Cstring, Cstring, Ptr{Cstring}, GDALProgressFunc, Any),
+            oldpath,
+            newpath,
+            papszOptions,
+            pProgressFunc,
+            pProgressData,
+        ),
+    )
 end
 
 """
@@ -6160,6 +6282,147 @@ function gdalextractrpcinfov2(arg1, arg2)
     )
 end
 
+"Opaque type used for the C bindings of the C++ GDALMajorObject class"
+const GDALMajorObjectH = Ptr{Cvoid}
+
+"Opaque type used for the C bindings of the C++ GDALDataset class"
+const GDALDatasetH = Ptr{Cvoid}
+
+"Opaque type used for the C bindings of the C++ GDALRasterBand class"
+const GDALRasterBandH = Ptr{Cvoid}
+
+"Opaque type used for the C bindings of the C++ GDALDriver class"
+const GDALDriverH = Ptr{Cvoid}
+
+"Opaque type used for the C bindings of the C++ GDALColorTable class"
+const GDALColorTableH = Ptr{Cvoid}
+
+"Opaque type used for the C bindings of the C++ GDALRasterAttributeTable class"
+const GDALRasterAttributeTableH = Ptr{Cvoid}
+
+"Opaque type used for the C bindings of the C++ GDALAsyncReader class"
+const GDALAsyncReaderH = Ptr{Cvoid}
+
+"""
+Opaque type used for the C bindings of the C++ GDALRelationship class
+
+\\since GDAL 3.6
+"""
+const GDALRelationshipH = Ptr{Cvoid}
+
+const GDALExtendedDataTypeHS = Cvoid
+
+"Opaque type for C++ GDALExtendedDataType"
+const GDALExtendedDataTypeH = Ptr{GDALExtendedDataTypeHS}
+
+const GDALEDTComponentHS = Cvoid
+
+"Opaque type for C++ GDALEDTComponent"
+const GDALEDTComponentH = Ptr{GDALEDTComponentHS}
+
+const GDALGroupHS = Cvoid
+
+"Opaque type for C++ GDALGroup"
+const GDALGroupH = Ptr{GDALGroupHS}
+
+const GDALMDArrayHS = Cvoid
+
+"Opaque type for C++ GDALMDArray"
+const GDALMDArrayH = Ptr{GDALMDArrayHS}
+
+const GDALAttributeHS = Cvoid
+
+"Opaque type for C++ GDALAttribute"
+const GDALAttributeH = Ptr{GDALAttributeHS}
+
+const GDALDimensionHS = Cvoid
+
+"Opaque type for C++ GDALDimension"
+const GDALDimensionH = Ptr{GDALDimensionHS}
+
+const GDALSubdatasetInfo = Cvoid
+
+"""
+Opaque type used for the C bindings of the C++ [`GDALSubdatasetInfo`](@ref) class
+
+\\since GDAL 3.8
+"""
+const GDALSubdatasetInfoH = Ptr{GDALSubdatasetInfo}
+
+"Opaque type for a geometry"
+const OGRGeometryH = Ptr{Cvoid}
+
+const OGRGeomTransformer = Cvoid
+
+"Opaque type for a geometry transformer"
+const OGRGeomTransformerH = Ptr{OGRGeomTransformer}
+
+const OGRGeomCoordinatePrecision = Cvoid
+
+"Opaque type for [`OGRGeomCoordinatePrecision`](@ref)"
+const OGRGeomCoordinatePrecisionH = Ptr{OGRGeomCoordinatePrecision}
+
+const OGRwkbExportOptions = Cvoid
+
+const _OGRPreparedGeometry = Cvoid
+
+"Opaque type for a prepared geometry"
+const OGRPreparedGeometryH = Ptr{_OGRPreparedGeometry}
+
+"Opaque type for a field definition (OGRFieldDefn)"
+const OGRFieldDefnH = Ptr{Cvoid}
+
+"Opaque type for a feature definition (OGRFeatureDefn)"
+const OGRFeatureDefnH = Ptr{Cvoid}
+
+const OGRGeomFieldDefnHS = Cvoid
+
+"Opaque type for a geometry field definition (OGRGeomFieldDefn)"
+const OGRGeomFieldDefnH = Ptr{OGRGeomFieldDefnHS}
+
+const OGRFieldDomainHS = Cvoid
+
+"Opaque type for a field domain definition (OGRFieldDomain)"
+const OGRFieldDomainH = Ptr{OGRFieldDomainHS}
+
+"Opaque type for a feature (OGRFeature)"
+const OGRFeatureH = Ptr{Cvoid}
+
+"Opaque type for a layer (OGRLayer)"
+const OGRLayerH = Ptr{Cvoid}
+
+"Opaque type for a OGR datasource (OGRDataSource) (deprecated)"
+const OGRDataSourceH = Ptr{Cvoid}
+
+"Opaque type for a OGR driver (OGRSFDriver) (deprecated)"
+const OGRSFDriverH = Ptr{Cvoid}
+
+"Style manager opaque type"
+const OGRStyleMgrH = Ptr{Cvoid}
+
+"Style tool opaque type"
+const OGRStyleToolH = Ptr{Cvoid}
+
+"Opaque type for a style table (OGRStyleTable)"
+const OGRStyleTableH = Ptr{Cvoid}
+
+"Opaque type for a spatial reference system"
+const OGRSpatialReferenceH = Ptr{Cvoid}
+
+"Opaque type for a coordinate transformation object"
+const OGRCoordinateTransformationH = Ptr{Cvoid}
+
+const OGRCoordinateTransformationOptions = Cvoid
+
+"Coordinate transformation options"
+const OGRCoordinateTransformationOptionsH = Ptr{OGRCoordinateTransformationOptions}
+
+"Opaque type for a GNMNetwork"
+const GNMNetworkH = Ptr{Cvoid}
+
+"Opaque type for a GNMGenericNetwork"
+const GNMGenericNetworkH = Ptr{Cvoid}
+
 """
     GDALDataType
 
@@ -6176,10 +6439,12 @@ Pixel data types
 | GDT\\_Int32     | Thirty two bit signed integer          |
 | GDT\\_UInt64    | 64 bit unsigned integer (GDAL >= 3.5)  |
 | GDT\\_Int64     | 64 bit signed integer (GDAL >= 3.5)    |
+| GDT\\_Float16   | Sixteen bit floating point             |
 | GDT\\_Float32   | Thirty two bit floating point          |
 | GDT\\_Float64   | Sixty four bit floating point          |
 | GDT\\_CInt16    | Complex Int16                          |
 | GDT\\_CInt32    | Complex Int32                          |
+| GDT\\_CFloat16  | Complex Float16                        |
 | GDT\\_CFloat32  | Complex Float32                        |
 | GDT\\_CFloat64  | Complex Float64                        |
 | GDT\\_TypeCount |                                        |
@@ -6194,13 +6459,15 @@ Pixel data types
     GDT_Int32 = 5
     GDT_UInt64 = 12
     GDT_Int64 = 13
+    GDT_Float16 = 15
     GDT_Float32 = 6
     GDT_Float64 = 7
     GDT_CInt16 = 8
     GDT_CInt32 = 9
+    GDT_CFloat16 = 16
     GDT_CFloat32 = 10
     GDT_CFloat64 = 11
-    GDT_TypeCount = 15
+    GDT_TypeCount = 17
 end
 
 """
@@ -6482,6 +6749,18 @@ true if the provided value can be exactly represented in the data type.
 function gdalisvalueexactas(dfValue, eDT)
     aftercare(
         ccall((:GDALIsValueExactAs, libgdal), Bool, (Cdouble, GDALDataType), dfValue, eDT),
+    )
+end
+
+function gdalisvalueinrangeof(dfValue, eDT)
+    aftercare(
+        ccall(
+            (:GDALIsValueInRangeOf, libgdal),
+            Bool,
+            (Cdouble, GDALDataType),
+            dfValue,
+            eDT,
+        ),
     )
 end
 
@@ -6869,34 +7148,6 @@ function gdalgetpaletteinterpretationname(arg1)
     )
 end
 
-"Opaque type used for the C bindings of the C++ GDALMajorObject class"
-const GDALMajorObjectH = Ptr{Cvoid}
-
-"Opaque type used for the C bindings of the C++ GDALDataset class"
-const GDALDatasetH = Ptr{Cvoid}
-
-"Opaque type used for the C bindings of the C++ GDALRasterBand class"
-const GDALRasterBandH = Ptr{Cvoid}
-
-"Opaque type used for the C bindings of the C++ GDALDriver class"
-const GDALDriverH = Ptr{Cvoid}
-
-"Opaque type used for the C bindings of the C++ GDALColorTable class"
-const GDALColorTableH = Ptr{Cvoid}
-
-"Opaque type used for the C bindings of the C++ GDALRasterAttributeTable class"
-const GDALRasterAttributeTableH = Ptr{Cvoid}
-
-"Opaque type used for the C bindings of the C++ GDALAsyncReader class"
-const GDALAsyncReaderH = Ptr{Cvoid}
-
-"""
-Opaque type used for the C bindings of the C++ GDALRelationship class
-
-\\since GDAL 3.6
-"""
-const GDALRelationshipH = Ptr{Cvoid}
-
 "Type to express pixel, line or band spacing. Signed 64 bit integer"
 const GSpacing = GIntBig
 
@@ -6935,36 +7186,6 @@ Enumeration giving the subtype of a GDALExtendedDataType.
     GEDTST_NONE = 0
     GEDTST_JSON = 1
 end
-
-const GDALExtendedDataTypeHS = Cvoid
-
-"Opaque type for C++ GDALExtendedDataType"
-const GDALExtendedDataTypeH = Ptr{GDALExtendedDataTypeHS}
-
-const GDALEDTComponentHS = Cvoid
-
-"Opaque type for C++ GDALEDTComponent"
-const GDALEDTComponentH = Ptr{GDALEDTComponentHS}
-
-const GDALGroupHS = Cvoid
-
-"Opaque type for C++ GDALGroup"
-const GDALGroupH = Ptr{GDALGroupHS}
-
-const GDALMDArrayHS = Cvoid
-
-"Opaque type for C++ GDALMDArray"
-const GDALMDArrayH = Ptr{GDALMDArrayHS}
-
-const GDALAttributeHS = Cvoid
-
-"Opaque type for C++ GDALAttribute"
-const GDALAttributeH = Ptr{GDALAttributeHS}
-
-const GDALDimensionHS = Cvoid
-
-"Opaque type for C++ GDALDimension"
-const GDALDimensionH = Ptr{GDALDimensionHS}
 
 """
     GDALAllRegister() -> void
@@ -7428,6 +7649,18 @@ function gdalgetoutputdriversfordatasetname(
     )
 end
 
+function gdaldriverhasopenoption(arg1, pszOpenOptionName)
+    aftercare(
+        ccall(
+            (:GDALDriverHasOpenOption, libgdal),
+            Bool,
+            (GDALDriverH, Cstring),
+            arg1,
+            pszOpenOptionName,
+        ),
+    )
+end
+
 """
     GDALGetDriverShortName(GDALDriverH hDriver) -> const char *
 
@@ -7683,6 +7916,59 @@ function gdalcomposegeotransforms(padfGeoTransform1, padfGeoTransform2, padfGeoT
             padfGeoTransform1,
             padfGeoTransform2,
             padfGeoTransformOut,
+        ),
+    )
+end
+
+function gdalgcpstohomography(nGCPCount, pasGCPs, padfHomography)
+    aftercare(
+        ccall(
+            (:GDALGCPsToHomography, libgdal),
+            Cint,
+            (Cint, Ptr{GDAL_GCP}, Ptr{Cdouble}),
+            nGCPCount,
+            pasGCPs,
+            padfHomography,
+        ),
+    )
+end
+
+function gdalinvhomography(padfHomographyIn, padfInvHomographyOut)
+    aftercare(
+        ccall(
+            (:GDALInvHomography, libgdal),
+            Cint,
+            (Ptr{Cdouble}, Ptr{Cdouble}),
+            padfHomographyIn,
+            padfInvHomographyOut,
+        ),
+    )
+end
+
+function gdalapplyhomography(arg1, arg2, arg3, arg4, arg5)
+    aftercare(
+        ccall(
+            (:GDALApplyHomography, libgdal),
+            Cint,
+            (Ptr{Cdouble}, Cdouble, Cdouble, Ptr{Cdouble}, Ptr{Cdouble}),
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+        ),
+    )
+end
+
+function gdalcomposehomographies(padfHomography1, padfHomography2, padfHomographyOut)
+    aftercare(
+        ccall(
+            (:GDALComposeHomographies, libgdal),
+            Cvoid,
+            (Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}),
+            padfHomography1,
+            padfHomography2,
+            padfHomographyOut,
         ),
     )
 end
@@ -8433,9 +8719,6 @@ function gdalgetprojectionref(arg1)
     )
 end
 
-"Opaque type for a spatial reference system"
-const OGRSpatialReferenceH = Ptr{Cvoid}
-
 """
     GDALGetSpatialRef(GDALDatasetH hDS) -> OGRSpatialReferenceH
 
@@ -8509,6 +8792,39 @@ function gdalsetgeotransform(arg1, arg2)
             (GDALDatasetH, Ptr{Cdouble}),
             arg1,
             arg2,
+        ),
+    )
+end
+
+function gdaldatasetgeolocationtopixelline(
+    arg1,
+    dfGeolocX,
+    dfGeolocY,
+    hSRS,
+    pdfPixel,
+    pdfLine,
+    papszTransformerOptions,
+)
+    aftercare(
+        ccall(
+            (:GDALDatasetGeolocationToPixelLine, libgdal),
+            CPLErr,
+            (
+                GDALDatasetH,
+                Cdouble,
+                Cdouble,
+                OGRSpatialReferenceH,
+                Ptr{Cdouble},
+                Ptr{Cdouble},
+                CSLConstList,
+            ),
+            arg1,
+            dfGeolocX,
+            dfGeolocY,
+            hSRS,
+            pdfPixel,
+            pdfLine,
+            papszTransformerOptions,
         ),
     )
 end
@@ -8993,9 +9309,6 @@ function gdaldatasetgetlayercount(arg1)
     aftercare(ccall((:GDALDatasetGetLayerCount, libgdal), Cint, (GDALDatasetH,), arg1))
 end
 
-"Opaque type for a layer (OGRLayer)"
-const OGRLayerH = Ptr{Cvoid}
-
 """
     GDALDatasetGetLayer(GDALDatasetH hDS,
                         int iLayer) -> OGRLayerH
@@ -9282,11 +9595,6 @@ function gdaldatasetcreatelayer(arg1, arg2, arg3, arg4, arg5)
     )
 end
 
-const OGRGeomFieldDefnHS = Cvoid
-
-"Opaque type for a geometry field definition (OGRGeomFieldDefn)"
-const OGRGeomFieldDefnH = Ptr{OGRGeomFieldDefnHS}
-
 """
     GDALDatasetCreateLayerFromGeomFieldDefn(GDALDatasetH hDS,
                                             const char * pszName,
@@ -9361,9 +9669,6 @@ function gdaldatasetresetreading(arg1)
     aftercare(ccall((:GDALDatasetResetReading, libgdal), Cvoid, (GDALDatasetH,), arg1))
 end
 
-"Opaque type for a feature (OGRFeature)"
-const OGRFeatureH = Ptr{Cvoid}
-
 """
     GDALDatasetGetNextFeature(GDALDatasetH hDS,
                               OGRLayerH * phBelongingLayer,
@@ -9428,9 +9733,6 @@ function gdaldatasettestcapability(arg1, arg2)
         ),
     )
 end
-
-"Opaque type for a geometry"
-const OGRGeometryH = Ptr{Cvoid}
 
 """
     GDALDatasetExecuteSQL(GDALDatasetH hDS,
@@ -9499,9 +9801,6 @@ function gdaldatasetreleaseresultset(arg1, arg2)
         ),
     )
 end
-
-"Opaque type for a style table (OGRStyleTable)"
-const OGRStyleTableH = Ptr{Cvoid}
 
 """
     GDALDatasetGetStyleTable(GDALDatasetH hDS) -> OGRStyleTableH
@@ -9648,11 +9947,6 @@ function gdaldatasetgetfielddomainnames(arg1, arg2)
         ),
     )
 end
-
-const OGRFieldDomainHS = Cvoid
-
-"Opaque type for a field domain definition (OGRFieldDomain)"
-const OGRFieldDomainH = Ptr{OGRFieldDomainHS}
 
 """
     GDALDatasetGetFieldDomain(GDALDatasetH hDS,
@@ -9934,15 +10228,6 @@ function gdaldatasetsetqueryloggerfunc(hDS, pfnQueryLoggerFunc, poQueryLoggerArg
         ),
     )
 end
-
-const GDALSubdatasetInfo = Cvoid
-
-"""
-Opaque type used for the C bindings of the C++ [`GDALSubdatasetInfo`](@ref) class
-
-\\since GDAL 3.8
-"""
-const GDALSubdatasetInfoH = Ptr{GDALSubdatasetInfo}
 
 """
     gdalgetsubdatasetinfo(pszFileName)
@@ -10960,6 +11245,39 @@ function gdalcomputerasterminmax(hBand, bApproxOK, adfMinMax)
     )
 end
 
+function gdalcomputerasterminmaxlocation(
+    hBand,
+    pdfMin,
+    pdfMax,
+    pnMinX,
+    pnMinY,
+    pnMaxX,
+    pnMaxY,
+)
+    aftercare(
+        ccall(
+            (:GDALComputeRasterMinMaxLocation, libgdal),
+            CPLErr,
+            (
+                GDALRasterBandH,
+                Ptr{Cdouble},
+                Ptr{Cdouble},
+                Ptr{Cint},
+                Ptr{Cint},
+                Ptr{Cint},
+                Ptr{Cint},
+            ),
+            hBand,
+            pdfMin,
+            pdfMax,
+            pnMinX,
+            pnMinY,
+            pnMaxX,
+            pnMaxY,
+        ),
+    )
+end
+
 """
     GDALFlushRasterCache(GDALRasterBandH hBand) -> CPLErr
 
@@ -11517,6 +11835,42 @@ function gdalrasterinterpolateatpoint(
             eInterpolation,
             pdfRealValue,
             pdfImagValue,
+        ),
+    )
+end
+
+function gdalrasterinterpolateatgeolocation(
+    hBand,
+    dfGeolocX,
+    dfGeolocY,
+    hSRS,
+    eInterpolation,
+    pdfRealValue,
+    pdfImagValue,
+    papszTransformerOptions,
+)
+    aftercare(
+        ccall(
+            (:GDALRasterInterpolateAtGeolocation, libgdal),
+            CPLErr,
+            (
+                GDALRasterBandH,
+                Cdouble,
+                Cdouble,
+                OGRSpatialReferenceH,
+                GDALRIOResampleAlg,
+                Ptr{Cdouble},
+                Ptr{Cdouble},
+                CSLConstList,
+            ),
+            hBand,
+            dfGeolocX,
+            dfGeolocY,
+            hSRS,
+            eInterpolation,
+            pdfRealValue,
+            pdfImagValue,
+            papszTransformerOptions,
         ),
     )
 end
@@ -12093,6 +12447,22 @@ function gdaldeinterleave(
             ppDestBuffer,
             eDestDT,
             nIters,
+        ),
+    )
+end
+
+function gdaltranspose2d(pSrc, eSrcType, pDst, eDstType, nSrcWidth, nSrcHeight)
+    aftercare(
+        ccall(
+            (:GDALTranspose2D, libgdal),
+            Cvoid,
+            (Ptr{Cvoid}, GDALDataType, Ptr{Cvoid}, GDALDataType, Csize_t, Csize_t),
+            pSrc,
+            eSrcType,
+            pDst,
+            eDstType,
+            nSrcWidth,
+            nSrcHeight,
         ),
     )
 end
@@ -14838,6 +15208,19 @@ function gdalgroupgetmdarraynames(hGroup, papszOptions)
     )
 end
 
+function gdalgroupgetmdarrayfullnamesrecursive(hGroup, papszGroupOptions, papszArrayOptions)
+    aftercare(
+        ccall(
+            (:GDALGroupGetMDArrayFullNamesRecursive, libgdal),
+            Ptr{Cstring},
+            (GDALGroupH, CSLConstList, CSLConstList),
+            hGroup,
+            papszGroupOptions,
+            papszArrayOptions,
+        ),
+    )
+end
+
 """
     GDALGroupOpenMDArray(GDALGroupH hGroup,
                          const char * pszMDArrayName,
@@ -17499,7 +17882,7 @@ function gdalcreaterpctransformerv2(psRPC, bReversed, dfPixErrThreshold, papszOp
         ccall(
             (:GDALCreateRPCTransformerV2, libgdal),
             Ptr{Cvoid},
-            (Ptr{GDALRPCInfoV2}, Cint, Cdouble, Ptr{Cstring}),
+            (Ptr{GDALRPCInfoV2}, Cint, Cdouble, CSLConstList),
             psRPC,
             bReversed,
             dfPixErrThreshold,
@@ -18008,9 +18391,36 @@ function gdalcreatesimilartransformer(psTransformerArg, dfSrcRatioX, dfSrcRatioY
 end
 
 """
-    gdalcreategenimgprojtransformer(hSrcDS, pszSrcWKT, hDstDS, pszDstWKT, bGCPUseOK, dfGCPErrorThreshold, nOrder)
+    gdalgetgenimgprojtranformeroptionlist()
 
 ` `
+"""
+function gdalgetgenimgprojtranformeroptionlist()
+    aftercare(ccall((:GDALGetGenImgProjTranformerOptionList, libgdal), Cstring, ()), false)
+end
+
+"""
+    GDALCreateGenImgProjTransformer(GDALDatasetH hSrcDS,
+                                    const char * pszSrcWKT,
+                                    GDALDatasetH hDstDS,
+                                    const char * pszDstWKT,
+                                    int bGCPUseOK,
+                                    double dfGCPErrorThreshold,
+                                    int nOrder) -> void *
+
+Create image to image transformer.
+
+### Parameters
+* **hSrcDS**: source dataset, or NULL.
+* **pszSrcWKT**: the coordinate system for the source dataset. If NULL, it will be read from the dataset itself.
+* **hDstDS**: destination dataset (or NULL).
+* **pszDstWKT**: the coordinate system for the destination dataset. If NULL, and hDstDS not NULL, it will be read from the destination dataset.
+* **bGCPUseOK**: TRUE if GCPs should be used if the geotransform is not available on the source dataset (not destination).
+* **dfGCPErrorThreshold**: ignored/deprecated.
+* **nOrder**: the maximum order to use for GCP derived polynomials if possible. Use 0 to autoselect, or -1 for thin plate splines.
+
+### Returns
+handle suitable for use GDALGenImgProjTransform(), and to be deallocated with GDALDestroyGenImgProjTransformer().
 """
 function gdalcreategenimgprojtransformer(
     hSrcDS,
@@ -18057,7 +18467,7 @@ function gdalcreategenimgprojtransformer2(hSrcDS, hDstDS, papszOptions)
         ccall(
             (:GDALCreateGenImgProjTransformer2, libgdal),
             Ptr{Cvoid},
-            (GDALDatasetH, GDALDatasetH, Ptr{Cstring}),
+            (GDALDatasetH, GDALDatasetH, CSLConstList),
             hSrcDS,
             hDstDS,
             papszOptions,
@@ -18467,6 +18877,57 @@ function gdalgcptransform(pTransformArg, bDstToSrc, nPointCount, x, y, z, panSuc
     aftercare(
         ccall(
             (:GDALGCPTransform, libgdal),
+            Cint,
+            (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}),
+            pTransformArg,
+            bDstToSrc,
+            nPointCount,
+            x,
+            y,
+            z,
+            panSuccess,
+        ),
+    )
+end
+
+function gdalcreatehomographytransformer(adfHomography)
+    aftercare(
+        ccall(
+            (:GDALCreateHomographyTransformer, libgdal),
+            Ptr{Cvoid},
+            (Ptr{Cdouble},),
+            adfHomography,
+        ),
+    )
+end
+
+function gdalcreatehomographytransformerfromgcps(nGCPCount, pasGCPList)
+    aftercare(
+        ccall(
+            (:GDALCreateHomographyTransformerFromGCPs, libgdal),
+            Ptr{Cvoid},
+            (Cint, Ptr{GDAL_GCP}),
+            nGCPCount,
+            pasGCPList,
+        ),
+    )
+end
+
+function gdaldestroyhomographytransformer(pTransformArg)
+    aftercare(
+        ccall(
+            (:GDALDestroyHomographyTransformer, libgdal),
+            Cvoid,
+            (Ptr{Cvoid},),
+            pTransformArg,
+        ),
+    )
+end
+
+function gdalhomographytransform(pTransformArg, bDstToSrc, nPointCount, x, y, z, panSuccess)
+    aftercare(
+        ccall(
+            (:GDALHomographyTransform, libgdal),
             Cint,
             (Ptr{Cvoid}, Cint, Cint, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cdouble}, Ptr{Cint}),
             pTransformArg,
@@ -21349,6 +21810,17 @@ function gdalwarpcutlinemaskerex(
 end
 
 """
+    GWKTieStrategy
+
+GWKMode tie-breaking strategy
+"""
+@cenum GWKTieStrategy::UInt32 begin
+    GWKTS_First = 1
+    GWKTS_Min = 2
+    GWKTS_Max = 3
+end
+
+"""
     GDALWarpOptions
 
 Warp control options for use with GDALWarpOperation::Initialize()
@@ -21389,6 +21861,7 @@ Warp control options for use with GDALWarpOperation::Initialize()
 | pPostWarpProcessorArg            |                                                                                                                                                                           |
 | hCutline                         | Optional OGRPolygonH for a masking cutline.                                                                                                                               |
 | dfCutlineBlendDist               | Optional blending distance to apply across cutline in pixels, default is zero.                                                                                            |
+| eTieStrategy                     | Tie-breaking method                                                                                                                                                       |
 """
 struct GDALWarpOptions
     papszWarpOptions::Ptr{Cstring}
@@ -21426,6 +21899,11 @@ struct GDALWarpOptions
     pPostWarpProcessorArg::Ptr{Cvoid}
     hCutline::Ptr{Cvoid}
     dfCutlineBlendDist::Cdouble
+    eTieStrategy::GWKTieStrategy
+end
+
+function gdalwarpgetoptionlist()
+    aftercare(ccall((:GDALWarpGetOptionList, libgdal), Cstring, ()), false)
 end
 
 """
@@ -23128,6 +23606,93 @@ function gdalgrid(pszDest, hSrcDS, psOptions, pbUsageError)
     )
 end
 
+const GDALContourOptions = Cvoid
+
+const GDALContourOptionsForBinary = Cvoid
+
+function gdalcontouroptionsnew(papszArgv, psOptionsForBinary)
+    aftercare(
+        ccall(
+            (:GDALContourOptionsNew, libgdal),
+            Ptr{GDALContourOptions},
+            (Ptr{Cstring}, Ptr{GDALContourOptionsForBinary}),
+            papszArgv,
+            psOptionsForBinary,
+        ),
+    )
+end
+
+function gdalcontouroptionsfree(psOptions)
+    aftercare(
+        ccall(
+            (:GDALContourOptionsFree, libgdal),
+            Cvoid,
+            (Ptr{GDALContourOptions},),
+            psOptions,
+        ),
+    )
+end
+
+function gdalcontouroptionssetprogress(psOptions, pfnProgress, pProgressData)
+    aftercare(
+        ccall(
+            (:GDALContourOptionsSetProgress, libgdal),
+            Cvoid,
+            (Ptr{GDALContourOptions}, GDALProgressFunc, Any),
+            psOptions,
+            pfnProgress,
+            pProgressData,
+        ),
+    )
+end
+
+"""
+    gdalcontouroptionssetdestdatasource(psOptions, pszDestDatasource)
+
+` Doxygen_Suppress`
+"""
+function gdalcontouroptionssetdestdatasource(psOptions, pszDestDatasource)
+    aftercare(
+        ccall(
+            (:GDALContourOptionsSetDestDataSource, libgdal),
+            Cvoid,
+            (Ptr{GDALContourOptions}, Cstring),
+            psOptions,
+            pszDestDatasource,
+        ),
+    )
+end
+
+function gdalcontourprocessoptions(
+    psOptions,
+    ppapszStringOptions,
+    hSrcDS,
+    hBand,
+    hDstDS,
+    hLayer,
+)
+    aftercare(
+        ccall(
+            (:GDALContourProcessOptions, libgdal),
+            CPLErr,
+            (
+                Ptr{GDALContourOptions},
+                Ptr{Ptr{Cstring}},
+                Ptr{GDALDatasetH},
+                Ptr{GDALRasterBandH},
+                Ptr{GDALDatasetH},
+                Ptr{OGRLayerH},
+            ),
+            psOptions,
+            ppapszStringOptions,
+            hSrcDS,
+            hBand,
+            hDstDS,
+            hLayer,
+        ),
+    )
+end
+
 const GDALRasterizeOptions = Cvoid
 
 const GDALRasterizeOptionsForBinary = Cvoid
@@ -23767,6 +24332,19 @@ function gdaltileindexoptionsnew(papszArgv, psOptionsForBinary)
     )
 end
 
+function gdaltileindexoptionssetprogress(psOptions, pfnProgress, pProgressData)
+    aftercare(
+        ccall(
+            (:GDALTileIndexOptionsSetProgress, libgdal),
+            Cvoid,
+            (Ptr{GDALTileIndexOptions}, GDALProgressFunc, Any),
+            psOptions,
+            pfnProgress,
+            pProgressData,
+        ),
+    )
+end
+
 """
     GDALTileIndexOptionsFree(GDALTileIndexOptions * psOptions) -> void
 
@@ -23887,15 +24465,7 @@ function ogrgetgeosversion(pnMajor, pnMinor, pnPatch)
     )
 end
 
-"Opaque type for a coordinate transformation object"
-const OGRCoordinateTransformationH = Ptr{Cvoid}
-
 const _CPLXMLNode = Cvoid
-
-const OGRGeomCoordinatePrecision = Cvoid
-
-"Opaque type for [`OGRGeomCoordinatePrecision`](@ref)"
-const OGRGeomCoordinatePrecisionH = Ptr{OGRGeomCoordinatePrecision}
 
 """
     OGRGeomCoordinatePrecisionCreate(void) -> OGRGeomCoordinatePrecisionH
@@ -24784,8 +25354,6 @@ function ogr_g_exporttoisowkb(arg1, arg2, arg3)
     )
 end
 
-const OGRwkbExportOptions = Cvoid
-
 """
     OGRwkbExportOptionsCreate() -> OGRwkbExportOptions *
 
@@ -25397,11 +25965,6 @@ function ogr_g_transformto(arg1, arg2)
         ),
     )
 end
-
-const OGRGeomTransformer = Cvoid
-
-"Opaque type for a geometry transformer"
-const OGRGeomTransformerH = Ptr{OGRGeomTransformer}
 
 """
     OGR_GeomTransformer_Create(OGRCoordinateTransformationH hCT,
@@ -26318,6 +26881,10 @@ a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if 
 """
 function ogr_g_polygonize(arg1)
     aftercare(ccall((:OGR_G_Polygonize, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
+end
+
+function ogr_g_buildarea(arg1)
+    aftercare(ccall((:OGR_G_BuildArea, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
 """
@@ -27287,11 +27854,6 @@ function ogrgetnonlineargeometriesenabledflag()
     aftercare(ccall((:OGRGetNonLinearGeometriesEnabledFlag, libgdal), Cint, ()))
 end
 
-const _OGRPreparedGeometry = Cvoid
-
-"Opaque type for a prepared geometry"
-const OGRPreparedGeometryH = Ptr{_OGRPreparedGeometry}
-
 """
     OGRHasPreparedGeometrySupport() -> int
 
@@ -27394,12 +27956,6 @@ function ogrpreparedgeometrycontains(hPreparedGeom, hOtherGeom)
         ),
     )
 end
-
-"Opaque type for a field definition (OGRFieldDefn)"
-const OGRFieldDefnH = Ptr{Cvoid}
-
-"Opaque type for a feature definition (OGRFeatureDefn)"
-const OGRFeatureDefnH = Ptr{Cvoid}
 
 """
     OGRFieldType
@@ -27890,6 +28446,16 @@ function ogr_fld_setnullable(hDefn, arg2)
     )
 end
 
+function ogr_fld_setgenerated(hDefn, arg2)
+    aftercare(
+        ccall((:OGR_Fld_SetGenerated, libgdal), Cvoid, (OGRFieldDefnH, Cint), hDefn, arg2),
+    )
+end
+
+function ogr_fld_isgenerated(hDefn)
+    aftercare(ccall((:OGR_Fld_IsGenerated, libgdal), Cint, (OGRFieldDefnH,), hDefn))
+end
+
 """
     OGR_Fld_IsUnique(OGRFieldDefnH hDefn) -> int
 
@@ -28064,6 +28630,10 @@ function ogr_getfieldtypename(arg1)
     )
 end
 
+function ogr_getfieldtypebyname(arg1)
+    aftercare(ccall((:OGR_GetFieldTypeByName, libgdal), OGRFieldType, (Cstring,), arg1))
+end
+
 """
     OGR_GetFieldSubTypeName(OGRFieldSubType eSubType) -> const char *
 
@@ -28079,6 +28649,12 @@ function ogr_getfieldsubtypename(arg1)
     aftercare(
         ccall((:OGR_GetFieldSubTypeName, libgdal), Cstring, (OGRFieldSubType,), arg1),
         false,
+    )
+end
+
+function ogr_getfieldsubtypebyname(arg1)
+    aftercare(
+        ccall((:OGR_GetFieldSubTypeByName, libgdal), OGRFieldSubType, (Cstring,), arg1),
     )
 end
 
@@ -29198,13 +29774,41 @@ function Base.getproperty(x::Ptr{OGRField}, f::Symbol)
     f === :Integer64 && return Ptr{GIntBig}(x + 0)
     f === :Real && return Ptr{Cdouble}(x + 0)
     f === :String && return Ptr{Cstring}(x + 0)
-    f === :IntegerList && return Ptr{__JL_Ctag_164}(x + 0)
-    f === :Integer64List && return Ptr{__JL_Ctag_165}(x + 0)
-    f === :RealList && return Ptr{__JL_Ctag_166}(x + 0)
-    f === :StringList && return Ptr{__JL_Ctag_167}(x + 0)
-    f === :Binary && return Ptr{__JL_Ctag_168}(x + 0)
-    f === :Set && return Ptr{__JL_Ctag_169}(x + 0)
-    f === :Date && return Ptr{__JL_Ctag_170}(x + 0)
+    f === :IntegerList && return Ptr{
+        var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:912:5)",
+    }(
+        x + 0,
+    )
+    f === :Integer64List && return Ptr{
+        var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:918:5)",
+    }(
+        x + 0,
+    )
+    f === :RealList && return Ptr{
+        var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:924:5)",
+    }(
+        x + 0,
+    )
+    f === :StringList && return Ptr{
+        var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:930:5)",
+    }(
+        x + 0,
+    )
+    f === :Binary && return Ptr{
+        var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:936:5)",
+    }(
+        x + 0,
+    )
+    f === :Set && return Ptr{
+        var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:942:5)",
+    }(
+        x + 0,
+    )
+    f === :Date && return Ptr{
+        var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:949:5)",
+    }(
+        x + 0,
+    )
     return getfield(x, f)
 end
 
@@ -31026,12 +31630,6 @@ function ogr_globflddomain_getglob(arg1)
         false,
     )
 end
-
-"Opaque type for a OGR datasource (OGRDataSource)"
-const OGRDataSourceH = Ptr{Cvoid}
-
-"Opaque type for a OGR driver (OGRSFDriver)"
-const OGRSFDriverH = Ptr{Cvoid}
 
 """
     OGR_L_GetName(OGRLayerH hLayer) -> const char *
@@ -33140,12 +33738,6 @@ function ogrcleanupall()
     aftercare(ccall((:OGRCleanupAll, libgdal), Cvoid, ()))
 end
 
-"Style manager opaque type"
-const OGRStyleMgrH = Ptr{Cvoid}
-
-"Style tool opaque type"
-const OGRStyleToolH = Ptr{Cvoid}
-
 """
     OGR_SM_Create(OGRStyleTableH hStyleTable) -> OGRStyleMgrH
 
@@ -34192,6 +34784,17 @@ function ogr_gt_getcollection(eType)
     aftercare(
         ccall(
             (:OGR_GT_GetCollection, libgdal),
+            OGRwkbGeometryType,
+            (OGRwkbGeometryType,),
+            eType,
+        ),
+    )
+end
+
+function ogr_gt_getsingle(eType)
+    aftercare(
+        ccall(
+            (:OGR_GT_GetSingle, libgdal),
             OGRwkbGeometryType,
             (OGRwkbGeometryType,),
             eType,
@@ -37753,7 +38356,7 @@ end
 """
     osrsetwagner(hSRS, nVariation, dfCenterLat, dfFalseEasting, dfFalseNorthing)
 
-Wagner I -- VII
+Wagner I \\-- VII
 """
 function osrsetwagner(hSRS, nVariation, dfCenterLat, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -38036,11 +38639,6 @@ function octnewcoordinatetransformation(hSourceSRS, hTargetSRS)
         ),
     )
 end
-
-const OGRCoordinateTransformationOptions = Cvoid
-
-"Coordinate transformation options"
-const OGRCoordinateTransformationOptionsH = Ptr{OGRCoordinateTransformationOptions}
 
 """
     OCTNewCoordinateTransformationOptions(void) -> OGRCoordinateTransformationOptionsH
@@ -38549,141 +39147,38 @@ function octtransformbounds(
     )
 end
 
-struct __JL_Ctag_164
+struct var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:912:5)"
     nCount::Cint
     paList::Ptr{Cint}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_164}, f::Symbol)
-    f === :nCount && return Ptr{Cint}(x + 0)
-    f === :paList && return Ptr{Ptr{Cint}}(x + 8)
-    return getfield(x, f)
-end
-
-function Base.getproperty(x::__JL_Ctag_164, f::Symbol)
-    r = Ref{__JL_Ctag_164}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_164}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
-end
-
-function Base.setproperty!(x::Ptr{__JL_Ctag_164}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
-end
-
-struct __JL_Ctag_165
+struct var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:918:5)"
     nCount::Cint
     paList::Ptr{GIntBig}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_165}, f::Symbol)
-    f === :nCount && return Ptr{Cint}(x + 0)
-    f === :paList && return Ptr{Ptr{GIntBig}}(x + 8)
-    return getfield(x, f)
-end
-
-function Base.getproperty(x::__JL_Ctag_165, f::Symbol)
-    r = Ref{__JL_Ctag_165}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_165}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
-end
-
-function Base.setproperty!(x::Ptr{__JL_Ctag_165}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
-end
-
-struct __JL_Ctag_166
+struct var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:924:5)"
     nCount::Cint
     paList::Ptr{Cdouble}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_166}, f::Symbol)
-    f === :nCount && return Ptr{Cint}(x + 0)
-    f === :paList && return Ptr{Ptr{Cdouble}}(x + 8)
-    return getfield(x, f)
-end
-
-function Base.getproperty(x::__JL_Ctag_166, f::Symbol)
-    r = Ref{__JL_Ctag_166}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_166}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
-end
-
-function Base.setproperty!(x::Ptr{__JL_Ctag_166}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
-end
-
-struct __JL_Ctag_167
+struct var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:930:5)"
     nCount::Cint
     paList::Ptr{Cstring}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_167}, f::Symbol)
-    f === :nCount && return Ptr{Cint}(x + 0)
-    f === :paList && return Ptr{Ptr{Cstring}}(x + 8)
-    return getfield(x, f)
-end
-
-function Base.getproperty(x::__JL_Ctag_167, f::Symbol)
-    r = Ref{__JL_Ctag_167}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_167}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
-end
-
-function Base.setproperty!(x::Ptr{__JL_Ctag_167}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
-end
-
-struct __JL_Ctag_168
+struct var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:936:5)"
     nCount::Cint
     paData::Ptr{GByte}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_168}, f::Symbol)
-    f === :nCount && return Ptr{Cint}(x + 0)
-    f === :paData && return Ptr{Ptr{GByte}}(x + 8)
-    return getfield(x, f)
-end
-
-function Base.getproperty(x::__JL_Ctag_168, f::Symbol)
-    r = Ref{__JL_Ctag_168}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_168}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
-end
-
-function Base.setproperty!(x::Ptr{__JL_Ctag_168}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
-end
-
-struct __JL_Ctag_169
+struct var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:942:5)"
     nMarker1::Cint
     nMarker2::Cint
     nMarker3::Cint
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_169}, f::Symbol)
-    f === :nMarker1 && return Ptr{Cint}(x + 0)
-    f === :nMarker2 && return Ptr{Cint}(x + 4)
-    f === :nMarker3 && return Ptr{Cint}(x + 8)
-    return getfield(x, f)
-end
-
-function Base.getproperty(x::__JL_Ctag_169, f::Symbol)
-    r = Ref{__JL_Ctag_169}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_169}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
-end
-
-function Base.setproperty!(x::Ptr{__JL_Ctag_169}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
-end
-
-struct __JL_Ctag_170
+struct var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:949:5)"
     Year::GInt16
     Month::GByte
     Day::GByte
@@ -38692,29 +39187,6 @@ struct __JL_Ctag_170
     TZFlag::GByte
     Reserved::GByte
     Second::Cfloat
-end
-
-function Base.getproperty(x::Ptr{__JL_Ctag_170}, f::Symbol)
-    f === :Year && return Ptr{GInt16}(x + 0)
-    f === :Month && return Ptr{GByte}(x + 2)
-    f === :Day && return Ptr{GByte}(x + 3)
-    f === :Hour && return Ptr{GByte}(x + 4)
-    f === :Minute && return Ptr{GByte}(x + 5)
-    f === :TZFlag && return Ptr{GByte}(x + 6)
-    f === :Reserved && return Ptr{GByte}(x + 7)
-    f === :Second && return Ptr{Cfloat}(x + 8)
-    return getfield(x, f)
-end
-
-function Base.getproperty(x::__JL_Ctag_170, f::Symbol)
-    r = Ref{__JL_Ctag_170}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_170}, r)
-    fptr = getproperty(ptr, f)
-    GC.@preserve r unsafe_load(fptr)
-end
-
-function Base.setproperty!(x::Ptr{__JL_Ctag_170}, f::Symbol, v)
-    unsafe_store!(getproperty(x, f), v)
 end
 
 const GDAL_PREFIX = "/workspace/destdir"
@@ -38809,9 +39281,9 @@ const VSI_STAT_CACHE_ONLY = 0x10
 
 const GDAL_VERSION_MAJOR = 3
 
-const GDAL_VERSION_MINOR = 10
+const GDAL_VERSION_MINOR = 11
 
-const GDAL_VERSION_REV = 0
+const GDAL_VERSION_REV = 1
 
 const GDAL_VERSION_BUILD = 0
 
@@ -38819,9 +39291,11 @@ const GDAL_VERSION_NUM =
     GDAL_COMPUTE_VERSION(GDAL_VERSION_MAJOR, GDAL_VERSION_MINOR, GDAL_VERSION_REV) +
     GDAL_VERSION_BUILD
 
-const GDAL_RELEASE_DATE = 20241101
+const GDAL_RELEASE_DATE = 20250625
 
-const GDAL_RELEASE_NAME = "3.10.0"
+const GDAL_RELEASE_NAME = "3.11.1"
+
+const GDAL_RELEASE_NICKNAME = "Eganville"
 
 const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
 
@@ -38879,6 +39353,8 @@ const GDAL_DMD_CREATION_FIELD_DEFN_FLAGS = "DMD_CREATION_FIELD_DEFN_FLAGS"
 
 const GDAL_DMD_SUBDATASETS = "DMD_SUBDATASETS"
 
+const GDAL_DCAP_CREATE_SUBDATASETS = "DCAP_CREATE_SUBDATASETS"
+
 const GDAL_DMD_NUMERIC_FIELD_WIDTH_INCLUDES_DECIMAL_SEPARATOR = "DMD_NUMERIC_FIELD_WIDTH_INCLUDES_DECIMAL_SEPARATOR"
 
 const GDAL_DMD_NUMERIC_FIELD_WIDTH_INCLUDES_SIGN = "DMD_NUMERIC_FIELD_WIDTH_INCLUDES_SIGN"
@@ -38898,6 +39374,8 @@ const GDAL_DCAP_CREATECOPY_MULTIDIMENSIONAL = "DCAP_CREATECOPY_MULTIDIMENSIONAL"
 const GDAL_DCAP_MULTIDIM_RASTER = "DCAP_MULTIDIM_RASTER"
 
 const GDAL_DCAP_SUBCREATECOPY = "DCAP_SUBCREATECOPY"
+
+const GDAL_DCAP_UPDATE = "DCAP_UPDATE"
 
 const GDAL_DCAP_VIRTUALIO = "DCAP_VIRTUALIO"
 
@@ -38976,6 +39454,8 @@ const GDAL_DMD_ALTER_GEOM_FIELD_DEFN_FLAGS = "DMD_ALTER_GEOM_FIELD_DEFN_FLAGS"
 const GDAL_DMD_SUPPORTED_SQL_DIALECTS = "DMD_SUPPORTED_SQL_DIALECTS"
 
 const GDAL_DMD_PLUGIN_INSTALLATION_MESSAGE = "DMD_PLUGIN_INSTALLATION_MESSAGE"
+
+const GDAL_DMD_UPDATE_ITEMS = "DMD_UPDATE_ITEMS"
 
 const GDAL_DIM_TYPE_HORIZONTAL_X = "HORIZONTAL_X"
 
