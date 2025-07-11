@@ -30,28 +30,27 @@ global_logger(logger)
 include(joinpath(@__DIR__, "doc.jl"))
 
 includedir = joinpath(GDAL_jll.artifact_dir, "include")
-headerfiles =
-    joinpath.(
-        includedir,
-        [
-            "cpl_conv.h",
-            "cpl_error.h",
-            "cpl_minixml.h",
-            "cpl_port.h",
-            "cpl_progress.h",
-            "cpl_virtualmem.h",
-            "cpl_vsi.h",
-            "gdal.h",
-            "gdal_alg.h",
-            "gdalwarper.h",
-            "gdal_vrt.h",
-            "gdal_utils.h",
-            "ogr_api.h",
-            "ogr_core.h",
-            "ogr_srs_api.h",
-            "ogr_recordbatch.h",
-        ],
-    )
+headerfiles = joinpath.(
+    includedir,
+    [
+        "cpl_conv.h",
+        "cpl_error.h",
+        "cpl_minixml.h",
+        "cpl_port.h",
+        "cpl_progress.h",
+        "cpl_virtualmem.h",
+        "cpl_vsi.h",
+        "gdal.h",
+        "gdal_alg.h",
+        "gdalwarper.h",
+        "gdal_vrt.h",
+        "gdal_utils.h",
+        "ogr_api.h",
+        "ogr_core.h",
+        "ogr_srs_api.h",
+        "ogr_recordbatch.h",
+    ],
+)
 
 for headerfile in headerfiles
     if !isfile(headerfile)
