@@ -3,7 +3,7 @@
 """
     VSIFree(void * pData) -> void
 
-Analog of free() for data allocated with VSIMalloc(), VSICalloc(), VSIRealloc()
+Analog of free() for data allocated with VSIMalloc(), VSICalloc(), VSIRealloc().
 """
 function vsifree(arg1)
     aftercare(ccall((:VSIFree, libgdal), Cvoid, (Ptr{Cvoid},), arg1))
@@ -121,6 +121,16 @@ function cplsetthreadlocalconfigoption(pszKey, pszValue)
     )
 end
 
+"""
+    CPLDeclareKnownConfigOption(const char * pszKey,
+                                const char * pszDefinition) -> void
+
+Declare that the specified configuration option is known.
+
+### Parameters
+* **pszKey**: Name of the configuration option to declare.
+* **pszDefinition**: Unused for now. Must be set to nullptr.
+"""
 function cpldeclareknownconfigoption(pszKey, pszDefinition)
     aftercare(
         ccall(
@@ -133,6 +143,11 @@ function cpldeclareknownconfigoption(pszKey, pszDefinition)
     )
 end
 
+"""
+    CPLGetKnownConfigOptions() -> char **
+
+Return the list of known configuration options.
+"""
 function cplgetknownconfigoptions()
     aftercare(ccall((:CPLGetKnownConfigOptions, libgdal), Ptr{Cstring}, ()))
 end
@@ -1369,7 +1384,7 @@ end
 
 """
     CPLCheckForFile(char * pszFilename,
-                    char ** papszSiblingFiles) -> int
+                    CSLConstList papszSiblingFiles) -> int
 
 Check for file existence.
 
@@ -1385,7 +1400,7 @@ function cplcheckforfile(pszFilename, papszSiblingList)
         ccall(
             (:CPLCheckForFile, libgdal),
             Cint,
-            (Cstring, Ptr{Cstring}),
+            (Cstring, CSLConstList),
             pszFilename,
             papszSiblingList,
         ),
@@ -1402,6 +1417,38 @@ the home directory, or NULL.
 """
 function cplgethomedir()
     aftercare(ccall((:CPLGetHomeDir, libgdal), Cstring, ()), false)
+end
+
+"""
+    CPLHasPathTraversal(const char * pszFilename) -> bool
+
+Return whether the filename contains a path traversal pattern.
+
+### Parameters
+* **pszFilename**: The input string to check.
+
+### Returns
+true if a path traversal pattern is detected.
+"""
+function cplhaspathtraversal(pszFilename)
+    aftercare(ccall((:CPLHasPathTraversal, libgdal), Bool, (Cstring,), pszFilename))
+end
+
+"""
+    CPLHasUnbalancedPathTraversal(const char * pszFilename) -> bool
+
+Return whether the filename contains a unbalanced path traversal pattern.
+
+### Parameters
+* **pszFilename**: The input string to check.
+
+### Returns
+true if a path traversal pattern is detected.
+"""
+function cplhasunbalancedpathtraversal(pszFilename)
+    aftercare(
+        ccall((:CPLHasUnbalancedPathTraversal, libgdal), Bool, (Cstring,), pszFilename),
+    )
 end
 
 "Callback for [`CPLPushFileFinder`](@ref)"
@@ -1672,7 +1719,7 @@ end
 """
     CPLStringToComplex(const char * pszString,
                        double * pdfReal,
-                       double * pdfImag) -> void
+                       double * pdfImag) -> CPLErr
 
 Fetch the real and imaginary part of a serialized complex number.
 """
@@ -1758,6 +1805,15 @@ function cplsymlink(pszOldPath, pszNewPath, papszOptions)
 end
 
 """
+    CPLGetRemainingFileDescriptorCount() -> int
+
+Return the number of file descriptors that can still be opened by the current process.
+"""
+function cplgetremainingfiledescriptorcount()
+    aftercare(ccall((:CPLGetRemainingFileDescriptorCount, libgdal), Cint, ()))
+end
+
+"""
     CPLLockFileStatus
 
 Return code of [`CPLLockFileEx`](@ref)().
@@ -1783,6 +1839,21 @@ const CPLLockFileStruct = Cvoid
 "Handle type returned by [`CPLLockFileEx`](@ref)()"
 const CPLLockFileHandle = Ptr{CPLLockFileStruct}
 
+"""
+    CPLLockFileEx(const char * pszLockFileName,
+                  CPLLockFileHandle * phLockFileHandle,
+                  CSLConstList papszOptions) -> CPLLockFileStatus
+
+Create and acquire a lock file.
+
+### Parameters
+* **pszLockFileName**: Lock file name. The directory must already exist. Must not be NULL.
+* **phLockFileHandle**: Pointer to at location where to store the lock handle that must be passed to CPLUnlockFileEx(). *phLockFileHandle will be null if the return code of that function is not CLFS_OK.
+* **papszOptions**: NULL terminated list of strings, or NULL.
+
+### Returns
+lock file status.
+"""
 function cpllockfileex(pszLockFileName, phLockFileHandle, papszOptions)
     aftercare(
         ccall(
@@ -1796,6 +1867,14 @@ function cpllockfileex(pszLockFileName, phLockFileHandle, papszOptions)
     )
 end
 
+"""
+    CPLUnlockFileEx(CPLLockFileHandle hLockFileHandle) -> void
+
+Release and delete a lock file.
+
+### Parameters
+* **hLockFileHandle**: Lock handle (value of *phLockFileHandle argument set by CPLLockFileEx()), or NULL.
+"""
 function cplunlockfileex(hLockFileHandle)
     aftercare(
         ccall((:CPLUnlockFileEx, libgdal), Cvoid, (CPLLockFileHandle,), hLockFileHandle),
@@ -2088,6 +2167,17 @@ function cplispoweroftwo(i)
     aftercare(ccall((:CPLIsPowerOfTwo, libgdal), Cint, (Cuint,), i))
 end
 
+"""
+    CPLIsInteractive(FILE * f) -> bool
+
+Returns whether the provided file refers to a terminal.
+
+### Parameters
+* **f**: File to test. Typically stdin, stdout or stderr
+
+### Returns
+true if it is an open file referring to a terminal.
+"""
 function cplisinteractive(f)
     aftercare(ccall((:CPLIsInteractive, libgdal), Bool, (Ptr{Libc.FILE},), f))
 end
@@ -2933,8 +3023,6 @@ end
 
 Return the size of a page of virtual memory.
 
-\\since GDAL 1.11
-
 # Returns
 the page size.
 """
@@ -2954,8 +3042,6 @@ On Linux AMD64 platforms, the maximum value for nSize is 128 TB. On Linux x86 pl
 Only supported on Linux for now.
 
 Note that on Linux, this function will install a SIGSEGV handler. The original handler will be restored by [`CPLVirtualMemManagerTerminate`](@ref)().
-
-\\since GDAL 1.11
 
 # Arguments
 * `nSize`: size in bytes of the virtual memory mapping.
@@ -3014,8 +3100,6 @@ end
 
 Return if virtual memory mapping of a file is available.
 
-\\since GDAL 1.11
-
 # Returns
 [`TRUE`](@ref) if virtual memory mapping of a file is available.
 """
@@ -3037,9 +3121,7 @@ In VIRTUALMEM\\_READWRITE mode, updates to the memory mapping will be written in
 
 On Linux AMD64 platforms, the maximum value for nLength is 128 TB. On Linux x86 platforms, the maximum value for nLength is 2 GB.
 
-Supported on Linux only in GDAL <= 2.0, and all POSIX systems supporting mmap() in GDAL >= 2.1
-
-\\since GDAL 1.11
+Supported on all POSIX systems supporting mmap().
 
 # Arguments
 * `fp`: Virtual file handle.
@@ -3090,8 +3172,6 @@ This may be useful in case of creating mapping for pixel interleaved data.
 
 The new mapping takes a reference on the base mapping.
 
-\\since GDAL 1.11
-
 # Arguments
 * `pVMemBase`: Base virtual memory mapping
 * `nOffset`: Offset in the base virtual memory mapping from which to start the new mapping.
@@ -3129,8 +3209,6 @@ Free a virtual memory mapping.
 
 The pointer returned by [`CPLVirtualMemGetAddr`](@ref)() will no longer be valid. If the virtual memory mapping was created with read/write permissions and that they are dirty (i.e. modified) pages, they will be flushed through the pfnUnCachePage callback before being freed.
 
-\\since GDAL 1.11
-
 # Arguments
 * `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
 """
@@ -3146,8 +3224,6 @@ Return the pointer to the start of a virtual memory mapping.
 The bytes in the range [p:p+[`CPLVirtualMemGetSize`](@ref)()-1] where p is the pointer returned by this function will be valid, until [`CPLVirtualMemFree`](@ref)() is called.
 
 Note that if a range of bytes used as an argument of a system call (such as read() or write()) contains pages that have not been "realized", the system call will fail with EFAULT. [`CPLVirtualMemPin`](@ref)() can be used to work around this issue.
-
-\\since GDAL 1.11
 
 # Arguments
 * `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
@@ -3165,8 +3241,6 @@ end
 
 Return the size of the virtual memory mapping.
 
-\\since GDAL 1.11
-
 # Arguments
 * `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
 # Returns
@@ -3180,8 +3254,6 @@ end
     cplvirtualmemisfilemapping(ctxt)
 
 Return if the virtual memory mapping is a direct file mapping.
-
-\\since GDAL 1.11
 
 # Arguments
 * `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
@@ -3198,8 +3270,6 @@ end
     cplvirtualmemgetaccessmode(ctxt)
 
 Return the access mode of the virtual memory mapping.
-
-\\since GDAL 1.11
 
 # Arguments
 * `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
@@ -3224,8 +3294,6 @@ Return the page size associated to a virtual memory mapping.
 
 The value returned will be at least [`CPLGetPageSize`](@ref)(), but potentially larger.
 
-\\since GDAL 1.11
-
 # Arguments
 * `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
 # Returns
@@ -3247,8 +3315,6 @@ The situation that can cause problems is when several threads try to access a pa
 The return value of this function depends on whether bSingleThreadUsage has been set of not in [`CPLVirtualMemNew`](@ref)() and/or the implementation.
 
 On Linux, this will always return [`TRUE`](@ref) if bSingleThreadUsage = [`FALSE`](@ref).
-
-\\since GDAL 1.11
 
 # Arguments
 * `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
@@ -3275,8 +3341,6 @@ This function must be called by a thread that wants to access the content of a v
 
 This function must be paired with [`CPLVirtualMemUnDeclareThread`](@ref)().
 
-\\since GDAL 1.11
-
 # Arguments
 * `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
 """
@@ -3295,8 +3359,6 @@ This function must be called by a thread that will no longer access the content 
 
 This function must be paired with [`CPLVirtualMemDeclareThread`](@ref)().
 
-\\since GDAL 1.11
-
 # Arguments
 * `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
 """
@@ -3314,8 +3376,6 @@ Make sure that a region of virtual memory will be realized.
 Calling this function is not required, but might be useful when debugging a process with tools like gdb or valgrind that do not naturally like segmentation fault signals.
 
 It is also needed when wanting to provide part of virtual memory mapping to a system call such as read() or write(). If read() or write() is called on a memory region not yet realized, the call will fail with EFAULT.
-
-\\since GDAL 1.11
 
 # Arguments
 * `ctxt`: context returned by [`CPLVirtualMemNew`](@ref)().
@@ -3343,8 +3403,6 @@ end
 Cleanup any resource and handlers related to virtual memory.
 
 This function must be called after the last [`CPLVirtualMem`](@ref) object has been freed.
-
-\\since GDAL 2.0
 """
 function cplvirtualmemmanagerterminate()
     aftercare(ccall((:CPLVirtualMemManagerTerminate, libgdal), Cvoid, ()))
@@ -4372,7 +4430,7 @@ Get metadata on files.
 
 ### Parameters
 * **pszFilename**: the path of the filesystem object to be queried. UTF-8 encoded.
-* **pszDomain**: Metadata domain to query. Depends on the file system. The following are supported: 
+* **pszDomain**: Metadata domain to query. Depends on the file system. The following ones are supported: 
 
 HEADERS: to get HTTP headers for network-like filesystems (/vsicurl/, /vsis3/, /vsgis/, etc) 
 
@@ -4382,7 +4440,7 @@ TAGS:
 /vsis3/: to get S3 Object tagging information 
 
 
-/vsiaz/: to get blob tags. Refer to https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-tags 
+/vsiaz/: to get blob tags. Refer to https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-tags  
 
 
 
@@ -4394,7 +4452,7 @@ STATUS: specific to /vsiadls/: returns all system defined properties for a path 
 ACL: specific to /vsiadls/ and /vsigs/: returns the access control list for a path. For /vsigs/, a single XML=xml_content string is returned. Refer to https://cloud.google.com/storage/docs/xml-api/get-object-acls  
 
 
-METADATA: specific to /vsiaz/: to set blob metadata. Refer to https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-metadata. Note: this will be a subset of what pszDomain=HEADERS returns 
+METADATA: specific to /vsiaz/: to get blob metadata. Refer to https://docs.microsoft.com/en-us/rest/api/storageservices/get-blob-metadata. Note: this will be a subset of what pszDomain=HEADERS returns 
 
 
 ZIP: specific to /vsizip/: to obtain ZIP specific metadata, in particular if a file is SOZIP-enabled (SOZIP_VALID=YES)
@@ -4777,6 +4835,23 @@ function vsisiblingfiles(pszPath)
     aftercare(ccall((:VSISiblingFiles, libgdal), Ptr{Cstring}, (Cstring,), pszPath))
 end
 
+"""
+    VSIGlob(const char * pszPattern,
+            const char *const * papszOptions,
+            GDALProgressFunc pProgressFunc,
+            void * pProgressData) -> char **
+
+Return a list of file and directory names matching a pattern that can contain wildcards.
+
+### Parameters
+* **pszPattern**: the relative, or absolute path of a directory to read. UTF-8 encoded.
+* **papszOptions**: NULL-terminate list of options, or NULL. None supported currently.
+* **pProgressFunc**: Progress function, or NULL. This is only used as a way for the user to cancel operation if it takes too much time. The percentage passed to the callback is not significant (always at 0).
+* **pProgressData**: User data passed to the progress function, or NULL.
+
+### Returns
+The list of matched filenames, which must be freed with CSLDestroy(). Filenames are returned in UTF-8 encoding.
+"""
 function vsiglob(pszPattern, papszOptions, pProgressFunc, pProgressData)
     aftercare(
         ccall(
@@ -5002,6 +5077,25 @@ function vsirename(oldpath, newpath)
     aftercare(ccall((:VSIRename, libgdal), Cint, (Cstring, Cstring), oldpath, newpath))
 end
 
+"""
+    VSIMove(const char * oldpath,
+            const char * newpath,
+            const char *const * papszOptions,
+            GDALProgressFunc pProgressFunc,
+            void * pProgressData) -> int
+
+Move (or rename) a file.
+
+### Parameters
+* **oldpath**: the path of the file to be renamed/moved. UTF-8 encoded.
+* **newpath**: the new path the file should be given. UTF-8 encoded.
+* **papszOptions**: Null terminated list of options, or NULL.
+* **pProgressFunc**: Progress callback, or NULL.
+* **pProgressData**: User data of progress callback, or NULL.
+
+### Returns
+0 on success or -1 on error.
+"""
 function vsimove(oldpath, newpath, papszOptions, pProgressFunc, pProgressData)
     aftercare(
         ccall(
@@ -5338,7 +5432,7 @@ Completes a multi-part file upload.
 ### Parameters
 * **pszFilename**: Filename for which multipart upload should be completed. Should be the same as the one used for VSIMultipartUploadStart()
 * **pszUploadId**: Value returned by VSIMultipartUploadStart()
-* **nPartIdsCount**: Number of parts, andsize of apszPartIds
+* **nPartIdsCount**: Number of parts, and size of apszPartIds
 * **apszPartIds**: Array of part identifiers (as returned by VSIMultipartUploadAddPart()), that must be ordered in the sequential order of parts, and of size nPartIdsCount.
 * **nTotalSize**: Total size of the file in bytes (must be equal to the sum of nDataLength passed to VSIMultipartUploadAddPart())
 * **papszOptions**: Unused. Should be nullptr.
@@ -6291,6 +6385,9 @@ const GDALDatasetH = Ptr{Cvoid}
 "Opaque type used for the C bindings of the C++ GDALRasterBand class"
 const GDALRasterBandH = Ptr{Cvoid}
 
+"Opaque type used for the C bindings of the C++ GDALComputedRasterBand class"
+const GDALComputedRasterBandH = Ptr{Cvoid}
+
 "Opaque type used for the C bindings of the C++ GDALDriver class"
 const GDALDriverH = Ptr{Cvoid}
 
@@ -6530,7 +6627,7 @@ end
 """
     GDALDataTypeIsInteger(GDALDataType eDataType) -> int
 
-Is data type integer? (might be complex)
+Is data type integer?
 
 ### Returns
 TRUE if the passed type is integer (one of GDT_Byte, GDT_Int16, GDT_UInt16, GDT_Int32, GDT_UInt32, GDT_CInt16, GDT_CInt32).
@@ -6542,10 +6639,10 @@ end
 """
     GDALDataTypeIsFloating(GDALDataType eDataType) -> int
 
-Is data type floating? (might be complex)
+Is data type floating?
 
 ### Returns
-TRUE if the passed type is floating (one of GDT_Float32, GDT_Float64, GDT_CFloat32, GDT_CFloat64)
+TRUE if the passed type is floating (one of GDT_Float32, GDT_Float16, GDT_Float64, GDT_CFloat16, GDT_CFloat32, GDT_CFloat64)
 """
 function gdaldatatypeisfloating(arg1)
     aftercare(ccall((:GDALDataTypeIsFloating, libgdal), Cint, (GDALDataType,), arg1))
@@ -6752,6 +6849,19 @@ function gdalisvalueexactas(dfValue, eDT)
     )
 end
 
+"""
+    GDALIsValueInRangeOf(double dfValue,
+                         GDALDataType eDT) -> bool
+
+Check whether the provided value can be represented in the range of the data type, possibly with rounding.
+
+### Parameters
+* **dfValue**: value to check.
+* **eDT**: target data type.
+
+### Returns
+true if the provided value can be represented in the range of the data type, possibly with rounding.
+"""
 function gdalisvalueinrangeof(dfValue, eDT)
     aftercare(
         ccall(
@@ -6899,8 +7009,6 @@ end
 
 RasterIO() resampling method.
 
-\\since GDAL 2.0
-
 | Enumerator                | Note                                                                                                                     |
 | :------------------------ | :----------------------------------------------------------------------------------------------------------------------- |
 | GRIORA\\_NearestNeighbour | Nearest neighbour                                                                                                        |
@@ -6936,8 +7044,6 @@ end
 
 Structure to pass extra arguments to RasterIO() method, must be initialized with [`INIT_RASTERIO_EXTRA_ARG`](@ref)
 
-\\since GDAL 2.0
-
 | Field                        | Note                                                                                                                                                                                                                                                             |
 | :--------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | nVersion                     | Version of structure (to allow future extensions of the structure)                                                                                                                                                                                               |
@@ -6949,6 +7055,7 @@ Structure to pass extra arguments to RasterIO() method, must be initialized with
 | dfYOff                       | Line offset to the top left corner. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                                  |
 | dfXSize                      | Width in pixels of the area of interest. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                             |
 | dfYSize                      | Height in pixels of the area of interest. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                            |
+| bUseOnlyThisScale            | Indicate if overviews should be considered. Tested in GDALBandGetBestOverviewLevel(), mostly reserved for use by GDALRegenerateOverviewsMultiBand() Only available if [`RASTERIO_EXTRA_ARG_CURRENT_VERSION`](@ref) >= 2                                          |
 """
 struct GDALRasterIOExtraArg
     nVersion::Cint
@@ -6960,6 +7067,7 @@ struct GDALRasterIOExtraArg
     dfYOff::Cdouble
     dfXSize::Cdouble
     dfYSize::Cdouble
+    bUseOnlyThisScale::Cint
 end
 
 """
@@ -7416,7 +7524,7 @@ Thread safe mode: GDAL_OF_THREAD_SAFE (added in 3.10). This must be use in combi
 
 Verbose error: GDAL_OF_VERBOSE_ERROR. If set, a failed attempt to open the file will lead to an error message to be reported.
 * **papszAllowedDrivers**: NULL to consider all candidate drivers, or a NULL terminated list of strings with the driver short names that must be considered.
-* **papszOpenOptions**: NULL, or a NULL terminated list of strings with open options passed to candidate drivers. An option exists for all drivers, OVERVIEW_LEVEL=level, to select a particular overview level of a dataset. The level index starts at 0. The level number can be suffixed by "only" to specify that only this overview level must be visible, and not sub-levels. Open options are validated by default, and a warning is emitted in case the option is not recognized. In some scenarios, it might be not desirable (e.g. when not knowing which driver will open the file), so the special open option VALIDATE_OPEN_OPTIONS can be set to NO to avoid such warnings. Alternatively, since GDAL 2.1, an option name can be preceded by the @ character to indicate that it may not cause a warning if the driver doesn't declare this option. Starting with GDAL 3.3, OVERVIEW_LEVEL=NONE is supported to indicate that no overviews should be exposed.
+* **papszOpenOptions**: NULL, or a NULL terminated list of strings with open options passed to candidate drivers. An option exists for all drivers, OVERVIEW_LEVEL=level, to select a particular overview level of a dataset. The level index starts at 0. The level number can be suffixed by "only" to specify that only this overview level must be visible, and not sub-levels. Open options are validated by default, and a warning is emitted in case the option is not recognized. In some scenarios, it might be not desirable (e.g. when not knowing which driver will open the file), so the special open option VALIDATE_OPEN_OPTIONS can be set to NO to avoid such warnings. Alternatively, that it may not cause a warning if the driver doesn't declare this option. Starting with GDAL 3.3, OVERVIEW_LEVEL=NONE is supported to indicate that no overviews should be exposed.
 * **papszSiblingFiles**: NULL, or a NULL terminated list of strings that are filenames that are auxiliary to the main filename. If NULL is passed, a probing of the file system will be done.
 
 ### Returns
@@ -7615,7 +7723,7 @@ end
 
 """
     GDALGetOutputDriversForDatasetName(const char * pszDestDataset,
-                                       int nFlagRasterVector,
+                                       int nDatasetTypeFlag,
                                        bool bSingleMatch,
                                        bool bEmitWarning) -> char **
 
@@ -7623,8 +7731,8 @@ Return a list of driver short names that are likely candidates for the provided 
 
 ### Parameters
 * **pszDestDataset**: Output dataset name (might not exist).
-* **nFlagRasterVector**: GDAL_OF_RASTER, GDAL_OF_VECTOR or binary-or'ed combination of both
-* **bSingleMatch**: Whether a single match is desired, that is to say the returned list will contain at most one item, which will be the first driver in the order they are registered to match the output dataset name. Note that in this mode, if nFlagRasterVector==GDAL_OF_RASTER and pszDestDataset has no extension, GTiff will be selected.
+* **nDatasetTypeFlag**: GDAL_OF_RASTER, GDAL_OF_VECTOR, GDAL_OF_MULTIDIM_RASTER or a binary-or'ed combination of them
+* **bSingleMatch**: Whether a single match is desired, that is to say the returned list will contain at most one item, which will be the first driver in the order they are registered to match the output dataset name. Note that in this mode, if nDatasetTypeFlag==GDAL_OF_RASTER and pszDestDataset has no extension, GTiff will be selected.
 * **bEmitWarning**: Whether a warning should be emitted when bSingleMatch is true and there are more than 2 candidates.
 
 ### Returns
@@ -7649,6 +7757,19 @@ function gdalgetoutputdriversfordatasetname(
     )
 end
 
+"""
+    GDALDriverHasOpenOption(GDALDriverH hDriver,
+                            const char * pszOpenOptionName) -> bool
+
+Returns TRUE if the given open option is supported by the driver.
+
+### Parameters
+* **hDriver**: the handle of the driver
+* **pszOpenOptionName**: name of the open option to be checked
+
+### Returns
+TRUE if the driver supports the open option
+"""
 function gdaldriverhasopenoption(arg1, pszOpenOptionName)
     aftercare(
         ccall(
@@ -7920,6 +8041,21 @@ function gdalcomposegeotransforms(padfGeoTransform1, padfGeoTransform2, padfGeoT
     )
 end
 
+"""
+    GDALGCPsToHomography(int nGCPCount,
+                         const GDAL_GCP * pasGCPList,
+                         double * padfHomography) -> int
+
+Generate Homography from GCPs.
+
+### Parameters
+* **nGCPCount**: the number of GCPs being passed in.
+* **pasGCPList**: the list of GCP structures.
+* **padfHomography**: the nine double array in which the homography will be returned.
+
+### Returns
+TRUE on success or FALSE if there aren't enough points to prepare a homography, or pathological geometry is detected
+"""
 function gdalgcpstohomography(nGCPCount, pasGCPs, padfHomography)
     aftercare(
         ccall(
@@ -7933,6 +8069,19 @@ function gdalgcpstohomography(nGCPCount, pasGCPs, padfHomography)
     )
 end
 
+"""
+    GDALInvHomography(const double * padfHIn,
+                      double * padfHOut) -> int
+
+Invert Homography.
+
+### Parameters
+* **padfHIn**: Input homography (nine doubles - unaltered).
+* **padfHOut**: Output homography (nine doubles - updated).
+
+### Returns
+TRUE on success or FALSE if the equation is uninvertable.
+"""
 function gdalinvhomography(padfHomographyIn, padfInvHomographyOut)
     aftercare(
         ccall(
@@ -7945,6 +8094,25 @@ function gdalinvhomography(padfHomographyIn, padfInvHomographyOut)
     )
 end
 
+"""
+    GDALApplyHomography(const double * padfHomography,
+                        double dfPixel,
+                        double dfLine,
+                        double * pdfGeoX,
+                        double * pdfGeoY) -> int
+
+Apply Homography to x/y coordinate.
+
+### Parameters
+* **padfHomography**: Nine coefficient Homography to apply.
+* **dfPixel**: Input pixel position.
+* **dfLine**: Input line position.
+* **pdfGeoX**: output location where geo_x (easting/longitude) location is placed.
+* **pdfGeoY**: output location where geo_y (northing/latitude) location is placed.
+
+### Returns
+TRUE on success or FALSE if failure.
+"""
 function gdalapplyhomography(arg1, arg2, arg3, arg4, arg5)
     aftercare(
         ccall(
@@ -7960,6 +8128,18 @@ function gdalapplyhomography(arg1, arg2, arg3, arg4, arg5)
     )
 end
 
+"""
+    GDALComposeHomographies(const double * padfH1,
+                            const double * padfH2,
+                            double * padfHOut) -> void
+
+Compose two homographies.
+
+### Parameters
+* **padfH1**: the first homography, nine values.
+* **padfH2**: the second homography, nine values.
+* **padfHOut**: the output homography, nine values, may safely be the same array as padfH1 or padfH2.
+"""
 function gdalcomposehomographies(padfHomography1, padfHomography2, padfHomographyOut)
     aftercare(
         ccall(
@@ -8119,6 +8299,17 @@ function gdalgetfilelist(arg1)
 end
 
 """
+    GDALDatasetMarkSuppressOnClose(GDALDatasetH hDS) -> void
+
+Set that the dataset must be deleted on close.
+"""
+function gdaldatasetmarksuppressonclose(arg1)
+    aftercare(
+        ccall((:GDALDatasetMarkSuppressOnClose, libgdal), Cvoid, (GDALDatasetH,), arg1),
+    )
+end
+
+"""
     GDALClose(GDALDatasetH hDS) -> CPLErr
 
 Close GDAL dataset.
@@ -8131,6 +8322,28 @@ CE_None in case of success (return value since GDAL 3.7). On a shared dataset wh
 """
 function gdalclose(arg1)
     aftercare(ccall((:GDALClose, libgdal), CPLErr, (GDALDatasetH,), arg1))
+end
+
+"""
+    GDALDatasetRunCloseWithoutDestroying(GDALDatasetH hDS) -> CPLErr
+
+Run the Close() method, without running destruction of the object.
+
+### Parameters
+* **hDS**: dataset handle.
+
+### Returns
+CE_None if no error
+"""
+function gdaldatasetrunclosewithoutdestroying(hDS)
+    aftercare(
+        ccall(
+            (:GDALDatasetRunCloseWithoutDestroying, libgdal),
+            CPLErr,
+            (GDALDatasetH,),
+            hDS,
+        ),
+    )
 end
 
 """
@@ -8780,7 +8993,7 @@ end
 
 """
     GDALSetGeoTransform(GDALDatasetH hDS,
-                        double * padfTransform) -> CPLErr
+                        const double * padfTransform) -> CPLErr
 
 Set the affine transformation coefficients.
 """
@@ -8796,6 +9009,77 @@ function gdalsetgeotransform(arg1, arg2)
     )
 end
 
+struct OGREnvelope
+    MinX::Cdouble
+    MaxX::Cdouble
+    MinY::Cdouble
+    MaxY::Cdouble
+end
+
+"""
+    GDALGetExtent(GDALDatasetH hDS,
+                  OGREnvelope * psExtent,
+                  OGRSpatialReferenceH hCRS) -> CPLErr
+
+Return extent of dataset in specified CRS.
+
+### Parameters
+* **hDS**: Dataset handle. Must NOT be null.
+* **psExtent**: Pointer to output extent. Must NOT be null.
+* **hCRS**: CRS in which to express the extent. If not specified, this will be the raster CRS or the CRS of the first layer for a vector dataset.
+
+### Returns
+extent in poCRS (valid only if IsInit() method returns true)
+"""
+function gdalgetextent(arg1, arg2, hCRS)
+    aftercare(
+        ccall(
+            (:GDALGetExtent, libgdal),
+            CPLErr,
+            (GDALDatasetH, Ptr{OGREnvelope}, OGRSpatialReferenceH),
+            arg1,
+            arg2,
+            hCRS,
+        ),
+    )
+end
+
+"""
+    GDALGetExtentWGS84LongLat(GDALDatasetH hDS,
+                              OGREnvelope * psExtent) -> CPLErr
+
+Return extent of dataset in WGS84 longitude/latitude.
+
+### Parameters
+* **hDS**: Dataset handle. Must NOT be null.
+* **psExtent**: Pointer to output extent. Must NOT be null.
+
+### Returns
+extent (valid only if IsInit() method returns true)
+"""
+function gdalgetextentwgs84longlat(arg1, arg2)
+    aftercare(
+        ccall(
+            (:GDALGetExtentWGS84LongLat, libgdal),
+            CPLErr,
+            (GDALDatasetH, Ptr{OGREnvelope}),
+            arg1,
+            arg2,
+        ),
+    )
+end
+
+"""
+    GDALDatasetGeolocationToPixelLine(GDALDatasetH hDS,
+                                      double dfGeolocX,
+                                      double dfGeolocY,
+                                      OGRSpatialReferenceH hSRS,
+                                      double * pdfPixel,
+                                      double * pdfLine,
+                                      CSLConstList papszTransformerOptions) -> CPLErr
+
+Transform georeferenced coordinates to pixel/line coordinates.
+"""
 function gdaldatasetgeolocationtopixelline(
     arg1,
     dfGeolocX,
@@ -9417,75 +9701,77 @@ end
 
 List of well known binary geometry types. These are used within the BLOBs but are also returned from OGRGeometry::getGeometryType() to identify the type of a geometry object.
 
-| Enumerator               | Note                                                                                                                                  |
-| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
-| wkbUnknown               | unknown type, non-standard                                                                                                            |
-| wkbPoint                 | 0-dimensional geometric object, standard WKB                                                                                          |
-| wkbLineString            | 1-dimensional geometric object with linear interpolation between Points, standard WKB                                                 |
-| wkbPolygon               | planar 2-dimensional geometric object defined by 1 exterior boundary and 0 or more interior boundaries, standard WKB                  |
-| wkbMultiPoint            | GeometryCollection of Points, standard WKB                                                                                            |
-| wkbMultiPolygon          | GeometryCollection of Polygons, standard WKB                                                                                          |
-| wkbGeometryCollection    | geometric object that is a collection of 1 or more geometric objects, standard WKB                                                    |
-| wkbCircularString        | one or more circular arc segments connected end to end, ISO SQL/MM Part 3. GDAL >= 2.0                                                |
-| wkbCompoundCurve         | sequence of contiguous curves, ISO SQL/MM Part 3. GDAL >= 2.0                                                                         |
-| wkbCurvePolygon          | planar surface, defined by 1 exterior boundary and zero or more interior boundaries, that are curves. ISO SQL/MM Part 3. GDAL >= 2.0  |
-| wkbMultiCurve            | GeometryCollection of Curves, ISO SQL/MM Part 3. GDAL >= 2.0                                                                          |
-| wkbMultiSurface          | GeometryCollection of Surfaces, ISO SQL/MM Part 3. GDAL >= 2.0                                                                        |
-| wkbTIN                   | a PolyhedralSurface consisting only of Triangle patches ISO SQL/MM Part 3. GDAL >= 2.3                                                |
-| wkbTriangle              | a Triangle. ISO SQL/MM Part 3. GDAL >= 2.3                                                                                            |
-| wkbNone                  | non-standard, for pure attribute records                                                                                              |
-| wkbLinearRing            | non-standard, just for createGeometry()                                                                                               |
-| wkbCircularStringZ       | wkbCircularString with Z component. ISO SQL/MM Part 3. GDAL >= 2.0                                                                    |
-| wkbCompoundCurveZ        | wkbCompoundCurve with Z component. ISO SQL/MM Part 3. GDAL >= 2.0                                                                     |
-| wkbCurvePolygonZ         | wkbCurvePolygon with Z component. ISO SQL/MM Part 3. GDAL >= 2.0                                                                      |
-| wkbMultiCurveZ           | wkbMultiCurve with Z component. ISO SQL/MM Part 3. GDAL >= 2.0                                                                        |
-| wkbMultiSurfaceZ         | wkbMultiSurface with Z component. ISO SQL/MM Part 3. GDAL >= 2.0                                                                      |
-| wkbCurveZ                | wkbCurve with Z component. ISO SQL/MM Part 3. GDAL >= 2.1                                                                             |
-| wkbSurfaceZ              | wkbSurface with Z component. ISO SQL/MM Part 3. GDAL >= 2.1                                                                           |
-| wkbPolyhedralSurfaceZ    | ISO SQL/MM Part 3. GDAL >= 2.3                                                                                                        |
-| wkbTINZ                  |                                                                                                                                       |
-| wkbTriangleZ             |                                                                                                                                       |
-| wkbPointM                | ISO SQL/MM Part 3. GDAL >= 2.1                                                                                                        |
-| wkbLineStringM           |                                                                                                                                       |
-| wkbPolygonM              |                                                                                                                                       |
-| wkbMultiPointM           |                                                                                                                                       |
-| wkbMultiLineStringM      |                                                                                                                                       |
-| wkbMultiPolygonM         |                                                                                                                                       |
-| wkbGeometryCollectionM   |                                                                                                                                       |
-| wkbCircularStringM       |                                                                                                                                       |
-| wkbCompoundCurveM        |                                                                                                                                       |
-| wkbCurvePolygonM         |                                                                                                                                       |
-| wkbMultiCurveM           |                                                                                                                                       |
-| wkbMultiSurfaceM         |                                                                                                                                       |
-| wkbCurveM                |                                                                                                                                       |
-| wkbSurfaceM              |                                                                                                                                       |
-| wkbPolyhedralSurfaceM    | ISO SQL/MM Part 3. GDAL >= 2.3                                                                                                        |
-| wkbTINM                  |                                                                                                                                       |
-| wkbTriangleM             |                                                                                                                                       |
-| wkbPointZM               | ISO SQL/MM Part 3. GDAL >= 2.1                                                                                                        |
-| wkbLineStringZM          |                                                                                                                                       |
-| wkbPolygonZM             |                                                                                                                                       |
-| wkbMultiPointZM          |                                                                                                                                       |
-| wkbMultiLineStringZM     |                                                                                                                                       |
-| wkbMultiPolygonZM        |                                                                                                                                       |
-| wkbGeometryCollectionZM  |                                                                                                                                       |
-| wkbCircularStringZM      |                                                                                                                                       |
-| wkbCompoundCurveZM       |                                                                                                                                       |
-| wkbCurvePolygonZM        |                                                                                                                                       |
-| wkbMultiCurveZM          |                                                                                                                                       |
-| wkbMultiSurfaceZM        |                                                                                                                                       |
-| wkbCurveZM               |                                                                                                                                       |
-| wkbSurfaceZM             |                                                                                                                                       |
-| wkbPolyhedralSurfaceZM   | ISO SQL/MM Part 3. GDAL >= 2.3                                                                                                        |
-| wkbTINZM                 |                                                                                                                                       |
-| wkbTriangleZM            |                                                                                                                                       |
-| wkbPoint25D              | 2.5D extension as per 99-402                                                                                                          |
-| wkbLineString25D         |                                                                                                                                       |
-| wkbPolygon25D            |                                                                                                                                       |
-| wkbMultiPoint25D         |                                                                                                                                       |
-| wkbMultiLineString25D    |                                                                                                                                       |
-| wkbMultiPolygon25D       |                                                                                                                                       |
-| wkbGeometryCollection25D |                                                                                                                                       |
+| Enumerator               | Note                                                                                                                      |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| wkbUnknown               | unknown type, non-standard                                                                                                |
+| wkbPoint                 | 0-dimensional geometric object, standard WKB                                                                              |
+| wkbLineString            | 1-dimensional geometric object with linear interpolation between Points, standard WKB                                     |
+| wkbPolygon               | planar 2-dimensional geometric object defined by 1 exterior boundary and 0 or more interior boundaries, standard WKB      |
+| wkbMultiPoint            | GeometryCollection of Points, standard WKB                                                                                |
+| wkbMultiPolygon          | GeometryCollection of Polygons, standard WKB                                                                              |
+| wkbGeometryCollection    | geometric object that is a collection of 1 or more geometric objects, standard WKB                                        |
+| wkbCircularString        | one or more circular arc segments connected end to end, ISO SQL/MM Part 3.                                                |
+| wkbCompoundCurve         | sequence of contiguous curves, ISO SQL/MM Part 3.                                                                         |
+| wkbCurvePolygon          | planar surface, defined by 1 exterior boundary and zero or more interior boundaries, that are curves. ISO SQL/MM Part 3.  |
+| wkbMultiCurve            | GeometryCollection of Curves, ISO SQL/MM Part 3.                                                                          |
+| wkbMultiSurface          | GeometryCollection of Surfaces, ISO SQL/MM Part 3.                                                                        |
+| wkbCurve                 | Curve (abstract type). ISO SQL/MM Part 3.                                                                                 |
+| wkbSurface               | Surface (abstract type). ISO SQL/MM Part 3.                                                                               |
+| wkbTIN                   | a PolyhedralSurface consisting only of Triangle patches ISO SQL/MM Part 3.                                                |
+| wkbTriangle              | a Triangle. ISO SQL/MM Part 3.                                                                                            |
+| wkbNone                  | non-standard, for pure attribute records                                                                                  |
+| wkbLinearRing            | non-standard, just for createGeometry()                                                                                   |
+| wkbCircularStringZ       | wkbCircularString with Z component. ISO SQL/MM Part 3.                                                                    |
+| wkbCompoundCurveZ        | wkbCompoundCurve with Z component. ISO SQL/MM Part 3.                                                                     |
+| wkbCurvePolygonZ         | wkbCurvePolygon with Z component. ISO SQL/MM Part 3.                                                                      |
+| wkbMultiCurveZ           | wkbMultiCurve with Z component. ISO SQL/MM Part 3.                                                                        |
+| wkbMultiSurfaceZ         | wkbMultiSurface with Z component. ISO SQL/MM Part 3.                                                                      |
+| wkbCurveZ                | wkbCurve with Z component. ISO SQL/MM Part 3.                                                                             |
+| wkbSurfaceZ              | wkbSurface with Z component. ISO SQL/MM Part 3.                                                                           |
+| wkbPolyhedralSurfaceZ    | ISO SQL/MM Part 3.                                                                                                        |
+| wkbTINZ                  |                                                                                                                           |
+| wkbTriangleZ             |                                                                                                                           |
+| wkbPointM                |                                                                                                                           |
+| wkbLineStringM           |                                                                                                                           |
+| wkbPolygonM              |                                                                                                                           |
+| wkbMultiPointM           |                                                                                                                           |
+| wkbMultiLineStringM      |                                                                                                                           |
+| wkbMultiPolygonM         |                                                                                                                           |
+| wkbGeometryCollectionM   |                                                                                                                           |
+| wkbCircularStringM       |                                                                                                                           |
+| wkbCompoundCurveM        |                                                                                                                           |
+| wkbCurvePolygonM         |                                                                                                                           |
+| wkbMultiCurveM           |                                                                                                                           |
+| wkbMultiSurfaceM         |                                                                                                                           |
+| wkbCurveM                |                                                                                                                           |
+| wkbSurfaceM              |                                                                                                                           |
+| wkbPolyhedralSurfaceM    |                                                                                                                           |
+| wkbTINM                  |                                                                                                                           |
+| wkbTriangleM             |                                                                                                                           |
+| wkbPointZM               |                                                                                                                           |
+| wkbLineStringZM          |                                                                                                                           |
+| wkbPolygonZM             |                                                                                                                           |
+| wkbMultiPointZM          |                                                                                                                           |
+| wkbMultiLineStringZM     |                                                                                                                           |
+| wkbMultiPolygonZM        |                                                                                                                           |
+| wkbGeometryCollectionZM  |                                                                                                                           |
+| wkbCircularStringZM      |                                                                                                                           |
+| wkbCompoundCurveZM       |                                                                                                                           |
+| wkbCurvePolygonZM        |                                                                                                                           |
+| wkbMultiCurveZM          |                                                                                                                           |
+| wkbMultiSurfaceZM        |                                                                                                                           |
+| wkbCurveZM               |                                                                                                                           |
+| wkbSurfaceZM             |                                                                                                                           |
+| wkbPolyhedralSurfaceZM   |                                                                                                                           |
+| wkbTINZM                 |                                                                                                                           |
+| wkbTriangleZM            |                                                                                                                           |
+| wkbPoint25D              | 2.5D extension as per 99-402                                                                                              |
+| wkbLineString25D         |                                                                                                                           |
+| wkbPolygon25D            |                                                                                                                           |
+| wkbMultiPoint25D         |                                                                                                                           |
+| wkbMultiLineString25D    |                                                                                                                           |
+| wkbMultiPolygon25D       |                                                                                                                           |
+| wkbGeometryCollection25D |                                                                                                                           |
 """
 @cenum OGRwkbGeometryType::UInt32 begin
     wkbUnknown = 0
@@ -9924,6 +10210,31 @@ function gdaldatasetclearstatistics(hDS)
 end
 
 """
+    GDALDatasetAsMDArray(GDALDatasetH hDS,
+                         CSLConstList papszOptions) -> GDALMDArrayH
+
+Return a view of this dataset as a 3D multidimensional GDALMDArray.
+
+### Parameters
+* **hDS**: Dataset handle.
+* **papszOptions**: Null-terminated list of strings, or nullptr.
+
+### Returns
+a new array, or NULL.
+"""
+function gdaldatasetasmdarray(hDS, papszOptions)
+    aftercare(
+        ccall(
+            (:GDALDatasetAsMDArray, libgdal),
+            GDALMDArrayH,
+            (GDALDatasetH, CSLConstList),
+            hDS,
+            papszOptions,
+        ),
+    )
+end
+
+"""
     GDALDatasetGetFieldDomainNames(GDALDatasetH hDS,
                                    CSLConstList papszOptions) -> char **
 
@@ -10358,11 +10669,7 @@ function gdaldestroysubdatasetinfo(hInfo)
     )
 end
 
-"""
-Type of functions to pass to [`GDALAddDerivedBandPixelFunc`](@ref).
-
-\\since GDAL 2.2
-"""
+"Type of functions to pass to [`GDALAddDerivedBandPixelFunc`](@ref)"
 const GDALDerivedPixelFunc = Ptr{Cvoid}
 
 """
@@ -11245,6 +11552,17 @@ function gdalcomputerasterminmax(hBand, bApproxOK, adfMinMax)
     )
 end
 
+"""
+    GDALComputeRasterMinMaxLocation(GDALRasterBandH hBand,
+                                    double * pdfMin,
+                                    double * pdfMax,
+                                    int * pnMinX,
+                                    int * pnMinY,
+                                    int * pnMaxX,
+                                    int * pnMaxY) -> CPLErr
+
+Compute the min/max values for a band, and their location.
+"""
 function gdalcomputerasterminmaxlocation(
     hBand,
     pdfMin,
@@ -11839,6 +12157,18 @@ function gdalrasterinterpolateatpoint(
     )
 end
 
+"""
+    GDALRasterInterpolateAtGeolocation(GDALRasterBandH hBand,
+                                       double dfGeolocX,
+                                       double dfGeolocY,
+                                       OGRSpatialReferenceH hSRS,
+                                       GDALRIOResampleAlg eInterpolation,
+                                       double * pdfRealValue,
+                                       double * pdfImagValue,
+                                       CSLConstList papszTransformerOptions) -> CPLErr
+
+Interpolates the value between pixels using a resampling algorithm, taking georeferenced coordinates as input.
+"""
 function gdalrasterinterpolateatgeolocation(
     hBand,
     dfGeolocX,
@@ -12126,6 +12456,316 @@ function gdalgetdatacoveragestatus(
 end
 
 """
+    GDALComputedRasterBandRelease(GDALComputedRasterBandH hBand) -> void
+
+Release a GDALComputedRasterBandH.
+"""
+function gdalcomputedrasterbandrelease(hBand)
+    aftercare(
+        ccall(
+            (:GDALComputedRasterBandRelease, libgdal),
+            Cvoid,
+            (GDALComputedRasterBandH,),
+            hBand,
+        ),
+    )
+end
+
+"""
+    GDALRasterAlgebraUnaryOperation
+
+Raster algebra unary operation
+
+| Enumerator            | Note                                           |
+| :-------------------- | :--------------------------------------------- |
+| GRAUO\\_LOGICAL\\_NOT | Logical not                                    |
+| GRAUO\\_ABS           | Absolute value (module for complex data type)  |
+| GRAUO\\_SQRT          | Square root                                    |
+| GRAUO\\_LOG           | Natural logarithm (``ln``)                     |
+| GRAUO\\_LOG10         | Logarithm base 10                              |
+"""
+@cenum GDALRasterAlgebraUnaryOperation::UInt32 begin
+    GRAUO_LOGICAL_NOT = 0
+    GRAUO_ABS = 1
+    GRAUO_SQRT = 2
+    GRAUO_LOG = 3
+    GRAUO_LOG10 = 4
+end
+
+"""
+    GDALRasterBandUnaryOp(GDALRasterBandH hBand,
+                          GDALRasterAlgebraUnaryOperation eOp) -> GDALComputedRasterBandH
+
+Apply a unary operation on this band.
+
+### Returns
+a handle to free with GDALComputedRasterBandRelease(), or nullptr if error.
+"""
+function gdalrasterbandunaryop(hBand, eOp)
+    aftercare(
+        ccall(
+            (:GDALRasterBandUnaryOp, libgdal),
+            GDALComputedRasterBandH,
+            (GDALRasterBandH, GDALRasterAlgebraUnaryOperation),
+            hBand,
+            eOp,
+        ),
+    )
+end
+
+"""
+    GDALRasterAlgebraBinaryOperation
+
+Raster algebra binary operation
+
+| Enumerator            | Note                        |
+| :-------------------- | :-------------------------- |
+| GRABO\\_ADD           | Addition                    |
+| GRABO\\_SUB           | Subtraction                 |
+| GRABO\\_MUL           | Multiplication              |
+| GRABO\\_DIV           | Division                    |
+| GRABO\\_POW           | Power                       |
+| GRABO\\_GT            | Strictly greater than test  |
+| GRABO\\_GE            | Greater or equal to test    |
+| GRABO\\_LT            | Strictly lesser than test   |
+| GRABO\\_LE            | Lesser or equal to test     |
+| GRABO\\_EQ            | Equality test               |
+| GRABO\\_NE            | Non-equality test           |
+| GRABO\\_LOGICAL\\_AND | Logical and                 |
+| GRABO\\_LOGICAL\\_OR  | Logical or                  |
+"""
+@cenum GDALRasterAlgebraBinaryOperation::UInt32 begin
+    GRABO_ADD = 0
+    GRABO_SUB = 1
+    GRABO_MUL = 2
+    GRABO_DIV = 3
+    GRABO_POW = 4
+    GRABO_GT = 5
+    GRABO_GE = 6
+    GRABO_LT = 7
+    GRABO_LE = 8
+    GRABO_EQ = 9
+    GRABO_NE = 10
+    GRABO_LOGICAL_AND = 11
+    GRABO_LOGICAL_OR = 12
+end
+
+"""
+    GDALRasterBandBinaryOpBand(GDALRasterBandH hBand,
+                               GDALRasterAlgebraBinaryOperation eOp,
+                               GDALRasterBandH hOtherBand) -> GDALComputedRasterBandH
+
+Apply a binary operation on this band with another one.
+
+### Returns
+a handle to free with GDALComputedRasterBandRelease(), or nullptr if error.
+"""
+function gdalrasterbandbinaryopband(hBand, eOp, hOtherBand)
+    aftercare(
+        ccall(
+            (:GDALRasterBandBinaryOpBand, libgdal),
+            GDALComputedRasterBandH,
+            (GDALRasterBandH, GDALRasterAlgebraBinaryOperation, GDALRasterBandH),
+            hBand,
+            eOp,
+            hOtherBand,
+        ),
+    )
+end
+
+"""
+    GDALRasterBandBinaryOpDouble(GDALRasterBandH hBand,
+                                 GDALRasterAlgebraBinaryOperation eOp,
+                                 double constant) -> GDALComputedRasterBandH
+
+Apply a binary operation on this band with a constant.
+
+### Returns
+a handle to free with GDALComputedRasterBandRelease(), or nullptr if error.
+"""
+function gdalrasterbandbinaryopdouble(hBand, eOp, constant)
+    aftercare(
+        ccall(
+            (:GDALRasterBandBinaryOpDouble, libgdal),
+            GDALComputedRasterBandH,
+            (GDALRasterBandH, GDALRasterAlgebraBinaryOperation, Cdouble),
+            hBand,
+            eOp,
+            constant,
+        ),
+    )
+end
+
+"""
+    GDALRasterBandBinaryOpDoubleToBand(double constant,
+                                       GDALRasterAlgebraBinaryOperation eOp,
+                                       GDALRasterBandH hBand) -> GDALComputedRasterBandH
+
+Apply a binary operation on the constant with this band.
+
+### Returns
+a handle to free with GDALComputedRasterBandRelease(), or nullptr if error.
+"""
+function gdalrasterbandbinaryopdoubletoband(constant, eOp, hBand)
+    aftercare(
+        ccall(
+            (:GDALRasterBandBinaryOpDoubleToBand, libgdal),
+            GDALComputedRasterBandH,
+            (Cdouble, GDALRasterAlgebraBinaryOperation, GDALRasterBandH),
+            constant,
+            eOp,
+            hBand,
+        ),
+    )
+end
+
+"""
+    GDALRasterBandIfThenElse(GDALRasterBandH hCondBand,
+                             GDALRasterBandH hThenBand,
+                             GDALRasterBandH hElseBand) -> GDALComputedRasterBandH
+
+Return a band whose value is hThenBand if the corresponding pixel in hCondBand is not zero, or the one from hElseBand otherwise.
+"""
+function gdalrasterbandifthenelse(hCondBand, hThenBand, hElseBand)
+    aftercare(
+        ccall(
+            (:GDALRasterBandIfThenElse, libgdal),
+            GDALComputedRasterBandH,
+            (GDALRasterBandH, GDALRasterBandH, GDALRasterBandH),
+            hCondBand,
+            hThenBand,
+            hElseBand,
+        ),
+    )
+end
+
+"""
+    GDALRasterBandAsDataType(GDALRasterBandH hBand,
+                             GDALDataType eDT) -> GDALComputedRasterBandH
+
+Cast this band to another type.
+
+### Returns
+a handle to free with GDALComputedRasterBandRelease(), or nullptr if error.
+"""
+function gdalrasterbandasdatatype(hBand, eDT)
+    aftercare(
+        ccall(
+            (:GDALRasterBandAsDataType, libgdal),
+            GDALComputedRasterBandH,
+            (GDALRasterBandH, GDALDataType),
+            hBand,
+            eDT,
+        ),
+    )
+end
+
+"""
+    GDALMaximumOfNBands(size_t nBandCount,
+                        GDALRasterBandH * pahBands) -> GDALComputedRasterBandH
+
+Return a band whose each pixel value is the maximum of the corresponding pixel values in the input bands.
+
+### Returns
+a handle to free with GDALComputedRasterBandRelease(), or nullptr if error.
+"""
+function gdalmaximumofnbands(nBandCount, pahBands)
+    aftercare(
+        ccall(
+            (:GDALMaximumOfNBands, libgdal),
+            GDALComputedRasterBandH,
+            (Csize_t, Ptr{GDALRasterBandH}),
+            nBandCount,
+            pahBands,
+        ),
+    )
+end
+
+"""
+    GDALRasterBandMaxConstant(GDALRasterBandH hBand,
+                              double dfConstant) -> GDALComputedRasterBandH
+
+Return a band whose each pixel value is the maximum of the corresponding pixel values in the input band and the constant.
+
+### Returns
+a handle to free with GDALComputedRasterBandRelease(), or nullptr if error.
+"""
+function gdalrasterbandmaxconstant(hBand, dfConstant)
+    aftercare(
+        ccall(
+            (:GDALRasterBandMaxConstant, libgdal),
+            GDALComputedRasterBandH,
+            (GDALRasterBandH, Cdouble),
+            hBand,
+            dfConstant,
+        ),
+    )
+end
+
+"""
+    GDALMinimumOfNBands(size_t nBandCount,
+                        GDALRasterBandH * pahBands) -> GDALComputedRasterBandH
+
+Return a band whose each pixel value is the minimum of the corresponding pixel values in the input bands.
+
+### Returns
+a handle to free with GDALComputedRasterBandRelease(), or nullptr if error.
+"""
+function gdalminimumofnbands(nBandCount, pahBands)
+    aftercare(
+        ccall(
+            (:GDALMinimumOfNBands, libgdal),
+            GDALComputedRasterBandH,
+            (Csize_t, Ptr{GDALRasterBandH}),
+            nBandCount,
+            pahBands,
+        ),
+    )
+end
+
+"""
+    GDALRasterBandMinConstant(GDALRasterBandH hBand,
+                              double dfConstant) -> GDALComputedRasterBandH
+
+Return a band whose each pixel value is the minimum of the corresponding pixel values in the input band and the constant.
+
+### Returns
+a handle to free with GDALComputedRasterBandRelease(), or nullptr if error.
+"""
+function gdalrasterbandminconstant(hBand, dfConstant)
+    aftercare(
+        ccall(
+            (:GDALRasterBandMinConstant, libgdal),
+            GDALComputedRasterBandH,
+            (GDALRasterBandH, Cdouble),
+            hBand,
+            dfConstant,
+        ),
+    )
+end
+
+"""
+    GDALMeanOfNBands(size_t nBandCount,
+                     GDALRasterBandH * pahBands) -> GDALComputedRasterBandH
+
+Return a band whose each pixel value is the arithmetic mean of the corresponding pixel values in the input bands.
+
+### Returns
+a handle to free with GDALComputedRasterBandRelease(), or nullptr if error.
+"""
+function gdalmeanofnbands(nBandCount, pahBands)
+    aftercare(
+        ccall(
+            (:GDALMeanOfNBands, libgdal),
+            GDALComputedRasterBandH,
+            (Csize_t, Ptr{GDALRasterBandH}),
+            nBandCount,
+            pahBands,
+        ),
+    )
+end
+
+"""
     GDALARGetNextUpdatedRegion(GDALAsyncReaderH hARIO,
                                double dfTimeout,
                                int * pnBufXOff,
@@ -12216,7 +12856,7 @@ General utility option processing.
 ### Parameters
 * **nArgc**: number of values in the argument list.
 * **ppapszArgv**: pointer to the argument list array (will be updated in place).
-* **nOptions**: a or-able combination of GDAL_OF_RASTER and GDAL_OF_VECTOR to determine which drivers should be displayed by formats. If set to 0, GDAL_OF_RASTER is assumed.
+* **nOptions**: a or-able combination of GDAL_OF_RASTER and GDAL_OF_VECTOR to determine which drivers should be displayed by --formats. If set to 0, GDAL_OF_RASTER is assumed.
 
 ### Returns
 updated nArgc argument count. Return of 0 requests terminate without error, return of -1 requests exit with error code.
@@ -12451,6 +13091,13 @@ function gdaldeinterleave(
     )
 end
 
+"""
+    GDALTranspose2D(const void * pSrc,
+                    GDALDataType eSrcType,
+                    DST * pDst,
+                    size_t nSrcWidth,
+                    size_t nSrcHeight) -> void
+"""
 function gdaltranspose2d(pSrc, eSrcType, pDst, eDstType, nSrcWidth, nSrcHeight)
     aftercare(
         ccall(
@@ -12968,16 +13615,22 @@ end
 
 Field type of raster attribute table
 
-| Enumerator    | Note                           |
-| :------------ | :----------------------------- |
-| GFT\\_Integer | Integer field                  |
-| GFT\\_Real    | Floating point (double) field  |
-| GFT\\_String  | String field                   |
+| Enumerator        | Note                                   |
+| :---------------- | :------------------------------------- |
+| GFT\\_Integer     | Integer field                          |
+| GFT\\_Real        | Floating point (double) field          |
+| GFT\\_String      | String field                           |
+| GFT\\_Boolean     | Boolean field (GDAL >= 3.12)           |
+| GFT\\_DateTime    | DateTime field (GDAL >= 3.12)          |
+| GFT\\_WKBGeometry | Geometry field, as WKB (GDAL >= 3.12)  |
 """
 @cenum GDALRATFieldType::UInt32 begin
     GFT_Integer = 0
     GFT_Real = 1
     GFT_String = 2
+    GFT_Boolean = 3
+    GFT_DateTime = 4
+    GFT_WKBGeometry = 5
 end
 
 """
@@ -13033,8 +13686,6 @@ end
     GDALRATTableType
 
 RAT table type (thematic or athematic)
-
-\\since GDAL 2.4
 
 | Enumerator       | Note                  |
 | :--------------- | :-------------------- |
@@ -13161,6 +13812,30 @@ function gdalratgettypeofcol(arg1, arg2)
 end
 
 """
+    GDALGetRATFieldTypeName(GDALRATFieldType eType) -> const char *
+
+Return the string representation of a GDALRATFieldType.
+"""
+function gdalgetratfieldtypename(arg1)
+    aftercare(
+        ccall((:GDALGetRATFieldTypeName, libgdal), Cstring, (GDALRATFieldType,), arg1),
+        false,
+    )
+end
+
+"""
+    GDALGetRATFieldUsageName(GDALRATFieldUsage eUsage) -> const char *
+
+Return the string representation of a GDALRATFieldUsage.
+"""
+function gdalgetratfieldusagename(arg1)
+    aftercare(
+        ccall((:GDALGetRATFieldUsageName, libgdal), Cstring, (GDALRATFieldUsage,), arg1),
+        false,
+    )
+end
+
+"""
     GDALRATGetColOfUsage(GDALRasterAttributeTableH hRAT,
                          GDALRATFieldUsage eUsage) -> int
 
@@ -13196,15 +13871,15 @@ end
 
 Fetch field value as a string.
 """
-function gdalratgetvalueasstring(arg1, arg2, arg3)
+function gdalratgetvalueasstring(arg1, iRow, iField)
     aftercare(
         ccall(
             (:GDALRATGetValueAsString, libgdal),
             Cstring,
             (GDALRasterAttributeTableH, Cint, Cint),
             arg1,
-            arg2,
-            arg3,
+            iRow,
+            iField,
         ),
         false,
     )
@@ -13217,15 +13892,15 @@ end
 
 Fetch field value as a integer.
 """
-function gdalratgetvalueasint(arg1, arg2, arg3)
+function gdalratgetvalueasint(arg1, iRow, iField)
     aftercare(
         ccall(
             (:GDALRATGetValueAsInt, libgdal),
             Cint,
             (GDALRasterAttributeTableH, Cint, Cint),
             arg1,
-            arg2,
-            arg3,
+            iRow,
+            iField,
         ),
     )
 end
@@ -13237,15 +13912,109 @@ end
 
 Fetch field value as a double.
 """
-function gdalratgetvalueasdouble(arg1, arg2, arg3)
+function gdalratgetvalueasdouble(arg1, iRow, iField)
     aftercare(
         ccall(
             (:GDALRATGetValueAsDouble, libgdal),
             Cdouble,
             (GDALRasterAttributeTableH, Cint, Cint),
             arg1,
-            arg2,
-            arg3,
+            iRow,
+            iField,
+        ),
+    )
+end
+
+"""
+    GDALRATGetValueAsBoolean(GDALRasterAttributeTableH hRAT,
+                             int iRow,
+                             int iField) -> bool
+
+Fetch field value as a boolean.
+"""
+function gdalratgetvalueasboolean(arg1, iRow, iField)
+    aftercare(
+        ccall(
+            (:GDALRATGetValueAsBoolean, libgdal),
+            Bool,
+            (GDALRasterAttributeTableH, Cint, Cint),
+            arg1,
+            iRow,
+            iField,
+        ),
+    )
+end
+
+"""
+    GDALRATDateTime
+
+Structure encoding a DateTime field for a GDAL Raster Attribute Table.
+
+\\since 3.12
+
+| Field             | Note                                     |
+| :---------------- | :--------------------------------------- |
+| nYear             | Year                                     |
+| nMonth            | Month [1, 12]                            |
+| nDay              | Day [1, 31]                              |
+| nHour             | Hour [0, 23]                             |
+| nMinute           | Minute [0, 59]                           |
+| fSecond           | Second [0, 61)                           |
+| nTimeZoneHour     | Time zone hour [0, 23]                   |
+| nTimeZoneMinute   | Time zone minute: 0, 15, 30, 45          |
+| bPositiveTimeZone | Whether time zone is positive (or null)  |
+| bIsValid          | Whether this object is valid             |
+"""
+struct GDALRATDateTime
+    nYear::Cint
+    nMonth::Cint
+    nDay::Cint
+    nHour::Cint
+    nMinute::Cint
+    fSecond::Cfloat
+    nTimeZoneHour::Cint
+    nTimeZoneMinute::Cint
+    bPositiveTimeZone::Bool
+    bIsValid::Bool
+end
+
+"""
+    gdalratgetvalueasdatetime(arg1, iRow, iField, psDateTime)
+
+` `
+"""
+function gdalratgetvalueasdatetime(arg1, iRow, iField, psDateTime)
+    aftercare(
+        ccall(
+            (:GDALRATGetValueAsDateTime, libgdal),
+            CPLErr,
+            (GDALRasterAttributeTableH, Cint, Cint, Ptr{GDALRATDateTime}),
+            arg1,
+            iRow,
+            iField,
+            psDateTime,
+        ),
+    )
+end
+
+"""
+    GDALRATGetValueAsWKBGeometry(GDALRasterAttributeTableH hRAT,
+                                 int iRow,
+                                 int iField,
+                                 size_t * pnWKBSize) -> const GByte *
+
+Fetch field value as a WKB-encoded geometry.
+"""
+function gdalratgetvalueaswkbgeometry(arg1, iRow, iField, pnWKBSize)
+    aftercare(
+        ccall(
+            (:GDALRATGetValueAsWKBGeometry, libgdal),
+            Ptr{GByte},
+            (GDALRasterAttributeTableH, Cint, Cint, Ptr{Csize_t}),
+            arg1,
+            iRow,
+            iField,
+            pnWKBSize,
         ),
     )
 end
@@ -13264,15 +14033,15 @@ Set field value from string.
 * **iField**: field index.
 * **pszValue**: value.
 """
-function gdalratsetvalueasstring(arg1, arg2, arg3, arg4)
+function gdalratsetvalueasstring(arg1, iRow, iField, arg4)
     aftercare(
         ccall(
             (:GDALRATSetValueAsString, libgdal),
             Cvoid,
             (GDALRasterAttributeTableH, Cint, Cint, Cstring),
             arg1,
-            arg2,
-            arg3,
+            iRow,
+            iField,
             arg4,
         ),
     )
@@ -13286,15 +14055,15 @@ end
 
 Set field value from integer.
 """
-function gdalratsetvalueasint(arg1, arg2, arg3, arg4)
+function gdalratsetvalueasint(arg1, iRow, iField, arg4)
     aftercare(
         ccall(
             (:GDALRATSetValueAsInt, libgdal),
             Cvoid,
             (GDALRasterAttributeTableH, Cint, Cint, Cint),
             arg1,
-            arg2,
-            arg3,
+            iRow,
+            iField,
             arg4,
         ),
     )
@@ -13308,16 +14077,84 @@ end
 
 Set field value from double.
 """
-function gdalratsetvalueasdouble(arg1, arg2, arg3, arg4)
+function gdalratsetvalueasdouble(arg1, iRow, iField, arg4)
     aftercare(
         ccall(
             (:GDALRATSetValueAsDouble, libgdal),
             Cvoid,
             (GDALRasterAttributeTableH, Cint, Cint, Cdouble),
             arg1,
-            arg2,
-            arg3,
+            iRow,
+            iField,
             arg4,
+        ),
+    )
+end
+
+"""
+    GDALRATSetValueAsBoolean(GDALRasterAttributeTableH hRAT,
+                             int iRow,
+                             int iField,
+                             bool bValue) -> CPLErr
+
+Set field value from a boolean value.
+"""
+function gdalratsetvalueasboolean(arg1, iRow, iField, arg4)
+    aftercare(
+        ccall(
+            (:GDALRATSetValueAsBoolean, libgdal),
+            CPLErr,
+            (GDALRasterAttributeTableH, Cint, Cint, Bool),
+            arg1,
+            iRow,
+            iField,
+            arg4,
+        ),
+    )
+end
+
+"""
+    GDALRATSetValueAsDateTime(GDALRasterAttributeTableH hRAT,
+                              int iRow,
+                              int iField,
+                              const GDALRATDateTime * psDateTime) -> CPLErr
+
+Set field value from datetime.
+"""
+function gdalratsetvalueasdatetime(arg1, iRow, iField, psDateTime)
+    aftercare(
+        ccall(
+            (:GDALRATSetValueAsDateTime, libgdal),
+            CPLErr,
+            (GDALRasterAttributeTableH, Cint, Cint, Ptr{GDALRATDateTime}),
+            arg1,
+            iRow,
+            iField,
+            psDateTime,
+        ),
+    )
+end
+
+"""
+    GDALRATSetValueAsWKBGeometry(GDALRasterAttributeTableH hRAT,
+                                 int iRow,
+                                 int iField,
+                                 const void * pabyWKB,
+                                 size_t nWKBSize) -> CPLErr
+
+Set field value from a WKB-encoded geometry.
+"""
+function gdalratsetvalueaswkbgeometry(arg1, iRow, iField, pabyWKB, nWKBSize)
+    aftercare(
+        ccall(
+            (:GDALRATSetValueAsWKBGeometry, libgdal),
+            CPLErr,
+            (GDALRasterAttributeTableH, Cint, Cint, Ptr{Cvoid}, Csize_t),
+            arg1,
+            iRow,
+            iField,
+            pabyWKB,
+            nWKBSize,
         ),
     )
 end
@@ -13412,6 +14249,102 @@ function gdalratvaluesioasstring(hRAT, eRWFlag, iField, iStartRow, iLength, paps
             iStartRow,
             iLength,
             papszStrList,
+        ),
+    )
+end
+
+"""
+    GDALRATValuesIOAsBoolean(GDALRasterAttributeTableH hRAT,
+                             GDALRWFlag eRWFlag,
+                             int iField,
+                             int iStartRow,
+                             int iLength,
+                             bool * pbData) -> CPLErr
+
+Read or Write a block of booleans to/from the Attribute Table.
+"""
+function gdalratvaluesioasboolean(hRAT, eRWFlag, iField, iStartRow, iLength, pbData)
+    aftercare(
+        ccall(
+            (:GDALRATValuesIOAsBoolean, libgdal),
+            CPLErr,
+            (GDALRasterAttributeTableH, GDALRWFlag, Cint, Cint, Cint, Ptr{Bool}),
+            hRAT,
+            eRWFlag,
+            iField,
+            iStartRow,
+            iLength,
+            pbData,
+        ),
+    )
+end
+
+"""
+    GDALRATValuesIOAsDateTime(GDALRasterAttributeTableH hRAT,
+                              GDALRWFlag eRWFlag,
+                              int iField,
+                              int iStartRow,
+                              int iLength,
+                              GDALRATDateTime * psDateTime) -> CPLErr
+
+Read or Write a block of date-times to/from the Attribute Table.
+"""
+function gdalratvaluesioasdatetime(hRAT, eRWFlag, iField, iStartRow, iLength, pasDateTime)
+    aftercare(
+        ccall(
+            (:GDALRATValuesIOAsDateTime, libgdal),
+            CPLErr,
+            (GDALRasterAttributeTableH, GDALRWFlag, Cint, Cint, Cint, Ptr{GDALRATDateTime}),
+            hRAT,
+            eRWFlag,
+            iField,
+            iStartRow,
+            iLength,
+            pasDateTime,
+        ),
+    )
+end
+
+"""
+    GDALRATValuesIOAsWKBGeometry(GDALRasterAttributeTableH hRAT,
+                                 GDALRWFlag eRWFlag,
+                                 int iField,
+                                 int iStartRow,
+                                 int iLength,
+                                 GByte ** ppabyWKB,
+                                 size_t * pnWKBSize) -> CPLErr
+
+Read or Write a block of WKB-encoded geometries to/from the Attribute Table.
+"""
+function gdalratvaluesioaswkbgeometry(
+    hRAT,
+    eRWFlag,
+    iField,
+    iStartRow,
+    iLength,
+    ppabyWKB,
+    pnWKBSize,
+)
+    aftercare(
+        ccall(
+            (:GDALRATValuesIOAsWKBGeometry, libgdal),
+            CPLErr,
+            (
+                GDALRasterAttributeTableH,
+                GDALRWFlag,
+                Cint,
+                Cint,
+                Cint,
+                Ptr{Ptr{GByte}},
+                Ptr{Csize_t},
+            ),
+            hRAT,
+            eRWFlag,
+            iField,
+            iStartRow,
+            iLength,
+            ppabyWKB,
+            pnWKBSize,
         ),
     )
 end
@@ -14775,7 +15708,7 @@ end
 Return a new GDALExtendedDataType of class GEDTC_NUMERIC.
 
 ### Parameters
-* **eType**: Numeric data type.
+* **eType**: Numeric data type. Must be different from GDT_Unknown and GDT_TypeCount
 
 ### Returns
 a new GDALExtendedDataTypeH handle, or nullptr.
@@ -15079,6 +16012,28 @@ function gdalextendeddatatypegetsubtype(hEDT)
 end
 
 """
+    GDALExtendedDataTypeGetRAT(GDALExtendedDataTypeH hEDT) -> GDALRasterAttributeTableH
+
+Return associated raster attribute table, when there is one.
+
+### Parameters
+* **hEDT**: Data type.
+
+### Returns
+raster attribute (owned by GDALExtendedDataTypeH), or NULL
+"""
+function gdalextendeddatatypegetrat(hEDT)
+    aftercare(
+        ccall(
+            (:GDALExtendedDataTypeGetRAT, libgdal),
+            GDALRasterAttributeTableH,
+            (GDALExtendedDataTypeH,),
+            hEDT,
+        ),
+    )
+end
+
+"""
     GDALEDTComponentCreate(const char * pszName,
                            size_t nOffset,
                            GDALExtendedDataTypeH hType) -> GDALEDTComponentH
@@ -15208,6 +16163,16 @@ function gdalgroupgetmdarraynames(hGroup, papszOptions)
     )
 end
 
+"""
+    GDALGroupGetMDArrayFullNamesRecursive(GDALGroupH hGroup,
+                                          CSLConstList papszGroupOptions,
+                                          CSLConstList papszArrayOptions) -> char **
+
+Return the list of multidimensional array full names contained in this group and its subgroups.
+
+### Returns
+the array names, to be freed with CSLDestroy()
+"""
 function gdalgroupgetmdarrayfullnamesrecursive(hGroup, papszGroupOptions, papszArrayOptions)
     aftercare(
         ccall(
@@ -15733,6 +16698,36 @@ function gdalgroupsubsetdimensionfromselection(hGroup, pszSelection, papszOption
             hGroup,
             pszSelection,
             papszOptions,
+        ),
+    )
+end
+
+"""
+    GDALGroupGetDataTypeCount(GDALGroupH hGroup) -> size_t
+
+Return the number of data types associated with the group (typically enumerations).
+"""
+function gdalgroupgetdatatypecount(hGroup)
+    aftercare(ccall((:GDALGroupGetDataTypeCount, libgdal), Csize_t, (GDALGroupH,), hGroup))
+end
+
+"""
+    GDALGroupGetDataType(GDALGroupH hGroup,
+                         size_t nIdx) -> GDALExtendedDataTypeH
+
+Return one of the data types associated with the group.
+
+### Returns
+a type to release with GDALExtendedDataTypeRelease() once done, or nullptr in case of error.
+"""
+function gdalgroupgetdatatype(hGroup, nIdx)
+    aftercare(
+        ccall(
+            (:GDALGroupGetDataType, libgdal),
+            GDALExtendedDataTypeH,
+            (GDALGroupH, Csize_t),
+            hGroup,
+            nIdx,
         ),
     )
 end
@@ -16731,7 +17726,7 @@ Return a view of this array as a "classic" GDALDataset (ie 2D)
 * **hArray**: Array.
 * **iXDim**: Index of the dimension that will be used as the X/width axis.
 * **iYDim**: Index of the dimension that will be used as the Y/height axis. Ignored if the dimension count is 1.
-* **hRootGroup**: Root group, or NULL. Used with the BAND_METADATA option.
+* **hRootGroup**: Root group, or NULL. Used with the BAND_METADATA and BAND_IMAGERY_METADATA option.
 * **papszOptions**: Cf GDALMDArray::AsClassicDataset()
 
 ### Returns
@@ -17049,6 +18044,80 @@ function gdalmdarraygetmeshgrid(
             nCountInputArrays,
             pnCountOutputArrays,
             papszOptions,
+        ),
+    )
+end
+
+"""
+    GDALMDArrayRawBlockInfo
+
+| Field          | Note                                                                                                                                                                                                                                                                             |
+| :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| pszFilename    | Filename into which the raw block is found                                                                                                                                                                                                                                       |
+| nOffset        | File offset within pszFilename of the start of the raw block                                                                                                                                                                                                                     |
+| nSize          | Size in bytes of the raw block                                                                                                                                                                                                                                                   |
+| papszInfo      | NULL or Null-terminated list of driver specific information on the raw block                                                                                                                                                                                                     |
+| pabyInlineData | In-memory buffer of nSize bytes. When this is set, pszFilename and nOffset are set to NULL.  When using C++ copy constructor or copy-assignment operator, if a memory allocation fails, a [`CPLError`](@ref)() will be emitted and this field will be NULL, but nSize not zero.  |
+"""
+struct GDALMDArrayRawBlockInfo
+    pszFilename::Cstring
+    nOffset::UInt64
+    nSize::UInt64
+    papszInfo::Ptr{Cstring}
+    pabyInlineData::Ptr{GByte}
+end
+
+"""
+    gdalmdarrayrawblockinfocreate()
+
+` `
+"""
+function gdalmdarrayrawblockinfocreate()
+    aftercare(
+        ccall((:GDALMDArrayRawBlockInfoCreate, libgdal), Ptr{GDALMDArrayRawBlockInfo}, ()),
+    )
+end
+
+"""
+    GDALMDArrayRawBlockInfoRelease(GDALMDArrayRawBlockInfo * psBlockInfo) -> void
+
+Free an instance of GDALMDArrayRawBlockInfo.
+"""
+function gdalmdarrayrawblockinforelease(psBlockInfo)
+    aftercare(
+        ccall(
+            (:GDALMDArrayRawBlockInfoRelease, libgdal),
+            Cvoid,
+            (Ptr{GDALMDArrayRawBlockInfo},),
+            psBlockInfo,
+        ),
+    )
+end
+
+"""
+    GDALMDArrayGetRawBlockInfo(GDALMDArrayH hArray,
+                               const uint64_t * panBlockCoordinates,
+                               GDALMDArrayRawBlockInfo * psBlockInfo) -> bool
+
+Return information on a raw block.
+
+### Parameters
+* **hArray**: handle to array.
+* **panBlockCoordinates**: array of GetDimensionCount() values with the block coordinates.
+* **psBlockInfo**: structure to fill with block information. Must be allocated with GDALMDArrayRawBlockInfoCreate(), and freed with GDALMDArrayRawBlockInfoRelease().
+
+### Returns
+true in case of success, or false if an error occurs.
+"""
+function gdalmdarraygetrawblockinfo(hArray, panBlockCoordinates, psBlockInfo)
+    aftercare(
+        ccall(
+            (:GDALMDArrayGetRawBlockInfo, libgdal),
+            Bool,
+            (GDALMDArrayH, Ptr{UInt64}, Ptr{GDALMDArrayRawBlockInfo}),
+            hArray,
+            panBlockCoordinates,
+            psBlockInfo,
         ),
     )
 end
@@ -18095,7 +19164,7 @@ Fill selected raster regions by interpolation from the edges.
 TEMP_FILE_DRIVER=gdal_driver_name. For example MEM. 
 
 
-NODATA=value (starting with GDAL 2.4). Source pixels at that value will be ignored by the interpolator. Warning: currently this will not be honored by smoothing passes. 
+NODATA=value Source pixels at that value will be ignored by the interpolator. Warning: currently this will not be honored by smoothing passes. 
 
 
 INTERPOLATION=INV_DIST/NEAREST (GDAL >= 3.9). By default, pixels are interpolated using an inverse distance weighting (INV_DIST). It is also possible to choose a nearest neighbour (NEAREST) strategy.
@@ -18162,7 +19231,10 @@ Create polygon coverage from raster data.
 8CONNECTED=8: May be set to "8" to use 8 connectedness. Otherwise 4 connectedness will be applied to the algorithm 
 
 
-DATASET_FOR_GEOREF=dataset_name: Name of a dataset from which to read the geotransform. This useful if hSrcBand has no related dataset, which is typical for mask bands.
+DATASET_FOR_GEOREF=dataset_name: Name of a dataset from which to read the geotransform. This useful if hSrcBand has no related dataset, which is typical for mask bands. 
+
+
+COMMIT_INTERVAL=num: (GDAL >= 3.12) Interval in number of features at which transactions must be flushed. A value of 0 means that no transactions are opened. A negative value means a single transaction. The default value is 100000. The function takes care of issuing the starting transaction and committing the final one.
 * **pfnProgress**: callback for reporting algorithm progress matching the GDALProgressFunc() semantics. May be NULL.
 * **pProgressArg**: callback argument passed to pfnProgress.
 
@@ -18223,7 +19295,10 @@ Create polygon coverage from raster data.
 8CONNECTED=8: May be set to "8" to use 8 connectedness. Otherwise 4 connectedness will be applied to the algorithm 
 
 
-DATASET_FOR_GEOREF=dataset_name: Name of a dataset from which to read the geotransform. This useful if hSrcBand has no related dataset, which is typical for mask bands.
+DATASET_FOR_GEOREF=dataset_name: Name of a dataset from which to read the geotransform. This useful if hSrcBand has no related dataset, which is typical for mask bands. 
+
+
+COMMIT_INTERVAL=num: (GDAL >= 3.12) Interval in number of features at which transactions must be flushed. A value of 0 means that no transactions are opened. A negative value means a single transaction. The default value is 100000. The function takes care of issuing the starting transaction and committing the final one.
 * **pfnProgress**: callback for reporting algorithm progress matching the GDALProgressFunc() semantics. May be NULL.
 * **pProgressArg**: callback argument passed to pfnProgress.
 
@@ -18450,7 +19525,7 @@ end
 """
     GDALCreateGenImgProjTransformer2(GDALDatasetH hSrcDS,
                                      GDALDatasetH hDstDS,
-                                     char ** papszOptions) -> void *
+                                     CSLConstList papszOptions) -> void *
 
 Create image to image transformer.
 
@@ -18704,7 +19779,13 @@ COORDINATE_EPOCH=decimal_year: Coordinate epoch, expressed as a decimal year. Us
 SRC_COORDINATE_EPOCH: (GDAL >= 3.4) Coordinate epoch of source CRS, expressed as a decimal year. Useful for time-dependent coordinate operations. 
 
 
-DST_COORDINATE_EPOCH: (GDAL >= 3.4) Coordinate epoch of target CRS, expressed as a decimal year. Useful for time-dependent coordinate operations.
+DST_COORDINATE_EPOCH: (GDAL >= 3.4) Coordinate epoch of target CRS, expressed as a decimal year. Useful for time-dependent coordinate operations. 
+
+
+ALLOW_BALLPARK=YES/NO: (GDAL >= 3.11) Whether ballpark coordinate operations are allowed. Defaults to YES. 
+
+
+ONLY_BEST=YES/NO/AUTO: (GDAL >= 3.11) By default (at least in the PROJ 9.x series), PROJ may use coordinate operations that are not the "best" if resources (typically grids) needed to use them are missing. It will then fallback to other coordinate operations that have a lesser accuracy, for example using Helmert transformations, or in the absence of such operations, to ones with potential very rough accuracy, using "ballpark" transformations (see https://proj.org/glossary.html). When calling this method with YES, PROJ will only consider the "best" operation, and error out (at Transform() time) if they cannot be used. This method may be used together with ALLOW_BALLPARK=NO to only allow best operations that have a known accuracy. Note that this method has no effect on PROJ versions before 9.2. The default value for this option can be also set with the PROJ_ONLY_BEST_DEFAULT environment variable, or with the "only_best_default" setting of proj.ini. Calling SetOnlyBest() overrides such default value.
 
 ### Returns
 Handle for use with GDALReprojectionTransform(), or NULL if the system fails to initialize the reprojection.
@@ -18871,7 +19952,7 @@ Transforms point based on GCP derived polynomial model.
 * **panSuccess**: array in which a flag indicating success (TRUE) or failure (FALSE) of the transformation are placed.
 
 ### Returns
-TRUE.
+TRUE if all points have been successfully transformed.
 """
 function gdalgcptransform(pTransformArg, bDstToSrc, nPointCount, x, y, z, panSuccess)
     aftercare(
@@ -18890,6 +19971,17 @@ function gdalgcptransform(pTransformArg, bDstToSrc, nPointCount, x, y, z, panSuc
     )
 end
 
+"""
+    GDALCreateHomographyTransformer(double adfHomography) -> void *
+
+Create Homography transformer from GCPs.
+
+### Parameters
+* **adfHomography**: the forward homography.
+
+### Returns
+the transform argument or NULL if creation fails.
+"""
 function gdalcreatehomographytransformer(adfHomography)
     aftercare(
         ccall(
@@ -18901,6 +19993,19 @@ function gdalcreatehomographytransformer(adfHomography)
     )
 end
 
+"""
+    GDALCreateHomographyTransformerFromGCPs(int nGCPCount,
+                                            const GDAL_GCP * pasGCPList) -> void *
+
+Create Homography transformer from GCPs.
+
+### Parameters
+* **nGCPCount**: the number of GCPs in pasGCPList.
+* **pasGCPList**: an array of GCPs to be used as input.
+
+### Returns
+the transform argument or NULL if creation fails.
+"""
 function gdalcreatehomographytransformerfromgcps(nGCPCount, pasGCPList)
     aftercare(
         ccall(
@@ -18913,6 +20018,14 @@ function gdalcreatehomographytransformerfromgcps(nGCPCount, pasGCPList)
     )
 end
 
+"""
+    GDALDestroyHomographyTransformer(void * pTransformArg) -> void
+
+Destroy Homography transformer.
+
+### Parameters
+* **pTransformArg**: the transform arg previously returned by GDALCreateHomographyTransformer().
+"""
 function gdaldestroyhomographytransformer(pTransformArg)
     aftercare(
         ccall(
@@ -18924,6 +20037,29 @@ function gdaldestroyhomographytransformer(pTransformArg)
     )
 end
 
+"""
+    GDALHomographyTransform(void * pTransformArg,
+                            int bDstToSrc,
+                            int nPointCount,
+                            double * x,
+                            double * y,
+                            double * z,
+                            int * panSuccess) -> int
+
+Transforms point based on homography.
+
+### Parameters
+* **pTransformArg**: return value from GDALCreateHomographyTransformer().
+* **bDstToSrc**: TRUE if transformation is from the destination (georeferenced) coordinates to pixel/line or FALSE when transforming from pixel/line to georeferenced coordinates.
+* **nPointCount**: the number of values in the x, y and z arrays.
+* **x**: array containing the X values to be transformed.
+* **y**: array containing the Y values to be transformed.
+* **z**: array containing the Z values to be transformed.
+* **panSuccess**: array in which a flag indicating success (TRUE) or failure (FALSE) of the transformation are placed.
+
+### Returns
+TRUE if all points have been successfully transformed.
+"""
 function gdalhomographytransform(pTransformArg, bDstToSrc, nPointCount, x, y, z, panSuccess)
     aftercare(
         ccall(
@@ -19004,7 +20140,7 @@ Transforms point based on GCP derived polynomial model.
 * **panSuccess**: array in which a flag indicating success (TRUE) or failure (FALSE) of the transformation are placed.
 
 ### Returns
-TRUE.
+TRUE if all points have been successfully transformed.
 """
 function gdaltpstransform(pTransformArg, bDstToSrc, nPointCount, x, y, z, panSuccess)
     aftercare(
@@ -20233,7 +21369,7 @@ Gridding Algorithms
 | GGA\\_MetricCount                            | Number of Points (Data Metric)                                           |
 | GGA\\_MetricAverageDistance                  | Average Distance (Data Metric)                                           |
 | GGA\\_MetricAverageDistancePts               | Average Distance Between Data Points (Data Metric)                       |
-| GGA\\_Linear                                 | Linear interpolation (from Delaunay triangulation. Since GDAL 2.1        |
+| GGA\\_Linear                                 | Linear interpolation (from Delaunay triangulation.                       |
 | GGA\\_InverseDistanceToAPowerNearestNeighbor | Inverse distance to a power with nearest neighbor search for max points  |
 """
 @cenum GDALGridAlgorithm::UInt32 begin
@@ -20722,11 +21858,11 @@ end
 
 Triangulation structure
 
-| Field                | Note                                      |
-| :------------------- | :---------------------------------------- |
-| nFacets              | number of facets                          |
-| pasFacets            | array of nFacets facets                   |
-| pasFacetCoefficients | arra of nFacets barycentric coefficients  |
+| Field                | Note                                       |
+| :------------------- | :----------------------------------------- |
+| nFacets              | number of facets                           |
+| pasFacets            | array of nFacets facets                    |
+| pasFacetCoefficients | array of nFacets barycentric coefficients  |
 """
 struct GDALTriangulation
     nFacets::Cint
@@ -20978,6 +22114,44 @@ function gdalapplyverticalshiftgrid(
             dfSrcUnitToMeter,
             dfDstUnitToMeter,
             papszOptions,
+        ),
+    )
+end
+
+"""
+    gdalzonalstats(hSrcDS, hWeightsDS, hZonesDS, hOutDS, papszOptions, pfnProgress, pProgressArg)
+
+*********************************************************************
+"""
+function gdalzonalstats(
+    hSrcDS,
+    hWeightsDS,
+    hZonesDS,
+    hOutDS,
+    papszOptions,
+    pfnProgress,
+    pProgressArg,
+)
+    aftercare(
+        ccall(
+            (:GDALZonalStats, libgdal),
+            CPLErr,
+            (
+                GDALDatasetH,
+                GDALDatasetH,
+                GDALDatasetH,
+                GDALDatasetH,
+                CSLConstList,
+                GDALProgressFunc,
+                Any,
+            ),
+            hSrcDS,
+            hWeightsDS,
+            hZonesDS,
+            hOutDS,
+            papszOptions,
+            pfnProgress,
+            pProgressArg,
         ),
     )
 end
@@ -21244,6 +22418,15 @@ function cplgetnumcpus()
     aftercare(ccall((:CPLGetNumCPUs, libgdal), Cint, ()))
 end
 
+"""
+    CPLGetCurrentThreadCount(void) -> int
+
+Return the current number of threads of the current process.
+"""
+function cplgetcurrentthreadcount()
+    aftercare(ccall((:CPLGetCurrentThreadCount, libgdal), Cint, ()))
+end
+
 const _CPLLock = Cvoid
 
 const CPLLock = _CPLLock
@@ -21441,33 +22624,6 @@ Warp Resampling Algorithm
     GRA_Sum = 13
     GRA_RMS = 14
     GRA_LAST_VALUE = 14
-end
-
-"""
-    GWKAverageOrModeAlg
-
-GWKAverageOrMode Algorithm
-
-| Enumerator       | Note                                              |
-| :--------------- | :------------------------------------------------ |
-| GWKAOM\\_Average | Average                                           |
-| GWKAOM\\_Fmode   | Mode                                              |
-| GWKAOM\\_Imode   | Mode of GDT\\_Byte, GDT\\_UInt16, or GDT\\_Int16  |
-| GWKAOM\\_Max     | Maximum                                           |
-| GWKAOM\\_Min     | Minimum                                           |
-| GWKAOM\\_Quant   | Quantile                                          |
-| GWKAOM\\_Sum     | Sum                                               |
-| GWKAOM\\_RMS     | RMS                                               |
-"""
-@cenum GWKAverageOrModeAlg::UInt32 begin
-    GWKAOM_Average = 1
-    GWKAOM_Fmode = 2
-    GWKAOM_Imode = 3
-    GWKAOM_Max = 4
-    GWKAOM_Min = 5
-    GWKAOM_Quant = 6
-    GWKAOM_Sum = 7
-    GWKAOM_RMS = 8
 end
 
 "` Doxygen_Suppress `"
@@ -21902,6 +23058,11 @@ struct GDALWarpOptions
     eTieStrategy::GWKTieStrategy
 end
 
+"""
+    GDALWarpGetOptionList(void) -> const char *
+
+Return a XML string describing options accepted by GDALWarpOptions::papszWarpOptions.
+"""
 function gdalwarpgetoptionlist()
     aftercare(ccall((:GDALWarpGetOptionList, libgdal), Cstring, ()), false)
 end
@@ -22317,7 +23478,7 @@ end
     GDALCreateWarpedVRT(GDALDatasetH hSrcDS,
                         int nPixels,
                         int nLines,
-                        double * padfGeoTransform,
+                        const double * padfGeoTransform,
                         GDALWarpOptions * psOptions) -> GDALDatasetH
 
 Create virtual warped dataset.
@@ -23610,6 +24771,19 @@ const GDALContourOptions = Cvoid
 
 const GDALContourOptionsForBinary = Cvoid
 
+"""
+    GDALContourOptionsNew(char ** papszArgv,
+                          GDALContourOptionsForBinary * psOptionsForBinary) -> GDALContourOptions *
+
+Create a new GDALContourOptions object.
+
+### Parameters
+* **papszArgv**: the command line arguments.
+* **psOptionsForBinary**: the options for binary.
+
+### Returns
+the new GDALContourOptions object.
+"""
 function gdalcontouroptionsnew(papszArgv, psOptionsForBinary)
     aftercare(
         ccall(
@@ -23622,6 +24796,14 @@ function gdalcontouroptionsnew(papszArgv, psOptionsForBinary)
     )
 end
 
+"""
+    GDALContourOptionsFree(GDALContourOptions * psOptions) -> void
+
+Free a GDALContourOptions object.
+
+### Parameters
+* **psOptions**: the GDALContourOptions object to free.
+"""
 function gdalcontouroptionsfree(psOptions)
     aftercare(
         ccall(
@@ -23633,6 +24815,18 @@ function gdalcontouroptionsfree(psOptions)
     )
 end
 
+"""
+    GDALContourOptionsSetProgress(GDALContourOptions * psOptions,
+                                  GDALProgressFunc pfnProgress,
+                                  void * pProgressData) -> void
+
+Set a progress function.
+
+### Parameters
+* **psOptions**: the options struct for GDALContour().
+* **pfnProgress**: the progress callback.
+* **pProgressData**: the user data for the progress callback.
+"""
 function gdalcontouroptionssetprogress(psOptions, pfnProgress, pProgressData)
     aftercare(
         ccall(
@@ -23780,7 +24974,7 @@ Burns vector geometries into a raster.
 * **hDstDS**: the destination dataset or NULL.
 * **hSrcDataset**: the source dataset handle.
 * **psOptionsIn**: the options struct returned by GDALRasterizeOptionsNew() or NULL.
-* **pbUsageError**: pointer to a integer output variable to store if any usage error has occurred or NULL.
+* **pbUsageError**: pointer to an integer output variable to store if any usage error has occurred or NULL.
 
 ### Returns
 the output dataset (new dataset that must be closed using GDALClose(), or hDstDS is not NULL) or NULL in case of error.
@@ -24332,6 +25526,18 @@ function gdaltileindexoptionsnew(papszArgv, psOptionsForBinary)
     )
 end
 
+"""
+    GDALTileIndexOptionsSetProgress(GDALTileIndexOptions * psOptions,
+                                    GDALProgressFunc pfnProgress,
+                                    void * pProgressData) -> void
+
+Set a progress function.
+
+### Parameters
+* **psOptions**: the options struct for GDALTileIndex().
+* **pfnProgress**: the progress callback.
+* **pProgressData**: the user data for the progress callback.
+"""
 function gdaltileindexoptionssetprogress(psOptions, pfnProgress, pProgressData)
     aftercare(
         ccall(
@@ -24823,6 +26029,40 @@ function ogr_g_createfromfgf(arg1, arg2, arg3, arg4, arg5)
 end
 
 """
+    OGR_G_CreateFromEnvelope(double dfMinX,
+                             double dfMinY,
+                             double dfMaxX,
+                             double dfMaxY,
+                             OGRSpatialReferenceH hSRS) -> OGRGeometryH
+
+Create a Polygon geometry from an envelope.
+
+### Parameters
+* **dfMinX**: minimum X coordinate
+* **dfMinY**: minimum Y coordinate
+* **dfMaxX**: maximum X coordinate
+* **dfMaxY**: maximum Y coordinate
+* **hSRS**: handle to the spatial reference to be assigned to the created geometry object. This may be NULL.
+
+### Returns
+the newly created geometry. Should be freed with OGR_G_DestroyGeometry() after use.
+"""
+function ogr_g_createfromenvelope(arg1, arg2, arg3, arg4, arg5)
+    aftercare(
+        ccall(
+            (:OGR_G_CreateFromEnvelope, libgdal),
+            OGRGeometryH,
+            (Cdouble, Cdouble, Cdouble, Cdouble, OGRSpatialReferenceH),
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+        ),
+    )
+end
+
+"""
     OGR_G_DestroyGeometry(OGRGeometryH hGeom) -> void
 
 Destroy geometry object.
@@ -24926,7 +26166,7 @@ Convert to polygon.
 * **hGeom**: handle to the geometry to convert (ownership surrendered).
 
 ### Returns
-the converted geometry (ownership to caller).
+the converted geometry (ownership to caller), or NULL in case of error
 """
 function ogr_g_forcetopolygon(arg1)
     aftercare(ccall((:OGR_G_ForceToPolygon, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
@@ -24958,7 +26198,7 @@ Convert to multipolygon.
 * **hGeom**: handle to the geometry to convert (ownership surrendered).
 
 ### Returns
-the converted geometry (ownership to caller).
+the converted geometry (ownership to caller), or NULL in case of error
 """
 function ogr_g_forcetomultipolygon(arg1)
     aftercare(
@@ -25193,13 +26433,6 @@ a handle on the copy of the geometry with the spatial reference system as the or
 """
 function ogr_g_clone(arg1)
     aftercare(ccall((:OGR_G_Clone, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
-end
-
-struct OGREnvelope
-    MinX::Cdouble
-    MaxX::Cdouble
-    MinY::Cdouble
-    MaxY::Cdouble
 end
 
 """
@@ -25828,7 +27061,7 @@ end
     OGR_G_ExportToJsonEx(OGRGeometryH hGeometry,
                          char ** papszOptions) -> char *
 
-Convert a geometry into GeoJSON format.
+Convert a geometry into GeoJSON-style format.
 
 ### Parameters
 * **hGeometry**: handle to the geometry.
@@ -25974,12 +27207,7 @@ Create a geometry transformer.
 
 ### Parameters
 * **hCT**: Coordinate transformation object (will be cloned) or NULL.
-* **papszOptions**: NULL terminated list of options, or NULL. Supported options are: 
-
-WRAPDATELINE=YES 
-
-
-DATELINEOFFSET=longitude_gap_in_degree. Defaults to 10.
+* **papszOptions**: NULL terminated list of options, or NULL.
 
 ### Returns
 transformer object to free with OGR_GeomTransformer_Destroy()
@@ -26114,6 +27342,28 @@ function ogr_g_delaunaytriangulation(hThis, dfTolerance, bOnlyEdges)
             hThis,
             dfTolerance,
             bOnlyEdges,
+        ),
+    )
+end
+
+"""
+    OGR_G_ConstrainedDelaunayTriangulation(OGRGeometryH hThis) -> OGRGeometryH
+
+Return a constrained Delaunay triangulation of the vertices of the given polygon(s).
+
+### Parameters
+* **hThis**: the geometry.
+
+### Returns
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
+"""
+function ogr_g_constraineddelaunaytriangulation(hThis)
+    aftercare(
+        ccall(
+            (:OGR_G_ConstrainedDelaunayTriangulation, libgdal),
+            OGRGeometryH,
+            (OGRGeometryH,),
+            hThis,
         ),
     )
 end
@@ -26834,7 +28084,7 @@ Test if the geometry is a ring.
 * **hGeom**: The Geometry to test.
 
 ### Returns
-TRUE if the geometry has no points, otherwise FALSE.
+TRUE if the coordinates of the geometry form a ring, by checking length and closure (self-intersection is not checked), otherwise FALSE.
 """
 function ogr_g_isring(arg1)
     aftercare(ccall((:OGR_G_IsRing, libgdal), Cint, (OGRGeometryH,), arg1))
@@ -26883,6 +28133,17 @@ function ogr_g_polygonize(arg1)
     aftercare(ccall((:OGR_G_Polygonize, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
 
+"""
+    OGR_G_BuildArea(OGRGeometryH hGeom) -> OGRGeometryH
+
+Polygonize a linework assuming inner polygons are holes.
+
+### Parameters
+* **hGeom**: handle on the geometry to polygonize.
+
+### Returns
+a handle on newly allocated geometry now owned by the caller, or NULL on failure.
+"""
 function ogr_g_buildarea(arg1)
     aftercare(ccall((:OGR_G_BuildArea, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
 end
@@ -26970,7 +28231,7 @@ Returns all points of line string.
 * **nZStride**: the number of bytes between 2 elements of pabyZ.
 
 ### Returns
-the number of points
+the number of points, or -1 (starting in GDAL 3.12) if the operation can not be performed in this geometry type.
 """
 function ogr_g_getpoints(hGeom, pabyX, nXStride, pabyY, nYStride, pabyZ, nZStride)
     aftercare(
@@ -27788,7 +29049,7 @@ Build a ring from a bunch of arcs.
 * **peErr**: OGRERR_NONE on success, or OGRERR_FAILURE on failure.
 
 ### Returns
-a handle to the new geometry, a polygon.
+a handle to the new geometry, a polygon or multipolygon.
 """
 function ogrbuildpolygonfromedges(
     hLinesAsCollection,
@@ -28148,15 +29409,13 @@ end
 
 List of field subtypes. A subtype represents a hint, a restriction of the main type, that is not strictly necessary to consult. This list is likely to be extended in the future ... avoid coding applications based on the assumption that all field types can be known. Most subtypes only make sense for a restricted set of main types.
 
-\\since GDAL 2.0
-
 | Enumerator     | Note                                                                               |
 | :------------- | :--------------------------------------------------------------------------------- |
 | OFSTNone       | No subtype. This is the default value                                              |
 | OFSTBoolean    | Boolean integer. Only valid for OFTInteger and OFTIntegerList.                     |
 | OFSTInt16      | Signed 16-bit integer. Only valid for OFTInteger and OFTIntegerList.               |
 | OFSTFloat32    | Single precision (32 bit) floating point. Only valid for OFTReal and OFTRealList.  |
-| OFSTJSON       | JSON content. Only valid for OFTString.  \\since GDAL 2.4                          |
+| OFSTJSON       | JSON content. Only valid for OFTString.                                            |
 | OFSTUUID       | UUID string representation. Only valid for OFTString.  \\since GDAL 3.3            |
 | OFSTMaxSubType |                                                                                    |
 """
@@ -28446,12 +29705,33 @@ function ogr_fld_setnullable(hDefn, arg2)
     )
 end
 
+"""
+    OGR_Fld_SetGenerated(OGRFieldDefnH hDefn,
+                         int bGeneratedIn) -> void
+
+Set whether this field is a generated field.
+
+### Parameters
+* **hDefn**: handle to the field definition
+* **bGeneratedIn**: FALSE if the field is a generated field.
+"""
 function ogr_fld_setgenerated(hDefn, arg2)
     aftercare(
         ccall((:OGR_Fld_SetGenerated, libgdal), Cvoid, (OGRFieldDefnH, Cint), hDefn, arg2),
     )
 end
 
+"""
+    OGR_Fld_IsGenerated(OGRFieldDefnH hDefn) -> int
+
+Return whether this field is a generated field.
+
+### Parameters
+* **hDefn**: handle to the field definition
+
+### Returns
+TRUE if the field is a generated field.
+"""
 function ogr_fld_isgenerated(hDefn)
     aftercare(ccall((:OGR_Fld_IsGenerated, libgdal), Cint, (OGRFieldDefnH,), hDefn))
 end
@@ -28630,6 +29910,17 @@ function ogr_getfieldtypename(arg1)
     )
 end
 
+"""
+    OGR_GetFieldTypeByName(const char * pszName) -> OGRFieldType
+
+Fetch field type by name.
+
+### Parameters
+* **pszName**: the name of the field type.
+
+### Returns
+the field type or OFTString if there is no match with known type names.
+"""
 function ogr_getfieldtypebyname(arg1)
     aftercare(ccall((:OGR_GetFieldTypeByName, libgdal), OGRFieldType, (Cstring,), arg1))
 end
@@ -28652,6 +29943,17 @@ function ogr_getfieldsubtypename(arg1)
     )
 end
 
+"""
+    OGR_GetFieldSubTypeByName(const char * pszName) -> OGRFieldSubType
+
+Fetch field subtype by name.
+
+### Parameters
+* **pszName**: the name of the field subtype.
+
+### Returns
+the field subtype.
+"""
 function ogr_getfieldsubtypebyname(arg1)
     aftercare(
         ccall((:OGR_GetFieldSubTypeByName, libgdal), OGRFieldSubType, (Cstring,), arg1),
@@ -29456,7 +30758,7 @@ Feature factory.
 * **hDefn**: handle to the feature class (layer) definition to which the feature will adhere.
 
 ### Returns
-a handle to the new feature object with null fields and no geometry, or, starting with GDAL 2.1, NULL in case out of memory situation.
+a handle to the new feature object with null fields and no geometry, or, NULL in case out of memory situation.
 """
 function ogr_f_create(arg1)
     aftercare(ccall((:OGR_F_Create, libgdal), OGRFeatureH, (OGRFeatureDefnH,), arg1))
@@ -29774,41 +31076,13 @@ function Base.getproperty(x::Ptr{OGRField}, f::Symbol)
     f === :Integer64 && return Ptr{GIntBig}(x + 0)
     f === :Real && return Ptr{Cdouble}(x + 0)
     f === :String && return Ptr{Cstring}(x + 0)
-    f === :IntegerList && return Ptr{
-        var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:912:5)",
-    }(
-        x + 0,
-    )
-    f === :Integer64List && return Ptr{
-        var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:918:5)",
-    }(
-        x + 0,
-    )
-    f === :RealList && return Ptr{
-        var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:924:5)",
-    }(
-        x + 0,
-    )
-    f === :StringList && return Ptr{
-        var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:930:5)",
-    }(
-        x + 0,
-    )
-    f === :Binary && return Ptr{
-        var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:936:5)",
-    }(
-        x + 0,
-    )
-    f === :Set && return Ptr{
-        var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:942:5)",
-    }(
-        x + 0,
-    )
-    f === :Date && return Ptr{
-        var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:949:5)",
-    }(
-        x + 0,
-    )
+    f === :IntegerList && return Ptr{__JL_Ctag_1}(x + 0)
+    f === :Integer64List && return Ptr{__JL_Ctag_2}(x + 0)
+    f === :RealList && return Ptr{__JL_Ctag_3}(x + 0)
+    f === :StringList && return Ptr{__JL_Ctag_4}(x + 0)
+    f === :Binary && return Ptr{__JL_Ctag_5}(x + 0)
+    f === :Set && return Ptr{__JL_Ctag_6}(x + 0)
+    f === :Date && return Ptr{__JL_Ctag_7}(x + 0)
     return getfield(x, f)
 end
 
@@ -29821,6 +31095,27 @@ end
 
 function Base.setproperty!(x::Ptr{OGRField}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
+end
+
+function Base.propertynames(x::OGRField, private::Bool = false)
+    (
+        :Integer,
+        :Integer64,
+        :Real,
+        :String,
+        :IntegerList,
+        :Integer64List,
+        :RealList,
+        :StringList,
+        :Binary,
+        :Set,
+        :Date,
+        if private
+            fieldnames(typeof(x))
+        else
+            ()
+        end...,
+    )
 end
 
 """
@@ -32466,8 +33761,8 @@ end
 
 """
     OGR_L_CreateGeomField(OGRLayerH hLayer,
-                          OGRGeomFieldDefnH hFieldDefn,
-                          int bForce) -> OGRErr
+                          OGRGeomFieldDefnH hField,
+                          int bApproxOK) -> OGRErr
 
 Create a new geometry field on a layer.
 
@@ -32595,7 +33890,7 @@ end
 
 """
     OGR_L_AlterGeomFieldDefn(OGRLayerH hLayer,
-                             int iField,
+                             int iGeomField,
                              OGRGeomFieldDefnH hNewGeomFieldDefn,
                              int nFlags) -> OGRErr
 
@@ -32643,9 +33938,6 @@ end
     OGR_L_CommitTransaction(OGRLayerH hLayer) -> OGRErr
 
 For datasources which support transactions, CommitTransaction commits a transaction.
-
-### Parameters
-* **hLayer**: handle to the layer
 
 ### Returns
 OGRERR_NONE on success.
@@ -33217,7 +34509,7 @@ This function attempts to create a new layer on the data source with the indicat
 * **pszName**: the name for the new layer. This should ideally not match any existing layer on the datasource.
 * **hSpatialRef**: handle to the coordinate system to use for the new layer, or NULL if no coordinate system is available. The driver might only increase the reference counter of the object to take ownership, and not make a full copy, so do not use OSRDestroySpatialReference(), but OSRRelease() instead when you are done with the object.
 * **eType**: the geometry type for the layer. Use wkbUnknown if there are no constraints on the types geometry to be written.
-* **papszOptions**: a StringList of name=value options. Options are driver specific, and driver information can be found at the following url: http://www.gdal.org/ogr_formats.html
+* **papszOptions**: a StringList of name=value options. Options are driver specific.
 
 ### Returns
 NULL is returned on failure, or a new OGRLayer handle on success.
@@ -33439,7 +34731,7 @@ function ogr_ds_setstyletable(arg1, arg2)
 end
 
 """
-    OGR_Dr_GetName(OGRSFDriverH) -> const char *
+    OGR_Dr_GetName(OGRSFDriverH hDriver) -> const char *
 
 Fetch name of driver (file format).
 
@@ -33454,9 +34746,9 @@ function ogr_dr_getname(arg1)
 end
 
 """
-    OGR_Dr_Open(OGRSFDriverH,
-                const char *,
-                int) -> OGRDataSourceH
+    OGR_Dr_Open(OGRSFDriverH hDriver,
+                const char * pszName,
+                int bUpdate) -> OGRDataSourceH
 
 Attempt to open file with this driver.
 
@@ -33482,8 +34774,8 @@ function ogr_dr_open(arg1, arg2, arg3)
 end
 
 """
-    OGR_Dr_TestCapability(OGRSFDriverH,
-                          const char *) -> int
+    OGR_Dr_TestCapability(OGRSFDriverH hDriver,
+                          const char * pszCap) -> int
 
 Test if capability is available.
 
@@ -33501,16 +34793,16 @@ function ogr_dr_testcapability(arg1, arg2)
 end
 
 """
-    OGR_Dr_CreateDataSource(OGRSFDriverH,
-                            const char *,
-                            char **) -> OGRDataSourceH
+    OGR_Dr_CreateDataSource(OGRSFDriverH hDriver,
+                            const char * pszName,
+                            char ** papszOptions) -> OGRDataSourceH
 
 This function attempts to create a new data source based on the passed driver.
 
 ### Parameters
 * **hDriver**: handle to the driver on which data source creation is based.
 * **pszName**: the name for the new data source. UTF-8 encoded.
-* **papszOptions**: a StringList of name=value options. Options are driver specific, and driver information can be found at the following url: http://www.gdal.org/ogr_formats.html
+* **papszOptions**: a StringList of name=value options. Options are driver specific.
 
 ### Returns
 NULL is returned on failure, or a new OGRDataSource handle on success.
@@ -33529,10 +34821,10 @@ function ogr_dr_createdatasource(arg1, arg2, arg3)
 end
 
 """
-    OGR_Dr_CopyDataSource(OGRSFDriverH,
-                          OGRDataSourceH,
-                          const char *,
-                          char **) -> OGRDataSourceH
+    OGR_Dr_CopyDataSource(OGRSFDriverH hDriver,
+                          OGRDataSourceH hSrcDS,
+                          const char * pszNewName,
+                          char ** papszOptions) -> OGRDataSourceH
 
 This function creates a new datasource by copying all the layers from the source datasource.
 
@@ -33540,7 +34832,7 @@ This function creates a new datasource by copying all the layers from the source
 * **hDriver**: handle to the driver on which data source creation is based.
 * **hSrcDS**: source datasource
 * **pszNewName**: the name for the new data source.
-* **papszOptions**: a StringList of name=value options. Options are driver specific, and driver information can be found at the following url: http://www.gdal.org/ogr_formats.html
+* **papszOptions**: a StringList of name=value options. Options are driver specific.
 
 ### Returns
 NULL is returned on failure, or a new OGRDataSource handle on success.
@@ -33560,8 +34852,8 @@ function ogr_dr_copydatasource(arg1, arg2, arg3, arg4)
 end
 
 """
-    OGR_Dr_DeleteDataSource(OGRSFDriverH,
-                            const char *) -> OGRErr
+    OGR_Dr_DeleteDataSource(OGRSFDriverH hDriver,
+                            const char * pszDataSource) -> OGRErr
 
 Delete a datasource.
 
@@ -33585,9 +34877,9 @@ function ogr_dr_deletedatasource(arg1, arg2)
 end
 
 """
-    OGROpen(const char *,
-            int,
-            OGRSFDriverH *) -> OGRDataSourceH
+    OGROpen(const char * pszName,
+            int bUpdate,
+            OGRSFDriverH * pahDriverList) -> OGRDataSourceH
 
 Open a file / data source with one of the registered drivers.
 
@@ -33613,9 +34905,9 @@ function ogropen(arg1, arg2, arg3)
 end
 
 """
-    OGROpenShared(const char *,
-                  int,
-                  OGRSFDriverH *) -> OGRDataSourceH
+    OGROpenShared(const char * pszName,
+                  int bUpdate,
+                  OGRSFDriverH * pahDriverList) -> OGRDataSourceH
 
 Open a file / data source with one of the registered drivers if not already opened, or increment reference count of already opened data source previously opened with OGROpenShared()
 
@@ -33641,7 +34933,7 @@ function ogropenshared(arg1, arg2, arg3)
 end
 
 """
-    OGRReleaseDataSource(OGRDataSourceH) -> OGRErr
+    OGRReleaseDataSource(OGRDataSourceH hDS) -> OGRErr
 
 Drop a reference to this datasource, and if the reference count drops to zero close (destroy) the datasource.
 
@@ -33678,7 +34970,7 @@ function ogrgetdrivercount()
 end
 
 """
-    OGRGetDriver(int) -> OGRSFDriverH
+    OGRGetDriver(int iDriver) -> OGRSFDriverH
 
 Fetch the indicated driver.
 
@@ -33693,7 +34985,7 @@ function ogrgetdriver(arg1)
 end
 
 """
-    OGRGetDriverByName(const char *) -> OGRSFDriverH
+    OGRGetDriverByName(const char * pszName) -> OGRSFDriverH
 
 Fetch the indicated driver.
 
@@ -33732,7 +35024,7 @@ end
 """
     ogrcleanupall()
 
-Clean-up all drivers (including raster ones starting with GDAL 2.0. See [`GDALDestroyDriverManager`](@ref)()
+Clean-up all drivers, including raster ones. See [`GDALDestroyDriverManager`](@ref)()
 """
 function ogrcleanupall()
     aftercare(ccall((:OGRCleanupAll, libgdal), Cvoid, ()))
@@ -34791,6 +36083,17 @@ function ogr_gt_getcollection(eType)
     )
 end
 
+"""
+    OGR_GT_GetSingle(OGRwkbGeometryType eType) -> OGRwkbGeometryType
+
+Returns the non-collection type that be contained in the passed geometry type.
+
+### Parameters
+* **eType**: Input geometry type
+
+### Returns
+the the non-collection type that be contained in the passed geometry type or wkbUnknown
+"""
 function ogr_gt_getsingle(eType)
     aftercare(
         ccall(
@@ -35917,6 +37220,18 @@ Return the CRS name.
 """
 function osrgetname(hSRS)
     aftercare(ccall((:OSRGetName, libgdal), Cstring, (OGRSpatialReferenceH,), hSRS), false)
+end
+
+"""
+    OSRGetCelestialBodyName(OGRSpatialReferenceH hSRS) -> const char *
+
+Return the name of the celestial body of this CRS.
+"""
+function osrgetcelestialbodyname(hSRS)
+    aftercare(
+        ccall((:OSRGetCelestialBodyName, libgdal), Cstring, (OGRSpatialReferenceH,), hSRS),
+        false,
+    )
 end
 
 """
@@ -38532,20 +39847,21 @@ Structure given overall description of a CRS.
 
 This structure may grow over time, and should not be directly allocated by client code.
 
-| Field               | Note                                                                                                                   |
-| :------------------ | :--------------------------------------------------------------------------------------------------------------------- |
-| pszAuthName         | Authority name.                                                                                                        |
-| pszCode             | Object code.                                                                                                           |
-| pszName             | Object name.                                                                                                           |
-| eType               | Object type.                                                                                                           |
-| bDeprecated         | Whether the object is deprecated                                                                                       |
-| bBboxValid          | Whereas the west\\_lon\\_degree, south\\_lat\\_degree, east\\_lon\\_degree and north\\_lat\\_degree fields are valid.  |
-| dfWestLongitudeDeg  | Western-most longitude of the area of use, in degrees.                                                                 |
-| dfSouthLatitudeDeg  | Southern-most latitude of the area of use, in degrees.                                                                 |
-| dfEastLongitudeDeg  | Eastern-most longitude of the area of use, in degrees.                                                                 |
-| dfNorthLatitudeDeg  | Northern-most latitude of the area of use, in degrees.                                                                 |
-| pszAreaName         | Name of the area of use.                                                                                               |
-| pszProjectionMethod | Name of the projection method for a projected CRS. Might be NULL evenfor projected CRS in some cases.                  |
+| Field                | Note                                                                                                                   |
+| :------------------- | :--------------------------------------------------------------------------------------------------------------------- |
+| pszAuthName          | Authority name.                                                                                                        |
+| pszCode              | Object code.                                                                                                           |
+| pszName              | Object name.                                                                                                           |
+| eType                | Object type.                                                                                                           |
+| bDeprecated          | Whether the object is deprecated                                                                                       |
+| bBboxValid           | Whereas the west\\_lon\\_degree, south\\_lat\\_degree, east\\_lon\\_degree and north\\_lat\\_degree fields are valid.  |
+| dfWestLongitudeDeg   | Western-most longitude of the area of use, in degrees.                                                                 |
+| dfSouthLatitudeDeg   | Southern-most latitude of the area of use, in degrees.                                                                 |
+| dfEastLongitudeDeg   | Eastern-most longitude of the area of use, in degrees.                                                                 |
+| dfNorthLatitudeDeg   | Northern-most latitude of the area of use, in degrees.                                                                 |
+| pszAreaName          | Name of the area of use.                                                                                               |
+| pszProjectionMethod  | Name of the projection method for a projected CRS. Might be NULL evenfor projected CRS in some cases.                  |
+| pszCelestialBodyName | Name of the celestial body of the CRS (e.g. "Earth").  \\since GDAL 3.12, and filled only if PROJ >= 8.1               |
 """
 struct OSRCRSInfo
     pszAuthName::Cstring
@@ -38560,6 +39876,7 @@ struct OSRCRSInfo
     dfNorthLatitudeDeg::Cdouble
     pszAreaName::Cstring
     pszProjectionMethod::Cstring
+    pszCelestialBodyName::Cstring
 end
 
 const OSRCRSListParameters = Cvoid
@@ -39147,38 +40464,141 @@ function octtransformbounds(
     )
 end
 
-struct var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:912:5)"
+struct __JL_Ctag_1
     nCount::Cint
     paList::Ptr{Cint}
 end
 
-struct var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:918:5)"
+function Base.getproperty(x::Ptr{__JL_Ctag_1}, f::Symbol)
+    f === :nCount && return Ptr{Cint}(x + 0)
+    f === :paList && return Ptr{Ptr{Cint}}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_1, f::Symbol)
+    r = Ref{__JL_Ctag_1}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_1}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_1}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+struct __JL_Ctag_2
     nCount::Cint
     paList::Ptr{GIntBig}
 end
 
-struct var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:924:5)"
+function Base.getproperty(x::Ptr{__JL_Ctag_2}, f::Symbol)
+    f === :nCount && return Ptr{Cint}(x + 0)
+    f === :paList && return Ptr{Ptr{GIntBig}}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_2, f::Symbol)
+    r = Ref{__JL_Ctag_2}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_2}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_2}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+struct __JL_Ctag_3
     nCount::Cint
     paList::Ptr{Cdouble}
 end
 
-struct var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:930:5)"
+function Base.getproperty(x::Ptr{__JL_Ctag_3}, f::Symbol)
+    f === :nCount && return Ptr{Cint}(x + 0)
+    f === :paList && return Ptr{Ptr{Cdouble}}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_3, f::Symbol)
+    r = Ref{__JL_Ctag_3}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_3}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_3}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+struct __JL_Ctag_4
     nCount::Cint
     paList::Ptr{Cstring}
 end
 
-struct var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:936:5)"
+function Base.getproperty(x::Ptr{__JL_Ctag_4}, f::Symbol)
+    f === :nCount && return Ptr{Cint}(x + 0)
+    f === :paList && return Ptr{Ptr{Cstring}}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_4, f::Symbol)
+    r = Ref{__JL_Ctag_4}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_4}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_4}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+struct __JL_Ctag_5
     nCount::Cint
     paData::Ptr{GByte}
 end
 
-struct var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:942:5)"
+function Base.getproperty(x::Ptr{__JL_Ctag_5}, f::Symbol)
+    f === :nCount && return Ptr{Cint}(x + 0)
+    f === :paData && return Ptr{Ptr{GByte}}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_5, f::Symbol)
+    r = Ref{__JL_Ctag_5}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_5}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_5}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+struct __JL_Ctag_6
     nMarker1::Cint
     nMarker2::Cint
     nMarker3::Cint
 end
 
-struct var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifacts\\\\c2b9f7d21ec9425cf8eec46468f38a719d8319e5\\\\include\\\\ogr_core.h:949:5)"
+function Base.getproperty(x::Ptr{__JL_Ctag_6}, f::Symbol)
+    f === :nMarker1 && return Ptr{Cint}(x + 0)
+    f === :nMarker2 && return Ptr{Cint}(x + 4)
+    f === :nMarker3 && return Ptr{Cint}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_6, f::Symbol)
+    r = Ref{__JL_Ctag_6}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_6}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_6}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
+end
+
+struct __JL_Ctag_7
     Year::GInt16
     Month::GByte
     Day::GByte
@@ -39187,6 +40607,29 @@ struct var"struct (unnamed at C:\\\\ProgramData\\\\DevDrives\\\\.julia\\\\artifa
     TZFlag::GByte
     Reserved::GByte
     Second::Cfloat
+end
+
+function Base.getproperty(x::Ptr{__JL_Ctag_7}, f::Symbol)
+    f === :Year && return Ptr{GInt16}(x + 0)
+    f === :Month && return Ptr{GByte}(x + 2)
+    f === :Day && return Ptr{GByte}(x + 3)
+    f === :Hour && return Ptr{GByte}(x + 4)
+    f === :Minute && return Ptr{GByte}(x + 5)
+    f === :TZFlag && return Ptr{GByte}(x + 6)
+    f === :Reserved && return Ptr{GByte}(x + 7)
+    f === :Second && return Ptr{Cfloat}(x + 8)
+    return getfield(x, f)
+end
+
+function Base.getproperty(x::__JL_Ctag_7, f::Symbol)
+    r = Ref{__JL_Ctag_7}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_7}, r)
+    fptr = getproperty(ptr, f)
+    GC.@preserve r unsafe_load(fptr)
+end
+
+function Base.setproperty!(x::Ptr{__JL_Ctag_7}, f::Symbol, v)
+    unsafe_store!(getproperty(x, f), v)
 end
 
 const GDAL_PREFIX = "/workspace/destdir"
@@ -39202,10 +40645,6 @@ const SIZEOF_SIZE_T = 8
 const USE_GCC_VISIBILITY_FLAG = 1
 
 const HAVE_GCC_ATOMIC_BUILTINS = 1
-
-const HAVE_GCC_BSWAP = 1
-
-const HAVE_STD_IS_NAN = 1
 
 const CPLE_None = 0
 
@@ -39231,17 +40670,29 @@ const CPLE_ObjectNull = 10
 
 const CPLE_HttpResponse = 11
 
-const CPLE_AWSBucketNotFound = 12
+const CPLE_BucketNotFound = 12
 
-const CPLE_AWSObjectNotFound = 13
+const CPLE_ObjectNotFound = 13
 
-const CPLE_AWSAccessDenied = 14
+const CPLE_AccessDenied = 14
 
-const CPLE_AWSInvalidCredentials = 15
+const CPLE_InvalidCredentials = 15
 
-const CPLE_AWSSignatureDoesNotMatch = 16
+const CPLE_SignatureDoesNotMatch = 16
 
-const CPLE_AWSError = 17
+const CPLE_ObjectStorageGenericError = 17
+
+const CPLE_AWSBucketNotFound = CPLE_BucketNotFound
+
+const CPLE_AWSObjectNotFound = CPLE_ObjectNotFound
+
+const CPLE_AWSAccessDenied = CPLE_AccessDenied
+
+const CPLE_AWSInvalidCredentials = CPLE_InvalidCredentials
+
+const CPLE_AWSSignatureDoesNotMatch = CPLE_SignatureDoesNotMatch
+
+const CPLE_AWSError = CPLE_ObjectStorageGenericError
 
 const VALIDATE_POINTER_ERR = CE_Failure
 
@@ -39281,7 +40732,7 @@ const VSI_STAT_CACHE_ONLY = 0x10
 
 const GDAL_VERSION_MAJOR = 3
 
-const GDAL_VERSION_MINOR = 11
+const GDAL_VERSION_MINOR = 12
 
 const GDAL_VERSION_REV = 1
 
@@ -39291,13 +40742,13 @@ const GDAL_VERSION_NUM =
     GDAL_COMPUTE_VERSION(GDAL_VERSION_MAJOR, GDAL_VERSION_MINOR, GDAL_VERSION_REV) +
     GDAL_VERSION_BUILD
 
-const GDAL_RELEASE_DATE = 20250625
+const GDAL_RELEASE_DATE = 20251212
 
-const GDAL_RELEASE_NAME = "3.11.1"
+const GDAL_RELEASE_NAME = "3.12.1"
 
-const GDAL_RELEASE_NICKNAME = "Eganville"
+const GDAL_RELEASE_NICKNAME = "Chicoutimi"
 
-const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 1
+const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 2
 
 const GCI_IR_Start = 20
 
@@ -39329,6 +40780,8 @@ const GDAL_DMD_EXTENSIONS = "DMD_EXTENSIONS"
 
 const GDAL_DMD_CREATIONOPTIONLIST = "DMD_CREATIONOPTIONLIST"
 
+const GDAL_DMD_OVERVIEW_CREATIONOPTIONLIST = "DMD_OVERVIEW_CREATIONOPTIONLIST"
+
 const GDAL_DMD_MULTIDIM_DATASET_CREATIONOPTIONLIST = "DMD_MULTIDIM_DATASET_CREATIONOPTIONLIST"
 
 const GDAL_DMD_MULTIDIM_GROUP_CREATIONOPTIONLIST = "DMD_MULTIDIM_GROUP_CREATIONOPTIONLIST"
@@ -39349,6 +40802,8 @@ const GDAL_DMD_CREATIONFIELDDATATYPES = "DMD_CREATIONFIELDDATATYPES"
 
 const GDAL_DMD_CREATIONFIELDDATASUBTYPES = "DMD_CREATIONFIELDDATASUBTYPES"
 
+const GDAL_DMD_MAX_STRING_LENGTH = "DMD_MAX_STRING_LENGTH"
+
 const GDAL_DMD_CREATION_FIELD_DEFN_FLAGS = "DMD_CREATION_FIELD_DEFN_FLAGS"
 
 const GDAL_DMD_SUBDATASETS = "DMD_SUBDATASETS"
@@ -39367,6 +40822,8 @@ const GDAL_DCAP_CREATE_MULTIDIMENSIONAL = "DCAP_CREATE_MULTIDIMENSIONAL"
 
 const GDAL_DCAP_CREATECOPY = "DCAP_CREATECOPY"
 
+const GDAL_DCAP_CREATE_ONLY_VISIBLE_AT_CLOSE_TIME = "DCAP_CREATE_ONLY_VISIBLE_AT_CLOSE_TIME"
+
 const GDAL_DCAP_VECTOR_TRANSLATE_FROM = "DCAP_VECTOR_TRANSLATE_FROM"
 
 const GDAL_DCAP_CREATECOPY_MULTIDIMENSIONAL = "DCAP_CREATECOPY_MULTIDIMENSIONAL"
@@ -39374,6 +40831,8 @@ const GDAL_DCAP_CREATECOPY_MULTIDIMENSIONAL = "DCAP_CREATECOPY_MULTIDIMENSIONAL"
 const GDAL_DCAP_MULTIDIM_RASTER = "DCAP_MULTIDIM_RASTER"
 
 const GDAL_DCAP_SUBCREATECOPY = "DCAP_SUBCREATECOPY"
+
+const GDAL_DCAP_APPEND = "DCAP_APPEND"
 
 const GDAL_DCAP_UPDATE = "DCAP_UPDATE"
 
@@ -39441,6 +40900,8 @@ const GDAL_DCAP_FLUSHCACHE_CONSISTENT_STATE = "DCAP_FLUSHCACHE_CONSISTENT_STATE"
 
 const GDAL_DCAP_HONOR_GEOM_COORDINATE_PRECISION = "DCAP_HONOR_GEOM_COORDINATE_PRECISION"
 
+const GDAL_DCAP_UPSERT = "DCAP_UPSERT"
+
 const GDAL_DMD_RELATIONSHIP_FLAGS = "GDAL_DMD_RELATIONSHIP_FLAGS"
 
 const GDAL_DMD_RELATIONSHIP_RELATED_TABLE_TYPES = "GDAL_DMD_RELATIONSHIP_RELATED_TABLE_TYPES"
@@ -39467,11 +40928,19 @@ const GDAL_DIM_TYPE_TEMPORAL = "TEMPORAL"
 
 const GDAL_DIM_TYPE_PARAMETRIC = "PARAMETRIC"
 
+const GDAL_DCAP_REOPEN_AFTER_WRITE_REQUIRED = "DCAP_REOPEN_AFTER_WRITE_REQUIRED"
+
+const GDAL_DCAP_CAN_READ_AFTER_DELETE = "DCAP_CAN_READ_AFTER_DELETE"
+
 const GDsCAddRelationship = "AddRelationship"
 
 const GDsCDeleteRelationship = "DeleteRelationship"
 
 const GDsCUpdateRelationship = "UpdateRelationship"
+
+const GDsCFastGetExtent = "FastGetExtent"
+
+const GDsCFastGetExtentWGS84LongLat = "FastGetExtentWGS84LongLat"
 
 const GDAL_OF_READONLY = 0x00
 
@@ -39526,6 +40995,8 @@ const GDAL_DATA_COVERAGE_STATUS_DATA = 0x02
 const GDAL_DATA_COVERAGE_STATUS_EMPTY = 0x04
 
 const GDALRPCInfo = GDALRPCInfoV2
+
+const GFT_MaxCount = GFT_WKBGeometry + 1
 
 const GDAL_GTI2_SIGNATURE = "GTI2"
 

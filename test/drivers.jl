@@ -8,6 +8,7 @@ available_drivers = [
     "COG",
     "GPKG",
     "GTiff",
+    "LIBERTIFF",
     "JP2OpenJPEG",
     "MEM",
     "OGCAPI",
@@ -64,9 +65,11 @@ available_drivers = [
     end
 end
 
-# errors with BADCERT_NOT_TRUSTED if the CA certificate paths is not properly configured
-sentinel = "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/30/U/WA/2020/7/S2B_30UWA_20200730_0_L2A/L2A_PVI.tif"
-ds_sentinel = GDAL.gdalopen(string("/vsicurl/", sentinel), GDAL.GA_ReadOnly)
-GDAL.gdalclose(ds_sentinel)
-# actually also works without the /vsicurl/ prefix, but takes 50s versus 1s, so let's
-# not waste CI time. (it's probably downloading the whole file)
+@testset "vsicurl access" begin
+    # errors with BADCERT_NOT_TRUSTED if the CA certificate paths is not properly configured
+    sentinel = "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/30/U/WA/2020/7/S2B_30UWA_20200730_0_L2A/L2A_PVI.tif"
+    ds_sentinel = GDAL.gdalopen(string("/vsicurl/", sentinel), GDAL.GA_ReadOnly)
+    GDAL.gdalclose(ds_sentinel)
+    # actually also works without the /vsicurl/ prefix, but takes 50s versus 1s, so let's
+    # not waste CI time. (it's probably downloading the whole file)
+end
