@@ -1,6 +1,14 @@
 using GDAL
 using Test
 import Aqua
+using MozillaCACerts_jll
+
+# Fix for SSL certificate issue on macOS with Julia 1.12+
+# GDAL's libcurl doesn't know where to find CA certificates by default
+# See: https://github.com/JuliaGeo/GDAL.jl/issues/203
+if Sys.isapple() && VERSION >= v"1.11"
+    GDAL.cplsetconfigoption("CURL_CA_BUNDLE", MozillaCACerts_jll.cacert)
+end
 
 @testset "GDAL" begin
 
