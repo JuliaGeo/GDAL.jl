@@ -46,13 +46,13 @@ help?> GDAL.ogr_g_creategeometry
 ```
 
 Further usage documentation is not yet available, but the files
-[`test/tutorial_raster.jl`](https://github.com/JuliaGeo/GDAL.jl/blob/master/test/tutorial_raster.jl)
+[`test/tutorial_raster.jl`](https://github.com/JuliaGeo/GDAL.jl/blob/main/test/tutorial_raster.jl)
 and
-[`test/tutorial_vector.jl`](https://github.com/JuliaGeo/GDAL.jl/blob/master/test/tutorial_vector.jl)
+[`test/tutorial_vector.jl`](https://github.com/JuliaGeo/GDAL.jl/blob/main/test/tutorial_vector.jl)
 should provide a good hint based on the API tutorials from [GDAL.org](http://gdal.org/).
 
 The bulk of this package is generated automatically by the scripts under
-[`gen/`](https://github.com/JuliaGeo/GDAL.jl/tree/master/gen).
+[`gen/`](https://github.com/JuliaGeo/GDAL.jl/tree/main/gen).
 
 ## Using the GDAL and OGR utilities
 
@@ -85,8 +85,8 @@ Python (ending in .py) are not available, since those would require a Python ins
 
 Since GDAL 2.1's [RFC59.1](https://trac.osgeo.org/gdal/wiki/rfc59.1_utilities_as_a_library)
 most utilities are also available as functions in the library, they are implemented
-[here](https://github.com/JuliaGeo/GDAL.jl/blob/master/src/gdal_utils.jl) and tested
-[here](https://github.com/JuliaGeo/GDAL.jl/blob/master/test/gdal_utils.jl). If these are
+[here](https://github.com/JuliaGeo/GDAL.jl/blob/main/src/gdal_utils.jl) and tested
+[here](https://github.com/JuliaGeo/GDAL.jl/blob/main/test/gdal_utils.jl). If these are
 used you can avoid the need for calling the binaries.
 
 If you want to use these utilities from outside julia, note that this will not work unless
