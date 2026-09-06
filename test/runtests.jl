@@ -15,6 +15,62 @@ import Aqua
     @test n_gdal_driver > 0
     @test n_ogr_driver > 0
 
+    @testset "CA certificate configuration" begin
+        ca_options = GDAL._GDAL_CA_CONFIG_OPTIONS
+        original_options =
+            Dict(option => GDAL.cplgetglobalconfigoption(option, C_NULL)
+                 for option in ca_options)
+        withenv((option => nothing for option in ca_options)...) do
+            try
+                foreach(option -> GDAL.cplsetconfigoption(option, C_NULL), ca_options)
+                withenv("JULIA_SSL_CA_ROOTS_PATH" => "",
+                        "SSL_CERT_FILE" => nothing,
+                        "SSL_CERT_DIR" => nothing) do
+                    GDAL._set_ca_roots!()
+                    ca_path = GDAL.ca_roots_path()
+                    option = isdir(ca_path) ? "GDAL_HTTP_CAPATH" : "CURL_CA_BUNDLE"
+                    @test GDAL.cplgetconfigoption(option, C_NULL) == ca_path
+                end
+
+                foreach(option -> GDAL.cplsetconfigoption(option, C_NULL), ca_options)
+                mktempdir() do ca_directory
+                    withenv("JULIA_SSL_CA_ROOTS_PATH" => nothing,
+                            "SSL_CERT_FILE" => nothing,
+                            "SSL_CERT_DIR" => ca_directory) do
+                        GDAL._set_ca_roots!()
+                        @test GDAL.cplgetconfigoption("GDAL_HTTP_CAPATH", C_NULL) ==
+                              ca_directory
+                        @test GDAL.cplgetconfigoption("CURL_CA_BUNDLE", C_NULL) ===
+                              nothing
+                    end
+                end
+
+                for preserved_option in ca_options
+                    foreach(option -> GDAL.cplsetconfigoption(option, C_NULL), ca_options)
+                    GDAL.cplsetconfigoption(preserved_option, "custom-ca-setting")
+                    GDAL._set_ca_roots!()
+                    @test GDAL.cplgetconfigoption(preserved_option, C_NULL) ==
+                          "custom-ca-setting"
+                    @test count(option ->
+                                    GDAL.cplgetconfigoption(option, C_NULL) !== nothing,
+                                ca_options) == 1
+                end
+
+                foreach(option -> GDAL.cplsetconfigoption(option, C_NULL), ca_options)
+                withenv("GDAL_CURL_CA_BUNDLE" => "custom-ca-from-env") do
+                    GDAL._set_ca_roots!()
+                    @test GDAL.cplgetconfigoption("GDAL_CURL_CA_BUNDLE", C_NULL) ==
+                          "custom-ca-from-env"
+                    @test GDAL.cplgetconfigoption("CURL_CA_BUNDLE", C_NULL) === nothing
+                end
+            finally
+                for (option, value) in original_options
+                    GDAL.cplsetconfigoption(option, something(value, C_NULL))
+                end
+            end
+        end
+    end
+
     srs = GDAL.osrnewspatialreference(C_NULL)
     GDAL.osrimportfromepsg(srs, 4326) # fails if GDAL_DATA is not set correctly
 

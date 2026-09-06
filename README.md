@@ -98,6 +98,11 @@ you set two things:
 Inside of julia (2) is always the case, and (1) happens on loading the `GDAL` module, in its
 `__init__` function.
 
+GDAL's HTTPS support uses the certificate roots selected by Julia's `NetworkOptions`.
+On systems where the platform roots are not available as a file, this uses Julia's bundled
+certificate roots. Set `GDAL_CURL_CA_BUNDLE`, `CURL_CA_BUNDLE`, `SSL_CERT_FILE`, or
+`GDAL_HTTP_CAPATH` before loading GDAL to use custom certificate roots.
+
 ## Missing driver to support a format
 
 If you get an error such as the one below:
