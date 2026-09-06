@@ -32,6 +32,13 @@ function _set_ca_roots!()
     any(option -> cplgetconfigoption(option, C_NULL) !== nothing,
         _GDAL_CA_CONFIG_OPTIONS) && return
 
+    # On Windows, GDAL's C runtime may not see changes made through Julia's ENV.
+    for option in _GDAL_CA_CONFIG_OPTIONS
+        haskey(ENV, option) || continue
+        cplsetconfigoption(option, ENV[option])
+        return
+    end
+
     ca_path = ca_roots_path()
     is_ca_directory =
         isdir(ca_path) || get(ENV, "SSL_CERT_DIR", nothing) == ca_path
