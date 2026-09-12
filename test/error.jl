@@ -59,4 +59,57 @@
     # signal (22): SIGABRT
     # So let's not even test it once to be safe
 
+    @testset "opting out of error checks" begin
+        @test GDAL.check_errors[] === true
+        # The reference call: checked by default, so it throws.
+        @test_throws GDAL.GDALError GDAL.gdalgetdrivershortname(C_NULL)
+
+        GDAL.check_errors[] = false
+        try
+            # Same call, unchecked: aftercare returns the NULL Cstring as nothing
+            # and leaves GDAL's error state for the caller to inspect.
+            @test GDAL.gdalgetdrivershortname(C_NULL) === nothing
+            @test GDAL.cplgetlasterrortype() === GDAL.CE_Failure
+            @test GDAL.cplgetlasterrorno() === Int32(10)
+        finally
+            GDAL.check_errors[] = true
+            GDAL.cplerrorreset()
+        end
+        # Checking is restored, and the discarded error state does not leak out.
+        @test GDAL.cplgetlasterrortype() === GDAL.CE_None
+        @test_throws GDAL.GDALError GDAL.gdalgetdrivershortname(C_NULL)
+
+        @testset "without_error_checks" begin
+            # Returns f()'s value, and checks are off for its duration.
+            result = GDAL.without_error_checks() do
+                @test GDAL.check_errors[] === false
+                42
+            end
+            @test result == 42
+            @test GDAL.check_errors[] === true
+
+            # Restores the flag when f throws.
+            @test_throws ErrorException GDAL.without_error_checks() do
+                error("boom")
+            end
+            @test GDAL.check_errors[] === true
+
+            # Restores the previous value rather than forcing `true`.
+            GDAL.check_errors[] = false
+            GDAL.without_error_checks() do
+                nothing
+            end
+            @test GDAL.check_errors[] === false
+            GDAL.check_errors[] = true
+
+            # A failure inside the block is not thrown; it surfaces on the next
+            # checked call, which resets the state as usual.
+            GDAL.without_error_checks() do
+                @test GDAL.gdalgetdrivershortname(C_NULL) === nothing
+            end
+            @test_throws GDAL.GDALError GDAL.gdalgetdriverbyname("NotADriver")
+            @test GDAL.cplgetlasterrortype() === GDAL.CE_None
+        end
+    end
+
 end # testset "GDAL errors"
