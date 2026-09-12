@@ -36,12 +36,65 @@ function gdaljl_errorhandler(class::CPLErr, errno::Cint, errmsg::Cstring)
     return C_NULL
 end
 
+"""
+    check_errors
+
+Whether wrapped GDAL calls inspect GDAL's error state, as a process-global
+`Ref{Bool}` that defaults to `true`.
+
+Every wrapper in `libgdal.jl` ends in `aftercare`, which calls `CPLGetLastErrorType`
+and throws a `GDALError` on `CE_Failure`. That is one extra `ccall` per GDAL call,
+which loops issuing millions of calls can opt out of:
+
+    GDAL.check_errors[] = false
+    # ... accessors whose failure the caller handles itself
+    GDAL.check_errors[] = true
+
+`without_error_checks` wraps that pattern and restores the flag on exception.
+
+Two consequences are worth planning for:
+
+- The flag is process-global, so every thread and task stops checking for as long
+  as it is `false`.
+- GDAL keeps accumulating its error state while checks are off, so the first checked
+  call afterwards may throw a `GDALError` describing a failure from the unchecked
+  region. Call `cplerrorreset()` to discard it.
+"""
+const check_errors = Ref(true)
+
 "Check the last error type and throw a GDALError if it is a failure"
 function maybe_throw()
-    if cplgetlasterrortype() >= CE_Failure
+    # Short-circuit: with checks enabled this is the original behaviour plus one
+    # load; with checks disabled the CPLGetLastErrorType ccall is skipped.
+    if check_errors[] && cplgetlasterrortype() >= CE_Failure
         throw(GDALError())
     end
     nothing
+end
+
+"""
+    without_error_checks(f)
+
+Run `f()` with GDAL error checking disabled, restoring `check_errors` to its previous
+value afterwards, including when `f` throws.
+
+    GDAL.without_error_checks() do
+        for i in 1:n
+            GDAL.ogr_f_getfid(features[i])
+        end
+    end
+
+See `check_errors` for the scope of the flag and for the error state GDAL keeps
+while checks are off.
+"""
+function without_error_checks(f)
+    old = check_errors[]
+    check_errors[] = false
+    try
+        f()
+    finally
+        check_errors[] = old
+    end
 end
 
 """
@@ -52,6 +105,7 @@ If the failure was thrown by GDAL itself, it will not even get to `aftercare` an
 `gdaljl_errorhandler`. However in many cases even though GDAL sets the error state to `CE_Failure`
 it will not throw the error. However we always do, to make sure not failure goes unnoticed.
 If an error might be expected, one can use `try .. catch` to handle this.
+`check_errors` turns the check off for loops that check failures themselves.
 
 Depending on the return type, we do extra work.
 """
