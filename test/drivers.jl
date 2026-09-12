@@ -73,3 +73,22 @@ end
     # actually also works without the /vsicurl/ prefix, but takes 50s versus 1s, so let's
     # not waste CI time. (it's probably downloading the whole file)
 end
+
+@testset "GeoParquet" begin
+    # Regression test for https://github.com/JuliaGeo/GDAL.jl/issues/146
+    geoparquet = "/vsicurl/https://github.com/opengeospatial/geoparquet/raw/v1.0.0-beta.1/examples/example.parquet"
+    dataset = GDAL.gdalopenex(geoparquet, GDAL.GDAL_OF_VECTOR, C_NULL, C_NULL, C_NULL)
+    layer = GDAL.gdaldatasetgetlayer(dataset, 0)
+    @test GDAL.ogr_l_getname(layer) == "example"
+
+    featuredefn = GDAL.ogr_l_getlayerdefn(layer)
+    @test GDAL.ogr_fd_getfieldcount(featuredefn) == 5
+    feature = GDAL.ogr_l_getnextfeature(layer)
+    @test GDAL.ogr_f_getfieldasinteger(feature, 0) == 920938
+
+    geometry = GDAL.ogr_f_getgeometryref(feature)
+    @test GDAL.ogr_g_getgeometrytype(geometry) == GDAL.wkbMultiPolygon
+
+    GDAL.ogr_f_destroy(feature)
+    GDAL.gdalclose(dataset)
+end
