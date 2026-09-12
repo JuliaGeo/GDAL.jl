@@ -49,9 +49,8 @@ end
 
 """
     CPLGetThreadLocalConfigOption(const char * pszKey,
-                                  const char * pszDefault) -> const char *
-
-Same as CPLGetConfigOption() but only with options set with CPLSetThreadLocalConfigOption()
+                                  const char * pszDefault,
+                                  bool bSubstituteNullValueMarkerWithNull) -> const char *
 """
 function cplgetthreadlocalconfigoption(arg1, arg2)
     aftercare(
@@ -68,9 +67,8 @@ end
 
 """
     CPLGetGlobalConfigOption(const char * pszKey,
-                             const char * pszDefault) -> const char *
-
-Same as CPLGetConfigOption() but excludes environment variables and options set with CPLSetThreadLocalConfigOption().
+                             const char * pszDefault,
+                             bool bSubstituteNullValueMarkerWithNull) -> const char *
 """
 function cplgetglobalconfigoption(arg1, arg2)
     aftercare(
@@ -93,7 +91,7 @@ Set a configuration option for GDAL/OGR use.
 
 ### Parameters
 * **pszKey**: the key of the option
-* **pszValue**: the value of the option, or NULL to clear a setting.
+* **pszValue**: the value of the option, NULL to clear a setting, or macro CPL_NULL_VALUE.
 """
 function cplsetconfigoption(arg1, arg2)
     aftercare(ccall((:CPLSetConfigOption, libgdal), Cvoid, (Cstring, Cstring), arg1, arg2))
@@ -107,7 +105,7 @@ Set a configuration option for GDAL/OGR use.
 
 ### Parameters
 * **pszKey**: the key of the option
-* **pszValue**: the value of the option, or NULL to clear a setting.
+* **pszValue**: the value of the option, NULL to clear a setting, or macro CPL_NULL_VALUE.
 """
 function cplsetthreadlocalconfigoption(pszKey, pszValue)
     aftercare(
@@ -159,7 +157,7 @@ const CPLSetConfigOptionSubscriber = Ptr{Cvoid}
     CPLSubscribeToSetConfigOption(CPLSetConfigOptionSubscriber pfnCallback,
                                   void * pUserData) -> int
 
-Install a callback that will be notified of calls to CPLSetConfigOption()/ CPLSetThreadLocalConfigOption()
+Install a callback that will be notified of calls to CPLSetConfigOption()/ CPLSetThreadLocalConfigOption().
 
 ### Parameters
 * **pfnCallback**: Callback. Must not be NULL
@@ -183,7 +181,7 @@ end
 """
     CPLUnsubscribeToSetConfigOption(int nId) -> void
 
-Remove a subscriber installed with CPLSubscribeToSetConfigOption()
+Remove a subscriber installed with CPLSubscribeToSetConfigOption().
 
 ### Parameters
 * **nId**: Subscriber id returned by CPLSubscribeToSetConfigOption()
@@ -816,19 +814,9 @@ function cplscanpointer(arg1, arg2)
 end
 
 """
-    CPLPrintString(char * pszDest,
-                   const char * pszSrc,
-                   int nMaxLen) -> int
-
-Copy the string pointed to by pszSrc, NOT including the terminating \\0 character, to the array pointed to by pszDest.
-
-### Parameters
-* **pszDest**: Pointer to the destination string buffer. Should be large enough to hold the resulting string.
-* **pszSrc**: Pointer to the source buffer.
-* **nMaxLen**: Maximum length of the resulting string. If string length is greater than nMaxLen, it will be truncated.
-
-### Returns
-Number of characters printed.
+    CPLPrintString(char *,
+                   const char *,
+                   int) -> int
 """
 function cplprintstring(arg1, arg2, arg3)
     aftercare(
@@ -837,19 +825,9 @@ function cplprintstring(arg1, arg2, arg3)
 end
 
 """
-    CPLPrintStringFill(char * pszDest,
-                       const char * pszSrc,
-                       int nMaxLen) -> int
-
-Copy the string pointed to by pszSrc, NOT including the terminating \\0 character, to the array pointed to by pszDest.
-
-### Parameters
-* **pszDest**: Pointer to the destination string buffer. Should be large enough to hold the resulting string.
-* **pszSrc**: Pointer to the source buffer.
-* **nMaxLen**: Maximum length of the resulting string. If string length is greater than nMaxLen, it will be truncated.
-
-### Returns
-Number of characters printed.
+    CPLPrintStringFill(char *,
+                       const char *,
+                       int) -> int
 """
 function cplprintstringfill(arg1, arg2, arg3)
     aftercare(
@@ -872,15 +850,21 @@ const GInt32 = Cint
                   GInt32 iValue,
                   int nMaxLen) -> int
 
-Print GInt32 value into specified string buffer.
+Copy the string pointed to by pszSrc, NOT including the terminating `\\0' character, to the array pointed to by pszDest.
 
 ### Parameters
+* **pszDest**: Pointer to the destination string buffer. Should be large enough to hold the resulting string.
+* **pszSrc**: Pointer to the source buffer.
+* **nMaxLen**: Maximum length of the resulting string. If string length is greater than nMaxLen, it will be truncated.
+* **pszDest**: Pointer to the destination string buffer. Should be large enough to hold the resulting string.
+* **pszSrc**: Pointer to the source buffer.
+* **nMaxLen**: Maximum length of the resulting string. If string length is greater than nMaxLen, it will be truncated.
 * **pszBuffer**: Pointer to the destination string buffer. Should be large enough to hold the resulting string. Note, that the string will not be NULL-terminated, so user should do this himself, if needed.
 * **iValue**: Numerical value to print.
 * **nMaxLen**: Maximum length of the resulting string. If string length is greater than nMaxLen, it will be truncated.
 
 ### Returns
-Number of characters printed.
+Number of characters printed. */
 """
 function cplprintint32(arg1, arg2, arg3)
     aftercare(
@@ -1357,7 +1341,7 @@ end
 """
     CPLCorrespondingPaths(const char * pszOldFilename,
                           const char * pszNewFilename,
-                          char ** papszFileList) -> char **
+                          CSLConstList papszFileList) -> char **
 
 Identify corresponding paths.
 
@@ -1374,7 +1358,7 @@ function cplcorrespondingpaths(pszOldFilename, pszNewFilename, papszFileList)
         ccall(
             (:CPLCorrespondingPaths, libgdal),
             Ptr{Cstring},
-            (Cstring, Cstring, Ptr{Cstring}),
+            (Cstring, Cstring, CSLConstList),
             pszOldFilename,
             pszNewFilename,
             papszFileList,
@@ -1706,7 +1690,17 @@ end
 """
     CPLErr
 
-Error category
+Error category / error level.
+
+Can be used either as return code for a number of functions of the GDAL API, or as the error level in warning/errors raised by [`CPLError`](@ref)().
+
+| Enumerator   | Note                                                                                                                                     |
+| :----------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| CE\\_None    | No error. Only used as the return value of a function                                                                                    |
+| CE\\_Debug   | Debug message. Emitted through [`CPLDebug`](@ref)().                                                                                     |
+| CE\\_Warning | Non-nominal situation that is worth bringing to the attention of the user, but that does not prevent the ongoing operation to complete.  |
+| CE\\_Failure | Error that prevents the current operation to succeed. Other following GDAL operations might succeed.                                     |
+| CE\\_Fatal   | Fatal unrecoverable error. The process is terminated with abort() after it is emitted.                                                   |
 """
 @cenum CPLErr::UInt32 begin
     CE_None = 0
@@ -1899,9 +1893,11 @@ function cplcreatezip(pszZipFilename, papszOptions)
 end
 
 """
-    CPLCreateFileInZip(void *,
-                       const char *,
-                       char **) -> CPLErr
+    CPLCreateFileInZip(void * hZip,
+                       const char * pszFilename,
+                       char ** papszOptions) -> CPLErr
+
+Create a file in a ZIP file.
 """
 function cplcreatefileinzip(hZip, pszFilename, papszOptions)
     aftercare(
@@ -1917,9 +1913,11 @@ function cplcreatefileinzip(hZip, pszFilename, papszOptions)
 end
 
 """
-    CPLWriteFileInZip(void *,
-                      const void *,
-                      int) -> CPLErr
+    CPLWriteFileInZip(void * hZip,
+                      const void * pBuffer,
+                      int nBufferSize) -> CPLErr
+
+Write in current file inside a ZIP file.
 """
 function cplwritefileinzip(hZip, pBuffer, nBufferSize)
     aftercare(
@@ -1935,7 +1933,9 @@ function cplwritefileinzip(hZip, pBuffer, nBufferSize)
 end
 
 """
-    CPLCloseFileInZip(void *) -> CPLErr
+    CPLCloseFileInZip(void * hZip) -> CPLErr
+
+Close current file inside ZIP file.
 """
 function cplclosefileinzip(hZip)
     aftercare(ccall((:CPLCloseFileInZip, libgdal), CPLErr, (Ptr{Cvoid},), hZip))
@@ -2000,19 +2000,34 @@ function cpladdfileinzip(
 end
 
 """
-    CPLCloseZip(void *) -> CPLErr
+    CPLCloseZip(void * hZip) -> CPLErr
+
+Close ZIP file.
 """
 function cplclosezip(hZip)
     aftercare(ccall((:CPLCloseZip, libgdal), CPLErr, (Ptr{Cvoid},), hZip))
 end
 
 """
-    CPLZLibDeflate(const void *,
-                   size_t,
-                   int,
-                   void *,
-                   size_t,
+    CPLZLibDeflate(const void * ptr,
+                   size_t nBytes,
+                   int nLevel,
+                   void * outptr,
+                   size_t nOutAvailableBytes,
                    size_t * pnOutBytes) -> void *
+
+Compress a buffer with ZLib compression.
+
+### Parameters
+* **ptr**: input buffer.
+* **nBytes**: size of input buffer in bytes.
+* **nLevel**: ZLib compression level (-1 for default).
+* **outptr**: output buffer, or NULL to let the function allocate it.
+* **nOutAvailableBytes**: size of output buffer if provided, or ignored.
+* **pnOutBytes**: pointer to a size_t, where to store the size of the output buffer.
+
+### Returns
+the output buffer (to be freed with VSIFree() if not provided) or NULL in case of error.
 """
 function cplzlibdeflate(ptr, nBytes, nLevel, outptr, nOutAvailableBytes, pnOutBytes)
     aftercare(
@@ -2031,11 +2046,23 @@ function cplzlibdeflate(ptr, nBytes, nLevel, outptr, nOutAvailableBytes, pnOutBy
 end
 
 """
-    CPLZLibInflate(const void *,
-                   size_t,
-                   void *,
-                   size_t,
+    CPLZLibInflate(const void * ptr,
+                   size_t nBytes,
+                   void * outptr,
+                   size_t nOutAvailableBytes,
                    size_t * pnOutBytes) -> void *
+
+Uncompress a buffer compressed with ZLib compression.
+
+### Parameters
+* **ptr**: input buffer.
+* **nBytes**: size of input buffer in bytes.
+* **outptr**: output buffer, or NULL to let the function allocate it.
+* **nOutAvailableBytes**: size of output buffer if provided, or ignored.
+* **pnOutBytes**: pointer to a size_t, where to store the size of the output buffer.
+
+### Returns
+the output buffer (to be freed with VSIFree() if not provided) or NULL in case of error.
 """
 function cplzlibinflate(ptr, nBytes, outptr, nOutAvailableBytes, pnOutBytes)
     aftercare(
@@ -3413,7 +3440,7 @@ end
                                 const char * pszFile,
                                 int nLine) -> void *
 
-See VSIMallocAlignedAuto()
+See VSIMallocAlignedAuto().
 """
 function vsimallocalignedautoverbose(nSize, pszFile, nLine)
     aftercare(
@@ -3814,7 +3841,7 @@ Seek to requested offset.
 * **nWhence**: one of SEEK_SET, SEEK_CUR or SEEK_END.
 
 ### Returns
-0 on success or -1 one failure.
+0 on success or -1 on failure.
 """
 function vsifseekl(arg1, arg2, arg3)
     aftercare(
@@ -4149,8 +4176,10 @@ function vsioverwritefile(fpTarget, pszSourceFilename)
     )
 end
 
+const stat64 = Cvoid
+
 "Type for [`VSIStatL`](@ref)()"
-const VSIStatBufL = _stat64
+const VSIStatBufL = stat64
 
 """
     VSIStatL(const char * pszFilename,
@@ -4563,7 +4592,7 @@ end
 """
     VSIClearPathSpecificOptions(const char * pszPathPrefix) -> void
 
-Clear path specific options set with VSISetPathSpecificOption()
+Clear path specific options set with VSISetPathSpecificOption().
 
 ### Parameters
 * **pszPathPrefix**: If set to NULL, all path specific options are cleared. If set to not-NULL, only those set with VSISetPathSpecificOption(pszPathPrefix, ...) will be cleared.
@@ -4618,7 +4647,7 @@ end
 """
     VSIClearCredentials(const char * pszPathPrefix) -> void
 
-Clear path specific options set with VSISetPathSpecificOption()
+Clear path specific options set with VSISetPathSpecificOption().
 """
 function vsiclearcredentials(pszPathPrefix)
     aftercare(ccall((:VSIClearCredentials, libgdal), Cvoid, (Cstring,), pszPathPrefix))
@@ -5592,7 +5621,7 @@ end
 """
     VSIInstallCurlFileHandler(void) -> void
 
-Install /vsicurl/ HTTP/FTP file system handler (requires libcurl)
+Install /vsicurl/ HTTP/FTP file system handler (requires libcurl).
 """
 function vsiinstallcurlfilehandler()
     aftercare(ccall((:VSIInstallCurlFileHandler, libgdal), Cvoid, ()))
@@ -5601,7 +5630,7 @@ end
 """
     VSICurlClearCache(void) -> void
 
-Clean local cache associated with /vsicurl/ (and related file systems)
+Clean local cache associated with /vsicurl/ (and related file systems).
 """
 function vsicurlclearcache()
     aftercare(ccall((:VSICurlClearCache, libgdal), Cvoid, ()))
@@ -5610,7 +5639,7 @@ end
 """
     VSICurlPartialClearCache(const char * pszFilenamePrefix) -> void
 
-Clean local cache associated with /vsicurl/ (and related file systems) for a given filename (and its subfiles and subdirectories if it is a directory)
+Clean local cache associated with /vsicurl/ (and related file systems) for a given filename (and its subfiles and subdirectories if it is a directory).
 
 ### Parameters
 * **pszFilenamePrefix**: Filename prefix
@@ -5633,7 +5662,7 @@ end
 """
     VSIInstallS3FileHandler(void) -> void
 
-Install /vsis3/ Amazon S3 file system handler (requires libcurl)
+Install /vsis3/ Amazon S3 file system handler (requires libcurl).
 """
 function vsiinstalls3filehandler()
     aftercare(ccall((:VSIInstallS3FileHandler, libgdal), Cvoid, ()))
@@ -5651,7 +5680,7 @@ end
 """
     VSIInstallGSFileHandler(void) -> void
 
-Install /vsigs/ Google Cloud Storage file system handler (requires libcurl)
+Install /vsigs/ Google Cloud Storage file system handler (requires libcurl).
 """
 function vsiinstallgsfilehandler()
     aftercare(ccall((:VSIInstallGSFileHandler, libgdal), Cvoid, ()))
@@ -5660,7 +5689,7 @@ end
 """
     VSIInstallGSStreamingFileHandler(void) -> void
 
-Install /vsigs_streaming/ Google Cloud Storage file system handler (requires libcurl)
+Install /vsigs_streaming/ Google Cloud Storage file system handler (requires libcurl).
 """
 function vsiinstallgsstreamingfilehandler()
     aftercare(ccall((:VSIInstallGSStreamingFileHandler, libgdal), Cvoid, ()))
@@ -5669,7 +5698,7 @@ end
 """
     VSIInstallAzureFileHandler(void) -> void
 
-Install /vsiaz/ Microsoft Azure Blob file system handler (requires libcurl)
+Install /vsiaz/ Microsoft Azure Blob file system handler (requires libcurl).
 """
 function vsiinstallazurefilehandler()
     aftercare(ccall((:VSIInstallAzureFileHandler, libgdal), Cvoid, ()))
@@ -5678,7 +5707,7 @@ end
 """
     VSIInstallAzureStreamingFileHandler(void) -> void
 
-Install /vsiaz_streaming/ Microsoft Azure Blob file system handler (requires libcurl)
+Install /vsiaz_streaming/ Microsoft Azure Blob file system handler (requires libcurl).
 """
 function vsiinstallazurestreamingfilehandler()
     aftercare(ccall((:VSIInstallAzureStreamingFileHandler, libgdal), Cvoid, ()))
@@ -5687,7 +5716,7 @@ end
 """
     VSIInstallADLSFileHandler(void) -> void
 
-Install /vsiaz/ Microsoft Azure Data Lake Storage Gen2 file system handler (requires libcurl)
+Install /vsiaz/ Microsoft Azure Data Lake Storage Gen2 file system handler (requires libcurl).
 """
 function vsiinstalladlsfilehandler()
     aftercare(ccall((:VSIInstallADLSFileHandler, libgdal), Cvoid, ()))
@@ -5696,7 +5725,7 @@ end
 """
     VSIInstallOSSFileHandler(void) -> void
 
-Install /vsioss/ Alibaba Cloud Object Storage Service (OSS) file system handler (requires libcurl)
+Install /vsioss/ Alibaba Cloud Object Storage Service (OSS) file system handler (requires libcurl).
 """
 function vsiinstallossfilehandler()
     aftercare(ccall((:VSIInstallOSSFileHandler, libgdal), Cvoid, ()))
@@ -5705,7 +5734,7 @@ end
 """
     VSIInstallOSSStreamingFileHandler(void) -> void
 
-Install /vsiaz_streaming/ Alibaba Cloud Object Storage Service (OSS) (requires libcurl)
+Install /vsiaz_streaming/ Alibaba Cloud Object Storage Service (OSS) (requires libcurl).
 """
 function vsiinstallossstreamingfilehandler()
     aftercare(ccall((:VSIInstallOSSStreamingFileHandler, libgdal), Cvoid, ()))
@@ -5714,7 +5743,7 @@ end
 """
     VSIInstallSwiftFileHandler(void) -> void
 
-Install /vsiswift/ OpenStack Swif Object Storage (Swift) file system handler (requires libcurl)
+Install /vsiswift/ OpenStack Swif Object Storage (Swift) file system handler (requires libcurl).
 """
 function vsiinstallswiftfilehandler()
     aftercare(ccall((:VSIInstallSwiftFileHandler, libgdal), Cvoid, ()))
@@ -5723,7 +5752,7 @@ end
 """
     VSIInstallSwiftStreamingFileHandler(void) -> void
 
-Install /vsiswift_streaming/ OpenStack Swif Object Storage (Swift) file system handler (requires libcurl)
+Install /vsiswift_streaming/ OpenStack Swif Object Storage (Swift) file system handler (requires libcurl).
 """
 function vsiinstallswiftstreamingfilehandler()
     aftercare(ccall((:VSIInstallSwiftStreamingFileHandler, libgdal), Cvoid, ()))
@@ -5732,7 +5761,7 @@ end
 """
     VSIInstall7zFileHandler(void) -> void
 
-Install /vsi7z/ 7zip file system handler (requires libarchive)
+Install /vsi7z/ 7zip file system handler (requires libarchive).
 """
 function vsiinstall7zfilehandler()
     aftercare(ccall((:VSIInstall7zFileHandler, libgdal), Cvoid, ()))
@@ -5741,7 +5770,7 @@ end
 """
     VSIInstallRarFileHandler(void) -> void
 
-Install /vsirar/ RAR file system handler (requires libarchive)
+Install /vsirar/ RAR file system handler (requires libarchive).
 """
 function vsiinstallrarfilehandler()
     aftercare(ccall((:VSIInstallRarFileHandler, libgdal), Cvoid, ()))
@@ -5777,7 +5806,7 @@ end
 """
     VSIInstallHdfsHandler() -> void
 
-Install /vsihdfs/ file system handler (requires JVM and HDFS support)
+Install /vsihdfs/ file system handler (requires JVM and HDFS support).
 """
 function vsiinstallhdfshandler()
     aftercare(ccall((:VSIInstallHdfsHandler, libgdal), Cvoid, ()))
@@ -5786,7 +5815,7 @@ end
 """
     VSIInstallWebHdfsHandler(void) -> void
 
-Install /vsiwebhdfs/ WebHDFS (Hadoop File System) REST API file system handler (requires libcurl)
+Install /vsiwebhdfs/ WebHDFS (Hadoop File System) REST API file system handler (requires libcurl).
 """
 function vsiinstallwebhdfshandler()
     aftercare(ccall((:VSIInstallWebHdfsHandler, libgdal), Cvoid, ()))
@@ -5831,7 +5860,7 @@ end
 """
     VSIInstallCryptFileHandler() -> void
 
-Install /vsicrypt/ encrypted file system handler (requires libcrypto++)
+Install /vsicrypt/ encrypted file system handler (requires libcrypto++).
 """
 function vsiinstallcryptfilehandler()
     aftercare(ccall((:VSIInstallCryptFileHandler, libgdal), Cvoid, ()))
@@ -6525,30 +6554,30 @@ const GNMGenericNetworkH = Ptr{Cvoid}
 
 Pixel data types
 
-| Enumerator      | Note                                   |
-| :-------------- | :------------------------------------- |
-| GDT\\_Unknown   | Unknown or unspecified type            |
-| GDT\\_Byte      | Eight bit unsigned integer             |
-| GDT\\_Int8      | 8-bit signed integer (GDAL >= 3.7)     |
-| GDT\\_UInt16    | Sixteen bit unsigned integer           |
-| GDT\\_Int16     | Sixteen bit signed integer             |
-| GDT\\_UInt32    | Thirty two bit unsigned integer        |
-| GDT\\_Int32     | Thirty two bit signed integer          |
-| GDT\\_UInt64    | 64 bit unsigned integer (GDAL >= 3.5)  |
-| GDT\\_Int64     | 64 bit signed integer (GDAL >= 3.5)    |
-| GDT\\_Float16   | Sixteen bit floating point             |
-| GDT\\_Float32   | Thirty two bit floating point          |
-| GDT\\_Float64   | Sixty four bit floating point          |
-| GDT\\_CInt16    | Complex Int16                          |
-| GDT\\_CInt32    | Complex Int32                          |
-| GDT\\_CFloat16  | Complex Float16                        |
-| GDT\\_CFloat32  | Complex Float32                        |
-| GDT\\_CFloat64  | Complex Float64                        |
-| GDT\\_TypeCount |                                        |
+| Enumerator      | Note                                                        |
+| :-------------- | :---------------------------------------------------------- |
+| GDT\\_Unknown   | Unknown or unspecified type                                 |
+| GDT\\_UInt8     | 8-bit unsigned integer ([`GDT_Byte`](@ref) in GDAL < 3.13)  |
+| GDT\\_Int8      | 8-bit signed integer (GDAL >= 3.7)                          |
+| GDT\\_UInt16    | 16-bit unsigned integer                                     |
+| GDT\\_Int16     | 16-bit signed integer                                       |
+| GDT\\_UInt32    | 32-bit unsigned integer                                     |
+| GDT\\_Int32     | 32-bit signed integer                                       |
+| GDT\\_UInt64    | 64 bit unsigned integer (GDAL >= 3.5)                       |
+| GDT\\_Int64     | 64 bit signed integer (GDAL >= 3.5)                         |
+| GDT\\_Float16   | 16-bit floating point                                       |
+| GDT\\_Float32   | 32-bit floating point                                       |
+| GDT\\_Float64   | 64-bit floating point                                       |
+| GDT\\_CInt16    | Complex Int16                                               |
+| GDT\\_CInt32    | Complex Int32                                               |
+| GDT\\_CFloat16  | Complex Float16                                             |
+| GDT\\_CFloat32  | Complex Float32                                             |
+| GDT\\_CFloat64  | Complex Float64                                             |
+| GDT\\_TypeCount |                                                             |
 """
 @cenum GDALDataType::UInt32 begin
     GDT_Unknown = 0
-    GDT_Byte = 1
+    GDT_UInt8 = 1
     GDT_Int8 = 14
     GDT_UInt16 = 2
     GDT_Int16 = 3
@@ -6573,7 +6602,7 @@ end
 Get data type size in bits.
 
 ### Parameters
-* **eDataType**: type, such as GDT_Byte.
+* **eDataType**: type, such as GDT_UInt8.
 
 ### Returns
 the number of bits or zero if it is not recognised.
@@ -6588,7 +6617,7 @@ end
 Get data type size in bits.
 
 ### Parameters
-* **eDataType**: type, such as GDT_Byte.
+* **eDataType**: type, such as GDT_UInt8.
 
 ### Returns
 the number of bits or zero if it is not recognised.
@@ -6603,7 +6632,7 @@ end
 Get data type size in bytes.
 
 ### Parameters
-* **eDataType**: type, such as GDT_Byte.
+* **eDataType**: type, such as GDT_UInt8.
 
 ### Returns
 the number of bytes or zero if it is not recognised.
@@ -6630,7 +6659,7 @@ end
 Is data type integer?
 
 ### Returns
-TRUE if the passed type is integer (one of GDT_Byte, GDT_Int16, GDT_UInt16, GDT_Int32, GDT_UInt32, GDT_CInt16, GDT_CInt32).
+TRUE if the passed type is integer (one of GDT_UInt8, GDT_Int16, GDT_UInt16, GDT_Int32, GDT_UInt32, GDT_CInt16, GDT_CInt32).
 """
 function gdaldatatypeisinteger(arg1)
     aftercare(ccall((:GDALDataTypeIsInteger, libgdal), Cint, (GDALDataType,), arg1))
@@ -7044,18 +7073,19 @@ end
 
 Structure to pass extra arguments to RasterIO() method, must be initialized with [`INIT_RASTERIO_EXTRA_ARG`](@ref)
 
-| Field                        | Note                                                                                                                                                                                                                                                             |
-| :--------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| nVersion                     | Version of structure (to allow future extensions of the structure)                                                                                                                                                                                               |
-| eResampleAlg                 | Resampling algorithm                                                                                                                                                                                                                                             |
-| pfnProgress                  | Progress callback                                                                                                                                                                                                                                                |
-| pProgressData                | Progress callback user data                                                                                                                                                                                                                                      |
-| bFloatingPointWindowValidity | Indicate if dfXOff, dfYOff, dfXSize and dfYSize are set. Mostly reserved from the VRT driver to communicate a more precise source window. Must be such that dfXOff - nXOff < 1.0 and dfYOff - nYOff < 1.0 and nXSize - dfXSize < 1.0 and nYSize - dfYSize < 1.0  |
-| dfXOff                       | Pixel offset to the top left corner. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                                 |
-| dfYOff                       | Line offset to the top left corner. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                                  |
-| dfXSize                      | Width in pixels of the area of interest. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                             |
-| dfYSize                      | Height in pixels of the area of interest. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                            |
-| bUseOnlyThisScale            | Indicate if overviews should be considered. Tested in GDALBandGetBestOverviewLevel(), mostly reserved for use by GDALRegenerateOverviewsMultiBand() Only available if [`RASTERIO_EXTRA_ARG_CURRENT_VERSION`](@ref) >= 2                                          |
+| Field                        | Note                                                                                                                                                                                                                                                                                                                                                                                                 |
+| :--------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| nVersion                     | Version of structure (to allow future extensions of the structure)                                                                                                                                                                                                                                                                                                                                   |
+| eResampleAlg                 | Resampling algorithm                                                                                                                                                                                                                                                                                                                                                                                 |
+| pfnProgress                  | Progress callback                                                                                                                                                                                                                                                                                                                                                                                    |
+| pProgressData                | Progress callback user data                                                                                                                                                                                                                                                                                                                                                                          |
+| bFloatingPointWindowValidity | Indicate if dfXOff, dfYOff, dfXSize and dfYSize are set. Mostly reserved from the VRT driver to communicate a more precise source window. Must be such that dfXOff - nXOff < 1.0 and dfYOff - nYOff < 1.0 and nXSize - dfXSize < 1.0 and nYSize - dfYSize < 1.0                                                                                                                                      |
+| dfXOff                       | Pixel offset to the top left corner. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                                                                                                                                                                     |
+| dfYOff                       | Line offset to the top left corner. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                                                                                                                                                                      |
+| dfXSize                      | Width in pixels of the area of interest. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                                                                                                                                                                 |
+| dfYSize                      | Height in pixels of the area of interest. Only valid if bFloatingPointWindowValidity = [`TRUE`](@ref)                                                                                                                                                                                                                                                                                                |
+| bUseOnlyThisScale            | Indicate if overviews should be considered. Tested in GDALBandGetBestOverviewLevel(), mostly reserved for use by GDALRegenerateOverviewsMultiBand() Only available if [`RASTERIO_EXTRA_ARG_CURRENT_VERSION`](@ref) >= 2                                                                                                                                                                              |
+| bOperateInBufType            | Indicate if operations (typically non-nearest resampling) should be done in the eBufType data type of the RasterIO() request rather than the band data type. Only available if [`RASTERIO_EXTRA_ARG_CURRENT_VERSION`](@ref) >= 3 (GDAL >= 3.13) Defaults to [`TRUE`](@ref) in GDAL >= 3.13 (behavior in previous version was mostly, but not always corresponding to setting it to [`FALSE`](@ref))  |
 """
 struct GDALRasterIOExtraArg
     nVersion::Cint
@@ -7068,6 +7098,7 @@ struct GDALRasterIOExtraArg
     dfXSize::Cdouble
     dfYSize::Cdouble
     bUseOnlyThisScale::Cint
+    bOperateInBufType::Cint
 end
 
 """
@@ -7210,6 +7241,28 @@ function gdalgetcolorinterpretationbyname(pszName)
             GDALColorInterp,
             (Cstring,),
             pszName,
+        ),
+    )
+end
+
+"""
+    GDALGetColorInterpretationList(int * pnCount) -> const GDALColorInterp *
+
+Get the list of valid color interpretations.
+
+### Parameters
+* **pnCount**: Pointer to an integer that will be set to the number of values of the returned array. It must not be null.
+
+### Returns
+array of *pnCount values
+"""
+function gdalgetcolorinterpretationlist(pnCount)
+    aftercare(
+        ccall(
+            (:GDALGetColorInterpretationList, libgdal),
+            Ptr{GDALColorInterp},
+            (Ptr{Cint},),
+            pnCount,
         ),
     )
 end
@@ -7523,7 +7576,7 @@ Thread safe mode: GDAL_OF_THREAD_SAFE (added in 3.10). This must be use in combi
 
 
 Verbose error: GDAL_OF_VERBOSE_ERROR. If set, a failed attempt to open the file will lead to an error message to be reported.
-* **papszAllowedDrivers**: NULL to consider all candidate drivers, or a NULL terminated list of strings with the driver short names that must be considered.
+* **papszAllowedDrivers**: NULL to consider all candidate drivers, or a NULL terminated list of strings with the driver short names that must be considered. Starting with GDAL 3.13, a string starting with the dash (-) character followed by the driver short name can be used to exclude a driver.
 * **papszOpenOptions**: NULL, or a NULL terminated list of strings with open options passed to candidate drivers. An option exists for all drivers, OVERVIEW_LEVEL=level, to select a particular overview level of a dataset. The level index starts at 0. The level number can be suffixed by "only" to specify that only this overview level must be visible, and not sub-levels. Open options are validated by default, and a warning is emitted in case the option is not recognized. In some scenarios, it might be not desirable (e.g. when not knowing which driver will open the file), so the special open option VALIDATE_OPEN_OPTIONS can be set to NO to avoid such warnings. Alternatively, that it may not cause a warning if the driver doesn't declare this option. Starting with GDAL 3.3, OVERVIEW_LEVEL=NONE is supported to indicate that no overviews should be exposed.
 * **papszSiblingFiles**: NULL, or a NULL terminated list of strings that are filenames that are auxiliary to the main filename. If NULL is passed, a probing of the file system will be done.
 
@@ -7633,6 +7686,15 @@ Destroy the driver manager.
 """
 function gdaldestroydrivermanager()
     aftercare(ccall((:GDALDestroyDriverManager, libgdal), Cvoid, ()))
+end
+
+"""
+    GDALClearMemoryCaches() -> void
+
+Clear all GDAL-controlled in-memory caches.
+"""
+function gdalclearmemorycaches()
+    aftercare(ccall((:GDALClearMemoryCaches, libgdal), Cvoid, ()))
 end
 
 """
@@ -7897,7 +7959,7 @@ end
     GDALDeinitGCPs(int nCount,
                    GDAL_GCP * psGCP) -> void
 
-De-initialize an array of GCPs (initialized with GDALInitGCPs())
+De-initialize an array of GCPs (initialized with GDALInitGCPs()).
 
 ### Parameters
 * **nCount**: number of GCPs in psGCP
@@ -8171,7 +8233,7 @@ end
 
 """
     GDALGetMetadata(GDALMajorObjectH hObject,
-                    const char * pszDomain) -> char **
+                    const char * pszDomain) -> CSLConstList
 
 Fetch metadata.
 """
@@ -8179,7 +8241,7 @@ function gdalgetmetadata(arg1, arg2)
     aftercare(
         ccall(
             (:GDALGetMetadata, libgdal),
-            Ptr{Cstring},
+            CSLConstList,
             (GDALMajorObjectH, Cstring),
             arg1,
             arg2,
@@ -8315,13 +8377,58 @@ end
 Close GDAL dataset.
 
 ### Parameters
-* **hDS**: The dataset to close. May be cast from a "GDALDataset *".
+* **hDS**: The dataset to close, or nullptr.
 
 ### Returns
 CE_None in case of success (return value since GDAL 3.7). On a shared dataset whose reference count is not dropped below 1, CE_None will be returned.
 """
 function gdalclose(arg1)
     aftercare(ccall((:GDALClose, libgdal), CPLErr, (GDALDatasetH,), arg1))
+end
+
+"""
+    GDALCloseEx(GDALDatasetH hDS,
+                GDALProgressFunc pfnProgress,
+                void * pProgressData) -> CPLErr
+
+Close GDAL dataset.
+
+### Parameters
+* **hDS**: The dataset to close, or nullptr
+* **pfnProgress**: Progress callback, or nullptr
+* **pProgressData**: User data of progress callback, or nullptr
+
+### Returns
+CE_None in case of success. On a shared dataset whose reference count is not dropped below 1, CE_None will be returned.
+"""
+function gdalcloseex(hDS, pfnProgress, pProgressData)
+    aftercare(
+        ccall(
+            (:GDALCloseEx, libgdal),
+            CPLErr,
+            (GDALDatasetH, GDALProgressFunc, Any),
+            hDS,
+            pfnProgress,
+            pProgressData,
+        ),
+    )
+end
+
+"""
+    GDALDatasetGetCloseReportsProgress(GDALDatasetH hDS) -> bool
+
+Returns whether the Close() operation will report progress / is a potential lengthy operation.
+
+### Parameters
+* **hDS**: dataset handle.
+
+### Returns
+CE_None if no error
+"""
+function gdaldatasetgetclosereportsprogress(hDS)
+    aftercare(
+        ccall((:GDALDatasetGetCloseReportsProgress, libgdal), Bool, (GDALDatasetH,), hDS),
+    )
 end
 
 """
@@ -8342,6 +8449,34 @@ function gdaldatasetrunclosewithoutdestroying(hDS)
             CPLErr,
             (GDALDatasetH,),
             hDS,
+        ),
+    )
+end
+
+"""
+    GDALDatasetRunCloseWithoutDestroyingEx(GDALDatasetH hDS,
+                                           GDALProgressFunc pfnProgress,
+                                           void * pProgressData) -> CPLErr
+
+Run the Close() method, without running destruction of the object.
+
+### Parameters
+* **hDS**: dataset handle.
+* **pfnProgress**: Progress callback, or nullptr
+* **pProgressData**: User data of progress callback, or nullptr
+
+### Returns
+CE_None if no error
+"""
+function gdaldatasetrunclosewithoutdestroyingex(hDS, pfnProgress, pProgressData)
+    aftercare(
+        ccall(
+            (:GDALDatasetRunCloseWithoutDestroyingEx, libgdal),
+            CPLErr,
+            (GDALDatasetH, GDALProgressFunc, Any),
+            hDS,
+            pfnProgress,
+            pProgressData,
         ),
     )
 end
@@ -9114,6 +9249,153 @@ function gdaldatasetgeolocationtopixelline(
 end
 
 """
+    GDALDatasetGetInterBandCovarianceMatrix(GDALDatasetH hDS,
+                                            double * padfCovMatrix,
+                                            size_t nSize,
+                                            int nBandCount,
+                                            const int * panBandList,
+                                            bool bApproxOK,
+                                            bool bForce,
+                                            bool bWriteIntoMetadata,
+                                            int nDeltaDegreeOfFreedom,
+                                            GDALProgressFunc pfnProgress,
+                                            void * pProgressData) -> CPLErr
+
+Fetch or compute the covariance matrix between bands of this dataset.
+
+### Parameters
+* **hDS**: Dataset handle.
+* **padfCovMatrix**: Pointer to an already allocated output array, of size at least nBandCount * nBandCount.
+* **nSize**: Number of elements in output array.
+* **nBandCount**: Zero for all bands, or number of values in panBandList. Defaults to 0.
+* **panBandList**: nullptr for all bands if nBandCount == 0, or array of nBandCount values such as panBandList[i] is the index between 1 and GetRasterCount() of a band that must be used in the covariance computation. Defaults to nullptr.
+* **bApproxOK**: Whether it is acceptable to use a subsample of values in GDALDatasetComputeInterBandCovarianceMatrix(). Defaults to false.
+* **bForce**: Whether GDALDatasetComputeInterBandCovarianceMatrix() should be called when the STATISTICS_COVARIANCES metadata items are missing. Defaults to false.
+* **bWriteIntoMetadata**: Whether GDALDatasetComputeInterBandCovarianceMatrix() must write STATISTICS_COVARIANCES band metadata items. Defaults to true.
+* **nDeltaDegreeOfFreedom**: Correction term to subtract in the final averaging phase of the covariance computation. Defaults to 1.
+* **pfnProgress**: a function to call to report progress, or NULL.
+* **pProgressData**: application data to pass to the progress function.
+
+### Returns
+CE_None if successful, CE_Warning if values are not available in metadata and bForce is false, or CE_Failure in case of failure
+"""
+function gdaldatasetgetinterbandcovariancematrix(
+    hDS,
+    padfCovMatrix,
+    nSize,
+    nBandCount,
+    panBandList,
+    bApproxOK,
+    bForce,
+    bWriteIntoMetadata,
+    nDeltaDegreeOfFreedom,
+    pfnProgress,
+    pProgressData,
+)
+    aftercare(
+        ccall(
+            (:GDALDatasetGetInterBandCovarianceMatrix, libgdal),
+            CPLErr,
+            (
+                GDALDatasetH,
+                Ptr{Cdouble},
+                Csize_t,
+                Cint,
+                Ptr{Cint},
+                Bool,
+                Bool,
+                Bool,
+                Cint,
+                GDALProgressFunc,
+                Any,
+            ),
+            hDS,
+            padfCovMatrix,
+            nSize,
+            nBandCount,
+            panBandList,
+            bApproxOK,
+            bForce,
+            bWriteIntoMetadata,
+            nDeltaDegreeOfFreedom,
+            pfnProgress,
+            pProgressData,
+        ),
+    )
+end
+
+"""
+    GDALDatasetComputeInterBandCovarianceMatrix(GDALDatasetH hDS,
+                                                double * padfCovMatrix,
+                                                size_t nSize,
+                                                int nBandCount,
+                                                const int * panBandList,
+                                                bool bApproxOK,
+                                                bool bWriteIntoMetadata,
+                                                int nDeltaDegreeOfFreedom,
+                                                GDALProgressFunc pfnProgress,
+                                                void * pProgressData) -> CPLErr
+
+Compute the covariance matrix between bands of this dataset.
+
+### Parameters
+* **hDS**: Dataset handle.
+* **padfCovMatrix**: Pointer to an already allocated output array, of size at least nBandCount * nBandCount.
+* **nSize**: Number of elements in output array.
+* **nBandCount**: Zero for all bands, or number of values in panBandList. Defaults to 0.
+* **panBandList**: nullptr for all bands if nBandCount == 0, or array of nBandCount values such as panBandList[i] is the index between 1 and GetRasterCount() of a band that must be used in the covariance computation. Defaults to nullptr.
+* **bApproxOK**: Whether it is acceptable to use a subsample of values. Defaults to false.
+* **bWriteIntoMetadata**: Whether this method must write STATISTICS_COVARIANCES band metadata items. Defaults to true.
+* **nDeltaDegreeOfFreedom**: Correction term to subtract in the final averaging phase of the covariance computation. Defaults to 1.
+* **pfnProgress**: a function to call to report progress, or NULL.
+* **pProgressData**: application data to pass to the progress function.
+
+### Returns
+CE_None if successful, or CE_Failure in case of failure
+"""
+function gdaldatasetcomputeinterbandcovariancematrix(
+    hDS,
+    padfCovMatrix,
+    nSize,
+    nBandCount,
+    panBandList,
+    bApproxOK,
+    bWriteIntoMetadata,
+    nDeltaDegreeOfFreedom,
+    pfnProgress,
+    pProgressData,
+)
+    aftercare(
+        ccall(
+            (:GDALDatasetComputeInterBandCovarianceMatrix, libgdal),
+            CPLErr,
+            (
+                GDALDatasetH,
+                Ptr{Cdouble},
+                Csize_t,
+                Cint,
+                Ptr{Cint},
+                Bool,
+                Bool,
+                Cint,
+                GDALProgressFunc,
+                Any,
+            ),
+            hDS,
+            padfCovMatrix,
+            nSize,
+            nBandCount,
+            panBandList,
+            bApproxOK,
+            bWriteIntoMetadata,
+            nDeltaDegreeOfFreedom,
+            pfnProgress,
+            pProgressData,
+        ),
+    )
+end
+
+"""
     GDALGetGCPCount(GDALDatasetH hDS) -> int
 
 Get number of GCPs.
@@ -9258,7 +9540,7 @@ end
                        GDALProgressFunc pfnProgress,
                        void * pProgressData) -> CPLErr
 
-Build raster overview(s)
+Build raster overview(s).
 """
 function gdalbuildoverviews(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8)
     aftercare(
@@ -9298,7 +9580,7 @@ end
                          void * pProgressData,
                          CSLConstList papszOptions) -> CPLErr
 
-Build raster overview(s)
+Build raster overview(s).
 """
 function gdalbuildoverviewsex(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, papszOptions)
     aftercare(
@@ -15847,7 +16129,7 @@ end
 """
     GDALExtendedDataTypeGetNumericDataType(GDALExtendedDataTypeH hEDT) -> GDALDataType
 
-Return numeric data type (only valid when GetClass() == GEDTC_NUMERIC)
+Return numeric data type (only valid when GetClass() == GEDTC_NUMERIC).
 """
 function gdalextendeddatatypegetnumericdatatype(hEDT)
     aftercare(
@@ -15896,7 +16178,7 @@ end
     GDALExtendedDataTypeGetComponents(GDALExtendedDataTypeH hEDT,
                                       size_t * pnCount) -> GDALEDTComponentH *
 
-Return the components of the data type (only valid when GetClass() == GEDTC_COMPOUND)
+Return the components of the data type (only valid when GetClass() == GEDTC_COMPOUND).
 
 ### Parameters
 * **hEDT**: Data type
@@ -17690,7 +17972,7 @@ end
                                 size_t iXDim,
                                 size_t iYDim) -> GDALDatasetH
 
-Return a view of this array as a "classic" GDALDataset (ie 2D)
+Return a view of this array as a "classic" GDALDataset (ie 2D).
 
 ### Parameters
 * **hArray**: Array.
@@ -17720,7 +18002,7 @@ end
                                   GDALGroupH hRootGroup,
                                   CSLConstList papszOptions) -> GDALDatasetH
 
-Return a view of this array as a "classic" GDALDataset (ie 2D)
+Return a view of this array as a "classic" GDALDataset (ie 2D).
 
 ### Parameters
 * **hArray**: Array.
@@ -18123,10 +18405,86 @@ function gdalmdarraygetrawblockinfo(hArray, panBlockCoordinates, psBlockInfo)
 end
 
 """
+    GDALMDArrayGetOverviewCount(GDALMDArrayH hArray) -> int
+
+Return the number of overview arrays available.
+
+### Parameters
+* **hArray**: Array.
+
+### Returns
+overview count, zero if none.
+"""
+function gdalmdarraygetoverviewcount(hArray)
+    aftercare(ccall((:GDALMDArrayGetOverviewCount, libgdal), Cint, (GDALMDArrayH,), hArray))
+end
+
+"""
+    GDALMDArrayGetOverview(GDALMDArrayH hArray,
+                           int nIdx) -> GDALMDArrayH
+
+Get overview array object.
+
+### Parameters
+* **hArray**: Array.
+* **nIdx**: overview index between 0 and GDALMDArrayGetOverviewCount()-1.
+
+### Returns
+overview GDALMDArray, or nullptr. Must be released with GDALMDArrayRelease()
+"""
+function gdalmdarraygetoverview(hArray, nIdx)
+    aftercare(
+        ccall(
+            (:GDALMDArrayGetOverview, libgdal),
+            GDALMDArrayH,
+            (GDALMDArrayH, Cint),
+            hArray,
+            nIdx,
+        ),
+    )
+end
+
+"""
+    GDALMDArrayBuildOverviews(GDALMDArrayH hArray,
+                              const char * pszResampling,
+                              int nOverviews,
+                              const int * panOverviewList,
+                              GDALProgressFunc pfnProgress,
+                              void * pProgressData,
+                              CSLConstList papszOptions) -> CPLErr
+
+Build overviews for a multidimensional array.
+"""
+function gdalmdarraybuildoverviews(
+    hArray,
+    pszResampling,
+    nOverviews,
+    panOverviewList,
+    pfnProgress,
+    pProgressData,
+    papszOptions,
+)
+    aftercare(
+        ccall(
+            (:GDALMDArrayBuildOverviews, libgdal),
+            CPLErr,
+            (GDALMDArrayH, Cstring, Cint, Ptr{Cint}, GDALProgressFunc, Any, CSLConstList),
+            hArray,
+            pszResampling,
+            nOverviews,
+            panOverviewList,
+            pfnProgress,
+            pProgressData,
+            papszOptions,
+        ),
+    )
+end
+
+"""
     GDALReleaseArrays(GDALMDArrayH * arrays,
                       size_t nCount) -> void
 
-Free the return of GDALMDArrayGetCoordinateVariables()
+Free the return of GDALMDArrayGetCoordinateVariables().
 
 ### Parameters
 * **arrays**: return pointer of above methods
@@ -18230,7 +18588,7 @@ end
     GDALReleaseAttributes(GDALAttributeH * attributes,
                           size_t nCount) -> void
 
-Free the return of GDALGroupGetAttributes() or GDALMDArrayGetAttributes()
+Free the return of GDALGroupGetAttributes() or GDALMDArrayGetAttributes().
 
 ### Parameters
 * **attributes**: return pointer of above methods
@@ -18375,7 +18733,7 @@ end
                                GByte * raw,
                                size_t nSize) -> void
 
-Free the return of GDALAttributeAsRaw()
+Free the return of GDALAttributeAsRaw().
 """
 function gdalattributefreerawresult(hAttr, raw, nSize)
     aftercare(
@@ -18539,7 +18897,7 @@ end
                           const void * pabyValue,
                           size_t nLength) -> int
 
-Write an attribute from raw values expressed in GetDataType()
+Write an attribute from raw values expressed in GetDataType().
 
 ### Parameters
 * **hAttr**: Attribute
@@ -18799,7 +19157,7 @@ end
     GDALReleaseDimensions(GDALDimensionH * dims,
                           size_t nCount) -> void
 
-Free the return of GDALGroupGetDimensions() or GDALMDArrayGetDimensions()
+Free the return of GDALGroupGetDimensions() or GDALMDArrayGetDimensions().
 
 ### Parameters
 * **dims**: return pointer of above methods
@@ -18976,7 +19334,7 @@ Compute optimal PCT for RGB image.
 * **hRed**: Red input band.
 * **hGreen**: Green input band.
 * **hBlue**: Blue input band.
-* **pfnIncludePixel**: function used to test which pixels should be included in the analysis. At this time this argument is ignored and all pixels are utilized. This should normally be NULL.
+* **pfnIncludePixel**: function used to test which pixels should be included in the analysis. At this time this argument is ignored. This should normally be NULL.
 * **nColors**: the desired number of colors to be returned (2-256).
 * **hColorTable**: the colors will be returned in this color table object.
 * **pfnProgress**: callback for reporting algorithm progress matching the GDALProgressFunc() semantics. May be NULL.
@@ -20896,7 +21254,21 @@ Create viewshed from raster DEM.
 * **pfnProgress**: A GDALProgressFunc that may be used to report progress to the user, or to interrupt the algorithm. May be NULL if not required.
 * **pProgressArg**: The callback data for the pfnProgress function.
 * **heightMode**: Type of information contained in output raster. Possible values GVOT_NORMAL = 1 (default), GVOT_MIN_TARGET_HEIGHT_FROM_DEM = 2, GVOT_MIN_TARGET_HEIGHT_FROM_GROUND = 3
-* **papszExtraOptions**: Future extra options. Must be set to NULL currently.
+* **papszExtraOptions**: Extra options to control the viewshed analysis. This is a NULL-terminated list of strings in "KEY=VALUE" format, or NULL for no options. The following keys are supported: 
+
+START_ANGLE: Mask all cells outside of the arc ('start-angle', 'end-angle'). Clockwise degrees from north. Also used to clamp the extent of the output raster. 
+
+
+END_ANGLE: Mask all cells outside of the arc ('start-angle', 'end-angle'). Clockwise degrees from north. Also used to clamp the extent of the output raster. 
+
+
+LOW_PITCH: Bound observable height to be no lower than the 'low-pitch' angle from the observer. Degrees from horizontal - positive is up. Must be less than 'high-pitch'. 
+
+
+HIGH_PITCH: Mark all cells out-of-range where the observable height would be higher than the 'high-pitch' angle from the observer. Degrees from horizontal - positive is up. Must be greater than 'low-pitch'. 
+
+
+If NULL, a 360-degree viewshed is calculated.
 
 ### Returns
 not NULL output dataset on success (to be closed with GDALClose()) or NULL if an error occurs.
@@ -21704,7 +22076,7 @@ end
 """
     GDALGridContextFree(GDALGridContext * psContext) -> void
 
-Free a context used created by GDALGridContextCreate()
+Free a context used created by GDALGridContextCreate().
 
 ### Parameters
 * **psContext**: the context.
@@ -21871,7 +22243,7 @@ struct GDALTriangulation
 end
 
 """
-    GDALHasTriangulation() -> int
+    GDALHasTriangulation(void) -> int
 
 Returns if GDAL is built with Delaunay triangulation support.
 
@@ -22152,6 +22524,31 @@ function gdalzonalstats(
             papszOptions,
             pfnProgress,
             pProgressArg,
+        ),
+    )
+end
+
+"""
+    gdalhilbertcode(poDomain, dfX, dfY)
+
+Provides a Hilbert code describing the location of a specified point within a specified spatial extent.
+
+# Arguments
+* `poDomain`: The domain to be covered by the Hilbert curve.
+* `dfX`: X coordinate of the point to encode
+* `dfY`: Y coordinate of the point to encode
+# Returns
+Hilbert-encoded point.
+"""
+function gdalhilbertcode(poDomain, dfX, dfY)
+    aftercare(
+        ccall(
+            (:GDALHilbertCode, libgdal),
+            UInt32,
+            (Ptr{OGREnvelope}, Cdouble, Cdouble),
+            poDomain,
+            dfX,
+            dfY,
         ),
     )
 end
@@ -23804,14 +24201,14 @@ end
 """
     VRTAddBand(VRTDatasetH hDataset,
                GDALDataType eType,
-               char ** papszOptions) -> int
+               CSLConstList papszOptions) -> int
 """
 function vrtaddband(arg1, arg2, arg3)
     aftercare(
         ccall(
             (:VRTAddBand, libgdal),
             Cint,
-            (VRTDatasetH, GDALDataType, Ptr{Cstring}),
+            (VRTDatasetH, GDALDataType, CSLConstList),
             arg1,
             arg2,
             arg3,
@@ -26248,7 +26645,7 @@ end
 """
     OGR_G_ForceTo(OGRGeometryH hGeom,
                   OGRwkbGeometryType eTargetType,
-                  char ** papszOptions) -> OGRGeometryH
+                  CSLConstList papszOptions) -> OGRGeometryH
 
 Convert to another geometry type.
 
@@ -26265,7 +26662,7 @@ function ogr_g_forceto(hGeom, eTargetType, papszOptions)
         ccall(
             (:OGR_G_ForceTo, libgdal),
             OGRGeometryH,
-            (OGRGeometryH, OGRwkbGeometryType, Ptr{Cstring}),
+            (OGRGeometryH, OGRwkbGeometryType, CSLConstList),
             hGeom,
             eTargetType,
             papszOptions,
@@ -26602,7 +26999,7 @@ end
 """
     OGRwkbExportOptionsDestroy(OGRwkbExportOptions * psOptions) -> void
 
-Destroy object returned by OGRwkbExportOptionsCreate()
+Destroy object returned by OGRwkbExportOptionsCreate().
 
 ### Parameters
 * **psOptions**: WKB export options
@@ -26954,7 +27351,7 @@ end
 
 """
     OGR_G_ExportToGMLEx(OGRGeometryH hGeometry,
-                        char ** papszOptions) -> char *
+                        CSLConstList papszOptions) -> char *
 
 Convert a geometry into GML format.
 
@@ -26970,7 +27367,7 @@ function ogr_g_exporttogmlex(arg1, papszOptions)
         ccall(
             (:OGR_G_ExportToGMLEx, libgdal),
             Cstring,
-            (OGRGeometryH, Ptr{Cstring}),
+            (OGRGeometryH, CSLConstList),
             arg1,
             papszOptions,
         ),
@@ -27059,7 +27456,7 @@ end
 
 """
     OGR_G_ExportToJsonEx(OGRGeometryH hGeometry,
-                         char ** papszOptions) -> char *
+                         CSLConstList papszOptions) -> char *
 
 Convert a geometry into GeoJSON-style format.
 
@@ -27075,7 +27472,7 @@ function ogr_g_exporttojsonex(arg1, papszOptions)
         ccall(
             (:OGR_G_ExportToJsonEx, libgdal),
             Cstring,
-            (OGRGeometryH, Ptr{Cstring}),
+            (OGRGeometryH, CSLConstList),
             arg1,
             papszOptions,
         ),
@@ -27252,7 +27649,7 @@ end
 """
     OGR_GeomTransformer_Destroy(OGRGeomTransformerH hTransformer) -> void
 
-Destroy a geometry transformer allocated with OGR_GeomTransformer_Create()
+Destroy a geometry transformer allocated with OGR_GeomTransformer_Create().
 
 ### Parameters
 * **hTransformer**: transformer object.
@@ -27577,7 +27974,7 @@ end
                       double dfRatio,
                       bool bAllowHoles) -> OGRGeometryH
 
-Compute "concave hull" of a geometry.
+Compute the concave hull of a geometry.
 
 ### Parameters
 * **hTarget**: The Geometry to calculate the concave hull of.
@@ -27595,6 +27992,37 @@ function ogr_g_concavehull(arg1, dfRatio, bAllowHoles)
             (OGRGeometryH, Cdouble, Bool),
             arg1,
             dfRatio,
+            bAllowHoles,
+        ),
+    )
+end
+
+"""
+    OGR_G_ConcaveHullOfPolygons(OGRGeometryH hTarget,
+                                double dfLengthRatio,
+                                bool bIsTight,
+                                bool bAllowHoles) -> OGRGeometryH
+
+Compute the concave hull of a set of polygons, respecting the polygons as constraints.
+
+### Parameters
+* **hTarget**: The Geometry to calculate the concave hull of.
+* **dfLengthRatio**: Specifies the Maximum Edge Length as a fraction of the difference between the longest and shortest edge lengths between the polygons. This normalizes the Maximum Edge Length to be scale-free. A value of 1 produces the convex hull; a value of 0 produces the original polygons.
+* **bIsTight**: Whether the hull must follow the outer boundaries of the input polygons.
+* **bAllowHoles**: Whether the concave hull is allowed to contain holes
+
+### Returns
+a new geometry to be freed by the caller with OGR_G_DestroyGeometry, or NULL if an error occurs.
+"""
+function ogr_g_concavehullofpolygons(arg1, dfLengthRatio, bIsTight, bAllowHoles)
+    aftercare(
+        ccall(
+            (:OGR_G_ConcaveHullOfPolygons, libgdal),
+            OGRGeometryH,
+            (OGRGeometryH, Cdouble, Bool, Bool),
+            arg1,
+            dfLengthRatio,
+            bIsTight,
             bAllowHoles,
         ),
     )
@@ -27914,7 +28342,7 @@ end
 """
     OGR_G_IsClockwise(OGRGeometryH hGeom) -> bool
 
-Returns true if the ring has clockwise winding (or less than 2 points)
+Returns true if the ring has clockwise winding (or less than 2 points).
 
 ### Parameters
 * **hGeom**: handle to a curve geometry
@@ -27999,10 +28427,28 @@ Test if the geometry is valid.
 * **hGeom**: The Geometry to test.
 
 ### Returns
-TRUE if the geometry has no points, otherwise FALSE.
+TRUE if the geometry is valid, otherwise FALSE.
 """
 function ogr_g_isvalid(arg1)
     aftercare(ccall((:OGR_G_IsValid, libgdal), Cint, (OGRGeometryH,), arg1))
+end
+
+"""
+    OGR_G_GetInvalidityReason(OGRGeometryH hGeom) -> char *
+
+Test if the geometry is valid and, if not, return the invalidity reason.
+
+### Parameters
+* **hGeom**: The Geometry to test.
+
+### Returns
+a string with the invalidity reason, to free with CPLFree(), if the geometry is invalid, or nullptr if the geometry is valid.
+"""
+function ogr_g_getinvalidityreason(arg1)
+    aftercare(
+        ccall((:OGR_G_GetInvalidityReason, libgdal), Cstring, (OGRGeometryH,), arg1),
+        false,
+    )
 end
 
 """
@@ -28169,7 +28615,7 @@ end
     OGR_G_SymmetricDifference(OGRGeometryH hThis,
                               OGRGeometryH hOther) -> OGRGeometryH
 
-Compute symmetric difference (deprecated)
+Compute symmetric difference (deprecated).
 """
 function ogr_g_symmetricdifference(arg1, arg2)
     aftercare(
@@ -28186,7 +28632,7 @@ end
 """
     OGR_G_GetArea(OGRGeometryH hGeom) -> double
 
-Compute geometry area (deprecated)
+Compute geometry area (deprecated).
 """
 function ogr_g_getarea(arg1)
     aftercare(ccall((:OGR_G_GetArea, libgdal), Cdouble, (OGRGeometryH,), arg1))
@@ -28195,7 +28641,7 @@ end
 """
     OGR_G_GetBoundary(OGRGeometryH hTarget) -> OGRGeometryH
 
-Compute boundary (deprecated)
+Compute boundary (deprecated).
 """
 function ogr_g_getboundary(arg1)
     aftercare(ccall((:OGR_G_GetBoundary, libgdal), OGRGeometryH, (OGRGeometryH,), arg1))
@@ -28451,19 +28897,22 @@ end
 
 """
     OGR_G_SetPointCount(OGRGeometryH hGeom,
-                        int nNewPointCount) -> void
+                        int nNewPointCount) -> OGRErr
 
 Set number of points in a geometry.
 
 ### Parameters
 * **hGeom**: handle to the geometry.
 * **nNewPointCount**: the new number of points for geometry.
+
+### Returns
+(since 3.13) OGRERR_NONE in case of success, OGRERR_FAILURE in case of error.
 """
 function ogr_g_setpointcount(hGeom, nNewPointCount)
     aftercare(
         ccall(
             (:OGR_G_SetPointCount, libgdal),
-            Cvoid,
+            OGRErr,
             (OGRGeometryH, Cint),
             hGeom,
             nNewPointCount,
@@ -28476,7 +28925,7 @@ end
                    int i,
                    double dfX,
                    double dfY,
-                   double dfZ) -> void
+                   double dfZ) -> OGRErr
 
 Set the location of a vertex in a point or linestring geometry.
 
@@ -28486,12 +28935,15 @@ Set the location of a vertex in a point or linestring geometry.
 * **dfX**: input X coordinate to assign.
 * **dfY**: input Y coordinate to assign.
 * **dfZ**: input Z coordinate to assign (defaults to zero).
+
+### Returns
+(since 3.13) OGRERR_NONE in case of success, OGRERR_FAILURE in case of error.
 """
 function ogr_g_setpoint(arg1, iPoint, arg3, arg4, arg5)
     aftercare(
         ccall(
             (:OGR_G_SetPoint, libgdal),
-            Cvoid,
+            OGRErr,
             (OGRGeometryH, Cint, Cdouble, Cdouble, Cdouble),
             arg1,
             iPoint,
@@ -28506,7 +28958,7 @@ end
     OGR_G_SetPoint_2D(OGRGeometryH hGeom,
                       int i,
                       double dfX,
-                      double dfY) -> void
+                      double dfY) -> OGRErr
 
 Set the location of a vertex in a point or linestring geometry.
 
@@ -28515,12 +28967,15 @@ Set the location of a vertex in a point or linestring geometry.
 * **i**: the index of the vertex to assign (zero based) or zero for a point.
 * **dfX**: input X coordinate to assign.
 * **dfY**: input Y coordinate to assign.
+
+### Returns
+(since 3.13) OGRERR_NONE in case of success, OGRERR_FAILURE in case of error.
 """
 function ogr_g_setpoint_2d(arg1, iPoint, arg3, arg4)
     aftercare(
         ccall(
             (:OGR_G_SetPoint_2D, libgdal),
-            Cvoid,
+            OGRErr,
             (OGRGeometryH, Cint, Cdouble, Cdouble),
             arg1,
             iPoint,
@@ -28535,7 +28990,7 @@ end
                     int i,
                     double dfX,
                     double dfY,
-                    double dfM) -> void
+                    double dfM) -> OGRErr
 
 Set the location of a vertex in a point or linestring geometry.
 
@@ -28545,12 +29000,15 @@ Set the location of a vertex in a point or linestring geometry.
 * **dfX**: input X coordinate to assign.
 * **dfY**: input Y coordinate to assign.
 * **dfM**: input M coordinate to assign.
+
+### Returns
+(since 3.13) OGRERR_NONE in case of success, OGRERR_FAILURE in case of error.
 """
 function ogr_g_setpointm(arg1, iPoint, arg3, arg4, arg5)
     aftercare(
         ccall(
             (:OGR_G_SetPointM, libgdal),
-            Cvoid,
+            OGRErr,
             (OGRGeometryH, Cint, Cdouble, Cdouble, Cdouble),
             arg1,
             iPoint,
@@ -28567,7 +29025,7 @@ end
                      double dfX,
                      double dfY,
                      double dfZ,
-                     double dfM) -> void
+                     double dfM) -> OGRErr
 
 Set the location of a vertex in a point or linestring geometry.
 
@@ -28578,12 +29036,15 @@ Set the location of a vertex in a point or linestring geometry.
 * **dfY**: input Y coordinate to assign.
 * **dfZ**: input Z coordinate to assign.
 * **dfM**: input M coordinate to assign.
+
+### Returns
+(since 3.13) OGRERR_NONE in case of success, OGRERR_FAILURE in case of error.
 """
 function ogr_g_setpointzm(arg1, iPoint, arg3, arg4, arg5, arg6)
     aftercare(
         ccall(
             (:OGR_G_SetPointZM, libgdal),
-            Cvoid,
+            OGRErr,
             (OGRGeometryH, Cint, Cdouble, Cdouble, Cdouble, Cdouble),
             arg1,
             iPoint,
@@ -28599,7 +29060,7 @@ end
     OGR_G_AddPoint(OGRGeometryH hGeom,
                    double dfX,
                    double dfY,
-                   double dfZ) -> void
+                   double dfZ) -> OGRErr
 
 Add a point to a geometry (line string or point).
 
@@ -28608,12 +29069,15 @@ Add a point to a geometry (line string or point).
 * **dfX**: x coordinate of point to add.
 * **dfY**: y coordinate of point to add.
 * **dfZ**: z coordinate of point to add.
+
+### Returns
+(since 3.13) OGRERR_NONE in case of success, OGRERR_FAILURE in case of error.
 """
 function ogr_g_addpoint(arg1, arg2, arg3, arg4)
     aftercare(
         ccall(
             (:OGR_G_AddPoint, libgdal),
-            Cvoid,
+            OGRErr,
             (OGRGeometryH, Cdouble, Cdouble, Cdouble),
             arg1,
             arg2,
@@ -28626,7 +29090,7 @@ end
 """
     OGR_G_AddPoint_2D(OGRGeometryH hGeom,
                       double dfX,
-                      double dfY) -> void
+                      double dfY) -> OGRErr
 
 Add a point to a geometry (line string or point).
 
@@ -28634,12 +29098,15 @@ Add a point to a geometry (line string or point).
 * **hGeom**: handle to the geometry to add a point to.
 * **dfX**: x coordinate of point to add.
 * **dfY**: y coordinate of point to add.
+
+### Returns
+(since 3.13) OGRERR_NONE in case of success, OGRERR_FAILURE in case of error.
 """
 function ogr_g_addpoint_2d(arg1, arg2, arg3)
     aftercare(
         ccall(
             (:OGR_G_AddPoint_2D, libgdal),
-            Cvoid,
+            OGRErr,
             (OGRGeometryH, Cdouble, Cdouble),
             arg1,
             arg2,
@@ -28652,7 +29119,7 @@ end
     OGR_G_AddPointM(OGRGeometryH hGeom,
                     double dfX,
                     double dfY,
-                    double dfM) -> void
+                    double dfM) -> OGRErr
 
 Add a point to a geometry (line string or point).
 
@@ -28661,12 +29128,15 @@ Add a point to a geometry (line string or point).
 * **dfX**: x coordinate of point to add.
 * **dfY**: y coordinate of point to add.
 * **dfM**: m coordinate of point to add.
+
+### Returns
+(since 3.13) OGRERR_NONE in case of success, OGRERR_FAILURE in case of error.
 """
 function ogr_g_addpointm(arg1, arg2, arg3, arg4)
     aftercare(
         ccall(
             (:OGR_G_AddPointM, libgdal),
-            Cvoid,
+            OGRErr,
             (OGRGeometryH, Cdouble, Cdouble, Cdouble),
             arg1,
             arg2,
@@ -28681,7 +29151,7 @@ end
                      double dfX,
                      double dfY,
                      double dfZ,
-                     double dfM) -> void
+                     double dfM) -> OGRErr
 
 Add a point to a geometry (line string or point).
 
@@ -28691,12 +29161,15 @@ Add a point to a geometry (line string or point).
 * **dfY**: y coordinate of point to add.
 * **dfZ**: z coordinate of point to add.
 * **dfM**: m coordinate of point to add.
+
+### Returns
+(since 3.13) OGRERR_NONE in case of success, OGRERR_FAILURE in case of error.
 """
 function ogr_g_addpointzm(arg1, arg2, arg3, arg4, arg5)
     aftercare(
         ccall(
             (:OGR_G_AddPointZM, libgdal),
-            Cvoid,
+            OGRErr,
             (OGRGeometryH, Cdouble, Cdouble, Cdouble, Cdouble),
             arg1,
             arg2,
@@ -28715,7 +29188,7 @@ end
                     const void * pabyY,
                     int nYStride,
                     const void * pabyZ,
-                    int nZStride) -> void
+                    int nZStride) -> OGRErr
 
 Assign all points in a point or a line string geometry.
 
@@ -28728,6 +29201,9 @@ Assign all points in a point or a line string geometry.
 * **nYStride**: the number of bytes between 2 elements of pabyY.
 * **pabyZ**: list of Z coordinates (double values) of points being assigned (defaults to NULL for 2D objects).
 * **nZStride**: the number of bytes between 2 elements of pabyZ.
+
+### Returns
+(since 3.13) OGRERR_NONE in case of success, OGRERR_FAILURE in case of error.
 """
 function ogr_g_setpoints(
     hGeom,
@@ -28742,7 +29218,7 @@ function ogr_g_setpoints(
     aftercare(
         ccall(
             (:OGR_G_SetPoints, libgdal),
-            Cvoid,
+            OGRErr,
             (OGRGeometryH, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint, Ptr{Cvoid}, Cint),
             hGeom,
             nPointsIn,
@@ -28766,7 +29242,7 @@ end
                       const void * pZ,
                       int nZStride,
                       const void * pM,
-                      int nMStride) -> void
+                      int nMStride) -> OGRErr
 
 Assign all points in a point or a line string geometry.
 
@@ -28781,6 +29257,9 @@ Assign all points in a point or a line string geometry.
 * **nZStride**: the number of bytes between 2 elements of pZ.
 * **pM**: list of M coordinates (double values) of points being assigned (if not NULL, upgrades the geometry to have M coordinate).
 * **nMStride**: the number of bytes between 2 elements of pM.
+
+### Returns
+(since 3.13) OGRERR_NONE in case of success, OGRERR_FAILURE in case of error.
 """
 function ogr_g_setpointszm(
     hGeom,
@@ -28797,7 +29276,7 @@ function ogr_g_setpointszm(
     aftercare(
         ccall(
             (:OGR_G_SetPointsZM, libgdal),
-            Cvoid,
+            OGRErr,
             (
                 OGRGeometryH,
                 Cint,
@@ -28982,7 +29461,7 @@ end
 """
     OGR_G_GetLinearGeometry(OGRGeometryH hGeom,
                             double dfMaxAngleStepSizeDegrees,
-                            char ** papszOptions) -> OGRGeometryH
+                            CSLConstList papszOptions) -> OGRGeometryH
 
 Return, possibly approximate, linear version of this geometry.
 
@@ -28999,7 +29478,7 @@ function ogr_g_getlineargeometry(hGeom, dfMaxAngleStepSizeDegrees, papszOptions)
         ccall(
             (:OGR_G_GetLinearGeometry, libgdal),
             OGRGeometryH,
-            (OGRGeometryH, Cdouble, Ptr{Cstring}),
+            (OGRGeometryH, Cdouble, CSLConstList),
             hGeom,
             dfMaxAngleStepSizeDegrees,
             papszOptions,
@@ -29009,7 +29488,7 @@ end
 
 """
     OGR_G_GetCurveGeometry(OGRGeometryH hGeom,
-                           char ** papszOptions) -> OGRGeometryH
+                           CSLConstList papszOptions) -> OGRGeometryH
 
 Return curve version of this geometry.
 
@@ -29025,7 +29504,7 @@ function ogr_g_getcurvegeometry(hGeom, papszOptions)
         ccall(
             (:OGR_G_GetCurveGeometry, libgdal),
             OGRGeometryH,
-            (OGRGeometryH, Ptr{Cstring}),
+            (OGRGeometryH, CSLConstList),
             hGeom,
             papszOptions,
         ),
@@ -31076,13 +31555,13 @@ function Base.getproperty(x::Ptr{OGRField}, f::Symbol)
     f === :Integer64 && return Ptr{GIntBig}(x + 0)
     f === :Real && return Ptr{Cdouble}(x + 0)
     f === :String && return Ptr{Cstring}(x + 0)
-    f === :IntegerList && return Ptr{__JL_Ctag_1}(x + 0)
-    f === :Integer64List && return Ptr{__JL_Ctag_2}(x + 0)
-    f === :RealList && return Ptr{__JL_Ctag_3}(x + 0)
-    f === :StringList && return Ptr{__JL_Ctag_4}(x + 0)
-    f === :Binary && return Ptr{__JL_Ctag_5}(x + 0)
-    f === :Set && return Ptr{__JL_Ctag_6}(x + 0)
-    f === :Date && return Ptr{__JL_Ctag_7}(x + 0)
+    f === :IntegerList && return Ptr{__JL_Ctag_55}(x + 0)
+    f === :Integer64List && return Ptr{__JL_Ctag_56}(x + 0)
+    f === :RealList && return Ptr{__JL_Ctag_57}(x + 0)
+    f === :StringList && return Ptr{__JL_Ctag_58}(x + 0)
+    f === :Binary && return Ptr{__JL_Ctag_59}(x + 0)
+    f === :Set && return Ptr{__JL_Ctag_60}(x + 0)
+    f === :Date && return Ptr{__JL_Ctag_61}(x + 0)
     return getfield(x, f)
 end
 
@@ -32365,7 +32844,7 @@ end
 """
     OGR_F_FillUnsetWithDefault(OGRFeatureH hFeat,
                                int bNotNullableOnly,
-                               char ** papszOptions) -> void
+                               CSLConstList papszOptions) -> void
 
 Fill unset fields with default values that might be defined.
 
@@ -32379,7 +32858,7 @@ function ogr_f_fillunsetwithdefault(hFeat, bNotNullableOnly, papszOptions)
         ccall(
             (:OGR_F_FillUnsetWithDefault, libgdal),
             Cvoid,
-            (OGRFeatureH, Cint, Ptr{Cstring}),
+            (OGRFeatureH, Cint, CSLConstList),
             hFeat,
             bNotNullableOnly,
             papszOptions,
@@ -33167,6 +33646,21 @@ function ogr_l_setattributefilter(arg1, arg2)
     )
 end
 
+"""
+    OGR_L_GetAttributeFilter(OGRLayerH hLayer) -> const char *
+
+Fetch the current attribute query string.
+
+### Returns
+the current attribute query string, or NULL if no attribute query is currently installed. The returned string is short lived and owned by the layer and should not be modified or freed by the caller.
+"""
+function ogr_l_getattributefilter(arg1)
+    aftercare(
+        ccall((:OGR_L_GetAttributeFilter, libgdal), Cstring, (OGRLayerH,), arg1),
+        false,
+    )
+end
+
 struct ArrowArrayStream
     get_schema::Ptr{Cvoid}
     get_next::Ptr{Cvoid}
@@ -33178,7 +33672,7 @@ end
 """
     OGR_L_GetArrowStream(OGRLayerH hLayer,
                          struct ArrowArrayStream * out_stream,
-                         char ** papszOptions) -> bool
+                         CSLConstList papszOptions) -> bool
 
 Get a Arrow C stream.
 
@@ -33195,7 +33689,7 @@ function ogr_l_getarrowstream(hLayer, out_stream, papszOptions)
         ccall(
             (:OGR_L_GetArrowStream, libgdal),
             Bool,
-            (OGRLayerH, Ptr{ArrowArrayStream}, Ptr{Cstring}),
+            (OGRLayerH, Ptr{ArrowArrayStream}, CSLConstList),
             hLayer,
             out_stream,
             papszOptions,
@@ -33218,7 +33712,7 @@ end
 """
     OGR_L_IsArrowSchemaSupported(OGRLayerH hLayer,
                                  const struct ArrowSchema * schema,
-                                 char ** papszOptions,
+                                 CSLConstList papszOptions,
                                  char ** ppszErrorMsg) -> bool
 
 Returns whether the provided ArrowSchema is supported for writing.
@@ -33237,7 +33731,7 @@ function ogr_l_isarrowschemasupported(hLayer, schema, papszOptions, ppszErrorMsg
         ccall(
             (:OGR_L_IsArrowSchemaSupported, libgdal),
             Bool,
-            (OGRLayerH, Ptr{ArrowSchema}, Ptr{Cstring}, Ptr{Cstring}),
+            (OGRLayerH, Ptr{ArrowSchema}, CSLConstList, Ptr{Cstring}),
             hLayer,
             schema,
             papszOptions,
@@ -33249,7 +33743,7 @@ end
 """
     OGR_L_CreateFieldFromArrowSchema(OGRLayerH hLayer,
                                      const struct ArrowSchema * schema,
-                                     char ** papszOptions) -> bool
+                                     CSLConstList papszOptions) -> bool
 
 Creates a field from an ArrowSchema.
 
@@ -33266,7 +33760,7 @@ function ogr_l_createfieldfromarrowschema(hLayer, schema, papszOptions)
         ccall(
             (:OGR_L_CreateFieldFromArrowSchema, libgdal),
             Bool,
-            (OGRLayerH, Ptr{ArrowSchema}, Ptr{Cstring}),
+            (OGRLayerH, Ptr{ArrowSchema}, CSLConstList),
             hLayer,
             schema,
             papszOptions,
@@ -33291,7 +33785,7 @@ end
     OGR_L_WriteArrowBatch(OGRLayerH hLayer,
                           const struct ArrowSchema * schema,
                           struct ArrowArray * array,
-                          char ** papszOptions) -> bool
+                          CSLConstList papszOptions) -> bool
 
 Writes a batch of rows from an ArrowArray.
 
@@ -33309,7 +33803,7 @@ function ogr_l_writearrowbatch(hLayer, schema, array, papszOptions)
         ccall(
             (:OGR_L_WriteArrowBatch, libgdal),
             Bool,
-            (OGRLayerH, Ptr{ArrowSchema}, Ptr{ArrowArray}, Ptr{Cstring}),
+            (OGRLayerH, Ptr{ArrowSchema}, Ptr{ArrowArray}, CSLConstList),
             hLayer,
             schema,
             array,
@@ -34120,7 +34614,7 @@ end
     OGR_L_Intersection(OGRLayerH pLayerInput,
                        OGRLayerH pLayerMethod,
                        OGRLayerH pLayerResult,
-                       char ** papszOptions,
+                       CSLConstList papszOptions,
                        GDALProgressFunc pfnProgress,
                        void * pProgressArg) -> OGRErr
 
@@ -34142,7 +34636,7 @@ function ogr_l_intersection(arg1, arg2, arg3, arg4, arg5, arg6)
         ccall(
             (:OGR_L_Intersection, libgdal),
             OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
+            (OGRLayerH, OGRLayerH, OGRLayerH, CSLConstList, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -34157,7 +34651,7 @@ end
     OGR_L_Union(OGRLayerH pLayerInput,
                 OGRLayerH pLayerMethod,
                 OGRLayerH pLayerResult,
-                char ** papszOptions,
+                CSLConstList papszOptions,
                 GDALProgressFunc pfnProgress,
                 void * pProgressArg) -> OGRErr
 
@@ -34179,7 +34673,7 @@ function ogr_l_union(arg1, arg2, arg3, arg4, arg5, arg6)
         ccall(
             (:OGR_L_Union, libgdal),
             OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
+            (OGRLayerH, OGRLayerH, OGRLayerH, CSLConstList, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -34194,7 +34688,7 @@ end
     OGR_L_SymDifference(OGRLayerH pLayerInput,
                         OGRLayerH pLayerMethod,
                         OGRLayerH pLayerResult,
-                        char ** papszOptions,
+                        CSLConstList papszOptions,
                         GDALProgressFunc pfnProgress,
                         void * pProgressArg) -> OGRErr
 
@@ -34216,7 +34710,7 @@ function ogr_l_symdifference(arg1, arg2, arg3, arg4, arg5, arg6)
         ccall(
             (:OGR_L_SymDifference, libgdal),
             OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
+            (OGRLayerH, OGRLayerH, OGRLayerH, CSLConstList, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -34231,7 +34725,7 @@ end
     OGR_L_Identity(OGRLayerH pLayerInput,
                    OGRLayerH pLayerMethod,
                    OGRLayerH pLayerResult,
-                   char ** papszOptions,
+                   CSLConstList papszOptions,
                    GDALProgressFunc pfnProgress,
                    void * pProgressArg) -> OGRErr
 
@@ -34253,7 +34747,7 @@ function ogr_l_identity(arg1, arg2, arg3, arg4, arg5, arg6)
         ccall(
             (:OGR_L_Identity, libgdal),
             OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
+            (OGRLayerH, OGRLayerH, OGRLayerH, CSLConstList, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -34268,7 +34762,7 @@ end
     OGR_L_Update(OGRLayerH pLayerInput,
                  OGRLayerH pLayerMethod,
                  OGRLayerH pLayerResult,
-                 char ** papszOptions,
+                 CSLConstList papszOptions,
                  GDALProgressFunc pfnProgress,
                  void * pProgressArg) -> OGRErr
 
@@ -34290,7 +34784,7 @@ function ogr_l_update(arg1, arg2, arg3, arg4, arg5, arg6)
         ccall(
             (:OGR_L_Update, libgdal),
             OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
+            (OGRLayerH, OGRLayerH, OGRLayerH, CSLConstList, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -34305,7 +34799,7 @@ end
     OGR_L_Clip(OGRLayerH pLayerInput,
                OGRLayerH pLayerMethod,
                OGRLayerH pLayerResult,
-               char ** papszOptions,
+               CSLConstList papszOptions,
                GDALProgressFunc pfnProgress,
                void * pProgressArg) -> OGRErr
 
@@ -34327,7 +34821,7 @@ function ogr_l_clip(arg1, arg2, arg3, arg4, arg5, arg6)
         ccall(
             (:OGR_L_Clip, libgdal),
             OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
+            (OGRLayerH, OGRLayerH, OGRLayerH, CSLConstList, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -34342,7 +34836,7 @@ end
     OGR_L_Erase(OGRLayerH pLayerInput,
                 OGRLayerH pLayerMethod,
                 OGRLayerH pLayerResult,
-                char ** papszOptions,
+                CSLConstList papszOptions,
                 GDALProgressFunc pfnProgress,
                 void * pProgressArg) -> OGRErr
 
@@ -34364,7 +34858,7 @@ function ogr_l_erase(arg1, arg2, arg3, arg4, arg5, arg6)
         ccall(
             (:OGR_L_Erase, libgdal),
             OGRErr,
-            (OGRLayerH, OGRLayerH, OGRLayerH, Ptr{Cstring}, GDALProgressFunc, Any),
+            (OGRLayerH, OGRLayerH, OGRLayerH, CSLConstList, GDALProgressFunc, Any),
             arg1,
             arg2,
             arg3,
@@ -34909,7 +35403,7 @@ end
                   int bUpdate,
                   OGRSFDriverH * pahDriverList) -> OGRDataSourceH
 
-Open a file / data source with one of the registered drivers if not already opened, or increment reference count of already opened data source previously opened with OGROpenShared()
+Open a file / data source with one of the registered drivers if not already opened, or increment reference count of already opened data source previously opened with OGROpenShared().
 
 ### Parameters
 * **pszName**: the name of the file, or data source to open.
@@ -38311,7 +38805,7 @@ end
 
 """
     OSRFindMatches(OGRSpatialReferenceH hSRS,
-                   char ** papszOptions,
+                   CSLConstList papszOptions,
                    int * pnEntries,
                    int ** ppanMatchConfidence) -> OGRSpatialReferenceH *
 
@@ -38331,7 +38825,7 @@ function osrfindmatches(hSRS, papszOptions, pnEntries, ppanMatchConfidence)
         ccall(
             (:OSRFindMatches, libgdal),
             Ptr{OGRSpatialReferenceH},
-            (OGRSpatialReferenceH, Ptr{Cstring}, Ptr{Cint}, Ptr{Ptr{Cint}}),
+            (OGRSpatialReferenceH, CSLConstList, Ptr{Cint}, Ptr{Ptr{Cint}}),
             hSRS,
             papszOptions,
             pnEntries,
@@ -38343,7 +38837,7 @@ end
 """
     OSRFreeSRSArray(OGRSpatialReferenceH * pahSRS) -> void
 
-Free return of OSRIdentifyMatches()
+Free return of OSRIdentifyMatches().
 
 ### Parameters
 * **pahSRS**: array of SRS (must be NULL terminated)
@@ -38803,7 +39297,7 @@ end
 """
     osrsetgs(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
 
-Gall Stereograpic
+Gall Stereographic
 """
 function osrsetgs(hSRS, dfCentralMeridian, dfFalseEasting, dfFalseNorthing)
     aftercare(
@@ -40464,141 +40958,141 @@ function octtransformbounds(
     )
 end
 
-struct __JL_Ctag_1
+struct __JL_Ctag_55
     nCount::Cint
     paList::Ptr{Cint}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_1}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_55}, f::Symbol)
     f === :nCount && return Ptr{Cint}(x + 0)
     f === :paList && return Ptr{Ptr{Cint}}(x + 8)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_1, f::Symbol)
-    r = Ref{__JL_Ctag_1}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_1}, r)
+function Base.getproperty(x::__JL_Ctag_55, f::Symbol)
+    r = Ref{__JL_Ctag_55}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_55}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_1}, f::Symbol, v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_55}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
-struct __JL_Ctag_2
+struct __JL_Ctag_56
     nCount::Cint
     paList::Ptr{GIntBig}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_2}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_56}, f::Symbol)
     f === :nCount && return Ptr{Cint}(x + 0)
     f === :paList && return Ptr{Ptr{GIntBig}}(x + 8)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_2, f::Symbol)
-    r = Ref{__JL_Ctag_2}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_2}, r)
+function Base.getproperty(x::__JL_Ctag_56, f::Symbol)
+    r = Ref{__JL_Ctag_56}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_56}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_2}, f::Symbol, v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_56}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
-struct __JL_Ctag_3
+struct __JL_Ctag_57
     nCount::Cint
     paList::Ptr{Cdouble}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_3}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_57}, f::Symbol)
     f === :nCount && return Ptr{Cint}(x + 0)
     f === :paList && return Ptr{Ptr{Cdouble}}(x + 8)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_3, f::Symbol)
-    r = Ref{__JL_Ctag_3}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_3}, r)
+function Base.getproperty(x::__JL_Ctag_57, f::Symbol)
+    r = Ref{__JL_Ctag_57}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_57}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_3}, f::Symbol, v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_57}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
-struct __JL_Ctag_4
+struct __JL_Ctag_58
     nCount::Cint
     paList::Ptr{Cstring}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_4}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_58}, f::Symbol)
     f === :nCount && return Ptr{Cint}(x + 0)
     f === :paList && return Ptr{Ptr{Cstring}}(x + 8)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_4, f::Symbol)
-    r = Ref{__JL_Ctag_4}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_4}, r)
+function Base.getproperty(x::__JL_Ctag_58, f::Symbol)
+    r = Ref{__JL_Ctag_58}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_58}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_4}, f::Symbol, v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_58}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
-struct __JL_Ctag_5
+struct __JL_Ctag_59
     nCount::Cint
     paData::Ptr{GByte}
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_5}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_59}, f::Symbol)
     f === :nCount && return Ptr{Cint}(x + 0)
     f === :paData && return Ptr{Ptr{GByte}}(x + 8)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_5, f::Symbol)
-    r = Ref{__JL_Ctag_5}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_5}, r)
+function Base.getproperty(x::__JL_Ctag_59, f::Symbol)
+    r = Ref{__JL_Ctag_59}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_59}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_5}, f::Symbol, v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_59}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
-struct __JL_Ctag_6
+struct __JL_Ctag_60
     nMarker1::Cint
     nMarker2::Cint
     nMarker3::Cint
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_6}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_60}, f::Symbol)
     f === :nMarker1 && return Ptr{Cint}(x + 0)
     f === :nMarker2 && return Ptr{Cint}(x + 4)
     f === :nMarker3 && return Ptr{Cint}(x + 8)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_6, f::Symbol)
-    r = Ref{__JL_Ctag_6}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_6}, r)
+function Base.getproperty(x::__JL_Ctag_60, f::Symbol)
+    r = Ref{__JL_Ctag_60}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_60}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_6}, f::Symbol, v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_60}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
-struct __JL_Ctag_7
+struct __JL_Ctag_61
     Year::GInt16
     Month::GByte
     Day::GByte
@@ -40609,7 +41103,7 @@ struct __JL_Ctag_7
     Second::Cfloat
 end
 
-function Base.getproperty(x::Ptr{__JL_Ctag_7}, f::Symbol)
+function Base.getproperty(x::Ptr{__JL_Ctag_61}, f::Symbol)
     f === :Year && return Ptr{GInt16}(x + 0)
     f === :Month && return Ptr{GByte}(x + 2)
     f === :Day && return Ptr{GByte}(x + 3)
@@ -40621,14 +41115,14 @@ function Base.getproperty(x::Ptr{__JL_Ctag_7}, f::Symbol)
     return getfield(x, f)
 end
 
-function Base.getproperty(x::__JL_Ctag_7, f::Symbol)
-    r = Ref{__JL_Ctag_7}(x)
-    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_7}, r)
+function Base.getproperty(x::__JL_Ctag_61, f::Symbol)
+    r = Ref{__JL_Ctag_61}(x)
+    ptr = Base.unsafe_convert(Ptr{__JL_Ctag_61}, r)
     fptr = getproperty(ptr, f)
     GC.@preserve r unsafe_load(fptr)
 end
 
-function Base.setproperty!(x::Ptr{__JL_Ctag_7}, f::Symbol, v)
+function Base.setproperty!(x::Ptr{__JL_Ctag_61}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
@@ -40636,7 +41130,7 @@ const GDAL_PREFIX = "/workspace/destdir"
 
 const SIZEOF_INT = 4
 
-const SIZEOF_UNSIGNED_LONG = 4
+const SIZEOF_UNSIGNED_LONG = 8
 
 const SIZEOF_VOIDP = 8
 
@@ -40645,6 +41139,8 @@ const SIZEOF_SIZE_T = 8
 const USE_GCC_VISIBILITY_FLAG = 1
 
 const HAVE_GCC_ATOMIC_BUILTINS = 1
+
+const CPL_NULL_VALUE = "__CPL_NULL_VALUE__"
 
 const CPLE_None = 0
 
@@ -40710,7 +41206,7 @@ const GINT64_MAX = GINTBIG_MAX
 
 const GUINT64_MAX = GUINTBIG_MAX
 
-const CPL_FRMT_GB_WITHOUT_PREFIX = "I64"
+const CPL_FRMT_GB_WITHOUT_PREFIX = "ll"
 
 const CPL_IS_LSB = 1
 
@@ -40732,9 +41228,9 @@ const VSI_STAT_CACHE_ONLY = 0x10
 
 const GDAL_VERSION_MAJOR = 3
 
-const GDAL_VERSION_MINOR = 12
+const GDAL_VERSION_MINOR = 13
 
-const GDAL_VERSION_REV = 1
+const GDAL_VERSION_REV = 3
 
 const GDAL_VERSION_BUILD = 0
 
@@ -40742,13 +41238,15 @@ const GDAL_VERSION_NUM =
     GDAL_COMPUTE_VERSION(GDAL_VERSION_MAJOR, GDAL_VERSION_MINOR, GDAL_VERSION_REV) +
     GDAL_VERSION_BUILD
 
-const GDAL_RELEASE_DATE = 20251212
+const GDAL_RELEASE_DATE = 20260813
 
-const GDAL_RELEASE_NAME = "3.12.1"
+const GDAL_RELEASE_NAME = "3.13.3"
 
-const GDAL_RELEASE_NICKNAME = "Chicoutimi"
+const GDAL_RELEASE_NICKNAME = "Iowa City"
 
-const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 2
+const GDT_Byte = GDT_UInt8
+
+const RASTERIO_EXTRA_ARG_CURRENT_VERSION = 3
 
 const GCI_IR_Start = 20
 
@@ -40885,6 +41383,8 @@ const GDAL_DCAP_FEATURE_STYLES_WRITE = "DCAP_FEATURE_STYLES_WRITE"
 const GDAL_DCAP_COORDINATE_EPOCH = "DCAP_COORDINATE_EPOCH"
 
 const GDAL_DCAP_MULTIPLE_VECTOR_LAYERS = "DCAP_MULTIPLE_VECTOR_LAYERS"
+
+const GDAL_DCAP_MULTIPLE_VECTOR_LAYERS_IN_DIRECTORY = "GDAL_DCAP_MULTIPLE_VECTOR_LAYERS_IN_DIRECTORY"
 
 const GDAL_DCAP_FIELD_DOMAINS = "DCAP_FIELD_DOMAINS"
 
