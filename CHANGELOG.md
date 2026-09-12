@@ -1,6 +1,11 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- `GDAL.check_errors[] = false` skips the `CPLGetLastErrorType` call that every
+  wrapper makes through `aftercare`, for loops that check failures themselves.
+  `GDAL.without_error_checks(f)` runs `f` with the check disabled and restores the
+  flag afterwards. Checking stays on by default.
 
 ## [0.2.0] - 2018-08-10
 ### Fixed
