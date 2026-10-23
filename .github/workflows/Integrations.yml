@@ -37,11 +37,22 @@ jobs:
       - name: Load this and run the downstream tests
         shell: julia --color=yes --project=downstream {0}
         run: |
-          using Pkg
+          using Pkg, TOML
           try
+            project_file = Pkg.project().path
+            direct = haskey(Pkg.project().dependencies, "GDAL")
             # Force downstream tests to use this PR's version of the package
             Pkg.develop(PackageSpec(path="."))  # resolver may fail with main deps
             Pkg.update()
+            project = TOML.parsefile(project_file)
+            if !direct && haskey(project, "targets")
+              # Make GDAL a test-only dependency, so downstream Aqua checks don't flag it
+              # as stale or lacking compat. The manifest still tracks this PR's version.
+              project["extras"]["GDAL"] = pop!(project["deps"], "GDAL")
+              push!(project["targets"]["test"], "GDAL")
+              project["compat"]["GDAL"] = TOML.parsefile("Project.toml")["version"]
+              open(io -> TOML.print(io, project), project_file, "w")
+            end
             Pkg.test(coverage=true)  # resolver may fail with test time deps
           catch err
             err isa Pkg.Resolve.ResolverError || rethrow()
