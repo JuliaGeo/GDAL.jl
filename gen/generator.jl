@@ -7,6 +7,7 @@ Several custom transformations are applied that should make using this package m
 - function names are lowercased following Julia conventions
 - functions that return a Cstring are wrapped in unsafe_string to return a String
 - functions that return a Ptr{Cstring} are wrapped in unsafe_loadstringlist to return a Vector{String}
+- the arguments of these two kinds of functions are kept alive with GC.@preserve until the strings are copied
 - functions that return a Ptr{Cvoid} are wrapped in failsafe to catch errors
 =#
 
@@ -93,6 +94,10 @@ function rewriter(xs::Vector)
     rewritten
 end
 
+# `aftercare` copies a returned string after the ccall, when the arguments that
+# may own it are no longer kept alive by the ccall, so preserve them until then
+preserve(fargs, ex) = isempty(fargs) ? ex : :(GC.@preserve $(fargs...) $ex)
+
 "Rewrite expressions in the ways listed at the top of this file."
 function rewriter(x::Expr)
     if @capture(x, function f_(fargs__)
@@ -126,7 +131,9 @@ function rewriter(x::Expr)
         elseif rettype == :Cstring
             # boolean to let aftercare know if it should call vsifree
             free = f2 in string_free_me
-            :(aftercare($cc, $free))
+            preserve(fargs, :(aftercare($cc, $free)))
+        elseif rettype == :(Ptr{Cstring})
+            preserve(fargs, :(aftercare($cc)))
         else
             :(aftercare($cc))
         end
