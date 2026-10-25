@@ -46,6 +46,7 @@ import Aqua
         include("gdal_jll_utils.jl")
         include("drivers.jl")
         include("error.jl")
+        include("strings.jl")
     end
 
     GDAL.gdaldestroydrivermanager()
