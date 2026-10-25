@@ -63,7 +63,69 @@ end
 # because for instance the documentation says: "Free with CPLFree() or VSIFree()"
 # use the renamed (lowercased) function names here
 # if it is not in this list, it will not be freed, add function names to make it more complete
-const string_free_me = Symbol[:gdalinfo]
+const string_free_me = Symbol[
+    :cplstrdup,
+    :cplscanstring,
+    :cplgetcurrentdir,
+    :cplserializexmltree,
+    :vsistrdup,
+    :vsistrdupverbose,
+    :vsigetcanonicalfilename,
+    :vsigetsignedurl,
+    :vsimultipartuploadstart,
+    :vsimultipartuploadaddpart,
+    :vsinetworkstatsgetasserializedjson,
+    :gdalinfo,
+    :gdalmultidiminfo,
+    :gdalvectorinfo,
+    :gdalsubdatasetinfogetpathcomponent,
+    :gdalsubdatasetinfogetsubdatasetcomponent,
+    :gdalsubdatasetinfomodifypathcomponent,
+    :ogr_g_exporttogml,
+    :ogr_g_exporttogmlex,
+    :ogr_g_exporttokml,
+    :ogr_g_exporttojson,
+    :ogr_g_exporttojsonex,
+    :ogr_g_getinvalidityreason,
+    :ogr_f_dumpreadableasstring,
+]
+
+# functions that return a Ptr{Cstring} string list, of which we know we must free them
+# with CSLDestroy, because the documentation says so
+const stringlist_free_me = Symbol[
+    :cplgetknownconfigoptions,
+    :cplgetconfigoptions,
+    :cplgetthreadlocalconfigoptions,
+    :cplcorrespondingpaths,
+    :vsireaddir,
+    :vsireaddirrecursive,
+    :vsireaddirex,
+    :vsisiblingfiles,
+    :vsiglob,
+    :vsigetfilesystemsprefixes,
+    :vsigetfilemetadata,
+    :gdalgetoutputdriversfordatasetname,
+    :gdalgetmetadatadomainlist,
+    :gdalgetfilelist,
+    :gdaldatasetgetcompressionformats,
+    :gdaldatasetgetfielddomainnames,
+    :gdaldatasetgetrelationshipnames,
+    :gdalrelationshipgetlefttablefields,
+    :gdalrelationshipgetrighttablefields,
+    :gdalrelationshipgetleftmappingtablefields,
+    :gdalrelationshipgetrightmappingtablefields,
+    :gdalgroupgetmdarraynames,
+    :gdalgroupgetmdarrayfullnamesrecursive,
+    :gdalgroupgetgroupnames,
+    :gdalgroupgetvectorlayernames,
+    :gdalattributereadasstringarray,
+    :rpcinfov1tomd,
+    :rpcinfov2tomd,
+    :ogrgeomcoordinateprecisiongetformats,
+    :osrgetprojsearchpaths,
+    :osrgetprojauxdbpaths,
+    :osrgetauthoritylistfromdatabase,
+]
 
 """
 Custom rewriter for Clang.jl's C wrapper
@@ -133,7 +195,9 @@ function rewriter(x::Expr)
             free = f2 in string_free_me
             preserve(fargs, :(aftercare($cc, $free)))
         elseif rettype == :(Ptr{Cstring})
-            preserve(fargs, :(aftercare($cc)))
+            # boolean to let aftercare know if it should call CSLDestroy
+            free = f2 in stringlist_free_me
+            preserve(fargs, :(aftercare($cc, $free)))
         else
             :(aftercare($cc))
         end

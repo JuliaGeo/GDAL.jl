@@ -147,7 +147,7 @@ end
 Return the list of known configuration options.
 """
 function cplgetknownconfigoptions()
-    aftercare(ccall((:CPLGetKnownConfigOptions, libgdal), Ptr{Cstring}, ()))
+    aftercare(ccall((:CPLGetKnownConfigOptions, libgdal), Ptr{Cstring}, ()), true)
 end
 
 "Callback for [`CPLSubscribeToSetConfigOption`](@ref)()"
@@ -207,7 +207,7 @@ end
 ` `
 """
 function cplgetconfigoptions()
-    aftercare(ccall((:CPLGetConfigOptions, libgdal), Ptr{Cstring}, ()))
+    aftercare(ccall((:CPLGetConfigOptions, libgdal), Ptr{Cstring}, ()), true)
 end
 
 """
@@ -233,7 +233,7 @@ Return the list of thread local configuration options as KEY=VALUE pairs.
 a copy of the list, to be freed with CSLDestroy().
 """
 function cplgetthreadlocalconfigoptions()
-    aftercare(ccall((:CPLGetThreadLocalConfigOptions, libgdal), Ptr{Cstring}, ()))
+    aftercare(ccall((:CPLGetThreadLocalConfigOptions, libgdal), Ptr{Cstring}, ()), true)
 end
 
 """
@@ -349,7 +349,7 @@ pointer to a newly allocated copy of the string. Free with CPLFree() or VSIFree(
 function cplstrdup(arg1)
     GC.@preserve arg1 aftercare(
         ccall((:CPLStrdup, libgdal), Cstring, (Cstring,), arg1),
-        false,
+        true,
     )
 end
 
@@ -687,7 +687,7 @@ function cplscanstring(arg1, arg2, arg3, arg4)
             arg3,
             arg4,
         ),
-        false,
+        true,
     )
 end
 
@@ -1306,7 +1306,7 @@ Get the current working directory name.
 a pointer to buffer, containing current working directory path or NULL in case of error. User is responsible to free that buffer after usage with CPLFree() function. If HAVE_GETCWD macro is not defined, the function returns NULL.
 """
 function cplgetcurrentdir()
-    aftercare(ccall((:CPLGetCurrentDir, libgdal), Cstring, ()), false)
+    aftercare(ccall((:CPLGetCurrentDir, libgdal), Cstring, ()), true)
 end
 
 """
@@ -1396,6 +1396,7 @@ function cplcorrespondingpaths(pszOldFilename, pszNewFilename, papszFileList)
             pszNewFilename,
             papszFileList,
         ),
+        true,
     )
 end
 
@@ -2625,7 +2626,7 @@ the document on success or NULL on failure.
 function cplserializexmltree(psNode)
     GC.@preserve psNode aftercare(
         ccall((:CPLSerializeXMLTree, libgdal), Cstring, (Ptr{CPLXMLNode},), psNode),
-        false,
+        true,
     )
 end
 
@@ -3598,7 +3599,7 @@ function vsistrdupverbose(pszStr, pszFile, nLine)
             pszFile,
             nLine,
         ),
-        false,
+        true,
     )
 end
 
@@ -3616,6 +3617,7 @@ The list of entries in the directory, or NULL if the directory doesn't exist. Fi
 function vsireaddir(arg1)
     GC.@preserve arg1 aftercare(
         ccall((:VSIReadDir, libgdal), Ptr{Cstring}, (Cstring,), arg1),
+        true,
     )
 end
 
@@ -4320,7 +4322,7 @@ UTF-8 encoded string, to free with VSIFree()
 function vsigetcanonicalfilename(pszPath)
     GC.@preserve pszPath aftercare(
         ccall((:VSIGetCanonicalFilename, libgdal), Cstring, (Cstring,), pszPath),
-        false,
+        true,
     )
 end
 
@@ -4437,7 +4439,7 @@ function vsigetsignedurl(pszFilename, papszOptions)
             pszFilename,
             papszOptions,
         ),
-        false,
+        true,
     )
 end
 
@@ -4468,7 +4470,7 @@ Return the list of prefixes for virtual file system handlers currently registere
 a NULL terminated list of prefixes. Must be freed with CSLDestroy()
 """
 function vsigetfilesystemsprefixes()
-    aftercare(ccall((:VSIGetFileSystemsPrefixes, libgdal), Ptr{Cstring}, ()))
+    aftercare(ccall((:VSIGetFileSystemsPrefixes, libgdal), Ptr{Cstring}, ()), true)
 end
 
 """
@@ -4538,6 +4540,7 @@ function vsigetfilemetadata(pszFilename, pszDomain, papszOptions)
             pszDomain,
             papszOptions,
         ),
+        true,
     )
 end
 
@@ -4749,7 +4752,7 @@ Analog of strdup().
 function vsistrdup(arg1)
     GC.@preserve arg1 aftercare(
         ccall((:VSIStrdup, libgdal), Cstring, (Cstring,), arg1),
-        false,
+        true,
     )
 end
 
@@ -4870,6 +4873,7 @@ The list of entries in the directory and subdirectories or NULL if the directory
 function vsireaddirrecursive(pszPath)
     GC.@preserve pszPath aftercare(
         ccall((:VSIReadDirRecursive, libgdal), Ptr{Cstring}, (Cstring,), pszPath),
+        true,
     )
 end
 
@@ -4889,6 +4893,7 @@ The list of entries in the directory, or NULL if the directory doesn't exist. Fi
 function vsireaddirex(pszPath, nMaxFiles)
     GC.@preserve pszPath nMaxFiles aftercare(
         ccall((:VSIReadDirEx, libgdal), Ptr{Cstring}, (Cstring, Cint), pszPath, nMaxFiles),
+        true,
     )
 end
 
@@ -4906,6 +4911,7 @@ The list of entries, relative to the directory, of all sidecar files available o
 function vsisiblingfiles(pszPath)
     GC.@preserve pszPath aftercare(
         ccall((:VSISiblingFiles, libgdal), Ptr{Cstring}, (Cstring,), pszPath),
+        true,
     )
 end
 
@@ -4937,6 +4943,7 @@ function vsiglob(pszPattern, papszOptions, pProgressFunc, pProgressData)
             pProgressFunc,
             pProgressData,
         ),
+        true,
     )
 end
 
@@ -5440,7 +5447,7 @@ function vsimultipartuploadstart(pszFilename, papszOptions)
             pszFilename,
             papszOptions,
         ),
-        false,
+        true,
     )
 end
 
@@ -5489,7 +5496,7 @@ function vsimultipartuploadaddpart(
             nDataLength,
             papszOptions,
         ),
-        false,
+        true,
     )
 end
 
@@ -5635,7 +5642,7 @@ function vsinetworkstatsgetasserializedjson(papszOptions)
             (Ptr{Cstring},),
             papszOptions,
         ),
-        false,
+        true,
     )
 end
 
@@ -7870,6 +7877,7 @@ function gdalgetoutputdriversfordatasetname(
             bSingleMatch,
             bEmitWarning,
         ),
+        true,
     )
 end
 
@@ -8282,6 +8290,7 @@ function gdalgetmetadatadomainlist(hObject)
             (GDALMajorObjectH,),
             hObject,
         ),
+        true,
     )
 end
 
@@ -8413,6 +8422,7 @@ Fetch files forming dataset.
 function gdalgetfilelist(arg1)
     GC.@preserve arg1 aftercare(
         ccall((:GDALGetFileList, libgdal), Ptr{Cstring}, (GDALDatasetH,), arg1),
+        true,
     )
 end
 
@@ -9032,6 +9042,7 @@ function gdaldatasetgetcompressionformats(
             nBandCount,
             panBandList,
         ),
+        true,
     )
 end
 
@@ -10594,6 +10605,7 @@ function gdaldatasetgetfielddomainnames(arg1, arg2)
             arg1,
             arg2,
         ),
+        true,
     )
 end
 
@@ -10728,6 +10740,7 @@ function gdaldatasetgetrelationshipnames(arg1, arg2)
             arg1,
             arg2,
         ),
+        true,
     )
 end
 
@@ -10929,7 +10942,7 @@ function gdalsubdatasetinfogetpathcomponent(hInfo)
             (GDALSubdatasetInfoH,),
             hInfo,
         ),
-        false,
+        true,
     )
 end
 
@@ -10957,7 +10970,7 @@ function gdalsubdatasetinfogetsubdatasetcomponent(hInfo)
             (GDALSubdatasetInfoH,),
             hInfo,
         ),
-        false,
+        true,
     )
 end
 
@@ -10987,7 +11000,7 @@ function gdalsubdatasetinfomodifypathcomponent(hInfo, pszNewPath)
             hInfo,
             pszNewPath,
         ),
-        false,
+        true,
     )
 end
 
@@ -11581,6 +11594,7 @@ function gdalgetrastercategorynames(arg1)
             (GDALRasterBandH,),
             arg1,
         ),
+        false,
     )
 end
 
@@ -15137,6 +15151,7 @@ function gdalrelationshipgetlefttablefields(arg1)
             (GDALRelationshipH,),
             arg1,
         ),
+        true,
     )
 end
 
@@ -15156,6 +15171,7 @@ function gdalrelationshipgetrighttablefields(arg1)
             (GDALRelationshipH,),
             arg1,
         ),
+        true,
     )
 end
 
@@ -15219,6 +15235,7 @@ function gdalrelationshipgetleftmappingtablefields(arg1)
             (GDALRelationshipH,),
             arg1,
         ),
+        true,
     )
 end
 
@@ -15238,6 +15255,7 @@ function gdalrelationshipgetrightmappingtablefields(arg1)
             (GDALRelationshipH,),
             arg1,
         ),
+        true,
     )
 end
 
@@ -16501,6 +16519,7 @@ function gdalgroupgetmdarraynames(hGroup, papszOptions)
             hGroup,
             papszOptions,
         ),
+        true,
     )
 end
 
@@ -16524,6 +16543,7 @@ function gdalgroupgetmdarrayfullnamesrecursive(hGroup, papszGroupOptions, papszA
             papszGroupOptions,
             papszArrayOptions,
         ),
+        true,
     )
 end
 
@@ -16613,6 +16633,7 @@ function gdalgroupgetgroupnames(hGroup, papszOptions)
             hGroup,
             papszOptions,
         ),
+        true,
     )
 end
 
@@ -16680,6 +16701,7 @@ function gdalgroupgetvectorlayernames(hGroup, papszOptions)
             hGroup,
             papszOptions,
         ),
+        true,
     )
 end
 
@@ -18873,6 +18895,7 @@ function gdalattributereadasstringarray(hAttr)
             (GDALAttributeH,),
             hAttr,
         ),
+        true,
     )
 end
 
@@ -19355,6 +19378,7 @@ end
 function rpcinfov2tomd(psRPCInfo)
     GC.@preserve psRPCInfo aftercare(
         ccall((:RPCInfoV2ToMD, libgdal), Ptr{Cstring}, (Ptr{GDALRPCInfoV2},), psRPCInfo),
+        true,
     )
 end
 
@@ -20582,6 +20606,7 @@ end
 function rpcinfov1tomd(psRPCInfo)
     GC.@preserve psRPCInfo aftercare(
         ccall((:RPCInfoV1ToMD, libgdal), Ptr{Cstring}, (Ptr{GDALRPCInfoV1},), psRPCInfo),
+        true,
     )
 end
 
@@ -25751,7 +25776,7 @@ function gdalmultidiminfo(hDataset, psOptions)
             hDataset,
             psOptions,
         ),
-        false,
+        true,
     )
 end
 
@@ -25949,7 +25974,7 @@ function gdalvectorinfo(hDataset, psOptions)
             hDataset,
             psOptions,
         ),
-        false,
+        true,
     )
 end
 
@@ -26248,6 +26273,7 @@ function ogrgeomcoordinateprecisiongetformats(arg1)
             (OGRGeomCoordinatePrecisionH,),
             arg1,
         ),
+        true,
     )
 end
 
@@ -27407,7 +27433,7 @@ A GML fragment or NULL in case of error.
 function ogr_g_exporttogml(arg1)
     GC.@preserve arg1 aftercare(
         ccall((:OGR_G_ExportToGML, libgdal), Cstring, (OGRGeometryH,), arg1),
-        false,
+        true,
     )
 end
 
@@ -27433,7 +27459,7 @@ function ogr_g_exporttogmlex(arg1, papszOptions)
             arg1,
             papszOptions,
         ),
-        false,
+        true,
     )
 end
 
@@ -27497,7 +27523,7 @@ function ogr_g_exporttokml(arg1, pszAltitudeMode)
             arg1,
             pszAltitudeMode,
         ),
-        false,
+        true,
     )
 end
 
@@ -27515,7 +27541,7 @@ A GeoJSON fragment or NULL in case of error.
 function ogr_g_exporttojson(arg1)
     GC.@preserve arg1 aftercare(
         ccall((:OGR_G_ExportToJson, libgdal), Cstring, (OGRGeometryH,), arg1),
-        false,
+        true,
     )
 end
 
@@ -27541,7 +27567,7 @@ function ogr_g_exporttojsonex(arg1, papszOptions)
             arg1,
             papszOptions,
         ),
-        false,
+        true,
     )
 end
 
@@ -28512,7 +28538,7 @@ a string with the invalidity reason, to free with CPLFree(), if the geometry is 
 function ogr_g_getinvalidityreason(arg1)
     GC.@preserve arg1 aftercare(
         ccall((:OGR_G_GetInvalidityReason, libgdal), Cstring, (OGRGeometryH,), arg1),
-        false,
+        true,
     )
 end
 
@@ -31959,6 +31985,7 @@ function ogr_f_getfieldasstringlist(arg1, arg2)
             arg1,
             arg2,
         ),
+        false,
     )
 end
 
@@ -32682,7 +32709,7 @@ function ogr_f_dumpreadableasstring(arg1, arg2)
             arg1,
             arg2,
         ),
-        false,
+        true,
     )
 end
 
@@ -37009,7 +37036,7 @@ Get the search path(s) for PROJ resource files.
 NULL terminated list of directory paths. To be freed with CSLDestroy()
 """
 function osrgetprojsearchpaths()
-    aftercare(ccall((:OSRGetPROJSearchPaths, libgdal), Ptr{Cstring}, ()))
+    aftercare(ccall((:OSRGetPROJSearchPaths, libgdal), Ptr{Cstring}, ()), true)
 end
 
 """
@@ -37033,7 +37060,7 @@ Get PROJ auxiliary database filenames.
 NULL terminated list of PROJ auxiliary database filenames. To be freed with CSLDestroy()
 """
 function osrgetprojauxdbpaths()
-    aftercare(ccall((:OSRGetPROJAuxDbPaths, libgdal), Ptr{Cstring}, ()))
+    aftercare(ccall((:OSRGetPROJAuxDbPaths, libgdal), Ptr{Cstring}, ()), true)
 end
 
 """
@@ -40521,7 +40548,7 @@ Return the list of CRS authorities used in the PROJ database.
 nullptr in case of error, or a NULL terminated list of strings to free with CSLDestroy()
 """
 function osrgetauthoritylistfromdatabase()
-    aftercare(ccall((:OSRGetAuthorityListFromDatabase, libgdal), Ptr{Cstring}, ()))
+    aftercare(ccall((:OSRGetAuthorityListFromDatabase, libgdal), Ptr{Cstring}, ()), true)
 end
 
 """
