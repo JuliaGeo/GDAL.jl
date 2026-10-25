@@ -13,7 +13,7 @@ PROJ_jll = "58948b4f-47e0-5654-a9ad-f609743f8632"
 
 [compat]
 Aqua = "0.8"
-CEnum = "0.2, 0.3, 0.4, 0.5"
+CEnum = "0.2, 0.3, 0.4, 0.5, 1"
 GDAL_jll = "305.1300"
 NetworkOptions = "1.2"
 PROJ_jll = "902"
