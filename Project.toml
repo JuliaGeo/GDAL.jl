@@ -17,16 +17,12 @@ CEnum = "0.2, 0.3, 0.4, 0.5"
 GDAL_jll = "305.1300"
 NetworkOptions = "1.2"
 PROJ_jll = "902"
-# Test-only pin: SQLite_jll >= 3.51.2 changed its library name, so libproj fails to
-# load on Linux without a system SQLite. See JuliaGeo/Proj.jl#128.
-SQLite_jll = "~3.48"
 Test = "<0.0.1,1"
 julia = "1.10"
 
 [extras]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
-SQLite_jll = "76ed43ae-9a5d-5a62-8c75-30186b810ce8"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Aqua", "SQLite_jll", "Test"]
+test = ["Aqua", "Test"]
