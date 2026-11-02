@@ -7,7 +7,8 @@ Several custom transformations are applied that should make using this package m
 - function names are lowercased following Julia conventions
 - functions that return a Cstring are wrapped in unsafe_string to return a String
 - functions that return a Ptr{Cstring} are wrapped in unsafe_loadstringlist to return a Vector{String}
-- the arguments of these two kinds of functions are kept alive with GC.@preserve until the strings are copied
+- the arguments of these two kinds of functions, and what ccall converts string arguments to, are kept alive
+  with GC.@preserve until the strings are copied
 - functions that return a Ptr{Cvoid} are wrapped in failsafe to catch errors
 =#
 
@@ -156,9 +157,31 @@ function rewriter(xs::Vector)
     rewritten
 end
 
-# `aftercare` copies a returned string after the ccall, when the arguments that
-# may own it are no longer kept alive by the ccall, so preserve them until then
-preserve(fargs, ex) = isempty(fargs) ? ex : :(GC.@preserve $(fargs...) $ex)
+# C types of the arguments that `ccall` can convert to a temporary holding the string data,
+# such as a String for a SubString, which a returned string can then point into
+const string_argtypes = (:Cstring, :(Ptr{Cstring}), :CSLConstList)
+
+# `aftercare` copies a returned string after the ccall, when the arguments that may own it
+# are no longer kept alive by the ccall, so preserve them until then. The ccall does not
+# give access to its temporaries, so convert string arguments up front to preserve those too.
+# Converting again in the ccall returns the same object, it does not copy.
+function preserved_aftercare(fargs, fname, rettype, argtypes, argvalues, free)
+    conversions = Expr[]
+    converted = Symbol[]
+    values = map(argtypes.args, argvalues) do type, value
+        type in string_argtypes || return value
+        c = Symbol(value, "_c")
+        push!(conversions, :($c = Base.cconvert($type, $value)))
+        push!(converted, c)
+        return c
+    end
+    ex = :(aftercare(ccall($fname, $rettype, $argtypes, $(values...)), $free))
+    isempty(fargs) && return ex
+    quote
+        $(conversions...)
+        GC.@preserve $(fargs...) $(converted...) $ex
+    end
+end
 
 "Rewrite expressions in the ways listed at the top of this file."
 function rewriter(x::Expr)
@@ -193,11 +216,11 @@ function rewriter(x::Expr)
         elseif rettype == :Cstring
             # boolean to let aftercare know if it should call vsifree
             free = f2 in string_free_me
-            preserve(fargs, :(aftercare($cc, $free)))
+            preserved_aftercare(fargs, fname, rettype, argtypes, argvalues, free)
         elseif rettype == :(Ptr{Cstring})
             # boolean to let aftercare know if it should call CSLDestroy
             free = f2 in stringlist_free_me
-            preserve(fargs, :(aftercare($cc, $free)))
+            preserved_aftercare(fargs, fname, rettype, argtypes, argvalues, free)
         else
             :(aftercare($cc))
         end

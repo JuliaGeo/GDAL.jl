@@ -41,8 +41,10 @@ Get the value of a configuration option.
 the value associated to the key, or the default value if not found
 """
 function cplgetconfigoption(arg1, arg2)
-    GC.@preserve arg1 arg2 aftercare(
-        ccall((:CPLGetConfigOption, libgdal), Cstring, (Cstring, Cstring), arg1, arg2),
+    arg1_c = Base.cconvert(Cstring, arg1)
+    arg2_c = Base.cconvert(Cstring, arg2)
+    GC.@preserve arg1 arg2 arg1_c arg2_c aftercare(
+        ccall((:CPLGetConfigOption, libgdal), Cstring, (Cstring, Cstring), arg1_c, arg2_c),
         false,
     )
 end
@@ -53,13 +55,15 @@ end
                                   bool bSubstituteNullValueMarkerWithNull) -> const char *
 """
 function cplgetthreadlocalconfigoption(arg1, arg2)
-    GC.@preserve arg1 arg2 aftercare(
+    arg1_c = Base.cconvert(Cstring, arg1)
+    arg2_c = Base.cconvert(Cstring, arg2)
+    GC.@preserve arg1 arg2 arg1_c arg2_c aftercare(
         ccall(
             (:CPLGetThreadLocalConfigOption, libgdal),
             Cstring,
             (Cstring, Cstring),
-            arg1,
-            arg2,
+            arg1_c,
+            arg2_c,
         ),
         false,
     )
@@ -71,13 +75,15 @@ end
                              bool bSubstituteNullValueMarkerWithNull) -> const char *
 """
 function cplgetglobalconfigoption(arg1, arg2)
-    GC.@preserve arg1 arg2 aftercare(
+    arg1_c = Base.cconvert(Cstring, arg1)
+    arg2_c = Base.cconvert(Cstring, arg2)
+    GC.@preserve arg1 arg2 arg1_c arg2_c aftercare(
         ccall(
             (:CPLGetGlobalConfigOption, libgdal),
             Cstring,
             (Cstring, Cstring),
-            arg1,
-            arg2,
+            arg1_c,
+            arg2_c,
         ),
         false,
     )
@@ -347,8 +353,9 @@ Safe version of strdup() function.
 pointer to a newly allocated copy of the string. Free with CPLFree() or VSIFree().
 """
 function cplstrdup(arg1)
-    GC.@preserve arg1 aftercare(
-        ccall((:CPLStrdup, libgdal), Cstring, (Cstring,), arg1),
+    arg1_c = Base.cconvert(Cstring, arg1)
+    GC.@preserve arg1 arg1_c aftercare(
+        ccall((:CPLStrdup, libgdal), Cstring, (Cstring,), arg1_c),
         true,
     )
 end
@@ -365,8 +372,9 @@ Convert each characters of the string to lower case.
 pointer to the same string, pszString.
 """
 function cplstrlwr(arg1)
-    GC.@preserve arg1 aftercare(
-        ccall((:CPLStrlwr, libgdal), Cstring, (Cstring,), arg1),
+    arg1_c = Base.cconvert(Cstring, arg1)
+    GC.@preserve arg1 arg1_c aftercare(
+        ccall((:CPLStrlwr, libgdal), Cstring, (Cstring,), arg1_c),
         false,
     )
 end
@@ -387,12 +395,13 @@ Reads in at most one less than nBufferSize characters from the fp stream and sto
 pointer to the pszBuffer containing a string read from the file or NULL if the error or end of file was encountered.
 """
 function cplfgets(arg1, arg2, arg3)
-    GC.@preserve arg1 arg2 arg3 aftercare(
+    arg1_c = Base.cconvert(Cstring, arg1)
+    GC.@preserve arg1 arg2 arg3 arg1_c aftercare(
         ccall(
             (:CPLFGets, libgdal),
             Cstring,
             (Cstring, Cint, Ptr{Libc.FILE}),
-            arg1,
+            arg1_c,
             arg2,
             arg3,
         ),
@@ -460,14 +469,15 @@ Simplified line reading from text file.
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered or the maximum number of characters allowed reached.
 """
 function cplreadline2l(arg1, arg2, arg3)
-    GC.@preserve arg1 arg2 arg3 aftercare(
+    arg3_c = Base.cconvert(CSLConstList, arg3)
+    GC.@preserve arg1 arg2 arg3 arg3_c aftercare(
         ccall(
             (:CPLReadLine2L, libgdal),
             Cstring,
             (Ptr{VSILFILE}, Cint, CSLConstList),
             arg1,
             arg2,
-            arg3,
+            arg3_c,
         ),
         false,
     )
@@ -491,7 +501,8 @@ Simplified line reading from text file.
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered or the maximum number of characters allowed reached.
 """
 function cplreadline3l(arg1, arg2, arg3, arg4)
-    GC.@preserve arg1 arg2 arg3 arg4 aftercare(
+    arg4_c = Base.cconvert(CSLConstList, arg4)
+    GC.@preserve arg1 arg2 arg3 arg4 arg4_c aftercare(
         ccall(
             (:CPLReadLine3L, libgdal),
             Cstring,
@@ -499,7 +510,7 @@ function cplreadline3l(arg1, arg2, arg3, arg4)
             arg1,
             arg2,
             arg3,
-            arg4,
+            arg4_c,
         ),
         false,
     )
@@ -677,12 +688,13 @@ Scan up to a maximum number of characters from a given string, allocate a buffer
 Pointer to the resulting string buffer. Caller responsible to free this buffer with CPLFree().
 """
 function cplscanstring(arg1, arg2, arg3, arg4)
-    GC.@preserve arg1 arg2 arg3 arg4 aftercare(
+    arg1_c = Base.cconvert(Cstring, arg1)
+    GC.@preserve arg1 arg2 arg3 arg4 arg1_c aftercare(
         ccall(
             (:CPLScanString, libgdal),
             Cstring,
             (Cstring, Cint, Cint, Cint),
-            arg1,
+            arg1_c,
             arg2,
             arg3,
             arg4,
@@ -1053,8 +1065,9 @@ Extract directory path portion of filename.
 Path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call. The returned will generally not contain a trailing path separator.
 """
 function cplgetpath(arg1)
-    GC.@preserve arg1 aftercare(
-        ccall((:CPLGetPath, libgdal), Cstring, (Cstring,), arg1),
+    arg1_c = Base.cconvert(Cstring, arg1)
+    GC.@preserve arg1 arg1_c aftercare(
+        ccall((:CPLGetPath, libgdal), Cstring, (Cstring,), arg1_c),
         false,
     )
 end
@@ -1071,8 +1084,9 @@ Extract directory path portion of filename.
 Path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call. The returned will generally not contain a trailing path separator.
 """
 function cplgetdirname(arg1)
-    GC.@preserve arg1 aftercare(
-        ccall((:CPLGetDirname, libgdal), Cstring, (Cstring,), arg1),
+    arg1_c = Base.cconvert(Cstring, arg1)
+    GC.@preserve arg1 arg1_c aftercare(
+        ccall((:CPLGetDirname, libgdal), Cstring, (Cstring,), arg1_c),
         false,
     )
 end
@@ -1089,8 +1103,9 @@ Extract basename (non-directory, non-extension) portion of filename.
 just the non-directory, non-extension portion of the path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call.
 """
 function cplgetbasename(arg1)
-    GC.@preserve arg1 aftercare(
-        ccall((:CPLGetBasename, libgdal), Cstring, (Cstring,), arg1),
+    arg1_c = Base.cconvert(Cstring, arg1)
+    GC.@preserve arg1 arg1_c aftercare(
+        ccall((:CPLGetBasename, libgdal), Cstring, (Cstring,), arg1_c),
         false,
     )
 end
@@ -1107,8 +1122,9 @@ Extract filename extension from full filename.
 just the extension portion of the path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call.
 """
 function cplgetextension(arg1)
-    GC.@preserve arg1 aftercare(
-        ccall((:CPLGetExtension, libgdal), Cstring, (Cstring,), arg1),
+    arg1_c = Base.cconvert(Cstring, arg1)
+    GC.@preserve arg1 arg1_c aftercare(
+        ccall((:CPLGetExtension, libgdal), Cstring, (Cstring,), arg1_c),
         false,
     )
 end
@@ -1129,14 +1145,17 @@ Build a full file path from a passed path, file basename and extension.
 a fully formed filename in an internal static string. Do not modify or free the returned string. The string may be destroyed by the next CPL call.
 """
 function cplformfilename(pszPath, pszBasename, pszExtension)
-    GC.@preserve pszPath pszBasename pszExtension aftercare(
+    pszPath_c = Base.cconvert(Cstring, pszPath)
+    pszBasename_c = Base.cconvert(Cstring, pszBasename)
+    pszExtension_c = Base.cconvert(Cstring, pszExtension)
+    GC.@preserve pszPath pszBasename pszExtension pszPath_c pszBasename_c pszExtension_c aftercare(
         ccall(
             (:CPLFormFilename, libgdal),
             Cstring,
             (Cstring, Cstring, Cstring),
-            pszPath,
-            pszBasename,
-            pszExtension,
+            pszPath_c,
+            pszBasename_c,
+            pszExtension_c,
         ),
         false,
     )
@@ -1158,14 +1177,17 @@ Case insensitive file searching, returning full path.
 a fully formed filename in an internal static string. Do not modify or free the returned string. The string may be destroyed by the next CPL call.
 """
 function cplformcifilename(pszPath, pszBasename, pszExtension)
-    GC.@preserve pszPath pszBasename pszExtension aftercare(
+    pszPath_c = Base.cconvert(Cstring, pszPath)
+    pszBasename_c = Base.cconvert(Cstring, pszBasename)
+    pszExtension_c = Base.cconvert(Cstring, pszExtension)
+    GC.@preserve pszPath pszBasename pszExtension pszPath_c pszBasename_c pszExtension_c aftercare(
         ccall(
             (:CPLFormCIFilename, libgdal),
             Cstring,
             (Cstring, Cstring, Cstring),
-            pszPath,
-            pszBasename,
-            pszExtension,
+            pszPath_c,
+            pszBasename_c,
+            pszExtension_c,
         ),
         false,
     )
@@ -1185,8 +1207,10 @@ Replace the extension with the provided one.
 an altered filename with the new extension. Do not modify or free the returned string. The string may be destroyed by the next CPL call.
 """
 function cplresetextension(arg1, arg2)
-    GC.@preserve arg1 arg2 aftercare(
-        ccall((:CPLResetExtension, libgdal), Cstring, (Cstring, Cstring), arg1, arg2),
+    arg1_c = Base.cconvert(Cstring, arg1)
+    arg2_c = Base.cconvert(Cstring, arg2)
+    GC.@preserve arg1 arg2 arg1_c arg2_c aftercare(
+        ccall((:CPLResetExtension, libgdal), Cstring, (Cstring, Cstring), arg1_c, arg2_c),
         false,
     )
 end
@@ -1205,13 +1229,15 @@ Find a file relative to a project file.
 a composed path to the secondary file. The returned string is internal and should not be altered, freed, or depending on past the next CPL call.
 """
 function cplprojectrelativefilename(pszProjectDir, pszSecondaryFilename)
-    GC.@preserve pszProjectDir pszSecondaryFilename aftercare(
+    pszProjectDir_c = Base.cconvert(Cstring, pszProjectDir)
+    pszSecondaryFilename_c = Base.cconvert(Cstring, pszSecondaryFilename)
+    GC.@preserve pszProjectDir pszSecondaryFilename pszProjectDir_c pszSecondaryFilename_c aftercare(
         ccall(
             (:CPLProjectRelativeFilename, libgdal),
             Cstring,
             (Cstring, Cstring),
-            pszProjectDir,
-            pszSecondaryFilename,
+            pszProjectDir_c,
+            pszSecondaryFilename_c,
         ),
         false,
     )
@@ -1229,8 +1255,9 @@ Remove trailing forward/backward slash from the path for UNIX/Windows resp.
 Path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call.
 """
 function cplcleantrailingslash(arg1)
-    GC.@preserve arg1 aftercare(
-        ccall((:CPLCleanTrailingSlash, libgdal), Cstring, (Cstring,), arg1),
+    arg1_c = Base.cconvert(Cstring, arg1)
+    GC.@preserve arg1 arg1_c aftercare(
+        ccall((:CPLCleanTrailingSlash, libgdal), Cstring, (Cstring,), arg1_c),
         false,
     )
 end
@@ -1247,8 +1274,9 @@ Generate temporary file name.
 a filename which is valid till the next CPL call in this thread.
 """
 function cplgeneratetempfilename(pszStem)
-    GC.@preserve pszStem aftercare(
-        ccall((:CPLGenerateTempFilename, libgdal), Cstring, (Cstring,), pszStem),
+    pszStem_c = Base.cconvert(Cstring, pszStem)
+    GC.@preserve pszStem pszStem_c aftercare(
+        ccall((:CPLGenerateTempFilename, libgdal), Cstring, (Cstring,), pszStem_c),
         false,
     )
 end
@@ -1265,8 +1293,9 @@ Expands ~/ at start of filename.
 an expanded filename.
 """
 function cplexpandtilde(pszFilename)
-    GC.@preserve pszFilename aftercare(
-        ccall((:CPLExpandTilde, libgdal), Cstring, (Cstring,), pszFilename),
+    pszFilename_c = Base.cconvert(Cstring, pszFilename)
+    GC.@preserve pszFilename pszFilename_c aftercare(
+        ccall((:CPLExpandTilde, libgdal), Cstring, (Cstring,), pszFilename_c),
         false,
     )
 end
@@ -1285,13 +1314,15 @@ Launder a string to be compatible of a filename.
 the laundered name.
 """
 function cpllaunderforfilename(pszName, pszOutputPath)
-    GC.@preserve pszName pszOutputPath aftercare(
+    pszName_c = Base.cconvert(Cstring, pszName)
+    pszOutputPath_c = Base.cconvert(Cstring, pszOutputPath)
+    GC.@preserve pszName pszOutputPath pszName_c pszOutputPath_c aftercare(
         ccall(
             (:CPLLaunderForFilename, libgdal),
             Cstring,
             (Cstring, Cstring),
-            pszName,
-            pszOutputPath,
+            pszName_c,
+            pszOutputPath_c,
         ),
         false,
     )
@@ -1321,8 +1352,9 @@ Extract non-directory portion of filename.
 just the non-directory portion of the path (points back into original string).
 """
 function cplgetfilename(arg1)
-    GC.@preserve arg1 aftercare(
-        ccall((:CPLGetFilename, libgdal), Cstring, (Cstring,), arg1),
+    arg1_c = Base.cconvert(Cstring, arg1)
+    GC.@preserve arg1 arg1_c aftercare(
+        ccall((:CPLGetFilename, libgdal), Cstring, (Cstring,), arg1_c),
         false,
     )
 end
@@ -1358,13 +1390,15 @@ Get relative path from directory to target file.
 an adjusted path or the original if it could not be made relative to the pszBaseFile's path.
 """
 function cplextractrelativepath(arg1, arg2, arg3)
-    GC.@preserve arg1 arg2 arg3 aftercare(
+    arg1_c = Base.cconvert(Cstring, arg1)
+    arg2_c = Base.cconvert(Cstring, arg2)
+    GC.@preserve arg1 arg2 arg3 arg1_c arg2_c aftercare(
         ccall(
             (:CPLExtractRelativePath, libgdal),
             Cstring,
             (Cstring, Cstring, Ptr{Cint}),
-            arg1,
-            arg2,
+            arg1_c,
+            arg2_c,
             arg3,
         ),
         false,
@@ -1387,14 +1421,17 @@ Identify corresponding paths.
 a list of files corresponding to papszFileList but renamed to correspond to pszNewFilename.
 """
 function cplcorrespondingpaths(pszOldFilename, pszNewFilename, papszFileList)
-    GC.@preserve pszOldFilename pszNewFilename papszFileList aftercare(
+    pszOldFilename_c = Base.cconvert(Cstring, pszOldFilename)
+    pszNewFilename_c = Base.cconvert(Cstring, pszNewFilename)
+    papszFileList_c = Base.cconvert(CSLConstList, papszFileList)
+    GC.@preserve pszOldFilename pszNewFilename papszFileList pszOldFilename_c pszNewFilename_c papszFileList_c aftercare(
         ccall(
             (:CPLCorrespondingPaths, libgdal),
             Ptr{Cstring},
             (Cstring, Cstring, CSLConstList),
-            pszOldFilename,
-            pszNewFilename,
-            papszFileList,
+            pszOldFilename_c,
+            pszNewFilename_c,
+            papszFileList_c,
         ),
         true,
     )
@@ -1479,8 +1516,16 @@ const CPLFileFinder = Ptr{Cvoid}
 CPLFindFile.
 """
 function cplfindfile(pszClass, pszBasename)
-    GC.@preserve pszClass pszBasename aftercare(
-        ccall((:CPLFindFile, libgdal), Cstring, (Cstring, Cstring), pszClass, pszBasename),
+    pszClass_c = Base.cconvert(Cstring, pszClass)
+    pszBasename_c = Base.cconvert(Cstring, pszBasename)
+    GC.@preserve pszClass pszBasename pszClass_c pszBasename_c aftercare(
+        ccall(
+            (:CPLFindFile, libgdal),
+            Cstring,
+            (Cstring, Cstring),
+            pszClass_c,
+            pszBasename_c,
+        ),
         false,
     )
 end
@@ -1492,13 +1537,15 @@ end
 CPLDefaultFindFile.
 """
 function cpldefaultfindfile(pszClass, pszBasename)
-    GC.@preserve pszClass pszBasename aftercare(
+    pszClass_c = Base.cconvert(Cstring, pszClass)
+    pszBasename_c = Base.cconvert(Cstring, pszBasename)
+    GC.@preserve pszClass pszBasename pszClass_c pszBasename_c aftercare(
         ccall(
             (:CPLDefaultFindFile, libgdal),
             Cstring,
             (Cstring, Cstring),
-            pszClass,
-            pszBasename,
+            pszClass_c,
+            pszBasename_c,
         ),
         false,
     )
@@ -1678,13 +1725,14 @@ end
 Translate a decimal degrees value to a DMS string with hemisphere.
 """
 function cpldectodms(dfAngle, pszAxis, nPrecision)
-    GC.@preserve dfAngle pszAxis nPrecision aftercare(
+    pszAxis_c = Base.cconvert(Cstring, pszAxis)
+    GC.@preserve dfAngle pszAxis nPrecision pszAxis_c aftercare(
         ccall(
             (:CPLDecToDMS, libgdal),
             Cstring,
             (Cdouble, Cstring, Cint),
             dfAngle,
-            pszAxis,
+            pszAxis_c,
             nPrecision,
         ),
         false,
@@ -2199,8 +2247,9 @@ Prevents parallel executions of setlocale().
 See your compiler's documentation on setlocale.
 """
 function cplsetlocale(category, locale)
-    GC.@preserve category locale aftercare(
-        ccall((:CPLsetlocale, libgdal), Cstring, (Cint, Cstring), category, locale),
+    locale_c = Base.cconvert(Cstring, locale)
+    GC.@preserve category locale locale_c aftercare(
+        ccall((:CPLsetlocale, libgdal), Cstring, (Cint, Cstring), category, locale_c),
         false,
     )
 end
@@ -2571,14 +2620,16 @@ Fetch element/attribute value.
 the requested value or pszDefault if not found.
 """
 function cplgetxmlvalue(poRoot, pszPath, pszDefault)
-    GC.@preserve poRoot pszPath pszDefault aftercare(
+    pszPath_c = Base.cconvert(Cstring, pszPath)
+    pszDefault_c = Base.cconvert(Cstring, pszDefault)
+    GC.@preserve poRoot pszPath pszDefault pszPath_c pszDefault_c aftercare(
         ccall(
             (:CPLGetXMLValue, libgdal),
             Cstring,
             (Ptr{CPLXMLNode}, Cstring, Cstring),
             poRoot,
-            pszPath,
-            pszDefault,
+            pszPath_c,
+            pszDefault_c,
         ),
         false,
     )
@@ -3590,13 +3641,15 @@ end
 [`VSIStrdupVerbose`](@ref)
 """
 function vsistrdupverbose(pszStr, pszFile, nLine)
-    GC.@preserve pszStr pszFile nLine aftercare(
+    pszStr_c = Base.cconvert(Cstring, pszStr)
+    pszFile_c = Base.cconvert(Cstring, pszFile)
+    GC.@preserve pszStr pszFile nLine pszStr_c pszFile_c aftercare(
         ccall(
             (:VSIStrdupVerbose, libgdal),
             Cstring,
             (Cstring, Cstring, Cint),
-            pszStr,
-            pszFile,
+            pszStr_c,
+            pszFile_c,
             nLine,
         ),
         true,
@@ -3615,8 +3668,9 @@ Read names in a directory.
 The list of entries in the directory, or NULL if the directory doesn't exist. Filenames are returned in UTF-8 encoding.
 """
 function vsireaddir(arg1)
-    GC.@preserve arg1 aftercare(
-        ccall((:VSIReadDir, libgdal), Ptr{Cstring}, (Cstring,), arg1),
+    arg1_c = Base.cconvert(Cstring, arg1)
+    GC.@preserve arg1 arg1_c aftercare(
+        ccall((:VSIReadDir, libgdal), Ptr{Cstring}, (Cstring,), arg1_c),
         true,
     )
 end
@@ -3715,12 +3769,13 @@ end
              FILE * fp) -> char *
 """
 function vsifgets(arg1, arg2, arg3)
-    GC.@preserve arg1 arg2 arg3 aftercare(
+    arg1_c = Base.cconvert(Cstring, arg1)
+    GC.@preserve arg1 arg2 arg3 arg1_c aftercare(
         ccall(
             (:VSIFGets, libgdal),
             Cstring,
             (Cstring, Cint, Ptr{Libc.FILE}),
-            arg1,
+            arg1_c,
             arg2,
             arg3,
         ),
@@ -4320,8 +4375,9 @@ Returns the canonical filename.
 UTF-8 encoded string, to free with VSIFree()
 """
 function vsigetcanonicalfilename(pszPath)
-    GC.@preserve pszPath aftercare(
-        ccall((:VSIGetCanonicalFilename, libgdal), Cstring, (Cstring,), pszPath),
+    pszPath_c = Base.cconvert(Cstring, pszPath)
+    GC.@preserve pszPath pszPath_c aftercare(
+        ccall((:VSIGetCanonicalFilename, libgdal), Cstring, (Cstring,), pszPath_c),
         true,
     )
 end
@@ -4403,8 +4459,9 @@ Returns the actual URL of a supplied filename.
 the actual URL corresponding to the supplied filename, or NULL. Should not be freed.
 """
 function vsigetactualurl(pszFilename)
-    GC.@preserve pszFilename aftercare(
-        ccall((:VSIGetActualURL, libgdal), Cstring, (Cstring,), pszFilename),
+    pszFilename_c = Base.cconvert(Cstring, pszFilename)
+    GC.@preserve pszFilename pszFilename_c aftercare(
+        ccall((:VSIGetActualURL, libgdal), Cstring, (Cstring,), pszFilename_c),
         false,
     )
 end
@@ -4431,13 +4488,15 @@ VERB=GET/HEAD/DELETE/PUT/POST: HTTP VERB for which the request will be used. Def
 a signed URL, or NULL. Should be freed with CPLFree().
 """
 function vsigetsignedurl(pszFilename, papszOptions)
-    GC.@preserve pszFilename papszOptions aftercare(
+    pszFilename_c = Base.cconvert(Cstring, pszFilename)
+    papszOptions_c = Base.cconvert(CSLConstList, papszOptions)
+    GC.@preserve pszFilename papszOptions pszFilename_c papszOptions_c aftercare(
         ccall(
             (:VSIGetSignedURL, libgdal),
             Cstring,
             (Cstring, CSLConstList),
-            pszFilename,
-            papszOptions,
+            pszFilename_c,
+            papszOptions_c,
         ),
         true,
     )
@@ -4455,8 +4514,9 @@ Return the list of options associated with a virtual file system handler as a se
 a string, which must not be freed, or NULL if no options is declared.
 """
 function vsigetfilesystemoptions(pszFilename)
-    GC.@preserve pszFilename aftercare(
-        ccall((:VSIGetFileSystemOptions, libgdal), Cstring, (Cstring,), pszFilename),
+    pszFilename_c = Base.cconvert(Cstring, pszFilename)
+    GC.@preserve pszFilename pszFilename_c aftercare(
+        ccall((:VSIGetFileSystemOptions, libgdal), Cstring, (Cstring,), pszFilename_c),
         false,
     )
 end
@@ -4531,14 +4591,17 @@ ZIP: specific to /vsizip/: to obtain ZIP specific metadata, in particular if a f
 a NULL-terminated list of key=value strings, to be freed with CSLDestroy() or NULL in case of error / empty list.
 """
 function vsigetfilemetadata(pszFilename, pszDomain, papszOptions)
-    GC.@preserve pszFilename pszDomain papszOptions aftercare(
+    pszFilename_c = Base.cconvert(Cstring, pszFilename)
+    pszDomain_c = Base.cconvert(Cstring, pszDomain)
+    papszOptions_c = Base.cconvert(CSLConstList, papszOptions)
+    GC.@preserve pszFilename pszDomain papszOptions pszFilename_c pszDomain_c papszOptions_c aftercare(
         ccall(
             (:VSIGetFileMetadata, libgdal),
             Ptr{Cstring},
             (Cstring, Cstring, CSLConstList),
-            pszFilename,
-            pszDomain,
-            papszOptions,
+            pszFilename_c,
+            pszDomain_c,
+            papszOptions_c,
         ),
         true,
     )
@@ -4652,14 +4715,17 @@ end
 Get the value a path specific option.
 """
 function vsigetpathspecificoption(pszPath, pszKey, pszDefault)
-    GC.@preserve pszPath pszKey pszDefault aftercare(
+    pszPath_c = Base.cconvert(Cstring, pszPath)
+    pszKey_c = Base.cconvert(Cstring, pszKey)
+    pszDefault_c = Base.cconvert(Cstring, pszDefault)
+    GC.@preserve pszPath pszKey pszDefault pszPath_c pszKey_c pszDefault_c aftercare(
         ccall(
             (:VSIGetPathSpecificOption, libgdal),
             Cstring,
             (Cstring, Cstring, Cstring),
-            pszPath,
-            pszKey,
-            pszDefault,
+            pszPath_c,
+            pszKey_c,
+            pszDefault_c,
         ),
         false,
     )
@@ -4702,14 +4768,17 @@ end
 Get the value of a credential (or more generally an option related to a virtual file system) for a given path.
 """
 function vsigetcredential(pszPath, pszKey, pszDefault)
-    GC.@preserve pszPath pszKey pszDefault aftercare(
+    pszPath_c = Base.cconvert(Cstring, pszPath)
+    pszKey_c = Base.cconvert(Cstring, pszKey)
+    pszDefault_c = Base.cconvert(Cstring, pszDefault)
+    GC.@preserve pszPath pszKey pszDefault pszPath_c pszKey_c pszDefault_c aftercare(
         ccall(
             (:VSIGetCredential, libgdal),
             Cstring,
             (Cstring, Cstring, Cstring),
-            pszPath,
-            pszKey,
-            pszDefault,
+            pszPath_c,
+            pszKey_c,
+            pszDefault_c,
         ),
         false,
     )
@@ -4750,8 +4819,9 @@ end
 Analog of strdup().
 """
 function vsistrdup(arg1)
-    GC.@preserve arg1 aftercare(
-        ccall((:VSIStrdup, libgdal), Cstring, (Cstring,), arg1),
+    arg1_c = Base.cconvert(Cstring, arg1)
+    GC.@preserve arg1 arg1_c aftercare(
+        ccall((:VSIStrdup, libgdal), Cstring, (Cstring,), arg1_c),
         true,
     )
 end
@@ -4871,8 +4941,9 @@ Read names in a directory recursively.
 The list of entries in the directory and subdirectories or NULL if the directory doesn't exist. Filenames are returned in UTF-8 encoding.
 """
 function vsireaddirrecursive(pszPath)
-    GC.@preserve pszPath aftercare(
-        ccall((:VSIReadDirRecursive, libgdal), Ptr{Cstring}, (Cstring,), pszPath),
+    pszPath_c = Base.cconvert(Cstring, pszPath)
+    GC.@preserve pszPath pszPath_c aftercare(
+        ccall((:VSIReadDirRecursive, libgdal), Ptr{Cstring}, (Cstring,), pszPath_c),
         true,
     )
 end
@@ -4891,8 +4962,15 @@ Read names in a directory.
 The list of entries in the directory, or NULL if the directory doesn't exist. Filenames are returned in UTF-8 encoding.
 """
 function vsireaddirex(pszPath, nMaxFiles)
-    GC.@preserve pszPath nMaxFiles aftercare(
-        ccall((:VSIReadDirEx, libgdal), Ptr{Cstring}, (Cstring, Cint), pszPath, nMaxFiles),
+    pszPath_c = Base.cconvert(Cstring, pszPath)
+    GC.@preserve pszPath nMaxFiles pszPath_c aftercare(
+        ccall(
+            (:VSIReadDirEx, libgdal),
+            Ptr{Cstring},
+            (Cstring, Cint),
+            pszPath_c,
+            nMaxFiles,
+        ),
         true,
     )
 end
@@ -4909,8 +4987,9 @@ Return related filenames.
 The list of entries, relative to the directory, of all sidecar files available or NULL if the list is not known. Filenames are returned in UTF-8 encoding. Most implementations will return NULL, and a subsequent ReadDir will list all files available in the file's directory. This function will be overridden by VSI FilesystemHandlers that wish to force e.g. an empty list to avoid opening non-existent files on slow filesystems. The return value shall be destroyed with CSLDestroy()
 """
 function vsisiblingfiles(pszPath)
-    GC.@preserve pszPath aftercare(
-        ccall((:VSISiblingFiles, libgdal), Ptr{Cstring}, (Cstring,), pszPath),
+    pszPath_c = Base.cconvert(Cstring, pszPath)
+    GC.@preserve pszPath pszPath_c aftercare(
+        ccall((:VSISiblingFiles, libgdal), Ptr{Cstring}, (Cstring,), pszPath_c),
         true,
     )
 end
@@ -4933,13 +5012,15 @@ Return a list of file and directory names matching a pattern that can contain wi
 The list of matched filenames, which must be freed with CSLDestroy(). Filenames are returned in UTF-8 encoding.
 """
 function vsiglob(pszPattern, papszOptions, pProgressFunc, pProgressData)
-    GC.@preserve pszPattern papszOptions pProgressFunc pProgressData aftercare(
+    pszPattern_c = Base.cconvert(Cstring, pszPattern)
+    papszOptions_c = Base.cconvert(Ptr{Cstring}, papszOptions)
+    GC.@preserve pszPattern papszOptions pProgressFunc pProgressData pszPattern_c papszOptions_c aftercare(
         ccall(
             (:VSIGlob, libgdal),
             Ptr{Cstring},
             (Cstring, Ptr{Cstring}, GDALProgressFunc, Any),
-            pszPattern,
-            papszOptions,
+            pszPattern_c,
+            papszOptions_c,
             pProgressFunc,
             pProgressData,
         ),
@@ -4953,8 +5034,9 @@ end
 Return the directory separator for the specified path.
 """
 function vsigetdirectoryseparator(pszPath)
-    GC.@preserve pszPath aftercare(
-        ccall((:VSIGetDirectorySeparator, libgdal), Cstring, (Cstring,), pszPath),
+    pszPath_c = Base.cconvert(Cstring, pszPath)
+    GC.@preserve pszPath pszPath_c aftercare(
+        ccall((:VSIGetDirectorySeparator, libgdal), Cstring, (Cstring,), pszPath_c),
         false,
     )
 end
@@ -5439,13 +5521,15 @@ Initiates the upload a (big) file in a piece-wise way.
 an upload ID to pass to other VSIMultipartUploadXXXXX() functions, and to free with CPLFree() once done, or nullptr in case of error.
 """
 function vsimultipartuploadstart(pszFilename, papszOptions)
-    GC.@preserve pszFilename papszOptions aftercare(
+    pszFilename_c = Base.cconvert(Cstring, pszFilename)
+    papszOptions_c = Base.cconvert(CSLConstList, papszOptions)
+    GC.@preserve pszFilename papszOptions pszFilename_c papszOptions_c aftercare(
         ccall(
             (:VSIMultipartUploadStart, libgdal),
             Cstring,
             (Cstring, CSLConstList),
-            pszFilename,
-            papszOptions,
+            pszFilename_c,
+            papszOptions_c,
         ),
         true,
     )
@@ -5483,18 +5567,21 @@ function vsimultipartuploadaddpart(
     nDataLength,
     papszOptions,
 )
-    GC.@preserve pszFilename pszUploadId nPartNumber nFileOffset pData nDataLength papszOptions aftercare(
+    pszFilename_c = Base.cconvert(Cstring, pszFilename)
+    pszUploadId_c = Base.cconvert(Cstring, pszUploadId)
+    papszOptions_c = Base.cconvert(CSLConstList, papszOptions)
+    GC.@preserve pszFilename pszUploadId nPartNumber nFileOffset pData nDataLength papszOptions pszFilename_c pszUploadId_c papszOptions_c aftercare(
         ccall(
             (:VSIMultipartUploadAddPart, libgdal),
             Cstring,
             (Cstring, Cstring, Cint, vsi_l_offset, Ptr{Cvoid}, Csize_t, CSLConstList),
-            pszFilename,
-            pszUploadId,
+            pszFilename_c,
+            pszUploadId_c,
             nPartNumber,
             nFileOffset,
             pData,
             nDataLength,
-            papszOptions,
+            papszOptions_c,
         ),
         true,
     )
@@ -5635,12 +5722,13 @@ Return network related statistics, as a JSON serialized object.
 a JSON serialized string to free with VSIFree(), or nullptr
 """
 function vsinetworkstatsgetasserializedjson(papszOptions)
-    GC.@preserve papszOptions aftercare(
+    papszOptions_c = Base.cconvert(Ptr{Cstring}, papszOptions)
+    GC.@preserve papszOptions papszOptions_c aftercare(
         ccall(
             (:VSINetworkStatsGetAsSerializedJSON, libgdal),
             Cstring,
             (Ptr{Cstring},),
-            papszOptions,
+            papszOptions_c,
         ),
         true,
     )
@@ -6034,8 +6122,9 @@ Generates a unique filename that can be used with the /vsimem/ virtual file syst
 pointer to a short-lived string (rotating buffer of strings in thread-local storage). It is recommended to use CPLStrdup() or std::string() immediately on it.
 """
 function vsimemgeneratehiddenfilename(pszFilename)
-    GC.@preserve pszFilename aftercare(
-        ccall((:VSIMemGenerateHiddenFilename, libgdal), Cstring, (Cstring,), pszFilename),
+    pszFilename_c = Base.cconvert(Cstring, pszFilename)
+    GC.@preserve pszFilename pszFilename_c aftercare(
+        ccall((:VSIMemGenerateHiddenFilename, libgdal), Cstring, (Cstring,), pszFilename_c),
         false,
     )
 end
@@ -7867,12 +7956,13 @@ function gdalgetoutputdriversfordatasetname(
     bSingleMatch,
     bEmitWarning,
 )
-    GC.@preserve pszDestFilename nFlagRasterVector bSingleMatch bEmitWarning aftercare(
+    pszDestFilename_c = Base.cconvert(Cstring, pszDestFilename)
+    GC.@preserve pszDestFilename nFlagRasterVector bSingleMatch bEmitWarning pszDestFilename_c aftercare(
         ccall(
             (:GDALGetOutputDriversForDatasetName, libgdal),
             Ptr{Cstring},
             (Cstring, Cint, Bool, Bool),
-            pszDestFilename,
+            pszDestFilename_c,
             nFlagRasterVector,
             bSingleMatch,
             bEmitWarning,
@@ -8340,14 +8430,16 @@ end
 Fetch single metadata item.
 """
 function gdalgetmetadataitem(arg1, arg2, arg3)
-    GC.@preserve arg1 arg2 arg3 aftercare(
+    arg2_c = Base.cconvert(Cstring, arg2)
+    arg3_c = Base.cconvert(Cstring, arg3)
+    GC.@preserve arg1 arg2 arg3 arg2_c arg3_c aftercare(
         ccall(
             (:GDALGetMetadataItem, libgdal),
             Cstring,
             (GDALMajorObjectH, Cstring, Cstring),
             arg1,
-            arg2,
-            arg3,
+            arg2_c,
+            arg3_c,
         ),
         false,
     )
@@ -10597,13 +10689,14 @@ Returns a list of the names of all field domains stored in the dataset.
 list of field domain names, to be freed with CSLDestroy()
 """
 function gdaldatasetgetfielddomainnames(arg1, arg2)
-    GC.@preserve arg1 arg2 aftercare(
+    arg2_c = Base.cconvert(CSLConstList, arg2)
+    GC.@preserve arg1 arg2 arg2_c aftercare(
         ccall(
             (:GDALDatasetGetFieldDomainNames, libgdal),
             Ptr{Cstring},
             (GDALDatasetH, CSLConstList),
             arg1,
-            arg2,
+            arg2_c,
         ),
         true,
     )
@@ -10732,13 +10825,14 @@ Returns a list of the names of all relationships stored in the dataset.
 list of relationship names, to be freed with CSLDestroy()
 """
 function gdaldatasetgetrelationshipnames(arg1, arg2)
-    GC.@preserve arg1 arg2 aftercare(
+    arg2_c = Base.cconvert(CSLConstList, arg2)
+    GC.@preserve arg1 arg2 arg2_c aftercare(
         ccall(
             (:GDALDatasetGetRelationshipNames, libgdal),
             Ptr{Cstring},
             (GDALDatasetH, CSLConstList),
             arg1,
-            arg2,
+            arg2_c,
         ),
         true,
     )
@@ -10992,13 +11086,14 @@ Replaces the path component of a subdataset descriptor. The returned string must
 The original subdataset descriptor with the old path component replaced by newPath.
 """
 function gdalsubdatasetinfomodifypathcomponent(hInfo, pszNewPath)
-    GC.@preserve hInfo pszNewPath aftercare(
+    pszNewPath_c = Base.cconvert(Cstring, pszNewPath)
+    GC.@preserve hInfo pszNewPath pszNewPath_c aftercare(
         ccall(
             (:GDALSubdatasetInfoModifyPathComponent, libgdal),
             Cstring,
             (GDALSubdatasetInfoH, Cstring),
             hInfo,
-            pszNewPath,
+            pszNewPath_c,
         ),
         true,
     )
@@ -13707,13 +13802,14 @@ end
 Translate a decimal degrees value to a DMS string with hemisphere.
 """
 function gdaldectodms(arg1, arg2, arg3)
-    GC.@preserve arg1 arg2 arg3 aftercare(
+    arg2_c = Base.cconvert(Cstring, arg2)
+    GC.@preserve arg1 arg2 arg3 arg2_c aftercare(
         ccall(
             (:GDALDecToDMS, libgdal),
             Cstring,
             (Cdouble, Cstring, Cint),
             arg1,
-            arg2,
+            arg2_c,
             arg3,
         ),
         false,
@@ -16511,13 +16607,14 @@ Return the list of multidimensional array names contained in this group.
 the array names, to be freed with CSLDestroy()
 """
 function gdalgroupgetmdarraynames(hGroup, papszOptions)
-    GC.@preserve hGroup papszOptions aftercare(
+    papszOptions_c = Base.cconvert(CSLConstList, papszOptions)
+    GC.@preserve hGroup papszOptions papszOptions_c aftercare(
         ccall(
             (:GDALGroupGetMDArrayNames, libgdal),
             Ptr{Cstring},
             (GDALGroupH, CSLConstList),
             hGroup,
-            papszOptions,
+            papszOptions_c,
         ),
         true,
     )
@@ -16534,14 +16631,16 @@ Return the list of multidimensional array full names contained in this group and
 the array names, to be freed with CSLDestroy()
 """
 function gdalgroupgetmdarrayfullnamesrecursive(hGroup, papszGroupOptions, papszArrayOptions)
-    GC.@preserve hGroup papszGroupOptions papszArrayOptions aftercare(
+    papszGroupOptions_c = Base.cconvert(CSLConstList, papszGroupOptions)
+    papszArrayOptions_c = Base.cconvert(CSLConstList, papszArrayOptions)
+    GC.@preserve hGroup papszGroupOptions papszArrayOptions papszGroupOptions_c papszArrayOptions_c aftercare(
         ccall(
             (:GDALGroupGetMDArrayFullNamesRecursive, libgdal),
             Ptr{Cstring},
             (GDALGroupH, CSLConstList, CSLConstList),
             hGroup,
-            papszGroupOptions,
-            papszArrayOptions,
+            papszGroupOptions_c,
+            papszArrayOptions_c,
         ),
         true,
     )
@@ -16625,13 +16724,14 @@ Return the list of sub-groups contained in this group.
 the group names, to be freed with CSLDestroy()
 """
 function gdalgroupgetgroupnames(hGroup, papszOptions)
-    GC.@preserve hGroup papszOptions aftercare(
+    papszOptions_c = Base.cconvert(CSLConstList, papszOptions)
+    GC.@preserve hGroup papszOptions papszOptions_c aftercare(
         ccall(
             (:GDALGroupGetGroupNames, libgdal),
             Ptr{Cstring},
             (GDALGroupH, CSLConstList),
             hGroup,
-            papszOptions,
+            papszOptions_c,
         ),
         true,
     )
@@ -16693,13 +16793,14 @@ Return the list of layer names contained in this group.
 the group names, to be freed with CSLDestroy()
 """
 function gdalgroupgetvectorlayernames(hGroup, papszOptions)
-    GC.@preserve hGroup papszOptions aftercare(
+    papszOptions_c = Base.cconvert(CSLConstList, papszOptions)
+    GC.@preserve hGroup papszOptions papszOptions_c aftercare(
         ccall(
             (:GDALGroupGetVectorLayerNames, libgdal),
             Ptr{Cstring},
             (GDALGroupH, CSLConstList),
             hGroup,
-            papszOptions,
+            papszOptions_c,
         ),
         true,
     )
@@ -27451,13 +27552,14 @@ Convert a geometry into GML format.
 A GML fragment or NULL in case of error.
 """
 function ogr_g_exporttogmlex(arg1, papszOptions)
-    GC.@preserve arg1 papszOptions aftercare(
+    papszOptions_c = Base.cconvert(CSLConstList, papszOptions)
+    GC.@preserve arg1 papszOptions papszOptions_c aftercare(
         ccall(
             (:OGR_G_ExportToGMLEx, libgdal),
             Cstring,
             (OGRGeometryH, CSLConstList),
             arg1,
-            papszOptions,
+            papszOptions_c,
         ),
         true,
     )
@@ -27515,13 +27617,14 @@ Convert a geometry into KML format.
 A KML fragment or NULL in case of error.
 """
 function ogr_g_exporttokml(arg1, pszAltitudeMode)
-    GC.@preserve arg1 pszAltitudeMode aftercare(
+    pszAltitudeMode_c = Base.cconvert(Cstring, pszAltitudeMode)
+    GC.@preserve arg1 pszAltitudeMode pszAltitudeMode_c aftercare(
         ccall(
             (:OGR_G_ExportToKML, libgdal),
             Cstring,
             (OGRGeometryH, Cstring),
             arg1,
-            pszAltitudeMode,
+            pszAltitudeMode_c,
         ),
         true,
     )
@@ -27559,13 +27662,14 @@ Convert a geometry into GeoJSON-style format.
 A GeoJSON fragment or NULL in case of error.
 """
 function ogr_g_exporttojsonex(arg1, papszOptions)
-    GC.@preserve arg1 papszOptions aftercare(
+    papszOptions_c = Base.cconvert(CSLConstList, papszOptions)
+    GC.@preserve arg1 papszOptions papszOptions_c aftercare(
         ccall(
             (:OGR_G_ExportToJsonEx, libgdal),
             Cstring,
             (OGRGeometryH, CSLConstList),
             arg1,
-            papszOptions,
+            papszOptions_c,
         ),
         true,
     )
@@ -31866,14 +31970,15 @@ Fetch OFTDateTime field value as a ISO8601 representation.
 the field value. This string is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function ogr_f_getfieldasiso8601datetime(arg1, arg2, arg3)
-    GC.@preserve arg1 arg2 arg3 aftercare(
+    arg3_c = Base.cconvert(CSLConstList, arg3)
+    GC.@preserve arg1 arg2 arg3 arg3_c aftercare(
         ccall(
             (:OGR_F_GetFieldAsISO8601DateTime, libgdal),
             Cstring,
             (OGRFeatureH, Cint, CSLConstList),
             arg1,
             arg2,
-            arg3,
+            arg3_c,
         ),
         false,
     )
@@ -32701,13 +32806,14 @@ Dump this feature in a human readable form.
 a string with the feature representation (to be freed with CPLFree())
 """
 function ogr_f_dumpreadableasstring(arg1, arg2)
-    GC.@preserve arg1 arg2 aftercare(
+    arg2_c = Base.cconvert(CSLConstList, arg2)
+    GC.@preserve arg1 arg2 arg2_c aftercare(
         ccall(
             (:OGR_F_DumpReadableAsString, libgdal),
             Cstring,
             (OGRFeatureH, CSLConstList),
             arg1,
-            arg2,
+            arg2_c,
         ),
         true,
     )
@@ -36285,13 +36391,14 @@ Get a style string by name.
 the style string matching the name or NULL if not found or error.
 """
 function ogr_stbl_find(hStyleTable, pszName)
-    GC.@preserve hStyleTable pszName aftercare(
+    pszName_c = Base.cconvert(Cstring, pszName)
+    GC.@preserve hStyleTable pszName pszName_c aftercare(
         ccall(
             (:OGR_STBL_Find, libgdal),
             Cstring,
             (OGRStyleTableH, Cstring),
             hStyleTable,
-            pszName,
+            pszName_c,
         ),
         false,
     )
@@ -36489,8 +36596,9 @@ function ogrrealloc(arg1, arg2)
 end
 
 function ogrstrdup(arg1)
-    GC.@preserve arg1 aftercare(
-        ccall((:OGRStrdup, libgdal), Cstring, (Cstring,), arg1),
+    arg1_c = Base.cconvert(Cstring, arg1)
+    GC.@preserve arg1 arg1_c aftercare(
+        ccall((:OGRStrdup, libgdal), Cstring, (Cstring,), arg1_c),
         false,
     )
 end
@@ -36969,8 +37077,9 @@ Get runtime version information.
 an internal string containing the requested information.
 """
 function gdalversioninfo(arg1)
-    GC.@preserve arg1 aftercare(
-        ccall((:GDALVersionInfo, libgdal), Cstring, (Cstring,), arg1),
+    arg1_c = Base.cconvert(Cstring, arg1)
+    GC.@preserve arg1 arg1_c aftercare(
+        ccall((:GDALVersionInfo, libgdal), Cstring, (Cstring,), arg1_c),
         false,
     )
 end
@@ -37881,13 +37990,14 @@ end
 Fetch indicated attribute of named node.
 """
 function osrgetattrvalue(hSRS, pszName, iChild)
-    GC.@preserve hSRS pszName iChild aftercare(
+    pszName_c = Base.cconvert(Cstring, pszName)
+    GC.@preserve hSRS pszName iChild pszName_c aftercare(
         ccall(
             (:OSRGetAttrValue, libgdal),
             Cstring,
             (OGRSpatialReferenceH, Cstring, Cint),
             hSRS,
-            pszName,
+            pszName_c,
             iChild,
         ),
         false,
@@ -38664,13 +38774,14 @@ end
 Get the authority code for a node.
 """
 function osrgetauthoritycode(hSRS, pszTargetKey)
-    GC.@preserve hSRS pszTargetKey aftercare(
+    pszTargetKey_c = Base.cconvert(Cstring, pszTargetKey)
+    GC.@preserve hSRS pszTargetKey pszTargetKey_c aftercare(
         ccall(
             (:OSRGetAuthorityCode, libgdal),
             Cstring,
             (OGRSpatialReferenceH, Cstring),
             hSRS,
-            pszTargetKey,
+            pszTargetKey_c,
         ),
         false,
     )
@@ -38683,13 +38794,14 @@ end
 Get the authority name for a node.
 """
 function osrgetauthorityname(hSRS, pszTargetKey)
-    GC.@preserve hSRS pszTargetKey aftercare(
+    pszTargetKey_c = Base.cconvert(Cstring, pszTargetKey)
+    GC.@preserve hSRS pszTargetKey pszTargetKey_c aftercare(
         ccall(
             (:OSRGetAuthorityName, libgdal),
             Cstring,
             (OGRSpatialReferenceH, Cstring),
             hSRS,
-            pszTargetKey,
+            pszTargetKey_c,
         ),
         false,
     )
@@ -39009,13 +39121,14 @@ end
 Fetch the orientation of one axis.
 """
 function osrgetaxis(hSRS, pszTargetKey, iAxis, peOrientation)
-    GC.@preserve hSRS pszTargetKey iAxis peOrientation aftercare(
+    pszTargetKey_c = Base.cconvert(Cstring, pszTargetKey)
+    GC.@preserve hSRS pszTargetKey iAxis peOrientation pszTargetKey_c aftercare(
         ccall(
             (:OSRGetAxis, libgdal),
             Cstring,
             (OGRSpatialReferenceH, Cstring, Cint, Ptr{OGRAxisOrientation}),
             hSRS,
-            pszTargetKey,
+            pszTargetKey_c,
             iAxis,
             peOrientation,
         ),

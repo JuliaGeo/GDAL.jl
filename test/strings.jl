@@ -28,4 +28,13 @@
         @test GDAL.ogr_f_getfieldasstringlist(feature, 0) == ["a", "b"]
         GDAL.ogr_f_destroy(feature)
     end
+
+    @testset "What a returned string can point into outlives its copy" begin
+        # in a separate process, since this overrides `maybe_throw` to force a collection
+        script = joinpath(@__DIR__, "string_lifetime.jl")
+        project = Base.active_project()
+        julia = Base.julia_cmd()
+        cmd = `$julia --startup-file=no --warn-overwrite=no --project=$project $script`
+        @test success(pipeline(cmd; stdout, stderr))
+    end
 end
