@@ -1,4 +1,5 @@
 using GDAL
+using Libdl
 using Test
 import Aqua
 
@@ -47,6 +48,7 @@ import Aqua
         include("drivers.jl")
         include("error.jl")
         include("strings.jl")
+        include("exports.jl")
     end
 
     GDAL.gdaldestroydrivermanager()

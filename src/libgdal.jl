@@ -2186,35 +2186,6 @@ function cplvalidatexml(pszXMLFilename, pszXSDFilename, papszOptions)
 end
 
 """
-    CPLsetlocale(int category,
-                 const char * locale) -> char *
-
-Prevents parallel executions of setlocale().
-
-### Parameters
-* **category**: See your compiler's documentation on setlocale.
-* **locale**: See your compiler's documentation on setlocale.
-
-### Returns
-See your compiler's documentation on setlocale.
-"""
-function cplsetlocale(category, locale)
-    GC.@preserve category locale aftercare(
-        ccall((:CPLsetlocale, libgdal), Cstring, (Cint, Cstring), category, locale),
-        false,
-    )
-end
-
-"""
-    cplcleanupsetlocalemutex()
-
-` Doxygen_Suppress `
-"""
-function cplcleanupsetlocalemutex()
-    aftercare(ccall((:CPLCleanupSetlocaleMutex, libgdal), Cvoid, ()))
-end
-
-"""
     cplispoweroftwo(i)
 
 [`CPLIsPowerOfTwo`](@ref)()
@@ -5674,15 +5645,6 @@ function vsiinstallsubfilehandler()
 end
 
 """
-    VSIInstallCurlFileHandler(void) -> void
-
-Install /vsicurl/ HTTP/FTP file system handler (requires libcurl).
-"""
-function vsiinstallcurlfilehandler()
-    aftercare(ccall((:VSIInstallCurlFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
     VSICurlClearCache(void) -> void
 
 Clean local cache associated with /vsicurl/ (and related file systems).
@@ -5706,210 +5668,12 @@ function vsicurlpartialclearcache(pszFilenamePrefix)
 end
 
 """
-    VSIInstallCurlStreamingFileHandler(void) -> void
-
-Install /vsicurl_streaming/ HTTP/FTP file system handler (requires libcurl).
-"""
-function vsiinstallcurlstreamingfilehandler()
-    aftercare(ccall((:VSIInstallCurlStreamingFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallS3FileHandler(void) -> void
-
-Install /vsis3/ Amazon S3 file system handler (requires libcurl).
-"""
-function vsiinstalls3filehandler()
-    aftercare(ccall((:VSIInstallS3FileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallS3StreamingFileHandler(void) -> void
-
-Install /vsis3_streaming/ Amazon S3 file system handler (requires libcurl).
-"""
-function vsiinstalls3streamingfilehandler()
-    aftercare(ccall((:VSIInstallS3StreamingFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallGSFileHandler(void) -> void
-
-Install /vsigs/ Google Cloud Storage file system handler (requires libcurl).
-"""
-function vsiinstallgsfilehandler()
-    aftercare(ccall((:VSIInstallGSFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallGSStreamingFileHandler(void) -> void
-
-Install /vsigs_streaming/ Google Cloud Storage file system handler (requires libcurl).
-"""
-function vsiinstallgsstreamingfilehandler()
-    aftercare(ccall((:VSIInstallGSStreamingFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallAzureFileHandler(void) -> void
-
-Install /vsiaz/ Microsoft Azure Blob file system handler (requires libcurl).
-"""
-function vsiinstallazurefilehandler()
-    aftercare(ccall((:VSIInstallAzureFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallAzureStreamingFileHandler(void) -> void
-
-Install /vsiaz_streaming/ Microsoft Azure Blob file system handler (requires libcurl).
-"""
-function vsiinstallazurestreamingfilehandler()
-    aftercare(ccall((:VSIInstallAzureStreamingFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallADLSFileHandler(void) -> void
-
-Install /vsiaz/ Microsoft Azure Data Lake Storage Gen2 file system handler (requires libcurl).
-"""
-function vsiinstalladlsfilehandler()
-    aftercare(ccall((:VSIInstallADLSFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallOSSFileHandler(void) -> void
-
-Install /vsioss/ Alibaba Cloud Object Storage Service (OSS) file system handler (requires libcurl).
-"""
-function vsiinstallossfilehandler()
-    aftercare(ccall((:VSIInstallOSSFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallOSSStreamingFileHandler(void) -> void
-
-Install /vsiaz_streaming/ Alibaba Cloud Object Storage Service (OSS) (requires libcurl).
-"""
-function vsiinstallossstreamingfilehandler()
-    aftercare(ccall((:VSIInstallOSSStreamingFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallSwiftFileHandler(void) -> void
-
-Install /vsiswift/ OpenStack Swif Object Storage (Swift) file system handler (requires libcurl).
-"""
-function vsiinstallswiftfilehandler()
-    aftercare(ccall((:VSIInstallSwiftFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallSwiftStreamingFileHandler(void) -> void
-
-Install /vsiswift_streaming/ OpenStack Swif Object Storage (Swift) file system handler (requires libcurl).
-"""
-function vsiinstallswiftstreamingfilehandler()
-    aftercare(ccall((:VSIInstallSwiftStreamingFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstall7zFileHandler(void) -> void
-
-Install /vsi7z/ 7zip file system handler (requires libarchive).
-"""
-function vsiinstall7zfilehandler()
-    aftercare(ccall((:VSIInstall7zFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallRarFileHandler(void) -> void
-
-Install /vsirar/ RAR file system handler (requires libarchive).
-"""
-function vsiinstallrarfilehandler()
-    aftercare(ccall((:VSIInstallRarFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallGZipFileHandler() -> void
-
-Install GZip file system handler.
-"""
-function vsiinstallgzipfilehandler()
-    aftercare(ccall((:VSIInstallGZipFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallZipFileHandler() -> void
-
-Install ZIP file system handler.
-"""
-function vsiinstallzipfilehandler()
-    aftercare(ccall((:VSIInstallZipFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallStdinHandler() -> void
-
-Install /vsistdin/ file system handler.
-"""
-function vsiinstallstdinhandler()
-    aftercare(ccall((:VSIInstallStdinHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallHdfsHandler() -> void
-
-Install /vsihdfs/ file system handler (requires JVM and HDFS support).
-"""
-function vsiinstallhdfshandler()
-    aftercare(ccall((:VSIInstallHdfsHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallWebHdfsHandler(void) -> void
-
-Install /vsiwebhdfs/ WebHDFS (Hadoop File System) REST API file system handler (requires libcurl).
-"""
-function vsiinstallwebhdfshandler()
-    aftercare(ccall((:VSIInstallWebHdfsHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallStdoutHandler() -> void
-
-Install /vsistdout/ file system handler.
-"""
-function vsiinstallstdouthandler()
-    aftercare(ccall((:VSIInstallStdoutHandler, libgdal), Cvoid, ()))
-end
-
-"""
     VSIInstallSparseFileHandler() -> void
 
 Install /vsisparse/ virtual file handler.
 """
 function vsiinstallsparsefilehandler()
     aftercare(ccall((:VSIInstallSparseFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallTarFileHandler(void) -> void
-
-Install /vsitar/ file system handler.
-"""
-function vsiinstalltarfilehandler()
-    aftercare(ccall((:VSIInstallTarFileHandler, libgdal), Cvoid, ()))
-end
-
-"""
-    VSIInstallCachedFileHandler(void) -> void
-
-Install /vsicached? file system handler.
-"""
-function vsiinstallcachedfilehandler()
-    aftercare(ccall((:VSIInstallCachedFileHandler, libgdal), Cvoid, ()))
 end
 
 """
@@ -13784,23 +13548,6 @@ struct GDALRPCInfoV1
 end
 
 """
-    gdalextractrpcinfov1(arg1, arg2)
-
-` Doxygen_Suppress `
-"""
-function gdalextractrpcinfov1(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALExtractRPCInfoV1, libgdal),
-            Cint,
-            (CSLConstList, Ptr{GDALRPCInfoV1}),
-            arg1,
-            arg2,
-        ),
-    )
-end
-
-"""
     GDALColorEntry
 
 Color tuple
@@ -19889,24 +19636,6 @@ function gdalusetransformer(pTransformerArg, bDstToSrc, nPointCount, x, y, z, pa
 end
 
 """
-    GDALCreateSimilarTransformer(void * pTransformArg,
-                                 double dfRatioX,
-                                 double dfRatioY) -> void *
-"""
-function gdalcreatesimilartransformer(psTransformerArg, dfSrcRatioX, dfSrcRatioY)
-    aftercare(
-        ccall(
-            (:GDALCreateSimilarTransformer, libgdal),
-            Ptr{Cvoid},
-            (Ptr{Cvoid}, Cdouble, Cdouble),
-            psTransformerArg,
-            dfSrcRatioX,
-            dfSrcRatioY,
-        ),
-    )
-end
-
-"""
     gdalgetgenimgprojtranformeroptionlist()
 
 ` `
@@ -20123,50 +19852,6 @@ function gdalgenimgprojtransform(pTransformArg, bDstToSrc, nPointCount, x, y, z,
             y,
             z,
             panSuccess,
-        ),
-    )
-end
-
-"""
-    GDALSetTransformerDstGeoTransform(void * pTransformArg,
-                                      const double * padfGeoTransform) -> void
-
-Set ApproxTransformer or GenImgProj output geotransform.
-
-### Parameters
-* **pTransformArg**: the handle to update.
-* **padfGeoTransform**: the destination geotransform to apply (six doubles).
-"""
-function gdalsettransformerdstgeotransform(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALSetTransformerDstGeoTransform, libgdal),
-            Cvoid,
-            (Ptr{Cvoid}, Ptr{Cdouble}),
-            arg1,
-            arg2,
-        ),
-    )
-end
-
-"""
-    GDALGetTransformerDstGeoTransform(void * pTransformArg,
-                                      double * padfGeoTransform) -> void
-
-Get ApproxTransformer or GenImgProj output geotransform.
-
-### Parameters
-* **pTransformArg**: transformer handle.
-* **padfGeoTransform**: (output) the destination geotransform to return (six doubles).
-"""
-function gdalgettransformerdstgeotransform(arg1, arg2)
-    aftercare(
-        ccall(
-            (:GDALGetTransformerDstGeoTransform, libgdal),
-            Cvoid,
-            (Ptr{Cvoid}, Ptr{Cdouble}),
-            arg1,
-            arg2,
         ),
     )
 end
@@ -20596,36 +20281,6 @@ function gdaltpstransform(pTransformArg, bDstToSrc, nPointCount, x, y, z, panSuc
             y,
             z,
             panSuccess,
-        ),
-    )
-end
-
-"""
-    RPCInfoV1ToMD(GDALRPCInfoV1 * psRPCInfo) -> char **
-"""
-function rpcinfov1tomd(psRPCInfo)
-    GC.@preserve psRPCInfo aftercare(
-        ccall((:RPCInfoV1ToMD, libgdal), Ptr{Cstring}, (Ptr{GDALRPCInfoV1},), psRPCInfo),
-        true,
-    )
-end
-
-"""
-    GDALCreateRPCTransformerV1(GDALRPCInfoV1 * psRPCInfo,
-                               int bReversed,
-                               double dfPixErrThreshold,
-                               char ** papszOptions) -> void *
-"""
-function gdalcreaterpctransformerv1(psRPC, bReversed, dfPixErrThreshold, papszOptions)
-    aftercare(
-        ccall(
-            (:GDALCreateRPCTransformerV1, libgdal),
-            Ptr{Cvoid},
-            (Ptr{GDALRPCInfoV1}, Cint, Cdouble, Ptr{Cstring}),
-            psRPC,
-            bReversed,
-            dfPixErrThreshold,
-            papszOptions,
         ),
     )
 end
@@ -24172,46 +23827,9 @@ function gdalwarpregiontobuffer(
     )
 end
 
-"""
-    gwkgetfilterradius(eResampleAlg)
-
-` Doxygen_Suppress `
-"""
-function gwkgetfilterradius(eResampleAlg)
-    aftercare(ccall((:GWKGetFilterRadius, libgdal), Cint, (GDALResampleAlg,), eResampleAlg))
-end
-
 const FilterFuncType = Ptr{Cvoid}
 
-"""
-    GWKGetFilterFunc(GDALResampleAlg eResampleAlg) -> FilterFuncType
-"""
-function gwkgetfilterfunc(eResampleAlg)
-    aftercare(
-        ccall(
-            (:GWKGetFilterFunc, libgdal),
-            FilterFuncType,
-            (GDALResampleAlg,),
-            eResampleAlg,
-        ),
-    )
-end
-
 const FilterFunc4ValuesType = Ptr{Cvoid}
-
-"""
-    GWKGetFilterFunc4Values(GDALResampleAlg eResampleAlg) -> FilterFunc4ValuesType
-"""
-function gwkgetfilterfunc4values(eResampleAlg)
-    aftercare(
-        ccall(
-            (:GWKGetFilterFunc4Values, libgdal),
-            FilterFunc4ValuesType,
-            (GDALResampleAlg,),
-            eResampleAlg,
-        ),
-    )
-end
 
 "Type for a function that returns the pixel data in a provided window"
 const VRTImageReadFunc = Ptr{Cvoid}
@@ -24296,22 +23914,6 @@ function vrtaddband(arg1, arg2, arg3)
             arg1,
             arg2,
             arg3,
-        ),
-    )
-end
-
-"""
-    VRTAddSource(VRTSourcedRasterBandH hVRTBand,
-                 VRTSourceH hNewSource) -> CPLErr
-"""
-function vrtaddsource(arg1, arg2)
-    aftercare(
-        ccall(
-            (:VRTAddSource, libgdal),
-            CPLErr,
-            (VRTSourcedRasterBandH, VRTSourceH),
-            arg1,
-            arg2,
         ),
     )
 end
@@ -36486,13 +36088,6 @@ end
 """
 function ogrrealloc(arg1, arg2)
     aftercare(ccall((:OGRRealloc, libgdal), Ptr{Cvoid}, (Ptr{Cvoid}, Csize_t), arg1, arg2))
-end
-
-function ogrstrdup(arg1)
-    GC.@preserve arg1 aftercare(
-        ccall((:OGRStrdup, libgdal), Cstring, (Cstring,), arg1),
-        false,
-    )
 end
 
 """
