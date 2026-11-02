@@ -56,27 +56,9 @@ The bulk of this package is generated automatically by the scripts under
 
 ## Using the GDAL and OGR utilities
 
-The provided GDAL installation also contains the commonly used utilities such as
-`gdal_translate` and `ogr2ogr`. They can be called from Julia like so:
-```julia
-using GDAL_jll
-
-# list information about a raster dataset
-run(`$(gdalinfo_exe()) path/to/raster-file`)
-
-# convert raster data between different formats
-run(`$(gdal_translate_exe()) -of COG input.asc output.tif`)
-
-# list information about an OGR-supported data source
-run(`$(ogrinfo_exe()) path/to/vector-file`)
-
-# convert simple features data between file formats
-run(`$(ogr2ogr_exe()) -f FlatGeobuf output.fgb input.shp`)
-```
-
-The same tasks can be done with the [`gdal` command line
-interface](https://gdal.org/en/stable/programs/index.html), which offers these utilities as
-subcommands of a single program:
+The provided GDAL installation also contains the [`gdal` command line
+interface](https://gdal.org/en/stable/programs/index.html), which offers the commonly used
+utilities as subcommands of a single program. It can be called from Julia like so:
 ```julia
 using GDAL_jll
 
@@ -93,11 +75,13 @@ run(`$(gdal_exe()) vector info path/to/vector-file`)
 run(`$(gdal_exe()) vector convert input.shp output.fgb`)
 ```
 
-The `<util>_exe` functions are exported from the
+`gdal_exe` is exported from the
 [`GDAL_jll`](https://github.com/JuliaBinaryWrappers/GDAL_jll.jl) package. If you only wish
 to run the utilities, that package will have all you need. If you are using the GDAL
-package, they are also available as `GDAL.<util>_exe`. A list of the available utilities
-can be found [here](https://github.com/JuliaBinaryWrappers/GDAL_jll.jl#products).
+package, it is also available as `GDAL.gdal_exe`. The individual utilities such as
+`gdal_translate` and `ogr2ogr` can be called in the same way, using `gdal_translate_exe` and
+`ogr2ogr_exe`. A list of the available utilities can be found
+[here](https://github.com/JuliaBinaryWrappers/GDAL_jll.jl#products).
 Documentation for them is available on
 [gdal.org/programs](https://gdal.org/programs/index.html). Note that programs implemented in
 Python (ending in .py) are not available, since those would require a Python installation.
