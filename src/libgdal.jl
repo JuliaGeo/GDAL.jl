@@ -41,7 +41,7 @@ Get the value of a configuration option.
 the value associated to the key, or the default value if not found
 """
 function cplgetconfigoption(arg1, arg2)
-    aftercare(
+    GC.@preserve arg1 arg2 aftercare(
         ccall((:CPLGetConfigOption, libgdal), Cstring, (Cstring, Cstring), arg1, arg2),
         false,
     )
@@ -53,7 +53,7 @@ end
                                   bool bSubstituteNullValueMarkerWithNull) -> const char *
 """
 function cplgetthreadlocalconfigoption(arg1, arg2)
-    aftercare(
+    GC.@preserve arg1 arg2 aftercare(
         ccall(
             (:CPLGetThreadLocalConfigOption, libgdal),
             Cstring,
@@ -71,7 +71,7 @@ end
                              bool bSubstituteNullValueMarkerWithNull) -> const char *
 """
 function cplgetglobalconfigoption(arg1, arg2)
-    aftercare(
+    GC.@preserve arg1 arg2 aftercare(
         ccall(
             (:CPLGetGlobalConfigOption, libgdal),
             Cstring,
@@ -347,7 +347,10 @@ Safe version of strdup() function.
 pointer to a newly allocated copy of the string. Free with CPLFree() or VSIFree().
 """
 function cplstrdup(arg1)
-    aftercare(ccall((:CPLStrdup, libgdal), Cstring, (Cstring,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:CPLStrdup, libgdal), Cstring, (Cstring,), arg1),
+        false,
+    )
 end
 
 """
@@ -362,7 +365,10 @@ Convert each characters of the string to lower case.
 pointer to the same string, pszString.
 """
 function cplstrlwr(arg1)
-    aftercare(ccall((:CPLStrlwr, libgdal), Cstring, (Cstring,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:CPLStrlwr, libgdal), Cstring, (Cstring,), arg1),
+        false,
+    )
 end
 
 """
@@ -381,7 +387,7 @@ Reads in at most one less than nBufferSize characters from the fp stream and sto
 pointer to the pszBuffer containing a string read from the file or NULL if the error or end of file was encountered.
 """
 function cplfgets(arg1, arg2, arg3)
-    aftercare(
+    GC.@preserve arg1 arg2 arg3 aftercare(
         ccall(
             (:CPLFGets, libgdal),
             Cstring,
@@ -406,7 +412,10 @@ Simplified line reading from text file.
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered.
 """
 function cplreadline(arg1)
-    aftercare(ccall((:CPLReadLine, libgdal), Cstring, (Ptr{Libc.FILE},), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:CPLReadLine, libgdal), Cstring, (Ptr{Libc.FILE},), arg1),
+        false,
+    )
 end
 
 const VSIVirtualHandle = Cvoid
@@ -426,7 +435,10 @@ Simplified line reading from text file.
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered.
 """
 function cplreadlinel(arg1)
-    aftercare(ccall((:CPLReadLineL, libgdal), Cstring, (Ptr{VSILFILE},), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:CPLReadLineL, libgdal), Cstring, (Ptr{VSILFILE},), arg1),
+        false,
+    )
 end
 
 "Type of a constant null-terminated list of nul terminated strings. Seen as char** from C and const char* const* from C++"
@@ -448,7 +460,7 @@ Simplified line reading from text file.
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered or the maximum number of characters allowed reached.
 """
 function cplreadline2l(arg1, arg2, arg3)
-    aftercare(
+    GC.@preserve arg1 arg2 arg3 aftercare(
         ccall(
             (:CPLReadLine2L, libgdal),
             Cstring,
@@ -479,7 +491,7 @@ Simplified line reading from text file.
 pointer to an internal buffer containing a line of text read from the file or NULL if the end of file was encountered or the maximum number of characters allowed reached.
 """
 function cplreadline3l(arg1, arg2, arg3, arg4)
-    aftercare(
+    GC.@preserve arg1 arg2 arg3 arg4 aftercare(
         ccall(
             (:CPLReadLine3L, libgdal),
             Cstring,
@@ -665,7 +677,7 @@ Scan up to a maximum number of characters from a given string, allocate a buffer
 Pointer to the resulting string buffer. Caller responsible to free this buffer with CPLFree().
 """
 function cplscanstring(arg1, arg2, arg3, arg4)
-    aftercare(
+    GC.@preserve arg1 arg2 arg3 arg4 aftercare(
         ccall(
             (:CPLScanString, libgdal),
             Cstring,
@@ -1041,7 +1053,10 @@ Extract directory path portion of filename.
 Path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call. The returned will generally not contain a trailing path separator.
 """
 function cplgetpath(arg1)
-    aftercare(ccall((:CPLGetPath, libgdal), Cstring, (Cstring,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:CPLGetPath, libgdal), Cstring, (Cstring,), arg1),
+        false,
+    )
 end
 
 """
@@ -1056,7 +1071,10 @@ Extract directory path portion of filename.
 Path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call. The returned will generally not contain a trailing path separator.
 """
 function cplgetdirname(arg1)
-    aftercare(ccall((:CPLGetDirname, libgdal), Cstring, (Cstring,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:CPLGetDirname, libgdal), Cstring, (Cstring,), arg1),
+        false,
+    )
 end
 
 """
@@ -1071,7 +1089,10 @@ Extract basename (non-directory, non-extension) portion of filename.
 just the non-directory, non-extension portion of the path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call.
 """
 function cplgetbasename(arg1)
-    aftercare(ccall((:CPLGetBasename, libgdal), Cstring, (Cstring,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:CPLGetBasename, libgdal), Cstring, (Cstring,), arg1),
+        false,
+    )
 end
 
 """
@@ -1086,7 +1107,10 @@ Extract filename extension from full filename.
 just the extension portion of the path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call.
 """
 function cplgetextension(arg1)
-    aftercare(ccall((:CPLGetExtension, libgdal), Cstring, (Cstring,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:CPLGetExtension, libgdal), Cstring, (Cstring,), arg1),
+        false,
+    )
 end
 
 """
@@ -1105,7 +1129,7 @@ Build a full file path from a passed path, file basename and extension.
 a fully formed filename in an internal static string. Do not modify or free the returned string. The string may be destroyed by the next CPL call.
 """
 function cplformfilename(pszPath, pszBasename, pszExtension)
-    aftercare(
+    GC.@preserve pszPath pszBasename pszExtension aftercare(
         ccall(
             (:CPLFormFilename, libgdal),
             Cstring,
@@ -1134,7 +1158,7 @@ Case insensitive file searching, returning full path.
 a fully formed filename in an internal static string. Do not modify or free the returned string. The string may be destroyed by the next CPL call.
 """
 function cplformcifilename(pszPath, pszBasename, pszExtension)
-    aftercare(
+    GC.@preserve pszPath pszBasename pszExtension aftercare(
         ccall(
             (:CPLFormCIFilename, libgdal),
             Cstring,
@@ -1161,7 +1185,7 @@ Replace the extension with the provided one.
 an altered filename with the new extension. Do not modify or free the returned string. The string may be destroyed by the next CPL call.
 """
 function cplresetextension(arg1, arg2)
-    aftercare(
+    GC.@preserve arg1 arg2 aftercare(
         ccall((:CPLResetExtension, libgdal), Cstring, (Cstring, Cstring), arg1, arg2),
         false,
     )
@@ -1181,7 +1205,7 @@ Find a file relative to a project file.
 a composed path to the secondary file. The returned string is internal and should not be altered, freed, or depending on past the next CPL call.
 """
 function cplprojectrelativefilename(pszProjectDir, pszSecondaryFilename)
-    aftercare(
+    GC.@preserve pszProjectDir pszSecondaryFilename aftercare(
         ccall(
             (:CPLProjectRelativeFilename, libgdal),
             Cstring,
@@ -1205,7 +1229,10 @@ Remove trailing forward/backward slash from the path for UNIX/Windows resp.
 Path in an internal string which must not be freed. The string may be destroyed by the next CPL filename handling call.
 """
 function cplcleantrailingslash(arg1)
-    aftercare(ccall((:CPLCleanTrailingSlash, libgdal), Cstring, (Cstring,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:CPLCleanTrailingSlash, libgdal), Cstring, (Cstring,), arg1),
+        false,
+    )
 end
 
 """
@@ -1220,7 +1247,7 @@ Generate temporary file name.
 a filename which is valid till the next CPL call in this thread.
 """
 function cplgeneratetempfilename(pszStem)
-    aftercare(
+    GC.@preserve pszStem aftercare(
         ccall((:CPLGenerateTempFilename, libgdal), Cstring, (Cstring,), pszStem),
         false,
     )
@@ -1238,7 +1265,10 @@ Expands ~/ at start of filename.
 an expanded filename.
 """
 function cplexpandtilde(pszFilename)
-    aftercare(ccall((:CPLExpandTilde, libgdal), Cstring, (Cstring,), pszFilename), false)
+    GC.@preserve pszFilename aftercare(
+        ccall((:CPLExpandTilde, libgdal), Cstring, (Cstring,), pszFilename),
+        false,
+    )
 end
 
 """
@@ -1255,7 +1285,7 @@ Launder a string to be compatible of a filename.
 the laundered name.
 """
 function cpllaunderforfilename(pszName, pszOutputPath)
-    aftercare(
+    GC.@preserve pszName pszOutputPath aftercare(
         ccall(
             (:CPLLaunderForFilename, libgdal),
             Cstring,
@@ -1291,7 +1321,10 @@ Extract non-directory portion of filename.
 just the non-directory portion of the path (points back into original string).
 """
 function cplgetfilename(arg1)
-    aftercare(ccall((:CPLGetFilename, libgdal), Cstring, (Cstring,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:CPLGetFilename, libgdal), Cstring, (Cstring,), arg1),
+        false,
+    )
 end
 
 """
@@ -1325,7 +1358,7 @@ Get relative path from directory to target file.
 an adjusted path or the original if it could not be made relative to the pszBaseFile's path.
 """
 function cplextractrelativepath(arg1, arg2, arg3)
-    aftercare(
+    GC.@preserve arg1 arg2 arg3 aftercare(
         ccall(
             (:CPLExtractRelativePath, libgdal),
             Cstring,
@@ -1354,7 +1387,7 @@ Identify corresponding paths.
 a list of files corresponding to papszFileList but renamed to correspond to pszNewFilename.
 """
 function cplcorrespondingpaths(pszOldFilename, pszNewFilename, papszFileList)
-    aftercare(
+    GC.@preserve pszOldFilename pszNewFilename papszFileList aftercare(
         ccall(
             (:CPLCorrespondingPaths, libgdal),
             Ptr{Cstring},
@@ -1445,7 +1478,7 @@ const CPLFileFinder = Ptr{Cvoid}
 CPLFindFile.
 """
 function cplfindfile(pszClass, pszBasename)
-    aftercare(
+    GC.@preserve pszClass pszBasename aftercare(
         ccall((:CPLFindFile, libgdal), Cstring, (Cstring, Cstring), pszClass, pszBasename),
         false,
     )
@@ -1458,7 +1491,7 @@ end
 CPLDefaultFindFile.
 """
 function cpldefaultfindfile(pszClass, pszBasename)
-    aftercare(
+    GC.@preserve pszClass pszBasename aftercare(
         ccall(
             (:CPLDefaultFindFile, libgdal),
             Cstring,
@@ -1644,7 +1677,7 @@ end
 Translate a decimal degrees value to a DMS string with hemisphere.
 """
 function cpldectodms(dfAngle, pszAxis, nPrecision)
-    aftercare(
+    GC.@preserve dfAngle pszAxis nPrecision aftercare(
         ccall(
             (:CPLDecToDMS, libgdal),
             Cstring,
@@ -2165,7 +2198,7 @@ Prevents parallel executions of setlocale().
 See your compiler's documentation on setlocale.
 """
 function cplsetlocale(category, locale)
-    aftercare(
+    GC.@preserve category locale aftercare(
         ccall((:CPLsetlocale, libgdal), Cstring, (Cint, Cstring), category, locale),
         false,
     )
@@ -2537,7 +2570,7 @@ Fetch element/attribute value.
 the requested value or pszDefault if not found.
 """
 function cplgetxmlvalue(poRoot, pszPath, pszDefault)
-    aftercare(
+    GC.@preserve poRoot pszPath pszDefault aftercare(
         ccall(
             (:CPLGetXMLValue, libgdal),
             Cstring,
@@ -2590,7 +2623,7 @@ Convert tree into string document.
 the document on success or NULL on failure.
 """
 function cplserializexmltree(psNode)
-    aftercare(
+    GC.@preserve psNode aftercare(
         ccall((:CPLSerializeXMLTree, libgdal), Cstring, (Ptr{CPLXMLNode},), psNode),
         false,
     )
@@ -3556,7 +3589,7 @@ end
 [`VSIStrdupVerbose`](@ref)
 """
 function vsistrdupverbose(pszStr, pszFile, nLine)
-    aftercare(
+    GC.@preserve pszStr pszFile nLine aftercare(
         ccall(
             (:VSIStrdupVerbose, libgdal),
             Cstring,
@@ -3581,7 +3614,9 @@ Read names in a directory.
 The list of entries in the directory, or NULL if the directory doesn't exist. Filenames are returned in UTF-8 encoding.
 """
 function vsireaddir(arg1)
-    aftercare(ccall((:VSIReadDir, libgdal), Ptr{Cstring}, (Cstring,), arg1))
+    GC.@preserve arg1 aftercare(
+        ccall((:VSIReadDir, libgdal), Ptr{Cstring}, (Cstring,), arg1),
+    )
 end
 
 """
@@ -3678,7 +3713,7 @@ end
              FILE * fp) -> char *
 """
 function vsifgets(arg1, arg2, arg3)
-    aftercare(
+    GC.@preserve arg1 arg2 arg3 aftercare(
         ccall(
             (:VSIFGets, libgdal),
             Cstring,
@@ -4283,7 +4318,7 @@ Returns the canonical filename.
 UTF-8 encoded string, to free with VSIFree()
 """
 function vsigetcanonicalfilename(pszPath)
-    aftercare(
+    GC.@preserve pszPath aftercare(
         ccall((:VSIGetCanonicalFilename, libgdal), Cstring, (Cstring,), pszPath),
         false,
     )
@@ -4366,7 +4401,10 @@ Returns the actual URL of a supplied filename.
 the actual URL corresponding to the supplied filename, or NULL. Should not be freed.
 """
 function vsigetactualurl(pszFilename)
-    aftercare(ccall((:VSIGetActualURL, libgdal), Cstring, (Cstring,), pszFilename), false)
+    GC.@preserve pszFilename aftercare(
+        ccall((:VSIGetActualURL, libgdal), Cstring, (Cstring,), pszFilename),
+        false,
+    )
 end
 
 """
@@ -4391,7 +4429,7 @@ VERB=GET/HEAD/DELETE/PUT/POST: HTTP VERB for which the request will be used. Def
 a signed URL, or NULL. Should be freed with CPLFree().
 """
 function vsigetsignedurl(pszFilename, papszOptions)
-    aftercare(
+    GC.@preserve pszFilename papszOptions aftercare(
         ccall(
             (:VSIGetSignedURL, libgdal),
             Cstring,
@@ -4415,7 +4453,7 @@ Return the list of options associated with a virtual file system handler as a se
 a string, which must not be freed, or NULL if no options is declared.
 """
 function vsigetfilesystemoptions(pszFilename)
-    aftercare(
+    GC.@preserve pszFilename aftercare(
         ccall((:VSIGetFileSystemOptions, libgdal), Cstring, (Cstring,), pszFilename),
         false,
     )
@@ -4491,7 +4529,7 @@ ZIP: specific to /vsizip/: to obtain ZIP specific metadata, in particular if a f
 a NULL-terminated list of key=value strings, to be freed with CSLDestroy() or NULL in case of error / empty list.
 """
 function vsigetfilemetadata(pszFilename, pszDomain, papszOptions)
-    aftercare(
+    GC.@preserve pszFilename pszDomain papszOptions aftercare(
         ccall(
             (:VSIGetFileMetadata, libgdal),
             Ptr{Cstring},
@@ -4611,7 +4649,7 @@ end
 Get the value a path specific option.
 """
 function vsigetpathspecificoption(pszPath, pszKey, pszDefault)
-    aftercare(
+    GC.@preserve pszPath pszKey pszDefault aftercare(
         ccall(
             (:VSIGetPathSpecificOption, libgdal),
             Cstring,
@@ -4661,7 +4699,7 @@ end
 Get the value of a credential (or more generally an option related to a virtual file system) for a given path.
 """
 function vsigetcredential(pszPath, pszKey, pszDefault)
-    aftercare(
+    GC.@preserve pszPath pszKey pszDefault aftercare(
         ccall(
             (:VSIGetCredential, libgdal),
             Cstring,
@@ -4709,7 +4747,10 @@ end
 Analog of strdup().
 """
 function vsistrdup(arg1)
-    aftercare(ccall((:VSIStrdup, libgdal), Cstring, (Cstring,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:VSIStrdup, libgdal), Cstring, (Cstring,), arg1),
+        false,
+    )
 end
 
 """
@@ -4827,7 +4868,9 @@ Read names in a directory recursively.
 The list of entries in the directory and subdirectories or NULL if the directory doesn't exist. Filenames are returned in UTF-8 encoding.
 """
 function vsireaddirrecursive(pszPath)
-    aftercare(ccall((:VSIReadDirRecursive, libgdal), Ptr{Cstring}, (Cstring,), pszPath))
+    GC.@preserve pszPath aftercare(
+        ccall((:VSIReadDirRecursive, libgdal), Ptr{Cstring}, (Cstring,), pszPath),
+    )
 end
 
 """
@@ -4844,7 +4887,7 @@ Read names in a directory.
 The list of entries in the directory, or NULL if the directory doesn't exist. Filenames are returned in UTF-8 encoding.
 """
 function vsireaddirex(pszPath, nMaxFiles)
-    aftercare(
+    GC.@preserve pszPath nMaxFiles aftercare(
         ccall((:VSIReadDirEx, libgdal), Ptr{Cstring}, (Cstring, Cint), pszPath, nMaxFiles),
     )
 end
@@ -4861,7 +4904,9 @@ Return related filenames.
 The list of entries, relative to the directory, of all sidecar files available or NULL if the list is not known. Filenames are returned in UTF-8 encoding. Most implementations will return NULL, and a subsequent ReadDir will list all files available in the file's directory. This function will be overridden by VSI FilesystemHandlers that wish to force e.g. an empty list to avoid opening non-existent files on slow filesystems. The return value shall be destroyed with CSLDestroy()
 """
 function vsisiblingfiles(pszPath)
-    aftercare(ccall((:VSISiblingFiles, libgdal), Ptr{Cstring}, (Cstring,), pszPath))
+    GC.@preserve pszPath aftercare(
+        ccall((:VSISiblingFiles, libgdal), Ptr{Cstring}, (Cstring,), pszPath),
+    )
 end
 
 """
@@ -4882,7 +4927,7 @@ Return a list of file and directory names matching a pattern that can contain wi
 The list of matched filenames, which must be freed with CSLDestroy(). Filenames are returned in UTF-8 encoding.
 """
 function vsiglob(pszPattern, papszOptions, pProgressFunc, pProgressData)
-    aftercare(
+    GC.@preserve pszPattern papszOptions pProgressFunc pProgressData aftercare(
         ccall(
             (:VSIGlob, libgdal),
             Ptr{Cstring},
@@ -4901,7 +4946,7 @@ end
 Return the directory separator for the specified path.
 """
 function vsigetdirectoryseparator(pszPath)
-    aftercare(
+    GC.@preserve pszPath aftercare(
         ccall((:VSIGetDirectorySeparator, libgdal), Cstring, (Cstring,), pszPath),
         false,
     )
@@ -5387,7 +5432,7 @@ Initiates the upload a (big) file in a piece-wise way.
 an upload ID to pass to other VSIMultipartUploadXXXXX() functions, and to free with CPLFree() once done, or nullptr in case of error.
 """
 function vsimultipartuploadstart(pszFilename, papszOptions)
-    aftercare(
+    GC.@preserve pszFilename papszOptions aftercare(
         ccall(
             (:VSIMultipartUploadStart, libgdal),
             Cstring,
@@ -5431,7 +5476,7 @@ function vsimultipartuploadaddpart(
     nDataLength,
     papszOptions,
 )
-    aftercare(
+    GC.@preserve pszFilename pszUploadId nPartNumber nFileOffset pData nDataLength papszOptions aftercare(
         ccall(
             (:VSIMultipartUploadAddPart, libgdal),
             Cstring,
@@ -5541,7 +5586,10 @@ end
 Return the error string corresponding to the error number.
 """
 function vsistrerror(arg1)
-    aftercare(ccall((:VSIStrerror, libgdal), Cstring, (Cint,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:VSIStrerror, libgdal), Cstring, (Cint,), arg1),
+        false,
+    )
 end
 
 """
@@ -5580,7 +5628,7 @@ Return network related statistics, as a JSON serialized object.
 a JSON serialized string to free with VSIFree(), or nullptr
 """
 function vsinetworkstatsgetasserializedjson(papszOptions)
-    aftercare(
+    GC.@preserve papszOptions aftercare(
         ccall(
             (:VSINetworkStatsGetAsSerializedJSON, libgdal),
             Cstring,
@@ -5979,7 +6027,7 @@ Generates a unique filename that can be used with the /vsimem/ virtual file syst
 pointer to a short-lived string (rotating buffer of strings in thread-local storage). It is recommended to use CPLStrdup() or std::string() immediately on it.
 """
 function vsimemgeneratehiddenfilename(pszFilename)
-    aftercare(
+    GC.@preserve pszFilename aftercare(
         ccall((:VSIMemGenerateHiddenFilename, libgdal), Cstring, (Cstring,), pszFilename),
         false,
     )
@@ -6302,7 +6350,10 @@ end
     VSICTime(unsigned long nTime) -> const char *
 """
 function vsictime(arg1)
-    aftercare(ccall((:VSICTime, libgdal), Cstring, (Culong,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:VSICTime, libgdal), Cstring, (Culong,), arg1),
+        false,
+    )
 end
 
 """
@@ -6701,7 +6752,10 @@ Get name of data type.
 string corresponding to existing data type or NULL pointer if invalid type given.
 """
 function gdalgetdatatypename(arg1)
-    aftercare(ccall((:GDALGetDataTypeName, libgdal), Cstring, (GDALDataType,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:GDALGetDataTypeName, libgdal), Cstring, (GDALDataType,), arg1),
+        false,
+    )
 end
 
 """
@@ -6970,7 +7024,7 @@ Get name of AsyncStatus data type.
 string corresponding to type.
 """
 function gdalgetasyncstatustypename(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall(
             (:GDALGetAsyncStatusTypeName, libgdal),
             Cstring,
@@ -7212,7 +7266,7 @@ Get name of color interpretation.
 string corresponding to color interpretation or NULL pointer if invalid enumerator given.
 """
 function gdalgetcolorinterpretationname(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall(
             (:GDALGetColorInterpretationName, libgdal),
             Cstring,
@@ -7298,7 +7352,7 @@ Get name of palette interpretation.
 string corresponding to palette interpretation.
 """
 function gdalgetpaletteinterpretationname(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall(
             (:GDALGetPaletteInterpretationName, libgdal),
             Cstring,
@@ -7806,7 +7860,7 @@ function gdalgetoutputdriversfordatasetname(
     bSingleMatch,
     bEmitWarning,
 )
-    aftercare(
+    GC.@preserve pszDestFilename nFlagRasterVector bSingleMatch bEmitWarning aftercare(
         ccall(
             (:GDALGetOutputDriversForDatasetName, libgdal),
             Ptr{Cstring},
@@ -7856,7 +7910,7 @@ Return the short name of a driver.
 the short name of the driver. The returned string should not be freed and is owned by the driver.
 """
 function gdalgetdrivershortname(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:GDALGetDriverShortName, libgdal), Cstring, (GDALDriverH,), arg1),
         false,
     )
@@ -7874,7 +7928,7 @@ Return the long name of a driver.
 the long name of the driver or empty string. The returned string should not be freed and is owned by the driver.
 """
 function gdalgetdriverlongname(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:GDALGetDriverLongName, libgdal), Cstring, (GDALDriverH,), arg1),
         false,
     )
@@ -7892,7 +7946,7 @@ Return the URL to the help that describes the driver.
 the URL to the help that describes the driver or NULL. The returned string should not be freed and is owned by the driver.
 """
 function gdalgetdriverhelptopic(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:GDALGetDriverHelpTopic, libgdal), Cstring, (GDALDriverH,), arg1),
         false,
     )
@@ -7910,7 +7964,7 @@ Return the list of creation options of the driver.
 an XML string that describes the list of creation options or empty string. The returned string should not be freed and is owned by the driver.
 """
 function gdalgetdrivercreationoptionlist(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:GDALGetDriverCreationOptionList, libgdal), Cstring, (GDALDriverH,), arg1),
         false,
     )
@@ -8221,7 +8275,7 @@ end
 Fetch list of metadata domains.
 """
 function gdalgetmetadatadomainlist(hObject)
-    aftercare(
+    GC.@preserve hObject aftercare(
         ccall(
             (:GDALGetMetadataDomainList, libgdal),
             Ptr{Cstring},
@@ -8277,7 +8331,7 @@ end
 Fetch single metadata item.
 """
 function gdalgetmetadataitem(arg1, arg2, arg3)
-    aftercare(
+    GC.@preserve arg1 arg2 arg3 aftercare(
         ccall(
             (:GDALGetMetadataItem, libgdal),
             Cstring,
@@ -8318,7 +8372,7 @@ end
 Fetch object description.
 """
 function gdalgetdescription(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:GDALGetDescription, libgdal), Cstring, (GDALMajorObjectH,), arg1),
         false,
     )
@@ -8357,7 +8411,9 @@ end
 Fetch files forming dataset.
 """
 function gdalgetfilelist(arg1)
-    aftercare(ccall((:GDALGetFileList, libgdal), Ptr{Cstring}, (GDALDatasetH,), arg1))
+    GC.@preserve arg1 aftercare(
+        ccall((:GDALGetFileList, libgdal), Ptr{Cstring}, (GDALDatasetH,), arg1),
+    )
 end
 
 """
@@ -8963,7 +9019,7 @@ function gdaldatasetgetcompressionformats(
     nBandCount,
     panBandList,
 )
-    aftercare(
+    GC.@preserve hDS nXOff nYOff nXSize nYSize nBandCount panBandList aftercare(
         ccall(
             (:GDALDatasetGetCompressionFormats, libgdal),
             Ptr{Cstring},
@@ -9061,7 +9117,7 @@ end
 Fetch the projection definition string for this dataset.
 """
 function gdalgetprojectionref(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:GDALGetProjectionRef, libgdal), Cstring, (GDALDatasetH,), arg1),
         false,
     )
@@ -9410,7 +9466,7 @@ end
 Get output projection for GCPs.
 """
 function gdalgetgcpprojection(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:GDALGetGCPProjection, libgdal), Cstring, (GDALDatasetH,), arg1),
         false,
     )
@@ -10530,7 +10586,7 @@ Returns a list of the names of all field domains stored in the dataset.
 list of field domain names, to be freed with CSLDestroy()
 """
 function gdaldatasetgetfielddomainnames(arg1, arg2)
-    aftercare(
+    GC.@preserve arg1 arg2 aftercare(
         ccall(
             (:GDALDatasetGetFieldDomainNames, libgdal),
             Ptr{Cstring},
@@ -10664,7 +10720,7 @@ Returns a list of the names of all relationships stored in the dataset.
 list of relationship names, to be freed with CSLDestroy()
 """
 function gdaldatasetgetrelationshipnames(arg1, arg2)
-    aftercare(
+    GC.@preserve arg1 arg2 aftercare(
         ccall(
             (:GDALDatasetGetRelationshipNames, libgdal),
             Ptr{Cstring},
@@ -10866,7 +10922,7 @@ Returns the file path component of a subdataset descriptor effectively stripping
 The original string with the subdataset information removed.
 """
 function gdalsubdatasetinfogetpathcomponent(hInfo)
-    aftercare(
+    GC.@preserve hInfo aftercare(
         ccall(
             (:GDALSubdatasetInfoGetPathComponent, libgdal),
             Cstring,
@@ -10894,7 +10950,7 @@ Returns the subdataset component of a subdataset descriptor descriptor. The retu
 The subdataset name.
 """
 function gdalsubdatasetinfogetsubdatasetcomponent(hInfo)
-    aftercare(
+    GC.@preserve hInfo aftercare(
         ccall(
             (:GDALSubdatasetInfoGetSubdatasetComponent, libgdal),
             Cstring,
@@ -10923,7 +10979,7 @@ Replaces the path component of a subdataset descriptor. The returned string must
 The original subdataset descriptor with the old path component replaced by newPath.
 """
 function gdalsubdatasetinfomodifypathcomponent(hInfo, pszNewPath)
-    aftercare(
+    GC.@preserve hInfo pszNewPath aftercare(
         ccall(
             (:GDALSubdatasetInfoModifyPathComponent, libgdal),
             Cstring,
@@ -11518,7 +11574,7 @@ end
 Fetch the list of category names for this raster.
 """
 function gdalgetrastercategorynames(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall(
             (:GDALGetRasterCategoryNames, libgdal),
             Ptr{Cstring},
@@ -11718,7 +11774,7 @@ end
 Return raster unit type.
 """
 function gdalgetrasterunittype(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:GDALGetRasterUnitType, libgdal), Cstring, (GDALRasterBandH,), arg1),
         false,
     )
@@ -13637,7 +13693,7 @@ end
 Translate a decimal degrees value to a DMS string with hemisphere.
 """
 function gdaldectodms(arg1, arg2, arg3)
-    aftercare(
+    GC.@preserve arg1 arg2 arg3 aftercare(
         ccall(
             (:GDALDecToDMS, libgdal),
             Cstring,
@@ -14031,7 +14087,7 @@ Fetch name of indicated column.
 name.
 """
 function gdalratgetnameofcol(arg1, arg2)
-    aftercare(
+    GC.@preserve arg1 arg2 aftercare(
         ccall(
             (:GDALRATGetNameOfCol, libgdal),
             Cstring,
@@ -14099,7 +14155,7 @@ end
 Return the string representation of a GDALRATFieldType.
 """
 function gdalgetratfieldtypename(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:GDALGetRATFieldTypeName, libgdal), Cstring, (GDALRATFieldType,), arg1),
         false,
     )
@@ -14111,7 +14167,7 @@ end
 Return the string representation of a GDALRATFieldUsage.
 """
 function gdalgetratfieldusagename(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:GDALGetRATFieldUsageName, libgdal), Cstring, (GDALRATFieldUsage,), arg1),
         false,
     )
@@ -14154,7 +14210,7 @@ end
 Fetch field value as a string.
 """
 function gdalratgetvalueasstring(arg1, iRow, iField)
-    aftercare(
+    GC.@preserve arg1 iRow iField aftercare(
         ccall(
             (:GDALRATGetValueAsString, libgdal),
             Cstring,
@@ -14958,7 +15014,7 @@ Get the name of the relationship.
 name.
 """
 function gdalrelationshipgetname(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:GDALRelationshipGetName, libgdal), Cstring, (GDALRelationshipH,), arg1),
         false,
     )
@@ -14992,7 +15048,7 @@ Get the name of the left (or base/origin) table in the relationship.
 left table name.
 """
 function gdalrelationshipgetlefttablename(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall(
             (:GDALRelationshipGetLeftTableName, libgdal),
             Cstring,
@@ -15012,7 +15068,7 @@ Get the name of the right (or related/destination) table in the relationship.
 right table name.
 """
 function gdalrelationshipgetrighttablename(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall(
             (:GDALRelationshipGetRightTableName, libgdal),
             Cstring,
@@ -15032,7 +15088,7 @@ Get the name of the mapping table for many-to-many relationships.
 mapping table name.
 """
 function gdalrelationshipgetmappingtablename(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall(
             (:GDALRelationshipGetMappingTableName, libgdal),
             Cstring,
@@ -15074,7 +15130,7 @@ Get the names of the participating fields from the left table in the relationshi
 the field names, to be freed with CSLDestroy()
 """
 function gdalrelationshipgetlefttablefields(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall(
             (:GDALRelationshipGetLeftTableFields, libgdal),
             Ptr{Cstring},
@@ -15093,7 +15149,7 @@ Get the names of the participating fields from the right table in the relationsh
 the field names, to be freed with CSLDestroy()
 """
 function gdalrelationshipgetrighttablefields(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall(
             (:GDALRelationshipGetRightTableFields, libgdal),
             Ptr{Cstring},
@@ -15156,7 +15212,7 @@ Get the names of the mapping table fields which correspond to the participating 
 the field names, to be freed with CSLDestroy()
 """
 function gdalrelationshipgetleftmappingtablefields(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall(
             (:GDALRelationshipGetLeftMappingTableFields, libgdal),
             Ptr{Cstring},
@@ -15175,7 +15231,7 @@ Get the names of the mapping table fields which correspond to the participating 
 the field names, to be freed with CSLDestroy()
 """
 function gdalrelationshipgetrightmappingtablefields(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall(
             (:GDALRelationshipGetRightMappingTableFields, libgdal),
             Ptr{Cstring},
@@ -15275,7 +15331,7 @@ Get the label of the forward path for the relationship.
 forward path label
 """
 function gdalrelationshipgetforwardpathlabel(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall(
             (:GDALRelationshipGetForwardPathLabel, libgdal),
             Cstring,
@@ -15317,7 +15373,7 @@ Get the label of the backward path for the relationship.
 backward path label
 """
 function gdalrelationshipgetbackwardpathlabel(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall(
             (:GDALRelationshipGetBackwardPathLabel, libgdal),
             Cstring,
@@ -15359,7 +15415,7 @@ Get the type string of the related table.
 related table type
 """
 function gdalrelationshipgetrelatedtabletype(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall(
             (:GDALRelationshipGetRelatedTableType, libgdal),
             Cstring,
@@ -16099,7 +16155,7 @@ end
 Return type name.
 """
 function gdalextendeddatatypegetname(hEDT)
-    aftercare(
+    GC.@preserve hEDT aftercare(
         ccall(
             (:GDALExtendedDataTypeGetName, libgdal),
             Cstring,
@@ -16352,7 +16408,7 @@ end
 Return the name.
 """
 function gdaledtcomponentgetname(hComp)
-    aftercare(
+    GC.@preserve hComp aftercare(
         ccall((:GDALEDTComponentGetName, libgdal), Cstring, (GDALEDTComponentH,), hComp),
         false,
     )
@@ -16409,7 +16465,10 @@ end
 Return the name of the group.
 """
 function gdalgroupgetname(hGroup)
-    aftercare(ccall((:GDALGroupGetName, libgdal), Cstring, (GDALGroupH,), hGroup), false)
+    GC.@preserve hGroup aftercare(
+        ccall((:GDALGroupGetName, libgdal), Cstring, (GDALGroupH,), hGroup),
+        false,
+    )
 end
 
 """
@@ -16418,7 +16477,7 @@ end
 Return the full name of the group.
 """
 function gdalgroupgetfullname(hGroup)
-    aftercare(
+    GC.@preserve hGroup aftercare(
         ccall((:GDALGroupGetFullName, libgdal), Cstring, (GDALGroupH,), hGroup),
         false,
     )
@@ -16434,7 +16493,7 @@ Return the list of multidimensional array names contained in this group.
 the array names, to be freed with CSLDestroy()
 """
 function gdalgroupgetmdarraynames(hGroup, papszOptions)
-    aftercare(
+    GC.@preserve hGroup papszOptions aftercare(
         ccall(
             (:GDALGroupGetMDArrayNames, libgdal),
             Ptr{Cstring},
@@ -16456,7 +16515,7 @@ Return the list of multidimensional array full names contained in this group and
 the array names, to be freed with CSLDestroy()
 """
 function gdalgroupgetmdarrayfullnamesrecursive(hGroup, papszGroupOptions, papszArrayOptions)
-    aftercare(
+    GC.@preserve hGroup papszGroupOptions papszArrayOptions aftercare(
         ccall(
             (:GDALGroupGetMDArrayFullNamesRecursive, libgdal),
             Ptr{Cstring},
@@ -16546,7 +16605,7 @@ Return the list of sub-groups contained in this group.
 the group names, to be freed with CSLDestroy()
 """
 function gdalgroupgetgroupnames(hGroup, papszOptions)
-    aftercare(
+    GC.@preserve hGroup papszOptions aftercare(
         ccall(
             (:GDALGroupGetGroupNames, libgdal),
             Ptr{Cstring},
@@ -16613,7 +16672,7 @@ Return the list of layer names contained in this group.
 the group names, to be freed with CSLDestroy()
 """
 function gdalgroupgetvectorlayernames(hGroup, papszOptions)
-    aftercare(
+    GC.@preserve hGroup papszOptions aftercare(
         ccall(
             (:GDALGroupGetVectorLayerNames, libgdal),
             Ptr{Cstring},
@@ -17029,7 +17088,7 @@ end
 Return array name.
 """
 function gdalmdarraygetname(hArray)
-    aftercare(
+    GC.@preserve hArray aftercare(
         ccall((:GDALMDArrayGetName, libgdal), Cstring, (GDALMDArrayH,), hArray),
         false,
     )
@@ -17041,7 +17100,7 @@ end
 Return array full name.
 """
 function gdalmdarraygetfullname(hArray)
-    aftercare(
+    GC.@preserve hArray aftercare(
         ccall((:GDALMDArrayGetFullName, libgdal), Cstring, (GDALMDArrayH,), hArray),
         false,
     )
@@ -17813,7 +17872,7 @@ end
 Return the array unit.
 """
 function gdalmdarraygetunit(hArray)
-    aftercare(
+    GC.@preserve hArray aftercare(
         ccall((:GDALMDArrayGetUnit, libgdal), Cstring, (GDALMDArrayH,), hArray),
         false,
     )
@@ -18612,7 +18671,7 @@ end
 Return the name of the attribute.
 """
 function gdalattributegetname(hAttr)
-    aftercare(
+    GC.@preserve hAttr aftercare(
         ccall((:GDALAttributeGetName, libgdal), Cstring, (GDALAttributeH,), hAttr),
         false,
     )
@@ -18624,7 +18683,7 @@ end
 Return the full name of the attribute.
 """
 function gdalattributegetfullname(hAttr)
-    aftercare(
+    GC.@preserve hAttr aftercare(
         ccall((:GDALAttributeGetFullName, libgdal), Cstring, (GDALAttributeH,), hAttr),
         false,
     )
@@ -18757,7 +18816,7 @@ Return the value of an attribute as a string.
 a string, or nullptr.
 """
 function gdalattributereadasstring(hAttr)
-    aftercare(
+    GC.@preserve hAttr aftercare(
         ccall((:GDALAttributeReadAsString, libgdal), Cstring, (GDALAttributeH,), hAttr),
         false,
     )
@@ -18807,7 +18866,7 @@ end
 Return the value of an attribute as an array of strings.
 """
 function gdalattributereadasstringarray(hAttr)
-    aftercare(
+    GC.@preserve hAttr aftercare(
         ccall(
             (:GDALAttributeReadAsStringArray, libgdal),
             Ptr{Cstring},
@@ -19181,7 +19240,7 @@ end
 Return dimension name.
 """
 function gdaldimensiongetname(hDim)
-    aftercare(
+    GC.@preserve hDim aftercare(
         ccall((:GDALDimensionGetName, libgdal), Cstring, (GDALDimensionH,), hDim),
         false,
     )
@@ -19193,7 +19252,7 @@ end
 Return dimension full name.
 """
 function gdaldimensiongetfullname(hDim)
-    aftercare(
+    GC.@preserve hDim aftercare(
         ccall((:GDALDimensionGetFullName, libgdal), Cstring, (GDALDimensionH,), hDim),
         false,
     )
@@ -19205,7 +19264,7 @@ end
 Return dimension type.
 """
 function gdaldimensiongettype(hDim)
-    aftercare(
+    GC.@preserve hDim aftercare(
         ccall((:GDALDimensionGetType, libgdal), Cstring, (GDALDimensionH,), hDim),
         false,
     )
@@ -19217,7 +19276,7 @@ end
 Return dimension direction.
 """
 function gdaldimensiongetdirection(hDim)
-    aftercare(
+    GC.@preserve hDim aftercare(
         ccall((:GDALDimensionGetDirection, libgdal), Cstring, (GDALDimensionH,), hDim),
         false,
     )
@@ -19294,7 +19353,7 @@ end
     RPCInfoV2ToMD(GDALRPCInfoV2 * psRPCInfo) -> char **
 """
 function rpcinfov2tomd(psRPCInfo)
-    aftercare(
+    GC.@preserve psRPCInfo aftercare(
         ccall((:RPCInfoV2ToMD, libgdal), Ptr{Cstring}, (Ptr{GDALRPCInfoV2},), psRPCInfo),
     )
 end
@@ -20521,7 +20580,7 @@ end
     RPCInfoV1ToMD(GDALRPCInfoV1 * psRPCInfo) -> char **
 """
 function rpcinfov1tomd(psRPCInfo)
-    aftercare(
+    GC.@preserve psRPCInfo aftercare(
         ccall((:RPCInfoV1ToMD, libgdal), Ptr{Cstring}, (Ptr{GDALRPCInfoV1},), psRPCInfo),
     )
 end
@@ -24437,7 +24496,7 @@ Lists various information about a GDAL supported raster dataset.
 string corresponding to the information about the raster dataset (must be freed with CPLFree()), or NULL in case of error.
 """
 function gdalinfo(hDataset, psOptions)
-    aftercare(
+    GC.@preserve hDataset psOptions aftercare(
         ccall(
             (:GDALInfo, libgdal),
             Cstring,
@@ -25684,7 +25743,7 @@ Lists various information about a GDAL multidimensional dataset.
 string corresponding to the information about the raster dataset (must be freed with CPLFree()), or NULL in case of error.
 """
 function gdalmultidiminfo(hDataset, psOptions)
-    aftercare(
+    GC.@preserve hDataset psOptions aftercare(
         ccall(
             (:GDALMultiDimInfo, libgdal),
             Cstring,
@@ -25882,7 +25941,7 @@ Lists various information about a GDAL supported vector dataset.
 string corresponding to the information about the raster dataset (must be freed with CPLFree()), or NULL in case of error.
 """
 function gdalvectorinfo(hDataset, psOptions)
-    aftercare(
+    GC.@preserve hDataset psOptions aftercare(
         ccall(
             (:GDALVectorInfo, libgdal),
             Cstring,
@@ -26182,7 +26241,7 @@ Get the list of format names for coordinate precision format specific options.
 a null-terminated list to free with CSLDestroy(), or nullptr.
 """
 function ogrgeomcoordinateprecisiongetformats(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall(
             (:OGRGeomCoordinatePrecisionGetFormats, libgdal),
             Ptr{Cstring},
@@ -27264,7 +27323,7 @@ Fetch WKT name for geometry type.
 name used for this geometry type in well known text format.
 """
 function ogr_g_getgeometryname(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:OGR_G_GetGeometryName, libgdal), Cstring, (OGRGeometryH,), arg1),
         false,
     )
@@ -27346,7 +27405,10 @@ Convert a geometry into GML format.
 A GML fragment or NULL in case of error.
 """
 function ogr_g_exporttogml(arg1)
-    aftercare(ccall((:OGR_G_ExportToGML, libgdal), Cstring, (OGRGeometryH,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:OGR_G_ExportToGML, libgdal), Cstring, (OGRGeometryH,), arg1),
+        false,
+    )
 end
 
 """
@@ -27363,7 +27425,7 @@ Convert a geometry into GML format.
 A GML fragment or NULL in case of error.
 """
 function ogr_g_exporttogmlex(arg1, papszOptions)
-    aftercare(
+    GC.@preserve arg1 papszOptions aftercare(
         ccall(
             (:OGR_G_ExportToGMLEx, libgdal),
             Cstring,
@@ -27427,7 +27489,7 @@ Convert a geometry into KML format.
 A KML fragment or NULL in case of error.
 """
 function ogr_g_exporttokml(arg1, pszAltitudeMode)
-    aftercare(
+    GC.@preserve arg1 pszAltitudeMode aftercare(
         ccall(
             (:OGR_G_ExportToKML, libgdal),
             Cstring,
@@ -27451,7 +27513,10 @@ Convert a geometry into GeoJSON format.
 A GeoJSON fragment or NULL in case of error.
 """
 function ogr_g_exporttojson(arg1)
-    aftercare(ccall((:OGR_G_ExportToJson, libgdal), Cstring, (OGRGeometryH,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:OGR_G_ExportToJson, libgdal), Cstring, (OGRGeometryH,), arg1),
+        false,
+    )
 end
 
 """
@@ -27468,7 +27533,7 @@ Convert a geometry into GeoJSON-style format.
 A GeoJSON fragment or NULL in case of error.
 """
 function ogr_g_exporttojsonex(arg1, papszOptions)
-    aftercare(
+    GC.@preserve arg1 papszOptions aftercare(
         ccall(
             (:OGR_G_ExportToJsonEx, libgdal),
             Cstring,
@@ -28445,7 +28510,7 @@ Test if the geometry is valid and, if not, return the invalidity reason.
 a string with the invalidity reason, to free with CPLFree(), if the geometry is invalid, or nullptr if the geometry is valid.
 """
 function ogr_g_getinvalidityreason(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:OGR_G_GetInvalidityReason, libgdal), Cstring, (OGRGeometryH,), arg1),
         false,
     )
@@ -29803,7 +29868,10 @@ Fetch name of this field.
 the name of the field definition.
 """
 function ogr_fld_getnameref(arg1)
-    aftercare(ccall((:OGR_Fld_GetNameRef, libgdal), Cstring, (OGRFieldDefnH,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:OGR_Fld_GetNameRef, libgdal), Cstring, (OGRFieldDefnH,), arg1),
+        false,
+    )
 end
 
 """
@@ -29840,7 +29908,7 @@ Fetch the alternative name (or "alias") for this field.
 the alternative name of the field definition.
 """
 function ogr_fld_getalternativenameref(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:OGR_Fld_GetAlternativeNameRef, libgdal), Cstring, (OGRFieldDefnH,), arg1),
         false,
     )
@@ -30258,7 +30326,7 @@ Get default field value.
 default field value or NULL.
 """
 function ogr_fld_getdefault(hDefn)
-    aftercare(
+    GC.@preserve hDefn aftercare(
         ccall((:OGR_Fld_GetDefault, libgdal), Cstring, (OGRFieldDefnH,), hDefn),
         false,
     )
@@ -30309,7 +30377,7 @@ Return the name of the field domain for this field.
 the field domain name, or an empty string if there is none.
 """
 function ogr_fld_getdomainname(hDefn)
-    aftercare(
+    GC.@preserve hDefn aftercare(
         ccall((:OGR_Fld_GetDomainName, libgdal), Cstring, (OGRFieldDefnH,), hDefn),
         false,
     )
@@ -30349,7 +30417,7 @@ Return the (optional) comment for this field.
 the comment, or an empty string if there is none.
 """
 function ogr_fld_getcomment(hDefn)
-    aftercare(
+    GC.@preserve hDefn aftercare(
         ccall((:OGR_Fld_GetComment, libgdal), Cstring, (OGRFieldDefnH,), hDefn),
         false,
     )
@@ -30383,7 +30451,7 @@ Fetch human readable name for a field type.
 the name.
 """
 function ogr_getfieldtypename(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:OGR_GetFieldTypeName, libgdal), Cstring, (OGRFieldType,), arg1),
         false,
     )
@@ -30416,7 +30484,7 @@ Fetch human readable name for a field subtype.
 the name.
 """
 function ogr_getfieldsubtypename(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:OGR_GetFieldSubTypeName, libgdal), Cstring, (OGRFieldSubType,), arg1),
         false,
     )
@@ -30535,7 +30603,7 @@ Fetch name of this field.
 the name of the geometry field definition.
 """
 function ogr_gfld_getnameref(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:OGR_GFld_GetNameRef, libgdal), Cstring, (OGRGeomFieldDefnH,), arg1),
         false,
     )
@@ -30793,7 +30861,10 @@ Get name of the OGRFeatureDefn passed as an argument.
 the name. This name is internal and should not be modified, or freed.
 """
 function ogr_fd_getname(arg1)
-    aftercare(ccall((:OGR_FD_GetName, libgdal), Cstring, (OGRFeatureDefnH,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:OGR_FD_GetName, libgdal), Cstring, (OGRFeatureDefnH,), arg1),
+        false,
+    )
 end
 
 """
@@ -31747,7 +31818,7 @@ Fetch field value as a string.
 the field value. This string is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function ogr_f_getfieldasstring(arg1, arg2)
-    aftercare(
+    GC.@preserve arg1 arg2 aftercare(
         ccall((:OGR_F_GetFieldAsString, libgdal), Cstring, (OGRFeatureH, Cint), arg1, arg2),
         false,
     )
@@ -31769,7 +31840,7 @@ Fetch OFTDateTime field value as a ISO8601 representation.
 the field value. This string is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function ogr_f_getfieldasiso8601datetime(arg1, arg2, arg3)
-    aftercare(
+    GC.@preserve arg1 arg2 arg3 aftercare(
         ccall(
             (:OGR_F_GetFieldAsISO8601DateTime, libgdal),
             Cstring,
@@ -31880,7 +31951,7 @@ Fetch field value as a list of strings.
 the field value. This list is internal, and should not be modified, or freed. Its lifetime may be very brief.
 """
 function ogr_f_getfieldasstringlist(arg1, arg2)
-    aftercare(
+    GC.@preserve arg1 arg2 aftercare(
         ccall(
             (:OGR_F_GetFieldAsStringList, libgdal),
             Ptr{Cstring},
@@ -32603,7 +32674,7 @@ Dump this feature in a human readable form.
 a string with the feature representation (to be freed with CPLFree())
 """
 function ogr_f_dumpreadableasstring(arg1, arg2)
-    aftercare(
+    GC.@preserve arg1 arg2 aftercare(
         ccall(
             (:OGR_F_DumpReadableAsString, libgdal),
             Cstring,
@@ -32686,7 +32757,10 @@ Fetch style string for this feature.
 a reference to a representation in string format, or NULL if there isn't one.
 """
 function ogr_f_getstylestring(arg1)
-    aftercare(ccall((:OGR_F_GetStyleString, libgdal), Cstring, (OGRFeatureH,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:OGR_F_GetStyleString, libgdal), Cstring, (OGRFeatureH,), arg1),
+        false,
+    )
 end
 
 """
@@ -32782,7 +32856,10 @@ Returns the native data for the feature.
 a string with the native data, or NULL if there is none.
 """
 function ogr_f_getnativedata(arg1)
-    aftercare(ccall((:OGR_F_GetNativeData, libgdal), Cstring, (OGRFeatureH,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:OGR_F_GetNativeData, libgdal), Cstring, (OGRFeatureH,), arg1),
+        false,
+    )
 end
 
 """
@@ -32813,7 +32890,7 @@ Returns the native media type for the feature.
 a string with the native media type, or NULL if there is none.
 """
 function ogr_f_getnativemediatype(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:OGR_F_GetNativeMediaType, libgdal), Cstring, (OGRFeatureH,), arg1),
         false,
     )
@@ -32918,7 +32995,7 @@ Get the name of the field domain.
 the field domain name.
 """
 function ogr_flddomain_getname(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:OGR_FldDomain_GetName, libgdal), Cstring, (OGRFieldDomainH,), arg1),
         false,
     )
@@ -32936,7 +33013,7 @@ Get the description of the field domain.
 the field domain description (might be empty string).
 """
 function ogr_flddomain_getdescription(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:OGR_FldDomain_GetDescription, libgdal), Cstring, (OGRFieldDomainH,), arg1),
         false,
     )
@@ -33399,7 +33476,7 @@ Get the glob expression.
 the glob expression, or nullptr in case of error
 """
 function ogr_globflddomain_getglob(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:OGR_GlobFldDomain_GetGlob, libgdal), Cstring, (OGRFieldDomainH,), arg1),
         false,
     )
@@ -33417,7 +33494,10 @@ Return the layer name.
 the layer name (must not been freed)
 """
 function ogr_l_getname(arg1)
-    aftercare(ccall((:OGR_L_GetName, libgdal), Cstring, (OGRLayerH,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:OGR_L_GetName, libgdal), Cstring, (OGRLayerH,), arg1),
+        false,
+    )
 end
 
 """
@@ -33655,7 +33735,7 @@ Fetch the current attribute query string.
 the current attribute query string, or NULL if no attribute query is currently installed. The returned string is short lived and owned by the layer and should not be modified or freed by the caller.
 """
 function ogr_l_getattributefilter(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:OGR_L_GetAttributeFilter, libgdal), Cstring, (OGRLayerH,), arg1),
         false,
     )
@@ -34521,7 +34601,10 @@ end
 ` `
 """
 function ogr_l_getfidcolumn(arg1)
-    aftercare(ccall((:OGR_L_GetFIDColumn, libgdal), Cstring, (OGRLayerH,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:OGR_L_GetFIDColumn, libgdal), Cstring, (OGRLayerH,), arg1),
+        false,
+    )
 end
 
 """
@@ -34536,7 +34619,7 @@ This method returns the name of the underlying database column being used as the
 geometry column name.
 """
 function ogr_l_getgeometrycolumn(arg1)
-    aftercare(
+    GC.@preserve arg1 aftercare(
         ccall((:OGR_L_GetGeometryColumn, libgdal), Cstring, (OGRLayerH,), arg1),
         false,
     )
@@ -34893,7 +34976,10 @@ Returns the name of the data source.
 pointer to an internal name string which should not be modified or freed by the caller.
 """
 function ogr_ds_getname(arg1)
-    aftercare(ccall((:OGR_DS_GetName, libgdal), Cstring, (OGRDataSourceH,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:OGR_DS_GetName, libgdal), Cstring, (OGRDataSourceH,), arg1),
+        false,
+    )
 end
 
 """
@@ -35236,7 +35322,10 @@ Fetch name of driver (file format).
 driver name. This is an internal string and should not be modified or freed.
 """
 function ogr_dr_getname(arg1)
-    aftercare(ccall((:OGR_Dr_GetName, libgdal), Cstring, (OGRSFDriverH,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:OGR_Dr_GetName, libgdal), Cstring, (OGRSFDriverH,), arg1),
+        false,
+    )
 end
 
 """
@@ -35567,7 +35656,7 @@ Initialize style manager from the style string of a feature.
 a reference to the style string read from the feature, or NULL in case of error.
 """
 function ogr_sm_initfromfeature(hSM, hFeat)
-    aftercare(
+    GC.@preserve hSM hFeat aftercare(
         ccall(
             (:OGR_SM_InitFromFeature, libgdal),
             Cstring,
@@ -35854,7 +35943,7 @@ Get Style Tool parameter value as string.
 the parameter value as string and sets bValueIsNull.
 """
 function ogr_st_getparamstr(hST, eParam, bValueIsNull)
-    aftercare(
+    GC.@preserve hST eParam bValueIsNull aftercare(
         ccall(
             (:OGR_ST_GetParamStr, libgdal),
             Cstring,
@@ -36010,7 +36099,7 @@ Get the style string for this Style Tool.
 the style string for this style tool or "" if the hST is invalid.
 """
 function ogr_st_getstylestring(hST)
-    aftercare(
+    GC.@preserve hST aftercare(
         ccall((:OGR_ST_GetStyleString, libgdal), Cstring, (OGRStyleToolH,), hST),
         false,
     )
@@ -36169,7 +36258,7 @@ Get a style string by name.
 the style string matching the name or NULL if not found or error.
 """
 function ogr_stbl_find(hStyleTable, pszName)
-    aftercare(
+    GC.@preserve hStyleTable pszName aftercare(
         ccall(
             (:OGR_STBL_Find, libgdal),
             Cstring,
@@ -36212,7 +36301,7 @@ Get the next style string from the table.
 the next style string or NULL on error.
 """
 function ogr_stbl_getnextstyle(hStyleTable)
-    aftercare(
+    GC.@preserve hStyleTable aftercare(
         ccall((:OGR_STBL_GetNextStyle, libgdal), Cstring, (OGRStyleTableH,), hStyleTable),
         false,
     )
@@ -36230,7 +36319,7 @@ Get the style name of the last style string fetched with OGR_STBL_GetNextStyle.
 the Name of the last style string or NULL on error.
 """
 function ogr_stbl_getlaststylename(hStyleTable)
-    aftercare(
+    GC.@preserve hStyleTable aftercare(
         ccall(
             (:OGR_STBL_GetLastStyleName, libgdal),
             Cstring,
@@ -36373,7 +36462,10 @@ function ogrrealloc(arg1, arg2)
 end
 
 function ogrstrdup(arg1)
-    aftercare(ccall((:OGRStrdup, libgdal), Cstring, (Cstring,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:OGRStrdup, libgdal), Cstring, (Cstring,), arg1),
+        false,
+    )
 end
 
 """
@@ -36398,7 +36490,7 @@ Fetch a human readable name corresponding to an OGRwkbGeometryType value.
 internal human readable string, or NULL on failure.
 """
 function ogrgeometrytypetoname(eType)
-    aftercare(
+    GC.@preserve eType aftercare(
         ccall((:OGRGeometryTypeToName, libgdal), Cstring, (OGRwkbGeometryType,), eType),
         false,
     )
@@ -36850,7 +36942,10 @@ Get runtime version information.
 an internal string containing the requested information.
 """
 function gdalversioninfo(arg1)
-    aftercare(ccall((:GDALVersionInfo, libgdal), Cstring, (Cstring,), arg1), false)
+    GC.@preserve arg1 aftercare(
+        ccall((:GDALVersionInfo, libgdal), Cstring, (Cstring,), arg1),
+        false,
+    )
 end
 
 """
@@ -36887,7 +36982,7 @@ Return the string representation for the OGRAxisOrientation enumeration.
 an internal string
 """
 function osraxisenumtoname(eOrientation)
-    aftercare(
+    GC.@preserve eOrientation aftercare(
         ccall((:OSRAxisEnumToName, libgdal), Cstring, (OGRAxisOrientation,), eOrientation),
         false,
     )
@@ -37713,7 +37808,10 @@ end
 Return the CRS name.
 """
 function osrgetname(hSRS)
-    aftercare(ccall((:OSRGetName, libgdal), Cstring, (OGRSpatialReferenceH,), hSRS), false)
+    GC.@preserve hSRS aftercare(
+        ccall((:OSRGetName, libgdal), Cstring, (OGRSpatialReferenceH,), hSRS),
+        false,
+    )
 end
 
 """
@@ -37722,7 +37820,7 @@ end
 Return the name of the celestial body of this CRS.
 """
 function osrgetcelestialbodyname(hSRS)
-    aftercare(
+    GC.@preserve hSRS aftercare(
         ccall((:OSRGetCelestialBodyName, libgdal), Cstring, (OGRSpatialReferenceH,), hSRS),
         false,
     )
@@ -37756,7 +37854,7 @@ end
 Fetch indicated attribute of named node.
 """
 function osrgetattrvalue(hSRS, pszName, iChild)
-    aftercare(
+    GC.@preserve hSRS pszName iChild aftercare(
         ccall(
             (:OSRGetAttrValue, libgdal),
             Cstring,
@@ -38539,7 +38637,7 @@ end
 Get the authority code for a node.
 """
 function osrgetauthoritycode(hSRS, pszTargetKey)
-    aftercare(
+    GC.@preserve hSRS pszTargetKey aftercare(
         ccall(
             (:OSRGetAuthorityCode, libgdal),
             Cstring,
@@ -38558,7 +38656,7 @@ end
 Get the authority name for a node.
 """
 function osrgetauthorityname(hSRS, pszTargetKey)
-    aftercare(
+    GC.@preserve hSRS pszTargetKey aftercare(
         ccall(
             (:OSRGetAuthorityName, libgdal),
             Cstring,
@@ -38884,7 +38982,7 @@ end
 Fetch the orientation of one axis.
 """
 function osrgetaxis(hSRS, pszTargetKey, iAxis, peOrientation)
-    aftercare(
+    GC.@preserve hSRS pszTargetKey iAxis peOrientation aftercare(
         ccall(
             (:OSRGetAxis, libgdal),
             Cstring,
