@@ -56,29 +56,32 @@ The bulk of this package is generated automatically by the scripts under
 
 ## Using the GDAL and OGR utilities
 
-The provided GDAL installation also contains the commonly used utilities such as
-`gdal_translate` and `ogr2ogr`. They can be called from Julia like so:
-```R
+The provided GDAL installation also contains the [`gdal` command line
+interface](https://gdal.org/en/stable/programs/index.html), which offers the commonly used
+utilities as subcommands of a single program. It can be called from Julia like so:
+```julia
 using GDAL_jll
 
 # list information about a raster dataset
-run(`$(gdalinfo_path()) path/to/raster-file`)
+run(`$(gdal_exe()) raster info path/to/raster-file`)
 
 # convert raster data between different formats
-run(`$(gdal_translate_path()) -of COG input.asc output.tif`)
+run(`$(gdal_exe()) raster convert input.asc output.tif`)
 
 # list information about an OGR-supported data source
-run(`$(ogrinfo_path()) path/to/vector-file`)
+run(`$(gdal_exe()) vector info path/to/vector-file`)
 
 # convert simple features data between file formats
-run(`$(ogr2ogr_path()) -f FlatGeobuf output.fgb input.shp`)
+run(`$(gdal_exe()) vector convert input.shp output.fgb`)
 ```
 
-The `<util>_path` functions are exported from the
+`gdal_exe` is exported from the
 [`GDAL_jll`](https://github.com/JuliaBinaryWrappers/GDAL_jll.jl) package. If you only wish
 to run the utilities, that package will have all you need. If you are using the GDAL
-package, they are also available as `GDAL.<util>_path`. A list of the available utilities
-can be found [here](https://github.com/JuliaBinaryWrappers/GDAL_jll.jl#products).
+package, it is also available as `GDAL.gdal_exe`. The individual utilities such as
+`gdal_translate` and `ogr2ogr` can be called in the same way, using `gdal_translate_exe` and
+`ogr2ogr_exe`. A list of the available utilities can be found
+[here](https://github.com/JuliaBinaryWrappers/GDAL_jll.jl#products).
 Documentation for them is available on
 [gdal.org/programs](https://gdal.org/programs/index.html). Note that programs implemented in
 Python (ending in .py) are not available, since those would require a Python installation.
@@ -95,8 +98,16 @@ you set two things:
    `GDAL.GDAL_DATA[]`.
 2. Julia's `Sys.BINDIR` must be in your path.
 
-Inside of julia (2) is always the case, and (1) happens on loading the `GDAL` module, in its
-`__init__` function.
+Inside of julia (2) is always the case, but (1) is not. Loading the `GDAL` module sets
+`GDAL_DATA` for library calls only, and the utilities run as separate processes. Most
+commands work without it, but some need its files. Writing a COG for instance warns `Cannot
+find tms_NZTM2000.json (GDAL_DATA is not defined)`. To avoid this, add it to the command:
+```julia
+using GDAL
+
+cmd = `$(GDAL.gdal_exe()) raster convert --output-format COG input.asc output.tif`
+run(addenv(cmd, "GDAL_DATA" => GDAL.GDAL_DATA[]))
+```
 
 ## Missing driver to support a format
 
