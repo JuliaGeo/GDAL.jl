@@ -9,11 +9,13 @@ Several custom transformations are applied that should make using this package m
 - functions that return a Ptr{Cstring} are wrapped in unsafe_loadstringlist to return a Vector{String}
 - the arguments of these two kinds of functions are kept alive with GC.@preserve until the strings are copied
 - functions that return a Ptr{Cvoid} are wrapped in failsafe to catch errors
+- functions that libgdal doesn't export are left out, since they cannot be called
 =#
 
 using Clang
 using Clang.Generators
 using MacroTools
+using Libdl
 using Logging
 using EzXML
 using GDAL_jll
@@ -119,7 +121,6 @@ const stringlist_free_me = Symbol[
     :gdalgroupgetgroupnames,
     :gdalgroupgetvectorlayernames,
     :gdalattributereadasstringarray,
-    :rpcinfov1tomd,
     :rpcinfov2tomd,
     :ogrgeomcoordinateprecisiongetformats,
     :osrgetprojsearchpaths,
@@ -233,6 +234,21 @@ function rewriter(dag::Clang.ExprDAG)
     end
 end
 
+"""
+Names of the functions in `dag` that the library `lib` doesn't export.
+
+The headers also declare functions that are not exported, because they lack `CPL_DLL`,
+are renamed when GDAL itself is compiled, or are never defined. Wrappers for these could
+only fail with an "undefined symbol" error.
+"""
+function unexported_functions(dag::Clang.ExprDAG, lib)
+    String[
+        string(node.id) for
+        node in get_nodes(dag) if node.type isa AbstractFunctionNodeType &&
+            dlsym(lib, node.id; throw_error = false) === nothing
+    ]
+end
+
 
 # do not wrap, handled in prologue.jl
 @add_def stat
@@ -251,6 +267,12 @@ ctx = create_context(headerfiles, args, options)
 # run generator
 build!(ctx, BUILDSTAGE_NO_PRINTING)
 rewriter(ctx.dag)
+
+# these names are only known now that the headers are parsed
+unexported = unexported_functions(ctx.dag, dlopen(GDAL_jll.libgdal_path))
+@info "Not wrapping functions that libgdal doesn't export" unexported
+append!(ctx.options["general"]["output_ignorelist"], unexported)
+
 build!(ctx, BUILDSTAGE_PRINTING_ONLY)
 
 add_doc(joinpath(@__DIR__, "..", "src", "libgdal.jl"))
