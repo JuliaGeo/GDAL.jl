@@ -73,12 +73,12 @@ function aftercare(ptr::Cstring, free::Bool)
 end
 
 """
-For string list pointers, load them to Vector{String}
+For string list pointers, load them to Vector{String}, and free them if we should.
 
 That is it expects a `StringList`, in the sense of the CPL functions,
 as a null-terminated array of strings.
 """
-function aftercare(ptr::Ptr{Cstring})
+function aftercare(ptr::Ptr{Cstring}, free::Bool = false)
     maybe_throw()
     strings = Vector{String}()
     if ptr == C_NULL
@@ -91,8 +91,6 @@ function aftercare(ptr::Ptr{Cstring})
         i += 1
         cstring = unsafe_load(ptr, i)
     end
-    # TODO it seems that, like aftercare(::Cstring), we need to
-    # free the memory ourselves with CSLDestroy (not currently wrapped)
-    # not sure if that is true for some or all functions
+    free && ccall((:CSLDestroy, libgdal), Cvoid, (Ptr{Cstring},), ptr)
     strings
 end
